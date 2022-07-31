@@ -200,70 +200,28 @@ class Mesh(mesh.Mesh):
         return vertices, edges, faces, c
 
     def get_directions(self):
-        '''
-        Return the (normalized) directions of the mesh. This is useful for
-        computing partial derivatives later on. The output of this function
-        should be treated as "read only."
-        '''
-
         return self._directions
 
     def get_vertices(self):
-        '''
-        Return the vertices of the mesh.
-        '''
-
         return np.multiply(self._directions, np.reshape(self._rho, (-1, 1)))
 
     def get_edges(self):
-        '''
-        Return the edges of the mesh adjacency list format. The output of this
-        function should be treated as "read only."
-        '''
-
         return self._edges
 
     def get_faces(self):
-        '''
-        Return a list of triples (i, j, k) representing the (indices of the)
-        faces of the mesh. Each i -> j -> k is oriented counterclockwise. The
-        output of this function should be treated as "read only."
-        '''
-
         return self._faces
 
     def get_c(self):
-        '''
-        Return a map from pairs of indices to indices where (i, j) maps to k
-        precisely when i -> j -> k is a face oriented counterclockwise. The
-        output of this function should be treated as "read only."
-        '''
-
         return self._c
 
     def get_rho(self):
-        '''
-        Return the magnitudes of the vertices of this mesh, ordered in the same
-        way as the output of `get_vertices`.
-        '''
-
         return np.copy(self._rho)
 
     def set_rho(self, rho):
-        '''
-        Set the magnitudes of the vertices of this mesh, ordered in the same
-        way as the output of `get_vertices`.
-        '''
-
         self._rho = np.copy(rho)
         self._updates += 1
 
     def updates(self):
-        '''
-        Return the number of times `set_rho` has been called. This function is
-        an easy (O(1)) way to determine whether the mesh has been updated.
-        '''
-
         return self._updates
 
     def nearest_direction_index(self, direction):
