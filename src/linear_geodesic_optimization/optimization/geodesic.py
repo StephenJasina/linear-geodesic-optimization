@@ -149,8 +149,15 @@ class Forward:
                               for j in es]) / 2
                          for i, es in enumerate(e)])
 
-    def calc_phi(self, gamma):
-        self._laplacian_forward.calc_L()
+    def _calc_phi(self):
+        phi = self.LC_inv.solve(self.div_X)
+        # We subtract off the minimum here so that we satisfy the obvious
+        # initial conidition (namely, the distance from gamma to itself
+        # should be 0)
+        return phi - min(phi)
+
+    def calc(self, gamma):
+        self._laplacian_forward.calc()
         self.N = self._laplacian_forward.N
         self.A = self._laplacian_forward.A
         self.D = self._laplacian_forward.D
@@ -181,13 +188,7 @@ class Forward:
             self.X = self._calc_X()
             self.p = self._calc_p()
             self.div_X = self._calc_div_X()
-            phi = self.LC_inv.solve(self.div_X)
-            # We subtract off the minimum here so that we satisfy the obvious
-            # initial conidition (namely, the distance from gamma to itself
-            # should be 0)
-            self.phi = phi - min(phi)
-
-        return self.phi
+            self.phi = self._calc_phi()
 
 class Reverse:
     '''
@@ -345,13 +346,16 @@ class Reverse:
                                  + (p[i,j] - p[k,i]) @ dif_X[i,j]) / 2
         return dif_div_X
 
-    def calc_dif_phi(self, gamma, dif_v, ls=None):
+    def _calc_dif_phi(self, l):
+        return self._LC_inv.solve(self.dif_div_X[l] - self._LC @ self._phi)
+
+    def calc(self, gamma, dif_v, ls=None):
         if self._ls is None:
             self._ls = range(self._V)
         if ls is None:
             ls = range(self._V)
 
-        self._geodesic_forward.calc_phi(gamma)
+        self._geodesic_forward.calc(gamma)
         self._N = self._geodesic_forward.N
         self._A = self._geodesic_forward.A
         self._D = self._geodesic_forward.D
@@ -369,7 +373,7 @@ class Reverse:
         self._div_X = self._geodesic_forward.div_X
         self._phi = self._geodesic_forward.phi
 
-        self._laplacian_reverse.calc_dif_L(dif_v, ls)
+        self._laplacian_reverse.calc(dif_v, ls)
         self._dif_N = self._laplacian_reverse.dif_N
         self._dif_A = self._laplacian_reverse.dif_A
         self._dif_D = self._laplacian_reverse.dif_D
@@ -391,8 +395,4 @@ class Reverse:
             self.dif_X = {l: self._calc_dif_X(l) for l in self._ls}
             self.dif_p = {l: self._calc_dif_p(l) for l in self._ls}
             self.dif_div_X = {l: self._calc_dif_div_X(l) for l in self._ls}
-            self.dif_phi = {l: self._LC_inv.solve(self.dif_div_X[l]
-                                                  - self._LC @ self._phi)
-                            for l in self._ls}
-
-        return self.dif_phi
+            self.dif_phi = {l: self._calc_dif_phi(l) for l in self._ls}

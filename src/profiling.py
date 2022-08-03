@@ -46,15 +46,19 @@ s_connected = list(s_connected)
 t = np.array(t)
 
 dif_L = np.zeros(V)
-dif_L_smooth = smooth_reverse.calc_dif_L_smooth(dif_v)
+smooth_reverse.calc(dif_v)
+dif_L_smooth = smooth_reverse.dif_L_smooth
 for l in range(V):
     dif_L[l] +=  lam * dif_L_smooth[l]
 
-phi = geodesic_forward.calc_phi(gamma)
+geodesic_forward.calc(gamma)
+phi = geodesic_forward.phi
 ls = list(range(M.get_rho().shape[0]))
-dif_phi = geodesic_reverse.calc_dif_phi(gamma, dif_v, ls)
+geodesic_reverse.calc(gamma, dif_v, ls)
+dif_phi = geodesic_reverse.dif_phi
 dif_phi = {l: dif[s_connected] for l, dif in dif_phi.items()}
-dif_lse = linear_regression_reverse.calc_dif_lse(phi[s_connected], t, dif_phi, ls)
+linear_regression_reverse.calc(phi[s_connected], t, dif_phi, ls)
+dif_lse = linear_regression_reverse.dif_lse
 
 pr.disable()
 s = io.StringIO()
@@ -62,4 +66,7 @@ ps = pstats.Stats(pr, stream=s)
 ps.strip_dirs()
 ps.sort_stats(pstats.SortKey.CUMULATIVE)
 ps.print_stats()
-print(s.getvalue())
+s = s.getvalue().split('\n')
+for line in s:
+    if '(_calc_' in line or 'filename:lineno(function)' in line:
+        print(line)

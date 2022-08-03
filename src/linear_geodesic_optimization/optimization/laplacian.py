@@ -86,7 +86,10 @@ class Forward:
         return sparse.coo_array((data, (row, col)),
                                  shape=(self._V, self._V)).tocsc()
 
-    def calc_L(self):
+    def _calc_L(self):
+        return self.D_inv @ self.LC
+
+    def calc(self):
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
             self._v = self._mesh.get_vertices()
@@ -97,9 +100,7 @@ class Forward:
             self.D_inv = sparse.diags(1 / self.D.data.flatten())
             self.cot = self._calc_cot()
             self.LC = self._calc_LC()
-            self.L = self.D_inv @ self.LC
-
-        return self.L
+            self.L = self._calc_L()
 
 class Reverse:
     '''
@@ -227,13 +228,16 @@ class Reverse:
         return sparse.coo_array((data, (row, col)),
                                  shape=(self._V, self._V)).tocsc()
 
-    def calc_dif_L(self, dif_v, ls=None):
+    def _calc_dif_L(self, l):
+        return self._D_inv @ (self.dif_LC[l] - self.dif_D[l] @ self._L)
+
+    def calc(self, dif_v, ls=None):
         if self._ls is None:
             self._ls = range(self._V)
         if ls is None:
             ls = range(self._V)
 
-        self._laplacian_forward.calc_L()
+        self._laplacian_forward.calc()
         self._N = self._laplacian_forward.N
         self._A = self._laplacian_forward.A
         self._D = self._laplacian_forward.D
@@ -253,8 +257,4 @@ class Reverse:
             self.dif_D = {l: self._calc_dif_D(l) for l in self._ls}
             self.dif_cot = {l: self._calc_dif_cot(l) for l in self._ls}
             self.dif_LC = {l: self._calc_dif_LC(l) for l in self._ls}
-            self.dif_L = {l: self._D_inv @
-                             (self.dif_LC[l] - self.dif_D[l] @ self._L)
-                          for l in self._ls}
-
-        return self.dif_L
+            self.dif_L = {l: self._calc_dif_L(l) for l in self._ls}

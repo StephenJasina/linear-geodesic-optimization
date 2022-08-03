@@ -13,7 +13,7 @@ class Forward:
 
         self.beta = None
 
-    def calc_lse(self, phi, t):
+    def calc(self, phi, t):
         E = phi.shape[0]
 
         # If phi and t haven't changed, don't do any additional work.
@@ -31,9 +31,8 @@ class Forward:
         self.d = self.d_tilde / (self.d_tilde @ self.d_tilde / E)**0.5
         self.residuals = t - np.sum(t) / E - (self.d @ t / E) * self.d
         self.lse = self.residuals @ self.residuals
-        return self.lse
 
-    def calc_beta(self, phi, t):
+    def get_beta(self, phi, t):
         E = phi.shape[0]
 
         # If phi and t haven't changed, don't do any additional work.
@@ -76,7 +75,7 @@ class Reverse:
         self.dif_residuals = None
         self.dif_lse = None
 
-    def calc_dif_lse(self, phi, t, dif_phi, ls=None):
+    def calc(self, phi, t, dif_phi, ls=None):
         E = phi.shape[0]
         if self._ls is None:
             self._ls = range(E)
@@ -100,7 +99,7 @@ class Reverse:
 
             self._ls = ls
 
-            self._linear_regression_forward.calc_lse(self._phi, self._t)
+            self._linear_regression_forward.calc(self._phi, self._t)
             self._d_tilde = self._linear_regression_forward.d_tilde
             self._d = self._linear_regression_forward.d
             self._residuals = self._linear_regression_forward.residuals
@@ -113,4 +112,3 @@ class Reverse:
         self.dif_d = {l: (self.dif_d_tilde[l] - (self._d @ self.dif_d_tilde[l]) * self._d) / linalg.norm(self._d_tilde) for l in self._ls}
         self.dif_residuals = {l: (-self._d @ self._t * self.dif_d[l] - self.dif_d[l] @ self._t * self._d) / E for l in self._ls}
         self.dif_lse = {l: 2 * self._residuals @ self.dif_residuals[l] for l in self._ls}
-        return self.dif_lse
