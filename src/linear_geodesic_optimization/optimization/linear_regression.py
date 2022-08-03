@@ -59,7 +59,7 @@ class Reverse:
         self._t = None
         self._dif_phi = None
 
-        self._ls = None
+        self._l = None
 
         self._linear_regression_forward = linear_regression_forward
         if linear_regression_forward is None:
@@ -75,29 +75,22 @@ class Reverse:
         self.dif_residuals = None
         self.dif_lse = None
 
-    def calc(self, phi, t, dif_phi, ls=None):
+    def calc(self, phi, t, dif_phi, l):
         E = phi.shape[0]
-        if self._ls is None:
-            self._ls = range(E)
-        if ls is None:
-            ls = range(E)
 
         pair_changed = False
         if (self._phi is None or self._phi.shape != phi.shape
             or not np.allclose(self._phi, phi)
             or self._t is None or self._t.shape != t.shape
-            or not np.allclose(self._t, t) or list(self._ls) != list(ls)
+            or not np.allclose(self._t, t) or self._l != l
             or self._dif_phi is None
-            or not np.all([l in self._dif_phi for l in self._ls])
-            or not np.all([l in dif_phi for l in self._ls])
-            or not np.all([np.allclose(self._dif_phi[l], dif_phi[l])
-                           for l in self._ls])):
+            or not np.allclose(self._dif_phi, dif_phi)):
             pair_changed = True
             self._phi = np.copy(phi)
             self._t = np.copy(t)
             self._dif_phi = dif_phi
 
-            self._ls = ls
+            self._l = l
 
             self._linear_regression_forward.calc(self._phi, self._t)
             self._d_tilde = self._linear_regression_forward.d_tilde
@@ -108,7 +101,7 @@ class Reverse:
         if not pair_changed:
             return self.dif_lse
 
-        self.dif_d_tilde = {l: self._dif_phi[l] - np.sum(self._dif_phi[l]) / E for l in self._ls}
-        self.dif_d = {l: (self.dif_d_tilde[l] - (self._d @ self.dif_d_tilde[l]) * self._d) / linalg.norm(self._d_tilde) for l in self._ls}
-        self.dif_residuals = {l: (-self._d @ self._t * self.dif_d[l] - self.dif_d[l] @ self._t * self._d) / E for l in self._ls}
-        self.dif_lse = {l: 2 * self._residuals @ self.dif_residuals[l] for l in self._ls}
+        self.dif_d_tilde = self._dif_phi - np.sum(self._dif_phi) / E
+        self.dif_d = (self.dif_d_tilde - (self._d @ self.dif_d_tilde) * self._d) / linalg.norm(self._d_tilde)
+        self.dif_residuals = (-self._d @ self._t * self.dif_d - self.dif_d @ self._t * self._d) / E
+        self.dif_lse = 2 * self._residuals @ self.dif_residuals

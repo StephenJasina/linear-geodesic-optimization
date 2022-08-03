@@ -118,7 +118,7 @@ class Reverse:
         self._V = len(self._e)
 
         self._dif_v = None
-        self._ls = None
+        self._l = None
 
         self._laplacian_forward = laplacian_forward
         if self._laplacian_forward is None:
@@ -141,12 +141,13 @@ class Reverse:
         self.dif_LC = None
         self.dif_L = None
 
-    def _calc_dif_N(self, l):
+    def _calc_dif_N(self):
         dif_N = {}
         v = self._v
         e = self._e
         c = self._c
-        dif_v = self._dif_v[l]
+        l = self._l
+        dif_v = self._dif_v
         for i, es in enumerate(e):
             vi = v[i]
             for j in es:
@@ -163,29 +164,30 @@ class Reverse:
                 # For efficiency, only store the nonzero values
         return dif_N
 
-    def _calc_dif_A(self, l):
+    def _calc_dif_A(self):
         e = self._e
         N = self._N
         A = self._A
-        dif_N = self.dif_N[l]
+        dif_N = self.dif_N
         return {(i, j): (N[i,j] @ dif_N[i,j]) / (4 * A[i,j])
                 for i, es in enumerate(e)
                 for j in es
                 if (i, j) in dif_N}
 
-    def _calc_dif_D(self, l):
+    def _calc_dif_D(self):
         e = self._e
-        dif_A = self.dif_A[l]
+        dif_A = self.dif_A
         return sparse.diags([sum(dif_A[i,j] for j in es if (i, j) in dif_A) / 3
                              for i, es in enumerate(e)])
 
-    def _calc_dif_cot(self, l):
+    def _calc_dif_cot(self):
         dif_cot = {}
         v = self._v
         e = self._e
         c = self._c
-        dif_v = self._dif_v[l]
-        dif_A = self.dif_A[l]
+        l = self._l
+        dif_v = self._dif_v
+        dif_A = self.dif_A
         vl = v[l]
         for j in e[l]:
             k = c[l,j]
@@ -202,8 +204,8 @@ class Reverse:
                             / (2 * self._A[j,k]))
         return dif_cot
 
-    def _calc_dif_LC(self, l):
-        dif_cot = self.dif_cot[l]
+    def _calc_dif_LC(self):
+        dif_cot = self.dif_cot
         row = []
         col = []
         data = []
@@ -228,15 +230,10 @@ class Reverse:
         return sparse.coo_array((data, (row, col)),
                                  shape=(self._V, self._V)).tocsc()
 
-    def _calc_dif_L(self, l):
-        return self._D_inv @ (self.dif_LC[l] - self.dif_D[l] @ self._L)
+    def _calc_dif_L(self):
+        return self._D_inv @ (self.dif_LC - self.dif_D @ self._L)
 
-    def calc(self, dif_v, ls=None):
-        if self._ls is None:
-            self._ls = range(self._V)
-        if ls is None:
-            ls = range(self._V)
-
+    def calc(self, dif_v, l):
         self._laplacian_forward.calc()
         self._N = self._laplacian_forward.N
         self._A = self._laplacian_forward.A
@@ -246,15 +243,15 @@ class Reverse:
         self._LC = self._laplacian_forward.LC
         self._L = self._laplacian_forward.L
 
-        if self._updates != self._mesh.updates() or self._ls != ls:
+        if self._updates != self._mesh.updates() or self._l != l:
             self._updates = self._mesh.updates()
             self._v = self._mesh.get_vertices()
             self._dif_v = dif_v
-            self._ls = ls
+            self._l = l
 
-            self.dif_N = {l: self._calc_dif_N(l) for l in self._ls}
-            self.dif_A = {l: self._calc_dif_A(l) for l in self._ls}
-            self.dif_D = {l: self._calc_dif_D(l) for l in self._ls}
-            self.dif_cot = {l: self._calc_dif_cot(l) for l in self._ls}
-            self.dif_LC = {l: self._calc_dif_LC(l) for l in self._ls}
-            self.dif_L = {l: self._calc_dif_L(l) for l in self._ls}
+            self.dif_N = self._calc_dif_N()
+            self.dif_A = self._calc_dif_A()
+            self.dif_D = self._calc_dif_D()
+            self.dif_cot = self._calc_dif_cot()
+            self.dif_LC = self._calc_dif_LC()
+            self.dif_L = self._calc_dif_L()

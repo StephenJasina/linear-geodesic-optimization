@@ -209,7 +209,7 @@ class Reverse:
         self._V = len(self._e)
 
         self._dif_v = None
-        self._ls = None
+        self._l = None
 
         self._geodesic_forward = geodesic_forward
         if self._geodesic_forward is None:
@@ -256,18 +256,19 @@ class Reverse:
         self.dif_div_X = None
         self.dif_phi = None
 
-    def _calc_dif_u(self, l):
-        return -self._D_h2LC_inv.solve((self._dif_D[l].tocsc()
-                                        - self._h2 * self._dif_LC[l]) @ self._u)
+    def _calc_dif_u(self):
+        return -self._D_h2LC_inv.solve((self._dif_D.tocsc()
+                                        - self._h2 * self._dif_LC) @ self._u)
 
-    def _calc_dif_q(self, l):
+    def _calc_dif_q(self):
         dif_q = {}
         v = self._v
         e = self._e
         c = self._c
-        dif_v = self._dif_v[l]
+        l = self._l
+        dif_v = self._dif_v
         u = self._u
-        dif_u = self.dif_u[l]
+        dif_u = self.dif_u
         for i, es in enumerate(e):
             for j in es:
                 k = c[i,j]
@@ -278,21 +279,21 @@ class Reverse:
                     dif_q[i,j] += u[i] * dif_v
         return dif_q
 
-    def _calc_dif_m(self, l):
+    def _calc_dif_m(self):
         e = self._e
         c = self._c
-        dif_q = self.dif_q[l]
+        dif_q = self.dif_q
         return {(i, j): dif_q[i,j] + dif_q[j,c[i,j]] + dif_q[c[i,j],i]
                 for i, es in enumerate(e)
                 for j in es}
 
-    def _calc_dif_grad_u(self, l):
+    def _calc_dif_grad_u(self):
         dif_grad_u = {}
         e = self._e
         N = self._N
         m = self._m
-        dif_N = self._dif_N[l]
-        dif_m = self.dif_m[l]
+        dif_N = self._dif_N
+        dif_m = self.dif_m
         for i, es in enumerate(e):
             for j in es:
                 dif_grad_u[i,j] = np.cross(N[i,j], dif_m[i,j])
@@ -300,23 +301,24 @@ class Reverse:
             dif_grad_u[i,j] += np.cross(dif_N[i,j], m[i,j])
         return dif_grad_u
 
-    def _calc_dif_X(self, l):
+    def _calc_dif_X(self):
         e = self._e
         grad_u = self._grad_u
         X = self._X
-        dif_grad_u = self.dif_grad_u[l]
+        dif_grad_u = self.dif_grad_u
         return {(i, j): ((X[i,j] @ dif_grad_u[i,j]) * X[i,j] - dif_grad_u[i,j])
                         / linalg.norm(grad_u[i,j])
                 for i, es in enumerate(e)
                 for j in es}
 
-    def _calc_dif_p(self, l):
+    def _calc_dif_p(self):
         dif_p = {}
         v = self._v
         c = self._c
-        dif_v = self._dif_v[l]
+        l = self._l
+        dif_v = self._dif_v
         cot = self._cot
-        dif_cot = self._dif_cot[l]
+        dif_cot = self._dif_cot
         for i, es in enumerate(self._e):
             for j in es:
                 if l == i:
@@ -329,14 +331,14 @@ class Reverse:
                     dif_p[i,j] = dif_cot[i,j] * (v[j] - v[i])
         return dif_p
 
-    def _calc_dif_div_X(self, l):
+    def _calc_dif_div_X(self):
         dif_div_X = np.zeros(self._V)
         e = self._e
         c = self._c
         X = self._X
         p = self._p
-        dif_X = self.dif_X[l]
-        dif_p = self.dif_p[l]
+        dif_X = self.dif_X
+        dif_p = self.dif_p
         for i, es in enumerate(e):
             for j in es:
                 k = c[i,j]
@@ -346,15 +348,10 @@ class Reverse:
                                  + (p[i,j] - p[k,i]) @ dif_X[i,j]) / 2
         return dif_div_X
 
-    def _calc_dif_phi(self, l):
-        return self._LC_inv.solve(self.dif_div_X[l] - self._LC @ self._phi)
+    def _calc_dif_phi(self):
+        return self._LC_inv.solve(self.dif_div_X - self._LC @ self._phi)
 
-    def calc(self, gamma, dif_v, ls=None):
-        if self._ls is None:
-            self._ls = range(self._V)
-        if ls is None:
-            ls = range(self._V)
-
+    def calc(self, gamma, dif_v, l):
         self._geodesic_forward.calc(gamma)
         self._N = self._geodesic_forward.N
         self._A = self._geodesic_forward.A
@@ -373,7 +370,7 @@ class Reverse:
         self._div_X = self._geodesic_forward.div_X
         self._phi = self._geodesic_forward.phi
 
-        self._laplacian_reverse.calc(dif_v, ls)
+        self._laplacian_reverse.calc(dif_v, l)
         self._dif_N = self._laplacian_reverse.dif_N
         self._dif_A = self._laplacian_reverse.dif_A
         self._dif_D = self._laplacian_reverse.dif_D
@@ -381,18 +378,18 @@ class Reverse:
         self._dif_LC = self._laplacian_reverse.dif_LC
 
         if (self._updates != self._mesh.updates() or self._gamma != gamma
-            or self._ls != ls):
+            or self._l != l):
             self._updates = self._mesh.updates()
             self._v = self._mesh.get_vertices()
             self._gamma = gamma
             self._dif_v = dif_v
-            self._ls = ls
+            self._l = l
 
-            self.dif_u = {l: self._calc_dif_u(l) for l in self._ls}
-            self.dif_q = {l: self._calc_dif_q(l) for l in self._ls}
-            self.dif_m = {l: self._calc_dif_m(l) for l in self._ls}
-            self.dif_grad_u = {l: self._calc_dif_grad_u(l) for l in self._ls}
-            self.dif_X = {l: self._calc_dif_X(l) for l in self._ls}
-            self.dif_p = {l: self._calc_dif_p(l) for l in self._ls}
-            self.dif_div_X = {l: self._calc_dif_div_X(l) for l in self._ls}
-            self.dif_phi = {l: self._calc_dif_phi(l) for l in self._ls}
+            self.dif_u = self._calc_dif_u()
+            self.dif_q = self._calc_dif_q()
+            self.dif_m = self._calc_dif_m()
+            self.dif_grad_u = self._calc_dif_grad_u()
+            self.dif_X = self._calc_dif_X()
+            self.dif_p = self._calc_dif_p()
+            self.dif_div_X = self._calc_dif_div_X()
+            self.dif_phi = self._calc_dif_phi()

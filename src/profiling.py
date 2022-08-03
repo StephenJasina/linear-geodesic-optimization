@@ -28,11 +28,11 @@ ts = {si: [(sj, np.arccos(dsi @ dsj))
 laplacian_forward = laplacian.Forward(M)
 geodesic_forward = geodesic.Forward(M, laplacian_forward)
 linear_regression_forward = linear_regression.Forward()
-smooth_forward = smooth.Forward(M)
+smooth_forward = smooth.Forward(M, laplacian_forward)
 laplacian_reverse = laplacian.Reverse(M, laplacian_forward)
 geodesic_reverse = geodesic.Reverse(M, geodesic_forward, laplacian_reverse)
 linear_regression_reverse = linear_regression.Reverse(linear_regression_forward)
-smooth_reverse = smooth.Reverse(M)
+smooth_reverse = smooth.Reverse(M, laplacian_forward, laplacian_reverse)
 
 lam = 0.1
 eta = 1
@@ -46,19 +46,22 @@ s_connected = list(s_connected)
 t = np.array(t)
 
 dif_L = np.zeros(V)
-smooth_reverse.calc(dif_v)
-dif_L_smooth = smooth_reverse.dif_L_smooth
-for l in range(V):
-    dif_L[l] +=  lam * dif_L_smooth[l]
 
+# Compute the geodesic loss gradient
 geodesic_forward.calc(gamma)
 phi = geodesic_forward.phi
-ls = list(range(M.get_rho().shape[0]))
-geodesic_reverse.calc(gamma, dif_v, ls)
-dif_phi = geodesic_reverse.dif_phi
-dif_phi = {l: dif[s_connected] for l, dif in dif_phi.items()}
-linear_regression_reverse.calc(phi[s_connected], t, dif_phi, ls)
-dif_lse = linear_regression_reverse.dif_lse
+for l in range(V):
+    geodesic_reverse.calc(gamma, dif_v[l], l)
+    dif_phi = geodesic_reverse.dif_phi[s_connected]
+    linear_regression_reverse.calc(phi[s_connected], t, dif_phi, l)
+    dif_lse = linear_regression_reverse.dif_lse
+    dif_L[l] += dif_lse
+
+# Compute the smooth loss gradient
+for l in range(V):
+    smooth_reverse.calc(dif_v[l], l)
+    dif_L_smooth = smooth_reverse.dif_L_smooth
+    dif_L[l] += lam * dif_L_smooth
 
 pr.disable()
 s = io.StringIO()

@@ -31,7 +31,7 @@ class Reverse:
         self._rho = None
 
         self._dif_v = None
-        self._ls = None
+        self._l = None
 
         self._laplacian_forward = laplacian_forward
         if self._laplacian_forward is None:
@@ -46,25 +46,18 @@ class Reverse:
 
         self.dif_L_smooth = None
 
-    def calc(self, dif_v, ls=None):
-        if self._ls is None:
-            self._ls = dif_v.keys()
-        if ls is None:
-            ls = dif_v.keys()
-
+    def calc(self, dif_v, l):
         self._laplacian_forward.calc()
         self._LC = self._laplacian_forward.LC
 
-        self._laplacian_reverse.calc(dif_v, ls)
+        self._laplacian_reverse.calc(dif_v, l)
         self.dif_LC = self._laplacian_reverse.dif_LC
 
-        if self._updates != self._mesh.updates() or self._ls != ls:
+        if self._updates != self._mesh.updates() or self._l != l:
             self._updates = self._mesh.updates()
             self._rho = self._mesh.get_rho()
             self._dif_v = dif_v
-            self._ls = ls
+            self._l = l
 
             L_rho = self._LC @ self._rho + self._LC.T @ self._rho
-            self.dif_L_smooth = {l: -L_rho[l]
-                                    - self._rho @ (self.dif_LC[l] @ self._rho)
-                                 for l in self._ls}
+            self.dif_L_smooth = -L_rho[l] - self._rho @ (self.dif_LC @ self._rho)
