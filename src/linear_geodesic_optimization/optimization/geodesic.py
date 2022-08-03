@@ -266,11 +266,11 @@ class Reverse:
         c = self._c
         dif_v = self._dif_v[l]
         u = self._u
-        dif_u = self.dif_u
+        dif_u = self.dif_u[l]
         for i, es in enumerate(e):
             for j in es:
                 k = c[i,j]
-                dif_q[i,j] = dif_u[l][i] * (v[k] - v[j])
+                dif_q[i,j] = dif_u[i] * (v[k] - v[j])
                 if l == j:
                     dif_q[i,j] -= u[i] * dif_v
                 elif l == k:
