@@ -1,10 +1,3 @@
-from pathlib import Path
-import sys
-path = Path().resolve()
-for crumb in __name__.split('.'):
-    path = path / crumb
-sys.path.insert(0, str((path / '..' / '..' / '..').resolve()))
-
 import numpy as np
 from scipy import linalg
 

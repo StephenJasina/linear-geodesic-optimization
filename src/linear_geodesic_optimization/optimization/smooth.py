@@ -1,4 +1,4 @@
-from . import laplacian
+from linear_geodesic_optimization.optimization import laplacian
 
 class Forward:
     def __init__(self, mesh, laplacian_forward=None):

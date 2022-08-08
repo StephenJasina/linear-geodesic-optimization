@@ -5,7 +5,8 @@ import pstats
 import numpy as np
 
 from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
-from linear_geodesic_optimization.optimization import laplacian, geodesic, linear_regression, smooth
+from linear_geodesic_optimization.optimization \
+    import laplacian, geodesic, linear_regression, smooth
 
 # Construct the mesh
 frequency = 5
@@ -47,6 +48,7 @@ t = np.array(t)
 
 dif_L = np.zeros(V)
 
+# V=1
 # Compute the geodesic loss gradient
 geodesic_forward.calc(gamma)
 phi = geodesic_forward.phi
@@ -57,8 +59,6 @@ for l in range(V):
     dif_lse = linear_regression_reverse.dif_lse
     dif_L[l] += dif_lse
 
-# Compute the smooth loss gradient
-for l in range(V):
     smooth_reverse.calc(dif_v[l], l)
     dif_L_smooth = smooth_reverse.dif_L_smooth
     dif_L[l] += lam * dif_L_smooth
@@ -71,5 +71,5 @@ ps.sort_stats(pstats.SortKey.CUMULATIVE)
 ps.print_stats()
 s = s.getvalue().split('\n')
 for line in s:
-    if '(_calc_' in line or 'filename:lineno(function)' in line:
+    if 'calc' in line or 'filename:lineno(function)' in line:
         print(line)

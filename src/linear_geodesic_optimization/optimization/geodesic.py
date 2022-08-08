@@ -3,7 +3,7 @@ from scipy import linalg
 from scipy import sparse
 from scipy.sparse.linalg import eigsh, splu
 
-from . import laplacian
+from linear_geodesic_optimization.optimization import laplacian
 
 class Forward:
     '''
