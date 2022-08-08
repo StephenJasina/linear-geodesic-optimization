@@ -3,12 +3,12 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
-def plot_scatter(geodesic_forward, ts):
+def plot_scatter(geodesic_forwards, ts):
     x = []
     y = []
     for si in ts:
-        geodesic_forward.calc([si])
-        phi = geodesic_forward.phi
+        geodesic_forwards[si].calc([si])
+        phi = geodesic_forwards[si].phi
         for sj, tij in ts[si]:
             x.append(phi[sj])
             y.append(tij)
