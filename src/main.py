@@ -23,7 +23,7 @@ M.set_rho(rho)
 dif_v = {l: directions[l] for l in range(V)}
 
 # Get some (phony) latency measurements
-s_indices, ts = phony.sphere_true(M)
+s_indices, ts = phony.sphere_random(M)
 
 # Construct the differentiation heirarchy
 laplacian_forward = laplacian.Forward(M)
@@ -35,7 +35,7 @@ laplacian_reverse = laplacian.Reverse(M, laplacian_forward)
 geodesic_reverses = {s_index: geodesic.Reverse(M, geodesic_forwards[s_index],
                                                laplacian_reverse)
                      for s_index in s_indices}
-linear_regression_reverse =  linear_regression.Reverse(linear_regression_forward)
+linear_regression_reverse = linear_regression.Reverse(linear_regression_forward)
 smooth_reverse = smooth.Reverse(M, laplacian_forward, laplacian_reverse)
 
 def get_forwards(s_indices=s_indices):
@@ -110,12 +110,12 @@ def descent_step(rho, lam=lam, s_indices=s_indices):
     d = -g(rho)
     alpha = standard.wolfe(rho, d, f, g)
     if alpha is None:
-        print('Could not find good step size. Using alpha=0.5 instead')
-        alpha = 0.5
+        print('Could not find good step size. Skipping iteration.')
+        return rho
     rho = M.set_rho(rho + alpha * d)
     return rho
 
-# plot_scatter(geodesic_forwards, ts)
+plot_scatter(geodesic_forwards, ts)
 
 max_iterations = 10
 
@@ -150,7 +150,4 @@ animation_3D.add_frame(M)
 
 animation_3D.get_fig(duration=50).show()
 
-# The following values should hopefully both be near 1.0
-print(np.min(rho), np.max(rho))
-
-# plot_scatter(geodesic_forwards, ts)
+plot_scatter(geodesic_forwards, ts)

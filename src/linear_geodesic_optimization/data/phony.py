@@ -20,15 +20,26 @@ def sphere_true(mesh):
           for i, (si, dsi) in enumerate(zip(s_indices, directions))}
     return s_indices, ts
 
-def sphere_random(mesh, count=10, connections=20):
+def sphere_random(mesh, count=10, connectivity=5):
     v = mesh.get_vertices()
-    V = v.shape[0]
-    s_indices = v[np.random.choice(range(v.shape[0]), count)]
-    distances = [(np.arccos(v[i] @ v[j]
-                  / np.linalg.norm(v[i]) / np.linalg.norm(v[i])), i, j)
-                 for i in range(V) for j in range(i + 1, V)]
-    ts = {}
-    for d, i, j in sorted(distances)[:connections]:
-        ts[i,j] = d * max(0.4, np.random.normal(1, 0.1))
+    s_indices = np.random.choice(range(v.shape[0]), count, replace=False)
+    connections = set()
+    for si in s_indices:
+        distances = sorted([(np.arccos(np.clip(v[si] @ v[sj]
+                                    / np.linalg.norm(v[si])
+                                    / np.linalg.norm(v[sj]), -1., 1.)),
+                             sj)
+                            for sj in s_indices if si != sj])[:connectivity]
+        for _, sj in distances:
+            connections.add((min(si, sj), max(si, sj)))
+
+    ts = {s_index: [] for s_index in s_indices}
+    for si, sj in connections:
+        distance = np.arccos(np.clip(v[si] @ v[sj]
+                                     / np.linalg.norm(v[si])
+                                     / np.linalg.norm(v[sj]), -1., 1.))
+        t = distance * max(0.4, np.random.normal(1, 0.1))
+        ts[si].append((sj, t))
+        ts[sj].append((si, t))
 
     return s_indices, ts
