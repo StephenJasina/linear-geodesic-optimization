@@ -6,7 +6,7 @@ from scipy import linalg
 from linear_geodesic_optimization.plot import plot_scatter, Animation3D
 from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 from linear_geodesic_optimization.optimization \
-    import laplacian, geodesic, linear_regression, smooth
+    import laplacian, geodesic, linear_regression, smooth, standard
 from linear_geodesic_optimization.optimization.partial_selection \
     import approximate_geodesics_fpi
 from linear_geodesic_optimization.data import phony
@@ -88,20 +88,43 @@ def get_reverses(s_indices=s_indices):
 
     return dif_lse, dif_L_smooth
 
+lam = 0.1
+
+def get_loss_callback(lam=lam, s_indices=s_indices):
+    def loss(rho):
+        M.set_rho(rho)
+        _, lse, L_smooth = get_forwards(s_indices)
+        return lse + lam * L_smooth
+    return loss
+
+def get_dif_loss_callback(lam=lam, s_indices=s_indices):
+    def dif_loss(rho):
+        M.set_rho(rho)
+        dif_lse, dif_L_smooth = get_reverses(s_indices)
+        return dif_lse + lam * dif_L_smooth
+    return dif_loss
+
+def descent_step(rho, lam=lam, s_indices=s_indices):
+    f = get_loss_callback(lam, s_indices)
+    g = get_dif_loss_callback(lam, s_indices)
+    d = -g(rho)
+    alpha = standard.wolfe(rho, d, f, g)
+    if alpha is None:
+        print('Could not find good step size. Using alpha=0.5 instead')
+        alpha = 0.5
+    rho = M.set_rho(rho + alpha * d)
+    return rho
+
 # plot_scatter(geodesic_forwards, ts)
 
-# Run gradient descent
-
-lam = 0.1
-max_iterations = 1
+max_iterations = 10
 
 animation_3D = Animation3D()
 
+stochastic = False
 for i in itertools.count(1):
     if i > max_iterations:
         break
-
-    eta = 1 / i
 
     # Diagnostic information
     _, lse, L_smooth = get_forwards()
@@ -109,19 +132,13 @@ for i in itertools.count(1):
           + f'\tlse: {lse:.6f}\n'
           + f'\tL_smooth: {L_smooth:.6f}\n'
           + f'\tLoss: {(lse + lam * L_smooth):.6f}')
+    animation_3D.add_frame(M)
 
-    for s_index in np.random.permutation(s_indices):
-        animation_3D.add_frame(M)
-
-        dif_lse, dif_L_smooth = get_reverses([s_index])
-        dif_L = dif_lse + lam * dif_L_smooth
-
-        # Apply the gradient step, and then normalize rho
-        rho -= eta * dif_L
-        rho = np.maximum(rho, 0.01)
-        rho /= sum(linalg.norm(rho[l]) for l in range(V)) / V
-
-        M.set_rho(rho)
+    if stochastic:
+        for s_index in np.random.permutation(s_indices):
+            rho = descent_step(M, rho, lam / len(s_indices), [s_index])
+    else:
+        rho = descent_step(rho, lam, s_indices)
 
 # Diagnostic information
 _, lse, L_smooth = get_forwards()

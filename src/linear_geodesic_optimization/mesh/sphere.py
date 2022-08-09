@@ -211,8 +211,14 @@ class Mesh(mesh.Mesh):
         return np.copy(self._rho)
 
     def set_rho(self, rho):
-        self._rho = np.copy(rho)
-        self._updates += 1
+        rho_max = np.max(np.abs(rho))
+        rho = np.maximum(rho, rho_max / 100)
+        rho = rho / np.average([linalg.norm(rho[l])
+                                for l in range(rho.shape[0])])
+        if not np.allclose(self._rho, rho):
+            self._rho = np.copy(rho)
+            self._updates += 1
+        return rho
 
     def updates(self):
         return self._updates
