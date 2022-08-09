@@ -47,3 +47,46 @@ def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
         x = set_x(x + alpha * d)
 
     diagnostics()
+
+def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
+    H_0 = 1 # H is a scalar multiple of the identity
+
+    ss = []
+    ys = []
+
+    g_k = g(x)
+    for k in range(max_iterations):
+        if diagnostics is not None:
+            diagnostics(k)
+
+        # Two loop recursion
+        q = g_k
+        etas = []
+        for s, y in zip(reversed(ss), reversed(ys)):
+            eta = s @ q / (s @ y)
+            etas.append(eta)
+            q = q - eta * y
+        r = H_0 * q
+        for s, y, eta in zip(ss, ys, reversed(etas)):
+            beta = r @ y / (s @ y)
+            r = r + (eta - beta) * s
+
+        d = -r
+        alpha = wolfe(x, d, f, g)
+        new_x = set_x(x + alpha * d)
+        new_g_k = g(new_x)
+
+        if k > m:
+            del ss[0]
+            del ys[0]
+
+        s = new_x - x
+        y = new_g_k - g_k
+
+        ss.append(s)
+        ys.append(y)
+        x = new_x
+        g_k = new_g_k
+        H_0 = s @ y / (y @ y)
+
+    diagnostics()
