@@ -36,3 +36,14 @@ def wolfe(x, d, f, g, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
             alpha = (alpha_l + alpha_r) / 2
             if alpha_r - alpha_l < epsilon:
                 return None
+
+def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
+    for i in range(max_iterations):
+        if diagnostics is not None:
+            diagnostics(i)
+
+        d = -g(x)
+        alpha = wolfe(x, d, f, g)
+        x = set_x(x + alpha * d)
+
+    diagnostics()

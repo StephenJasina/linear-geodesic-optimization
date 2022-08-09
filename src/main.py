@@ -4,7 +4,7 @@ from linear_geodesic_optimization.optimization import optimization, standard
 from linear_geodesic_optimization.plot import plot_scatter, Animation3D
 
 # Construct the mesh
-frequency = 2
+frequency = 3
 mesh = SphereMesh(frequency)
 directions = mesh.get_directions()
 V = directions.shape[0]
@@ -18,7 +18,8 @@ s_indices, ts = phony.sphere_random(mesh)
 lam = 0.1
 hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)
 
-def print_diagnostics(iteration=None):
+animation_3D = Animation3D()
+def diagnostics(iteration=None):
     _, lse, L_smooth = hierarchy.get_forwards()
     if iteration is None:
         print('final iteration:\n')
@@ -28,36 +29,17 @@ def print_diagnostics(iteration=None):
           + f'\tL_smooth: {L_smooth:.6f}\n'
           + f'\tLoss: {(lse + lam * L_smooth):.6f}')
 
-def descent_step(rho, s_indices=s_indices):
-    f = hierarchy.get_loss_callback(s_indices)
-    g = hierarchy.get_dif_loss_callback(s_indices)
-    d = -g(rho)
-    alpha = standard.wolfe(rho, d, f, g)
-    if alpha is None:
-        print('Could not find good step size. Skipping iteration.')
-        return rho
-    rho = mesh.set_rho(rho + alpha * d)
-    return rho
+    animation_3D.add_frame(mesh)
 
-plot_scatter(hierarchy)
-
-max_iterations = 3
-
-animation_3D = Animation3D()
 
 f = hierarchy.get_loss_callback(s_indices)
 g = hierarchy.get_dif_loss_callback(s_indices)
-for i in range(max_iterations):
-    print_diagnostics(i)
-    animation_3D.add_frame(mesh)
-
-    d = -g(rho)
-    alpha = standard.wolfe(rho, d, f, g)
-    rho = mesh.set_rho(rho + alpha * d)
-
-print_diagnostics()
-animation_3D.add_frame(mesh)
-
-animation_3D.get_fig(duration=50).show()
+max_iterations = 3
 
 plot_scatter(hierarchy)
+
+standard.steepest_descent(rho, mesh.set_rho, f, g, max_iterations, diagnostics)
+
+plot_scatter(hierarchy)
+animation_3D.get_fig(duration=50).show()
+
