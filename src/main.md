@@ -24,9 +24,15 @@ For additional details on these loss functions, see the notebooks in `optimizati
 
 # Putting It All Together with Minibatch Gradient Descent
 
-We can rewrite $$\mathcal{L}_{\text{geodesic}}(M) = \sum_{v \in V_G} \sum_{\substack{v' \in V_G \\ (v, v') \in E_G}} \frac{1}{2}(\text{least squares residual of edge \((v, v')\)})^2.$$ From here, we can take the standard approach of batching the gradient computation by vertices. This idea fits well with the heat method, since the heat method necessarily computes all geodesic distances (and their gradients) from a single source (represented by $v$ in the above decomposition).
+We can rewrite
 
-Motivated by this, define $$\mathcal{L}_{\text{geodesic}, v}(M) = \sum_{\substack{v' \in V_G \\ (v, v') \in E_G}} \frac{1}{2}(\text{least squares residual of edge \((v, v')\)})^2.$$
+$$\mathcal{L}_{\text{geodesic}}(M) = \sum_{v \in V_G} \sum_{\substack{v' \in V_G \\ (v, v') \in E_G}} \frac{1}{2}(\text{least squares residual of edge \((v, v')\)})^2.$$
+
+From here, we can take the standard approach of batching the gradient computation by vertices. This idea fits well with the heat method, since the heat method necessarily computes all geodesic distances (and their gradients) from a single source (represented by $v$ in the above decomposition).
+
+Motivated by this, define
+
+$$\mathcal{L}_{\text{geodesic}, v}(M) = \sum_{\substack{v' \in V_G \\ (v, v') \in E_G}} \frac{1}{2}(\text{least squares residual of edge \((v, v')\)})^2.$$
 
 TODO:
 * Try nonuniform meshes (e.g., more detail in America, less in the oceans)

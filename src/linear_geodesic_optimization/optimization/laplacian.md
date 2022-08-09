@@ -24,7 +24,9 @@ $$\begin{aligned}
 
 For the ease of notation (and the avoidance of edge cases), assume that we are using the spherical setup, so $v_\ell = \rho_\ell s_\ell$.
 
-We compute $$\begin{aligned}
+We compute
+
+$$\begin{aligned}
     \frac{\partial v_i}{\partial \rho_\ell} &= \begin{cases}
         s_i & \text{if $\ell = i$}, \\
         0 & \text{otherwise},

@@ -4,7 +4,9 @@ It would be nice to have something like [SI-MVS](https://www2.eecs.berkeley.edu/
 
 [This](https://www.cad-journal.net/files/vol_4/CAD_4(5)_2007_607-617.pdf) gives a good overview.
 
-For now, we use $$\mathcal{L}_{\text{smooth}}(M) \triangleq -\rho^\intercal L_C\rho.$$
+For now, we use
+
+$$\mathcal{L}_{\text{smooth}}(M) \triangleq -\rho^\intercal L_C\rho.$$
 
 # Gradient Computation
 

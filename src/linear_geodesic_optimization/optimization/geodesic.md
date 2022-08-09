@@ -27,7 +27,9 @@ $$\begin{aligned}
 
 Here, $L_C^+$ is the [pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse) of $L_C$ (as it is singular). Note that the integrated divergence can be thought of as taking a sum over triangles $v_i \to v_k \to v_{c(i, k)}$.
 
-Note that we're being careful about which pieces have a dependence on $\gamma$, as we can reuse certain computations if we want to compute distances from multiple sources. Abusing notation, we can get the distance matrix (that is, get rid of the $\gamma$ dependence) from $$\phi_{i, j} = \left(\phi^{\{v_j\}}\right)_i.$$
+Note that we're being careful about which pieces have a dependence on $\gamma$, as we can reuse certain computations if we want to compute distances from multiple sources. Abusing notation, we can get the distance matrix (that is, get rid of the $\gamma$ dependence) from
+
+$$\phi_{i, j} = \left(\phi^{\{v_j\}}\right)_i.$$
 
 # Gradient Computation
 

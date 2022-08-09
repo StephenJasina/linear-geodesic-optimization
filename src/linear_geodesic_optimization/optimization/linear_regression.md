@@ -1,6 +1,10 @@
 # Computation
 
-Recall the one-dimensional least squares setup. Here, we wish to relate $t_e$ to $d_e$ by $t_e \approx \beta_0 + \beta_1d_e$, where $d$ is some function of $\phi$. The goal is to minimize $$\sum_{e \in E_G}(t_e - \beta_0 - \beta_1d_e)^2$$ with respect to $\beta_0$ and $\beta_1$. Differentiating with respect to $\beta_0$ and $\beta_1$ gives the following relations:
+Recall the one-dimensional least squares setup. Here, we wish to relate $t_e$ to $d_e$ by $t_e \approx \beta_0 + \beta_1d_e$, where $d$ is some function of $\phi$. The goal is to minimize
+
+$$\sum_{e \in E_G}(t_e - \beta_0 - \beta_1d_e)^2$$
+
+with respect to $\beta_0$ and $\beta_1$. Differentiating with respect to $\beta_0$ and $\beta_1$ gives the following relations:
 
 $$\begin{aligned}
     0 &= -2\sum_{e \in E_G}(t_e - \beta_0 - \beta_1d_e), \\
