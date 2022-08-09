@@ -3,7 +3,9 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
-def plot_scatter(geodesic_forwards, ts):
+def plot_scatter(hierarchy):
+    ts = hierarchy.ts
+    geodesic_forwards = hierarchy.geodesic_forwards
     x = []
     y = []
     for si in ts:

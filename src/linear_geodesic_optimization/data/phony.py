@@ -38,7 +38,7 @@ def sphere_random(mesh, count=10, connectivity=5):
         distance = np.arccos(np.clip(v[si] @ v[sj]
                                      / np.linalg.norm(v[si])
                                      / np.linalg.norm(v[sj]), -1., 1.))
-        t = distance * max(0.4, np.random.normal(1, 0.1))
+        t = distance * max(0.4, np.random.normal(1, 0.3))
         ts[si].append((sj, t))
         ts[sj].append((si, t))
 
