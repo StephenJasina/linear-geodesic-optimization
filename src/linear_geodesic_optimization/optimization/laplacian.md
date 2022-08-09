@@ -2,7 +2,9 @@
 
 Some notation first. If $i$ and $j$ are two indices vertices for which $(v_i, v_j)$ is an edge, let $c(i, j)$ be the index such that $v_i \to v_j \to v_{c(i, j)}$ traces a triangle counterclockwise. Note that this index exists and is unique assuming we have a mesh without boundary.
 
-We have the following (standard) definition of the Laplace-Beltrami operator on a mesh: $$\begin{aligned}
+We have the following (standard) definition of the Laplace-Beltrami operator on a mesh:
+
+$$\begin{aligned}
     N_{i, j} &\triangleq (v_i - v_{c(i, j)}) \times (v_j - v_{c(i, j)}), & \text{Outward normal of triangle $v_i \to v_j \to v_{c(i, j)}$} \\
     A_{i, j} &\triangleq \frac{1}{2}\|N_{i, j}\|_2, & \text{Area of triangle $v_i \to v_j \to v_{c(i, j)}$} \\
     D_{i, j} &\triangleq \begin{cases}

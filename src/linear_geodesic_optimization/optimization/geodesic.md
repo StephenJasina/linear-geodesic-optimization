@@ -2,7 +2,9 @@ Note: This document assumes the notation found in `../main.md` and `laplacian.md
 
 # Computation
 
-Say we want to find the geodesic distances to a set of points $\gamma$. Following the strategy from [here](https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/), we use the (approximate) heat flow $u^\gamma$, where $$\begin{aligned}
+Say we want to find the geodesic distances to a set of points $\gamma$. Following the strategy from [here](https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/), we use the (approximate) heat flow $u^\gamma$, where
+
+$$\begin{aligned}
     t &\triangleq (\text{mean spacing between mesh points})^2, & \text{Adjustable parameter} \\
     \delta^\gamma &\triangleq \begin{cases}
         1 & \text{if $v_i \in \gamma$}, \\
@@ -11,7 +13,9 @@ Say we want to find the geodesic distances to a set of points $\gamma$. Followin
     u^\gamma &\triangleq (D - tL_C)^{-1}\delta^\gamma & \text{Heat flow}
 \end{aligned}$$
 
-We can then compute $$\begin{aligned}
+We can then compute
+
+$$\begin{aligned}
     q_{i, j} &\triangleq u^\gamma_i(v_{c(i, j)} - v_j), \\
     m_{i, j} &\triangleq q_{i, j} + q_{j, c(i, j)} + q_{c(i, j), i}, \\
     (\widetilde{\nabla} u^\gamma)_{i, j} &\triangleq N_{i, j} \times m_{i, j}, \\
@@ -19,7 +23,9 @@ We can then compute $$\begin{aligned}
     p_{i, j} &\triangleq \cot(\theta_{i, j})(v_j - v_i), \\
     (\nabla \cdot X^\gamma)_i &= \frac{1}{2}\sum_{\substack{k \\ \text{$(v_i, v_k)$ is an edge}}}(p_{i, k} - p_{c(i, k), i}) \cdot X^\gamma_{i, k}, \\
     \phi^\gamma &= L_C^+ \cdot (\nabla \cdot X^\gamma).
-\end{aligned}$$ Here, $L_C^+$ is the [pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse) of $L_C$ (as it is singular). Note that the integrated divergence can be thought of as taking a sum over triangles $v_i \to v_k \to v_{c(i, k)}$.
+\end{aligned}$$
+
+Here, $L_C^+$ is the [pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse) of $L_C$ (as it is singular). Note that the integrated divergence can be thought of as taking a sum over triangles $v_i \to v_k \to v_{c(i, k)}$.
 
 Note that we're being careful about which pieces have a dependence on $\gamma$, as we can reuse certain computations if we want to compute distances from multiple sources. Abusing notation, we can get the distance matrix (that is, get rid of the $\gamma$ dependence) from $$\phi_{i, j} = \left(\phi^{\{v_j\}}\right)_i.$$
 
@@ -27,7 +33,9 @@ Note that we're being careful about which pieces have a dependence on $\gamma$, 
 
 Note that $c(i, c(j, i)) = j$. This is helpful for reindexing some sums (in particular, the one for $\nabla \cdot X$).
 
-We then have the following partial derivatives: $$\begin{aligned}
+We then have the following partial derivatives:
+
+$$\begin{aligned}
     \frac{\partial u^\gamma}{\partial \rho_\ell} &= -(D - tL_C)^{-1}\left(\frac{\partial D}{\partial \rho_\ell} - t\frac{\partial L_C}{\partial \rho_\ell}\right)u^\gamma, \\
     \frac{\partial q_{i, j}}{\partial \rho_\ell} &= \begin{cases}
         \displaystyle\frac{\partial u^\gamma_i}{\rho_\ell}(v_{c(i, j)} - v_j) - u^\gamma_i\frac{\partial v_\ell}{\rho_\ell} & \text{if $\ell = j$}, \\

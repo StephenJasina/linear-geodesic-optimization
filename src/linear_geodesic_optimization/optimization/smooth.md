@@ -8,6 +8,8 @@ For now, we use $$\mathcal{L}_{\text{smooth}}(M) \triangleq -\rho^\intercal L_C\
 
 # Gradient Computation
 
-We compute the derivatives $$\begin{aligned}
+We compute the derivatives
+
+$$\begin{aligned}
     \frac{\partial}{\partial \rho_\ell}\mathcal{L}_{\text{smooth}}(M) &= -e_\ell^\intercal L_C\rho - \rho^\intercal\frac{\partial L_C}{\partial \rho_\ell}\rho - \rho^\intercal L_Ce_\ell.
 \end{aligned}$$

@@ -13,7 +13,7 @@ The code is written entirely in Python. The required packages are `numpy`, `scip
 ## File Structure
 In detail,
 * `src/`
-  * `main.py`: The main driver. Given a graph $G$ embedded on a mesh (which itself is embedded in $\mathbf{R}^3$) and a mapping from the edges of $G$ to positive reals, it attempts to modify the mesh so that the values associated to the edges are in an approximate linear relation with the lengths of the corresponding geodesics.
+  * `main.py`: The main driver. Given a graph $G$ embedded on a mesh (which itself is embedded in $\mathbb{R}^3$) and a mapping from the edges of $G$ to positive reals, it attempts to modify the mesh so that the values associated to the edges are in an approximate linear relation with the lengths of the corresponding geodesics.
   * `linear_ogeodesic_optimization/`
     * `data/`
       * `phony.py`: Some functions for producing fake latency data. This is mostly used for testing purposes.

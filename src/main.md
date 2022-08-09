@@ -8,11 +8,15 @@ The strategy to realize this intuition is to create a mesh $M = (V_M, E_M)$ supp
 
 # Objective/Loss Functions
 
-To enforce that the mesh approximates our desired surface, we define the objective functions $$\begin{aligned}
+To enforce that the mesh approximates our desired surface, we define the objective functions
+
+$$\begin{aligned}
     \mathcal{L}_{\mathrm{geodesic}}(M) &\triangleq \sum_{e \in E_G} (\text{least squares residual of edge \(e\)})^2, \\
     \mathcal{L}_{\mathrm{smooth}}(M) &\triangleq -\rho^\intercal L_C\rho, \\
     \mathcal{L}(M) &\triangleq \mathcal{L}_{\mathrm{geodesic}}(M) + \lambda\mathcal{L}_{\mathrm{smooth}}(M),
-\end{aligned}$$ where $L_C$ is the Laplacian of the mesh scaled by vertex area, and $\lambda$ is a tunable hyperparameter. Our goal is then to minimize $\mathcal{L}(M)$.
+\end{aligned}$$
+
+where $L_C$ is the Laplacian of the mesh scaled by vertex area, and $\lambda$ is a tunable hyperparameter. Our goal is then to minimize $\mathcal{L}(M)$.
 
 Note that the loss functions (particularly the geodesic and total ones) also have a dependence on the measured latencies. We omit that as a written parameter because they are treated as fixed (we are really optimizing over the manifold, not over the measured latencies).
 
