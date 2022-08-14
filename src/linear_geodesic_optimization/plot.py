@@ -3,19 +3,25 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
-def plot_scatter(hierarchy):
-    ts = hierarchy.ts
+def get_scatter_fig(hierarchy):
     geodesic_forwards = hierarchy.geodesic_forwards
-    x = []
-    y = []
-    for si in ts:
+    linear_regression_forward = hierarchy.linear_regression_forward
+    phis = []
+    ts = []
+    for si in hierarchy.ts:
         geodesic_forwards[si].calc([si])
         phi = geodesic_forwards[si].phi
-        for sj, tij in ts[si]:
-            x.append(phi[sj])
-            y.append(tij)
-    fig = px.scatter(x=x, y=y, trendline='ols')
-    fig.show()
+        for sj, tij in hierarchy.ts[si]:
+            phis.append(phi[sj])
+            ts.append(tij)
+    phis = np.array(phis)
+    ts = np.array(ts)
+    beta_0, beta_1 = linear_regression_forward.get_beta(phis, ts)
+    return px.scatter(
+        {
+            'Predicted Latency': (beta_0 + beta_1 * phis),
+            'Measured Latency': ts
+        }, x='Predicted Latency', y= 'Measured Latency', trendline='ols')
 
 class Animation3D:
     '''

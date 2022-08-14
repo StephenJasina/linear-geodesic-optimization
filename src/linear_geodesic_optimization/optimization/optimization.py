@@ -96,6 +96,8 @@ class DifferentiationHierarchy:
             s_indices = self.ts.keys()
 
         def loss(rho):
+            if np.min(rho) <= 0.:
+                return np.inf
             self.mesh.set_rho(rho)
             _, lse, L_smooth = self.get_forwards(s_indices)
             return lse + self.lam * L_smooth
@@ -106,6 +108,8 @@ class DifferentiationHierarchy:
             s_indices = self.ts.keys()
 
         def dif_loss(rho):
+            if min(rho) <= 0.:
+                return np.zeros(rho.shape[0])
             self.mesh.set_rho(rho)
             dif_lse, dif_L_smooth = self.get_reverses(s_indices)
             return dif_lse + self.lam * dif_L_smooth

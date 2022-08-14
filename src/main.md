@@ -41,6 +41,11 @@ TODO:
 * Same with $\lambda$
 * Later step is to plot the graph representing the network on the sphere
 * Come up with some example graphs and try to run them through the code. Use them as "canonical" proof of concepts
+* Change scale of scatter plot axes to be distance vs distance
+* Make canonical datasets
+* Maybe use data from the topology zoo
+* Run multiple combinations on different servers
+* Check out [Cloud Lab](https://cloudlab.us/)
 
 General guidelines
 * In general, think $|G| \approx 500$
