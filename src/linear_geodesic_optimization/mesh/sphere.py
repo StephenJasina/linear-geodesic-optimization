@@ -11,9 +11,9 @@ class Mesh(mesh.Mesh):
     '''
 
     def __init__(self, frequency):
-        self._directions, self._edges, self._faces, self._c \
+        self._partials, self._edges, self._faces, self._c \
             = self._initial_mesh(frequency)
-        self._rho = np.ones(self._directions.shape[0])
+        self._rho = np.ones(self._partials.shape[0])
         self._updates = 0
 
     def _initial_mesh(self, frequency):
@@ -192,11 +192,11 @@ class Mesh(mesh.Mesh):
 
         return vertices, edges, faces, c
 
-    def get_directions(self):
-        return self._directions
+    def get_partials(self):
+        return self._partials
 
     def get_vertices(self):
-        return np.multiply(self._directions, np.reshape(self._rho, (-1, 1)))
+        return np.multiply(self._partials, np.reshape(self._rho, (-1, 1)))
 
     def get_edges(self):
         return self._edges
@@ -204,13 +204,19 @@ class Mesh(mesh.Mesh):
     def get_faces(self):
         return self._faces
 
+    def get_boundary_vertices(self):
+        return set()
+
+    def get_boundary_edges(self):
+        return set()
+
     def get_c(self):
         return self._c
 
-    def get_rho(self):
+    def get_parameters(self):
         return np.copy(self._rho)
 
-    def set_rho(self, rho):
+    def set_parameters(self, rho):
         rho_max = np.max(np.abs(rho))
         rho = np.maximum(rho, rho_max / 100)
         rho = rho / np.average([linalg.norm(rho[l])
@@ -229,7 +235,7 @@ class Mesh(mesh.Mesh):
         direction.
         '''
 
-        return np.argmax(self._directions @ direction)
+        return np.argmax(self._partials @ direction)
 
     @staticmethod
     def latitude_longitude_to_direction(latitude, longitude):

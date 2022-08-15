@@ -6,9 +6,9 @@ from linear_geodesic_optimization.plot import get_scatter_fig, Animation3D
 # Construct the mesh
 frequency = 3
 mesh = SphereMesh(frequency)
-directions = mesh.get_directions()
+directions = mesh.get_partials()
 V = directions.shape[0]
-rho = mesh.get_rho()
+rho = mesh.get_parameters()
 
 dif_v = {l: directions[l] for l in range(V)}
 
@@ -39,7 +39,7 @@ max_iterations = 10
 
 get_scatter_fig(hierarchy).show()
 
-standard.lbfgs(rho, mesh.set_rho, f, g, max_iterations, diagnostics)
+standard.lbfgs(rho, mesh.set_parameters, f, g, max_iterations, diagnostics)
 
 get_scatter_fig(hierarchy).show()
 animation_3D.get_fig(duration=50).show()
