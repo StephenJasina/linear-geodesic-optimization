@@ -1,11 +1,10 @@
 import numpy as np
-from scipy import linalg
 
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import geodesic, laplacian
 
-width = 20
-height = 20
+width = 64
+height = 64
 M = RectangleMesh(width, height)
 
 laplacian_forward = laplacian.Forward(M)

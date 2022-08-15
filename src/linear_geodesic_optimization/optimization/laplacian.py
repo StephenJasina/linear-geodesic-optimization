@@ -29,7 +29,11 @@ class Forward:
         self.cot = None
 
         # A sparse matrix L_C
-        self.LC = None
+        self.LC_neumann = None
+
+        # A sparse matrix L_C, which has different boundary conditions from the
+        # one above
+        self.LC_dirichlet = None
 
         # A sparse matrix L
         self.L = None
@@ -61,11 +65,15 @@ class Forward:
                 for i, es in enumerate(e)
                 for j in es}
 
-    def _calc_LC(self):
+    def _calc_LC(self, neumann=True):
         row = []
         col = []
         data = []
         for (i, j), cot_ij in self.cot.items():
+            # Ignore the boundary in the Dirichlet boundary case
+            if not neumann and (j, i) not in self.cot:
+                continue
+
             half_cot_ij = cot_ij / 2
 
             row.append(i)
@@ -87,7 +95,7 @@ class Forward:
                                  shape=(self._V, self._V)).tocsc()
 
     def _calc_L(self):
-        return self.D_inv @ self.LC
+        return self.D_inv @ self.LC_neumann
 
     def calc(self):
         if self._updates != self._mesh.updates():
@@ -99,7 +107,11 @@ class Forward:
             self.D = self._calc_D()
             self.D_inv = sparse.diags(1 / self.D.data.flatten())
             self.cot = self._calc_cot()
-            self.LC = self._calc_LC()
+            self.LC_neumann = self._calc_LC(True)
+            if self._mesh.get_boundary_vertices():
+                self.LC_dirichlet = self._calc_LC(False)
+            else:
+                self.LC_dirichlet = None
             self.L = self._calc_L()
 
 class Reverse:
@@ -128,7 +140,8 @@ class Reverse:
         self._A = None
         self._D = None
         self._cot = None
-        self._LC = None
+        self._LC_neumann = None
+        self._LC_dirichlet = None
         self._L = None
 
         # Derivatives are stored as maps sending l to the partial with respect
@@ -138,7 +151,8 @@ class Reverse:
         self.dif_A = None
         self.dif_D = None
         self.dif_cot = None
-        self.dif_LC = None
+        self.dif_LC_neumann = None
+        self.dif_LC_dirichlet = None
         self.dif_L = None
 
     def _calc_dif_N(self):
@@ -204,12 +218,16 @@ class Reverse:
                             / (2 * self._A[j,k]))
         return dif_cot
 
-    def _calc_dif_LC(self):
+    def _calc_dif_LC(self, neumann=True):
         dif_cot = self.dif_cot
         row = []
         col = []
         data = []
         for (i, j), dif_cot_ij in dif_cot.items():
+            # Ignore the boundary in the Dirichlet boundary case
+            if not neumann and (j, i) not in self.dif_cot:
+                continue
+
             half_dif_cot_ij = dif_cot_ij / 2
 
             row.append(i)
@@ -231,7 +249,7 @@ class Reverse:
                                  shape=(self._V, self._V)).tocsc()
 
     def _calc_dif_L(self):
-        return self._D_inv @ (self.dif_LC - self.dif_D @ self._L)
+        return self._D_inv @ (self.dif_LC_neumann - self.dif_D @ self._L)
 
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()
@@ -240,7 +258,8 @@ class Reverse:
         self._D = self._laplacian_forward.D
         self._D_inv = self._laplacian_forward.D_inv
         self._cot = self._laplacian_forward.cot
-        self._LC = self._laplacian_forward.LC
+        self._LC_neumann = self._laplacian_forward.LC_neumann
+        self._LC_dirichlet = self._laplacian_forward.LC_dirichlet
         self._L = self._laplacian_forward.L
 
         if self._updates != self._mesh.updates() or self._l != l:
@@ -253,5 +272,9 @@ class Reverse:
             self.dif_A = self._calc_dif_A()
             self.dif_D = self._calc_dif_D()
             self.dif_cot = self._calc_dif_cot()
-            self.dif_LC = self._calc_dif_LC()
+            self.dif_LC_neumann = self._calc_dif_LC(True)
+            if self._LC_dirichlet is not None:
+                self.dif_LC_dirichlet = self._calc_dif_LC(False)
+            else:
+                self.dif_LC_dirichlet = None
             self.dif_L = self._calc_dif_L()

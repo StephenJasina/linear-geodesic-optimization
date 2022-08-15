@@ -16,7 +16,7 @@ class Forward:
 
     def calc(self):
         self._laplacian_forward.calc()
-        self.LC = self._laplacian_forward.LC
+        self.LC = self._laplacian_forward.LC_neumann
 
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
@@ -48,10 +48,10 @@ class Reverse:
 
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()
-        self._LC = self._laplacian_forward.LC
+        self._LC = self._laplacian_forward.LC_neumann
 
         self._laplacian_reverse.calc(dif_v, l)
-        self.dif_LC = self._laplacian_reverse.dif_LC
+        self.dif_LC = self._laplacian_reverse.dif_LC_neumann
 
         if self._updates != self._mesh.updates() or self._l != l:
             self._updates = self._mesh.updates()
