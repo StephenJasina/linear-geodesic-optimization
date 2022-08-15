@@ -229,9 +229,9 @@ class Mesh(mesh.Mesh):
     def updates(self):
         return self._updates
 
-    def nearest_direction_index(self, direction):
+    def nearest_vertex_index(self, direction):
         '''
-        Find the index of the direction on the mesh closest to the input
+        Find the index of the vertex whose direction is closest to the input
         direction.
         '''
 

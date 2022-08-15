@@ -18,6 +18,8 @@ class Mesh(mesh.Mesh):
         for i in range(width):
             for j in range(height):
                 vertices[i*height+j:] = np.array([i, j, 0])
+        vertices[:,0] /= (width - 1)
+        vertices[:,1] /= (height - 1)
 
         edges = [[] for _ in range(width * height)]
         faces = []
@@ -95,3 +97,14 @@ class Mesh(mesh.Mesh):
 
     def updates(self):
         return self._updates
+
+    def nearest_vertex_index(self, x, y):
+        '''
+        Find the index of the vertex whose (x, y) coordinate pair is closest to
+        the input coordinate pair. We assume x and y are between 0 and 1,
+        inclusive.
+        '''
+
+        i = round(x * (self._width - 1))
+        j = round(y * (self._height - 1))
+        return i * self._height + j
