@@ -1,4 +1,4 @@
-from linear_geodesic_optimization.data import phony, measured
+from linear_geodesic_optimization.data import phony
 from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 from linear_geodesic_optimization.optimization import optimization, standard
 from linear_geodesic_optimization.plot import get_scatter_fig, Animation3D
@@ -6,15 +6,14 @@ from linear_geodesic_optimization.plot import get_scatter_fig, Animation3D
 # Construct the mesh
 frequency = 3
 mesh = SphereMesh(frequency)
-directions = mesh.get_partials()
-V = directions.shape[0]
+partials = mesh.get_partials()
+V = partials.shape[0]
 rho = mesh.get_parameters()
 
-dif_v = {l: directions[l] for l in range(V)}
+dif_v = {l: partials[l] for l in range(V)}
 
 # Get some (phony) latency measurements
-# s_indices, ts = phony.sphere_random(mesh)
-s_indices, ts = measured.sphere_north_america(mesh)
+s_indices, ts = phony.sphere_random(mesh)
 
 lam = 0.01
 hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)
@@ -31,7 +30,6 @@ def diagnostics(iteration=None):
     print(f'\tLoss: {(lse + lam * L_smooth):.6f}')
 
     animation_3D.add_frame(mesh)
-
 
 f = hierarchy.get_loss_callback(s_indices)
 g = hierarchy.get_dif_loss_callback(s_indices)

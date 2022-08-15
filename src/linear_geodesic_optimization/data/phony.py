@@ -1,15 +1,16 @@
 import numpy as np
 
+from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 
 def sphere_true(mesh):
     lat_long_pairs = [
-        (0, 0),
-        (0, 90),
-        (90, 0),
-        (0, 180),
-        (0, -90),
-        (-90, 0),
+        (0., 0.),
+        (0., 90.),
+        (90., 0.),
+        (0., 180.),
+        (0., -90.),
+        (-90., 0.),
     ]
     directions = [SphereMesh.latitude_longitude_to_direction(lat, long)
                   for (lat, long) in lat_long_pairs]
@@ -42,8 +43,18 @@ def sphere_random(mesh, count=10, connectivity=5):
         distance = np.arccos(np.clip(v[si] @ v[sj]
                                      / np.linalg.norm(v[si])
                                      / np.linalg.norm(v[sj]), -1., 1.))
-        t = distance * max(0.4, rng.normal(1, 0.3))
+        t = distance * max(0.4, rng.normal(1., 0.3))
         ts[si].append((sj, t))
         ts[sj].append((si, t))
 
+    return s_indices, ts
+
+def rectangle_simplex(mesh):
+    s_indices = mesh.coordinates_to_indices([
+        (0., 0.),
+        (0., 1.),
+        (1., 0.),
+        (1., 1.),
+    ])
+    ts = {si: [(sj, np.random.normal(1., 0.1)) for sj in s_indices if si != sj] for si in s_indices}
     return s_indices, ts

@@ -108,3 +108,31 @@ class Mesh(mesh.Mesh):
         i = round(x * (self._width - 1))
         j = round(y * (self._height - 1))
         return i * self._height + j
+
+    def coordinates_to_indices(self, coordinates):
+        '''
+        Convert a list of (x, y) pairs into a list of indices such that the
+        coordinates have been approximately scaled and embedded into our mesh.
+        '''
+
+        if not coordinates:
+            return []
+
+        x_min = coordinates[0][0]
+        x_max = coordinates[0][0]
+        y_min = coordinates[0][1]
+        y_max = coordinates[0][1]
+
+        for x, y in coordinates:
+            x_min = min(x_min, x)
+            x_max = max(x_max, x)
+            y_min = min(y_min, y)
+            y_max = max(y_max, y)
+        x_divisor = x_max - x_min
+        x_divisor = 1. if x_divisor == 0. else x_divisor
+        y_divisor = y_max - y_min
+        y_divisor = 1. if y_divisor == 0. else y_divisor
+
+        return [self.nearest_vertex_index((x - x_min) / x_divisor,
+                                          (y - y_min) / y_divisor)
+                for x, y in coordinates]

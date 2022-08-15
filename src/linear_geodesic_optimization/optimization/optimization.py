@@ -8,8 +8,8 @@ from linear_geodesic_optimization.optimization.partial_selection \
 class DifferentiationHierarchy:
     def __init__(self, mesh, ts, lam=0.01):
         self.mesh = mesh
-        directions = self.mesh.get_directions()
-        self.dif_v = {l: directions[l] for l in range(directions.shape[0])}
+        partials = self.mesh.get_partials()
+        self.dif_v = {l: partials[l] for l in range(partials.shape[0])}
 
         self.ts = ts
 
@@ -58,7 +58,7 @@ class DifferentiationHierarchy:
         if s_indices is None:
             s_indices = self.ts.keys()
 
-        V = self.mesh.get_directions().shape[0]
+        V = self.mesh.get_partials().shape[0]
         dif_lse = np.zeros(V)
         dif_L_smooth = np.zeros(V)
 
@@ -95,10 +95,8 @@ class DifferentiationHierarchy:
         if s_indices is None:
             s_indices = self.ts.keys()
 
-        def loss(rho):
-            if np.min(rho) <= 0.:
-                return np.inf
-            self.mesh.set_rho(rho)
+        def loss(parameters):
+            self.mesh.set_parameters(parameters)
             _, lse, L_smooth = self.get_forwards(s_indices)
             return lse + self.lam * L_smooth
         return loss
@@ -107,10 +105,8 @@ class DifferentiationHierarchy:
         if s_indices is None:
             s_indices = self.ts.keys()
 
-        def dif_loss(rho):
-            if min(rho) <= 0.:
-                return np.zeros(rho.shape[0])
-            self.mesh.set_rho(rho)
+        def dif_loss(parameters):
+            self.mesh.set_parameters(parameters)
             dif_lse, dif_L_smooth = self.get_reverses(s_indices)
             return dif_lse + self.lam * dif_L_smooth
         return dif_loss

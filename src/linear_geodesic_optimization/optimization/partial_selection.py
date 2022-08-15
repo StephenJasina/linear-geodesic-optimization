@@ -24,17 +24,20 @@ def approximate_geodesics_fpi(mesh, phi, initial_vertices):
         vertices.add(j)
         vertices.add(k)
 
-        cji = c[j,i]
-        if phi[cji] < phi[i] or phi[cji] < phi[j]:
-            to_process.append((j, i, cji))
+        if (j, i) in c:
+            cji = c[j,i]
+            if phi[cji] < phi[i] or phi[cji] < phi[j]:
+                to_process.append((j, i, cji))
 
-        ckj = c[k,j]
-        if phi[ckj] < phi[j] or phi[ckj] < phi[k]:
-            to_process.append((k, j, ckj))
+        if (k, j) in c:
+            ckj = c[k,j]
+            if phi[ckj] < phi[j] or phi[ckj] < phi[k]:
+                to_process.append((k, j, ckj))
 
-        cik = c[i,k]
-        if phi[cik] < phi[k] or phi[cik] < phi[i]:
-            to_process.append((i, k, cik))
+        if (i, k) in c:
+            cik = c[i,k]
+            if phi[cik] < phi[k] or phi[cik] < phi[i]:
+                to_process.append((i, k, cik))
 
         processed.add((i, j, k))
 
