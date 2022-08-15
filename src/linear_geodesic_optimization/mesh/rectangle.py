@@ -17,17 +17,17 @@ class Mesh(mesh.Mesh):
         vertices = np.zeros((width * height, 3))
         for i in range(width):
             for j in range(height):
-                vertices[i*width+j:] = np.array([i, j, 0])
+                vertices[i*height+j:] = np.array([i, j, 0])
 
         edges = [[] for _ in range(width * height)]
         faces = []
         c = {}
         for i in range(width - 1):
             for j in range(height - 1):
-                v00 = i * width + j
-                v01 = i * width + j + 1
-                v10 = (i + 1) * width + j
-                v11 = (i + 1) * width + j + 1
+                v00 = i * height + j
+                v01 = i * height + j + 1
+                v10 = (i + 1) * height + j
+                v11 = (i + 1) * height + j + 1
 
                 edges[v00].append(v11)
                 edges[v11].append(v01)
@@ -63,20 +63,20 @@ class Mesh(mesh.Mesh):
 
     def get_boundary_vertices(self):
         boundary_vertices = set()
-        boundary_vertices.update(range(self._width))
-        boundary_vertices.update(range(self._width * (self._height - 1),
-                                       self._width * self._height))
-        boundary_vertices.update(range(self._width,
-                                       self._width * (self._height - 1),
-                                       self._width))
-        boundary_vertices.update(range(2 * self._width - 1,
-                                       self._width * self._height - 1,
-                                       self._width))
+        boundary_vertices.update(range(self._height))
+        boundary_vertices.update(range(self._height * (self._width - 1),
+                                       self._height * self._width))
+        boundary_vertices.update(range(self._height,
+                                       self._height * (self._width - 1),
+                                       self._height))
+        boundary_vertices.update(range(2 * self._height - 1,
+                                       self._height * self._width - 1,
+                                       self._height))
         return boundary_vertices
 
     def get_boundary_edges(self):
         boundary_edges = set()
-        for i, j in enumerate(self._c):
+        for i, j in self._c:
             if (j, i) not in self._c:
                 boundary_edges.add((i, j))
         return boundary_edges
