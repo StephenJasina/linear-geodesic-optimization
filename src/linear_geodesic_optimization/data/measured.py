@@ -35,8 +35,8 @@ def sphere_north_america(mesh):
     return s_indices, ts
 
 def rectangle_north_america(mesh):
-    city_id_to_index = {}
-    s_indices = []
+    city_ids = []
+    coordinates = []
     with open(os.path.join('linear_geodesic_optimization', 'data',
                            'locations.csv')) as locations_file:
         locations_reader = csv.reader(locations_file)
@@ -45,11 +45,12 @@ def rectangle_north_america(mesh):
             city_id = int(row[0])
             latitude = float(row[1])
             longitude = float(row[2])
-            direction = SphereMesh.latitude_longitude_to_direction(latitude,
-                                                                   longitude)
-            index = mesh.nearest_direction_index(direction)
-            city_id_to_index[city_id] = index
-            s_indices.append(index)
+
+            city_ids.append(city_id)
+            coordinates.append((latitude, longitude))
+    s_indices = mesh.coordinates_to_indices(coordinates)
+    city_id_to_index = {city_id: index
+                        for city_id, index in zip(city_ids, s_indices)}
 
     ts = {s_index: [] for s_index in s_indices}
     with open(os.path.join('linear_geodesic_optimization', 'data',

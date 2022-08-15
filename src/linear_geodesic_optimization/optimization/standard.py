@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 
 def wolfe(x, d, f, g, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
@@ -38,28 +40,34 @@ def wolfe(x, d, f, g, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
                 return None
 
 def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
-    for i in range(max_iterations):
+    for k in itertools.count():
+        if k >= max_iterations:
+            break
+
         if diagnostics is not None:
-            diagnostics(i)
+            diagnostics(k)
 
         d = -g(x)
         alpha = wolfe(x, d, f, g)
         x = set_x(x + alpha * d)
 
-    diagnostics()
+    if diagnostics is not None:
+        diagnostics()
 
 def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
     H_0 = 1 # H is a scalar multiple of the identity
-
     ss = []
     ys = []
 
-    g_k = g(x)
-    for k in range(max_iterations):
+    for k in itertools.count():
+        if k >= max_iterations:
+            break
+
         if diagnostics is not None:
             diagnostics(k)
 
         # Two loop recursion
+        g_k = g(x)
         q = g_k
         etas = []
         for s, y in zip(reversed(ss), reversed(ys)):
@@ -73,20 +81,34 @@ def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
 
         d = -r
         alpha = wolfe(x, d, f, g)
-        new_x = set_x(x + alpha * d)
-        new_g_k = g(new_x)
+        if alpha is None:
+            # If d is not a descent direction, use steepest descent instead
+            d = -g_k
+            alpha = wolfe(x, d, f, g)
+            if alpha is None:
+                # We are pretty much stuck, so end here
+                break
+            x = set_x(x + alpha * d)
 
-        if k > m:
-            del ss[0]
-            del ys[0]
+            # Also reset the Hessian estimation
+            H_0 = 1
+            ss = []
+            ys = []
+        else:
+            new_x = set_x(x + alpha * d)
+            new_g_k = g(new_x)
 
-        s = new_x - x
-        y = new_g_k - g_k
+            if len(ss) >= m:
+                del ss[0]
+                del ys[0]
 
-        ss.append(s)
-        ys.append(y)
-        x = new_x
-        g_k = new_g_k
-        H_0 = s @ y / (y @ y)
+            s = new_x - x
+            y = new_g_k - g_k
 
-    diagnostics()
+            ss.append(s)
+            ys.append(y)
+            x = new_x
+            H_0 = s @ y / (y @ y)
+
+    if diagnostics is not None:
+        diagnostics()

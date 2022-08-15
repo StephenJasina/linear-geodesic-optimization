@@ -15,8 +15,8 @@ z = mesh.set_parameters(np.random.normal(0., 0.1, width * height))
 
 dif_v = {l: partials[l] for l in range(V)}
 
-# Get some (phony) latency measurements
-s_indices, ts = phony.rectangle_simplex(mesh)
+# Get some (maybe phony) latency measurements
+s_indices, ts = measured.rectangle_north_america(mesh)
 
 lam = 0.01
 hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)
