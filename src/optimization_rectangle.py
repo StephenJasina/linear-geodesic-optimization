@@ -1,17 +1,17 @@
 import numpy as np
 
-from linear_geodesic_optimization.data import phony, measured
+from linear_geodesic_optimization.data import measured
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization, standard
 from linear_geodesic_optimization.plot import get_scatter_fig, Animation3D
 
 # Construct the mesh
-width = 8
-height = 8
+width = 14
+height = 14
 mesh = RectangleMesh(width, height)
 partials = mesh.get_partials()
 V = partials.shape[0]
-z = mesh.set_parameters(np.random.normal(0., 0.1, width * height))
+z = mesh.set_parameters(np.random.normal(0., 1., width * height))
 
 dif_v = {l: partials[l] for l in range(V)}
 
@@ -40,7 +40,7 @@ max_iterations = 10
 
 get_scatter_fig(hierarchy).show()
 
-standard.steepest_descent(z, mesh.set_parameters, f, g, max_iterations, diagnostics)
+standard.lbfgs(z, mesh.set_parameters, f, g, max_iterations, diagnostics)
 
 get_scatter_fig(hierarchy).show()
 animation_3D.get_fig(duration=50).show()

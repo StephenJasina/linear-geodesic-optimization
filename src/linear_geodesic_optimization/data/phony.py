@@ -14,8 +14,8 @@ def sphere_true(mesh):
     ]
     directions = [SphereMesh.latitude_longitude_to_direction(lat, long)
                   for (lat, long) in lat_long_pairs]
-    s_indices = [mesh.nearest_direction_index(direction)
-                 for direction in directions]
+    s_indices = {mesh.nearest_direction_index(direction)
+                 for direction in directions}
     ts = {si: [(sj, np.arccos(dsi @ dsj))
                for j, (sj, dsj) in enumerate(zip(s_indices, directions))
                if (i - j) % 6 != 0]
@@ -27,7 +27,7 @@ def sphere_random(mesh, count=10, connectivity=5):
     rng = np.random.default_rng(0)
 
     v = mesh.get_vertices()
-    s_indices = rng.choice(range(v.shape[0]), count, replace=False)
+    s_indices = set(rng.choice(range(v.shape[0]), count, replace=False))
     connections = set()
     for si in s_indices:
         distances = sorted([(np.arccos(np.clip(v[si] @ v[sj]
@@ -57,4 +57,4 @@ def rectangle_simplex(mesh):
         (1., 1.),
     ])
     ts = {si: [(sj, np.random.normal(1., 0.1)) for sj in s_indices if si != sj] for si in s_indices}
-    return s_indices, ts
+    return set(s_indices), ts

@@ -18,8 +18,6 @@ def wolfe(x, d, f, g, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
     alpha_r = np.inf
     alpha = min(1., 100. / (1. + np.linalg.norm(d)))
 
-    d = d / np.linalg.norm(d)
-
     phi_0 = f(x)
     dphi_0 = g(x) @ d
 

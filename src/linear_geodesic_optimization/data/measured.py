@@ -5,7 +5,7 @@ from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 
 def sphere_north_america(mesh):
     city_id_to_index = {}
-    s_indices = []
+    s_indices = set()
     with open(os.path.join('linear_geodesic_optimization', 'data',
                            'locations.csv')) as locations_file:
         locations_reader = csv.reader(locations_file)
@@ -18,7 +18,7 @@ def sphere_north_america(mesh):
                                                                    longitude)
             index = mesh.nearest_direction_index(direction)
             city_id_to_index[city_id] = index
-            s_indices.append(index)
+            s_indices.add(index)
 
     ts = {s_index: [] for s_index in s_indices}
     with open(os.path.join('linear_geodesic_optimization', 'data',
@@ -51,6 +51,7 @@ def rectangle_north_america(mesh):
     s_indices = mesh.coordinates_to_indices(coordinates)
     city_id_to_index = {city_id: index
                         for city_id, index in zip(city_ids, s_indices)}
+    s_indices = set(s_indices)
 
     ts = {s_index: [] for s_index in s_indices}
     with open(os.path.join('linear_geodesic_optimization', 'data',

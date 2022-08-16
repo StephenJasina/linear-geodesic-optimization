@@ -282,7 +282,7 @@ class Reverse:
                 -self._D_h2LC_neumann_inv.solve(
                     (self._dif_D.tocsc() - self._h2 * self._dif_LC_neumann) @ self._u
                 ) - self._D_h2LC_dirichlet_inv.solve(
-                    (self._dif_D.tocsc() - self._h2 * self._dif_LC_neumann) @ self._u
+                    (self._dif_D.tocsc() - self._h2 * self._dif_LC_dirichlet) @ self._u
                 )) / 2.
 
     def _calc_dif_q(self):
