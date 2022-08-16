@@ -47,6 +47,11 @@ def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
 
         d = -g(x)
         alpha = wolfe(x, d, f, g)
+
+        if alpha is None:
+            # We are pretty much stuck, so end here
+            break
+
         x = set_x(x + alpha * d)
 
     if diagnostics is not None:

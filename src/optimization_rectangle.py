@@ -6,8 +6,8 @@ from linear_geodesic_optimization.optimization import optimization, standard
 from linear_geodesic_optimization.plot import get_scatter_fig, Animation3D
 
 # Construct the mesh
-width = 14
-height = 14
+width = 8
+height = 8
 mesh = RectangleMesh(width, height)
 partials = mesh.get_partials()
 V = partials.shape[0]
@@ -40,7 +40,7 @@ max_iterations = 10
 
 get_scatter_fig(hierarchy).show()
 
-standard.lbfgs(z, mesh.set_parameters, f, g, max_iterations, diagnostics)
+standard.steepest_descent(z, mesh.set_parameters, f, g, max_iterations, diagnostics)
 
 get_scatter_fig(hierarchy).show()
 animation_3D.get_fig(duration=50).show()
