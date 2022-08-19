@@ -41,7 +41,6 @@ f = hierarchy.get_loss_callback(s_indices)
 g = hierarchy.get_dif_loss_callback(s_indices)
 
 before = get_scatter_fig(hierarchy, True)
-diagnostics(NotConnected)
 
 scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g, callback=diagnostics)
 
