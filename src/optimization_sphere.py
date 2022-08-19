@@ -7,7 +7,7 @@ from linear_geodesic_optimization.plot import get_scatter_fig, \
     combine_scatter_figs, Animation3D
 
 # Construct the mesh
-frequency = 10
+frequency = 4
 mesh = SphereMesh(frequency)
 partials = mesh.get_partials()
 V = partials.shape[0]
@@ -23,7 +23,8 @@ hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)
 
 animation_3D = Animation3D()
 iteration = 1
-def diagnostics(iteration):
+def diagnostics(_):
+    global iteration
     _, lse, L_smooth = hierarchy.get_forwards()
     print(f'iteration {iteration}:')
     print(f'\tlse: {lse:.6f}')
@@ -37,11 +38,11 @@ def diagnostics(iteration):
 f = hierarchy.get_loss_callback(s_indices)
 g = hierarchy.get_dif_loss_callback(s_indices)
 
-before = get_scatter_fig(hierarchy, color='red')
+before = get_scatter_fig(hierarchy, True)
 
 scipy.optimize.minimize(f, rho, method='L-BFGS-B', jac=g, callback=diagnostics)
 
-after = get_scatter_fig(hierarchy, color='blue')
+after = get_scatter_fig(hierarchy, False)
 animation_3D.get_fig(duration=50).show()
 
 combine_scatter_figs(before, after).show()

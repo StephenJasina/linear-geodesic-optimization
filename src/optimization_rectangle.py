@@ -13,7 +13,7 @@ height = 10
 mesh = RectangleMesh(width, height)
 partials = mesh.get_partials()
 V = partials.shape[0]
-z = mesh.set_parameters(np.random.normal(0., 1., width * height))
+z = mesh.set_parameters(np.random.normal(0., 0.1, width * height))
 
 dif_v = {l: partials[l] for l in range(V)}
 
@@ -40,11 +40,12 @@ def diagnostics(_):
 f = hierarchy.get_loss_callback(s_indices)
 g = hierarchy.get_dif_loss_callback(s_indices)
 
-before = get_scatter_fig(hierarchy, color='red')
+before = get_scatter_fig(hierarchy, True)
+diagnostics(NotConnected)
 
 scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g, callback=diagnostics)
 
-after = get_scatter_fig(hierarchy, color='blue')
+after = get_scatter_fig(hierarchy, False)
 animation_3D.get_fig(duration=50).show()
 
 combine_scatter_figs(before, after).show()

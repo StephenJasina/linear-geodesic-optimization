@@ -3,7 +3,7 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
-def get_scatter_fig(hierarchy, color=None):
+def get_scatter_fig(hierarchy, before=True):
     geodesic_forwards = hierarchy.geodesic_forwards
     linear_regression_forward = hierarchy.linear_regression_forward
     phis = []
@@ -20,9 +20,11 @@ def get_scatter_fig(hierarchy, color=None):
     return px.scatter(
         {
             'Predicted Latency': (beta_0 + beta_1 * phis),
-            'Measured Latency': ts
+            'Measured Latency': ts,
+            'Series': ['Before' if before else 'After'] * phis.shape[0]
         }, x='Predicted Latency', y= 'Measured Latency', trendline='ols',
-        color_discrete_sequence=[color])
+        color_discrete_sequence=['blue' if before else 'red'],
+        color='Series')
 
 def combine_scatter_figs(before, after):
     data = before.data + after.data
