@@ -92,7 +92,7 @@ class Forward:
             col.append(j)
             data.append(-half_cot_ij)
         return sparse.coo_array((data, (row, col)),
-                                 shape=(self._V, self._V)).tocsc()
+                                 shape=(self._V, self._V)).tocsr()
 
     def _calc_L(self):
         return self.D_inv @ self.LC_neumann

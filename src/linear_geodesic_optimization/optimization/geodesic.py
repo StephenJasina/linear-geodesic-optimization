@@ -1,9 +1,9 @@
 import numpy as np
 from scipy import linalg
 from scipy import sparse
-from scipy.sparse.linalg import eigsh, splu
+from scipy.sparse.linalg import eigsh
 
-from linear_geodesic_optimization.optimization import laplacian
+from linear_geodesic_optimization.optimization import laplacian, standard
 
 class Forward:
     '''
@@ -44,8 +44,8 @@ class Forward:
         # A float
         self.h2 = None
 
-        # Objects with a `.solve` method that takes a vector as input and
-        # returns a vector
+        # Objects with a `.solve` method that take a vector as input and
+        # return a vector
         self.D_h2LC_neumann_inv = None
         self.D_h2LC_dirichlet_inv = None
 
@@ -88,10 +88,12 @@ class Forward:
                         for j in es])**2
 
     def _calc_D_h2LC_neumann_inv(self):
-        return splu(self.D.tocsc() - self.h2 * self.LC_neumann)
+        return standard.SparseLUDecomposition(self.D.tocsr()
+                                              - self.h2 * self.LC_neumann)
 
     def _calc_D_h2LC_dirichlet_inv(self):
-        return splu(self.D.tocsc() - self.h2 * self.LC_dirichlet)
+        return standard.SparseLUDecomposition(self.D.tocsr()
+                                              - self.h2 * self.LC_dirichlet)
 
     def _calc_LC_neumann_inv(self):
         # Need to add a small offset to guarantee that the inverse exists.
@@ -101,7 +103,9 @@ class Forward:
         # the largest eigenvalue of L_C.
         offset_magnitude = eigsh(self.LC_neumann, k=1,
                                  return_eigenvectors=False)[0] * 1.e-10
-        return splu(self.LC_neumann - sparse.eye(self._V) * offset_magnitude)
+        return standard.SparseLUDecomposition(self.LC_neumann
+                                              - sparse.eye(self._V)
+                                              * offset_magnitude)
 
     def _calc_u(self):
         delta = np.zeros((self._V, 1))
