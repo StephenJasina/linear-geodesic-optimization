@@ -31,6 +31,7 @@ class Forward:
         self.d = self.d_tilde / (self.d_tilde @ self.d_tilde / E)**0.5
         self.residuals = t - np.sum(t) / E - (self.d @ t / E) * self.d
         self.lse = self.residuals @ self.residuals
+        self.beta = None
 
     def get_beta(self, phi, t):
         E = phi.shape[0]
@@ -43,6 +44,9 @@ class Forward:
             and self.beta is not None):
             return self.beta
 
+        self._phi = np.copy(phi)
+        self._t = np.copy(t)
+
         # Note that the following disagrees with the notation in the writeup
         # above. In particular, beta here is the coefficients when relating phi
         # to t (as opposed to relating d to t).
@@ -51,6 +55,11 @@ class Forward:
             (phi @ phi * np.sum(t) - np.sum(phi) * (phi @ t)) / denominator,
             (E * (phi @ t) - np.sum(phi) * np.sum(t)) / denominator,
         )
+        self.d_tilde = None
+        self.d = None
+        self.residuals = None
+        self.lse = None
+
         return self.beta
 
 class Reverse:

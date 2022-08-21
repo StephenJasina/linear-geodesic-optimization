@@ -24,10 +24,10 @@ lam = 0.01
 hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)
 
 animation_3D = Animation3D()
-iteration = 1
+iteration = 0
 def diagnostics(_):
     global iteration
-    _, lse, L_smooth = hierarchy.get_forwards()
+    lse, L_smooth = hierarchy.get_forwards()
     print(f'iteration {iteration}:')
     print(f'\tlse: {lse:.6f}')
     print(f'\tL_smooth: {L_smooth:.6f}\n')
@@ -42,6 +42,7 @@ g = hierarchy.get_dif_loss_callback(s_indices)
 
 before = get_scatter_fig(hierarchy, True)
 
+diagnostics(None)
 scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g, callback=diagnostics)
 
 after = get_scatter_fig(hierarchy, False)
