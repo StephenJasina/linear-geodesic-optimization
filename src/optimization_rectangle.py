@@ -19,7 +19,8 @@ if __name__ == '__main__':
     dif_v = {l: partials[l] for l in range(V)}
 
     # Get some (maybe phony) latency measurements
-    s_indices, ts = measured.rectangle_north_america(mesh)
+    ts = measured.rectangle_north_america(mesh)
+    s_indices = ts.keys()
 
     lam = 0.01
     hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)

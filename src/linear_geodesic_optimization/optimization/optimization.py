@@ -56,7 +56,7 @@ class DifferentiationHierarchy:
         if s_indices is None:
             s_indices = self.ts.keys()
 
-        with multiprocessing.Pool(os.cpu_count() // 2) as pool:
+        with multiprocessing.Pool(os.cpu_count() // 3) as pool:
             arguments = [(s_index, self.ts[s_index],
                           self.geodesic_forwards[s_index])
                          for s_index in s_indices]
@@ -107,7 +107,7 @@ class DifferentiationHierarchy:
         dif_lse = np.zeros(V)
         dif_L_smooth = np.zeros(V)
 
-        with multiprocessing.Pool(os.cpu_count() // 2) as pool:
+        with multiprocessing.Pool(os.cpu_count() // 3) as pool:
             arguments = [(s_index, self.ts[s_index], self.mesh,
                           self.geodesic_forwards[s_index],
                           self.geodesic_reverses[s_index])

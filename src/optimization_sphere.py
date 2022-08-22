@@ -1,3 +1,4 @@
+import numpy as np
 import scipy.optimize
 
 from linear_geodesic_optimization.data import phony
@@ -13,11 +14,13 @@ if __name__ == '__main__':
     partials = mesh.get_partials()
     V = partials.shape[0]
     rho = mesh.get_parameters()
+    rho = mesh.set_parameters(np.random.rand(*rho.shape) + 0.5)
 
     dif_v = {l: partials[l] for l in range(V)}
 
     # Get some (phony) latency measurements
-    s_indices, ts = phony.sphere_random(mesh)
+    ts = phony.sphere_random(mesh)
+    s_indices = ts.keys()
 
     lam = 0.01
     hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)

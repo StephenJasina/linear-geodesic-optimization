@@ -1,9 +1,18 @@
 import numpy as np
 
-from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 
 def sphere_true(mesh):
+    '''
+    Take three pairs of (approximately) antipodal points on a sphere mesh and
+    prentend that we measured their latencies as the geodesic distances on a
+    perfect sphere.
+
+    Latencies are returned as a dictionary sending a mesh index to a list of
+    pairs of mesh indices and their corresponding measured latencies
+    (essentially, an adjacency list with extra information).
+    '''
+
     lat_long_pairs = [
         (0., 0.),
         (0., 90.),
@@ -14,47 +23,54 @@ def sphere_true(mesh):
     ]
     directions = [SphereMesh.latitude_longitude_to_direction(lat, long)
                   for (lat, long) in lat_long_pairs]
-    s_indices = {mesh.nearest_direction_index(direction)
-                 for direction in directions}
-    ts = {si: [(sj, np.arccos(dsi @ dsj))
-               for j, (sj, dsj) in enumerate(zip(s_indices, directions))
+    mesh_indices = {mesh.nearest_direction_index(direction)
+                    for direction in directions}
+    ts = {mi: [(mj, np.arccos(di @ dj))
+               for j, (mj, dj) in enumerate(zip(mesh_indices, directions))
                if (i - j) % 6 != 0]
-          for i, (si, dsi) in enumerate(zip(s_indices, directions))}
-    return s_indices, ts
+          for i, (mi, di) in enumerate(zip(mesh_indices, directions))}
+    return ts
 
 def sphere_random(mesh, count=10, connectivity=5):
-    # Manually seed for testing purposes
+    '''
+    Pretend there are `count` many cities on a sphere. Each city will have a
+    phony latency measurement to its approximately `connectivity` nearest
+    neighbors.
+
+    Latencies are returned as a dictionary sending a mesh index to a list of
+    pairs of mesh indices and their corresponding measured latencies
+    (essentially, an adjacency list with extra information).
+    '''
+
+    # Manually seed for testing purposes (this guarantees reproducibility. This
+    # can be removed later if wanted)
     rng = np.random.default_rng(0)
 
-    v = mesh.get_vertices()
-    s_indices = set(rng.choice(range(v.shape[0]), count, replace=False))
+    # Here, we use the trick that on the sphere mesh, the normalized vertices
+    # are exactly the partials
+    v = mesh.get_partials()
+
+    # First, find the set of pairs of cities for which we have a latency
+    # measurement. This avoids having duplicates in our adjacency list.
     connections = set()
-    for si in s_indices:
-        distances = sorted([(np.arccos(np.clip(v[si] @ v[sj]
-                                    / np.linalg.norm(v[si])
-                                    / np.linalg.norm(v[sj]), -1., 1.)),
-                             sj)
-                            for sj in s_indices if si != sj])[:connectivity]
-        for _, sj in distances:
-            connections.add((min(si, sj), max(si, sj)))
+    mesh_indices = set(rng.choice(range(v.shape[0]), count, replace=False))
+    for mi in mesh_indices:
+        # Compute a list of pairs of (true distance, mesh index). Sorting this
+        # lets us easily get the closest few indices mj to mi
+        distances = [(np.arccos(v[mi] @ v[mj]), mj)
+                     for mj in mesh_indices if mi != mj]
+        for _, mj in sorted(distances)[:connectivity]:
+            connections.add((min(mi, mj), max(mi, mj)))
 
-    ts = {s_index: [] for s_index in s_indices}
-    for si, sj in connections:
-        distance = np.arccos(np.clip(v[si] @ v[sj]
-                                     / np.linalg.norm(v[si])
-                                     / np.linalg.norm(v[sj]), -1., 1.))
-        t = distance * max(0.4, rng.normal(1., 0.3))
-        ts[si].append((sj, t))
-        ts[sj].append((si, t))
+    ts = {mesh_index: [] for mesh_index in mesh_indices}
+    for mi, mj in connections:
+        # Set the measured latency to be some random scaling of the
+        # geodesic distance (also ensure that the scaling is positive)
+        t = np.arccos(v[mi] @ v[mj]) * max(0.4, rng.normal(1., 0.3))
 
-    return s_indices, ts
+        # For this dataset, assume that measured latency is symmetric across
+        # pairs of cities.
+        ts[mi].append((mj, t))
+        ts[mj].append((mi, t))
 
-def rectangle_simplex(mesh):
-    s_indices = mesh.coordinates_to_indices([
-        (0., 0.),
-        (0., 1.),
-        (1., 0.),
-        (1., 1.),
-    ])
-    ts = {si: [(sj, np.random.normal(1., 0.1)) for sj in s_indices if si != sj] for si in s_indices}
-    return set(s_indices), ts
+    return ts
