@@ -1,3 +1,6 @@
+import multiprocessing
+import os
+
 import numpy as np
 
 from linear_geodesic_optimization.optimization \
@@ -32,32 +35,62 @@ class DifferentiationHierarchy:
         self.smooth_reverse = smooth.Reverse(mesh, self.laplacian_forward,
                                              self.laplacian_reverse)
 
+    @staticmethod
+    def _forwards_call(s_index, t, geodesic_forward):
+        gamma = [s_index]
+        connected_s_index, t_s_index = zip(*t)
+        connected_s_index = list(connected_s_index)
+        geodesic_forward.calc(gamma)
+        phi = geodesic_forward.phi[connected_s_index]
+
+        return t_s_index, phi
+
     def get_forwards(self, s_indices=None):
         if s_indices is None:
             s_indices = self.ts.keys()
 
-        lse = 0
-        phi = []
+        with multiprocessing.Pool(os.cpu_count() // 2) as pool:
+            arguments = [(s_index, self.ts[s_index],
+                          self.geodesic_forwards[s_index])
+                         for s_index in s_indices]
+            ts, phis = zip(*pool.starmap(DifferentiationHierarchy._forwards_call, arguments))
+
         t = []
-
-        for s_index in s_indices:
-            gamma = [s_index]
-            connected_s_index, t_s_index = zip(*self.ts[s_index])
-            connected_s_index = list(connected_s_index)
-            self.geodesic_forwards[s_index].calc(gamma)
-            phi.extend(self.geodesic_forwards[s_index].phi[connected_s_index])
-            t.extend(t_s_index)
-
-        phi = np.array(phi)
+        for t_part in ts:
+            t.extend(t_part)
         t = np.array(t)
 
+        phi = []
+        for phi_part in phis:
+            phi.extend(phi_part)
+        phi = np.array(phi)
+
         self.linear_regression_forward.calc(phi, t)
-        lse = self.linear_regression_forward.lse
-
         self.smooth_forward.calc()
-        L_smooth = self.smooth_forward.L_smooth
+        return self.linear_regression_forward.lse, self.smooth_forward.L_smooth
 
-        return lse, L_smooth
+    @staticmethod
+    def _reverse_call(s_index, t, mesh, geodesic_forward, geodesic_reverse):
+        partials = mesh.get_partials()
+        V = partials.shape[0]
+        dif_v = {l: partials[l] for l in range(partials.shape[0])}
+
+        gamma = [s_index]
+        connected_s_index, t_s_index = zip(*t)
+        connected_s_index = list(connected_s_index)
+        geodesic_forward.calc(gamma)
+        phi = geodesic_forward.phi[connected_s_index]
+
+        ls = approximate_geodesics_fpi(mesh, geodesic_forward.phi, connected_s_index)
+        dif_phi = [None for l in range(V)]
+        for l in range(V):
+            if l in ls:
+                geodesic_reverse.calc(gamma, dif_v[l], l)
+                dif_phi[l] = geodesic_reverse.dif_phi[connected_s_index]
+            else:
+                dif_phi[l] = [0 for _ in range(len(connected_s_index))]
+
+        return t_s_index, phi, dif_phi
 
     def get_reverses(self, s_indices=None):
         if s_indices is None:
@@ -67,28 +100,27 @@ class DifferentiationHierarchy:
         dif_lse = np.zeros(V)
         dif_L_smooth = np.zeros(V)
 
-        phi = []
+        with multiprocessing.Pool(os.cpu_count() // 2) as pool:
+            arguments = [(s_index, self.ts[s_index], self.mesh,
+                          self.geodesic_forwards[s_index],
+                          self.geodesic_reverses[s_index])
+                         for s_index in s_indices]
+            ts, phis, dif_phis = zip(*pool.starmap(DifferentiationHierarchy._reverse_call, arguments))
+
         t = []
-        dif_phi = {l: [] for l in range(V)}
-
-        for s_index in s_indices:
-            gamma = [s_index]
-            connected_s_index, t_s_index = zip(*self.ts[s_index])
-            connected_s_index = list(connected_s_index)
-            self.geodesic_forwards[s_index].calc(gamma)
-            phi.extend(self.geodesic_forwards[s_index].phi[connected_s_index])
-            t.extend(t_s_index)
-
-            ls = approximate_geodesics_fpi(self.mesh, self.geodesic_forwards[s_index].phi, connected_s_index)
-            for l in range(V):
-                if l in ls:
-                    self.geodesic_reverses[s_index].calc(gamma, self.dif_v[l], l)
-                    dif_phi[l].extend(self.geodesic_reverses[s_index].dif_phi[connected_s_index])
-                else:
-                    dif_phi[l].extend([0 for _ in range(len(connected_s_index))])
-
-        phi = np.array(phi)
+        for t_part in ts:
+            t.extend(t_part)
         t = np.array(t)
+
+        phi = []
+        for phi_part in phis:
+            phi.extend(phi_part)
+        phi = np.array(phi)
+
+        dif_phi = [[] for _ in range(V)]
+        for dif_phi_part in dif_phis:
+            for l, dif_phi_subpart in enumerate(dif_phi_part):
+                dif_phi[l].extend(dif_phi_subpart)
 
         for l in range(V):
             self.linear_regression_reverse.calc(phi, t, dif_phi[l], l)
