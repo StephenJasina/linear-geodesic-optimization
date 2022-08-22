@@ -35,6 +35,13 @@ class DifferentiationHierarchy:
         self.smooth_reverse = smooth.Reverse(mesh, self.laplacian_forward,
                                              self.laplacian_reverse)
 
+        # Count of iterations for diagnostic purposes
+        self.iterations = 0
+
+        # List of how the parameters have evolved over time. This is useful for
+        # plotting/animation purposes.
+        self.history = []
+
     @staticmethod
     def _forwards_call(s_index, t, geodesic_forward):
         gamma = [s_index]
@@ -150,3 +157,13 @@ class DifferentiationHierarchy:
             dif_lse, dif_L_smooth = self.get_reverses(s_indices)
             return dif_lse + self.lam * dif_L_smooth
         return dif_loss
+
+    def print_diagnostics(self, _):
+        lse, L_smooth = self.get_forwards()
+        print(f'iteration {self.iterations}:')
+        print(f'\tlse: {lse:.6f}')
+        print(f'\tL_smooth: {L_smooth:.6f}\n')
+        print(f'\tLoss: {(lse + self.lam * L_smooth):.6f}')
+
+        self.iterations += 1
+        self.history.append(self.mesh.get_parameters())

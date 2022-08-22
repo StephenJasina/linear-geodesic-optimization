@@ -9,8 +9,8 @@ from linear_geodesic_optimization.plot import get_scatter_fig, \
 
 if __name__ == '__main__':
     # Construct the mesh
-    width = 14
-    height = 14
+    width = 20
+    height = 20
     mesh = RectangleMesh(width, height)
     partials = mesh.get_partials()
     V = partials.shape[0]
@@ -24,29 +24,21 @@ if __name__ == '__main__':
     lam = 0.01
     hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)
 
-    animation_3D = Animation3D()
-    iteration = 0
-    def diagnostics(_):
-        global iteration
-        lse, L_smooth = hierarchy.get_forwards()
-        print(f'iteration {iteration}:')
-        print(f'\tlse: {lse:.6f}')
-        print(f'\tL_smooth: {L_smooth:.6f}\n')
-        print(f'\tLoss: {(lse + lam * L_smooth):.6f}')
-
-        animation_3D.add_frame(mesh)
-
-        iteration = iteration + 1
-
     f = hierarchy.get_loss_callback(s_indices)
     g = hierarchy.get_dif_loss_callback(s_indices)
 
     before = get_scatter_fig(hierarchy, True)
 
-    diagnostics(None)
-    scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g, callback=diagnostics)
+    hierarchy.print_diagnostics(None)
+    scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
+                            callback=hierarchy.print_diagnostics)
 
     after = get_scatter_fig(hierarchy, False)
-    animation_3D.get_fig(duration=50).show()
 
     combine_scatter_figs(before, after).show()
+
+    animation_3D = Animation3D()
+    for parameters in hierarchy.history:
+        mesh.set_parameters(parameters)
+        animation_3D.add_frame(mesh)
+    animation_3D.get_fig(duration=50).show()
