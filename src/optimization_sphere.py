@@ -22,13 +22,12 @@ if __name__ == '__main__':
 
     # Get some (phony) latency measurements
     ts = phony.sphere_random(mesh)
-    s_indices = ts.keys()
 
     lam = 0.01
     hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam, directory)
 
-    f = hierarchy.get_loss_callback(s_indices)
-    g = hierarchy.get_dif_loss_callback(s_indices)
+    f = hierarchy.get_loss_callback()
+    g = hierarchy.get_dif_loss_callback()
 
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, rho, method='L-BFGS-B', jac=g,

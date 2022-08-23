@@ -25,8 +25,8 @@ class DifferentiationHierarchy:
              for mesh_index in ts}
         self.linear_regression_forward = linear_regression.Forward()
         self.smooth_forward = smooth.Forward(mesh, self.laplacian_forward)
-        self.laplacian_reverse = \
-            laplacian.Reverse(mesh, self.laplacian_forward)
+        self.laplacian_reverse = laplacian.Reverse(mesh,
+                                                   self.laplacian_forward)
         self.geodesic_reverses = \
             {mesh_index: geodesic.Reverse(mesh,
                                           self.geodesic_forwards[mesh_index],

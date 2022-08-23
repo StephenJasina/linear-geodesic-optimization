@@ -13,8 +13,8 @@ if __name__ == '__main__':
     os.mkdir(directory)
 
     # Construct the mesh
-    width = 20
-    height = 20
+    width = 32
+    height = 32
     mesh = RectangleMesh(width, height)
     partials = mesh.get_partials()
     V = partials.shape[0]
@@ -24,13 +24,12 @@ if __name__ == '__main__':
 
     # Get some (maybe phony) latency measurements
     ts = measured.rectangle_north_america(mesh)
-    s_indices = ts.keys()
 
     lam = 0.01
-    hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam)
+    hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam, directory)
 
-    f = hierarchy.get_loss_callback(s_indices)
-    g = hierarchy.get_dif_loss_callback(s_indices)
+    f = hierarchy.get_loss_callback()
+    g = hierarchy.get_dif_loss_callback()
 
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
