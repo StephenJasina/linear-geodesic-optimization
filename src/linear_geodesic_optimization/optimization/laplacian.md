@@ -2,7 +2,7 @@
 
 Some notation first. If $i$ and $j$ are two indices vertices for which $(v_i, v_j)$ is an edge, let $c(i, j)$ be the index such that $v_i \to v_j \to v_{c(i, j)}$ traces a triangle counterclockwise. Note that this index exists and is unique assuming we have a mesh without boundary.
 
-We have the following (standard) definition of the Laplace-Beltrami operator on a mesh:
+We have the following (standard) definition of the Laplace-Beltrami operator on a mesh without boundary:
 
 $$\begin{aligned}
     N_{i, j} &\triangleq (v_i - v_{c(i, j)}) \times (v_j - v_{c(i, j)}), & \text{Outward normal of triangle $v_i \to v_j \to v_{c(i, j)}$} \\
@@ -13,12 +13,14 @@ $$\begin{aligned}
     \end{cases} & \text{Vertex triangle areas; diagonal} \\
     \cot(\theta_{i, j}) &= \frac{(v_i - v_{c(i, j)}) \cdot (v_j - v_{c(i, j)})}{2A_{i, j}}, & \text{Cotangent of $\angle v_iv_{c(i, j)}v_j$} \\
     (L_C)_{i, j} &\triangleq \begin{cases}
-        \displaystyle\frac{1}{2}(\cot(\theta_{i, j}) + \cot(\theta_{j, i})) & \text{if $(i, j)$ is an edge}, \\
+        \displaystyle\frac{1}{2}(\cot(\theta_{i, j}) + \cot(\theta_{j, i})) & \text{if $(v_i, v_j)$ is an edge}, \\
         \displaystyle-\frac{1}{2}\sum_{\substack{k \\ \text{$(v_i, v_k)$ is an edge}}}(\cot(\theta_{i, k}) + \cot(\theta_{k, i})) & \text{if $i = j$}, \\
         0 & \text{otherwise},
     \end{cases} & \text{Cotangent operator; sparse} \\
     L &\triangleq D^{-1}L_C.
 \end{aligned}$$
+
+On meshes *with boundary*, we have two ways to compute $L_C$. The first is just to include the cotangent contribution $\frac{1}{2}(\cot(\theta_{i, j}) + \cot(\theta_{j, i}))$ if either $(v_i, v_j)$ or $(v_j, v_i)$ is an edge. This corresponds to the [zero Neumann boundary condition](https://en.wikipedia.org/wiki/Neumann_boundary_condition). The other is to include the contribution only if both $(v_i, v_j)$ and $(v_j, v_i)$ are edges (that is, we have an internal edge). This approach corresponds to the [zero Dirichlet boundary condition](https://en.wikipedia.org/wiki/Dirichlet_boundary_condition).
 
 # Gradient Computation
 
@@ -49,7 +51,7 @@ $$\begin{aligned}
         0 & \text{otherwise},
     \end{cases} \\
     \left(\frac{\partial L_C}{\partial \rho_\ell}\right)_{i, j} &= \begin{cases}
-        \displaystyle\frac{1}{2}\left(\frac{\partial}{\partial \rho_\ell}\cot(\theta_{i, j}) + \frac{\partial}{\partial \rho_\ell}\cot(\theta_{j, i})\right) & \text{if $(i, j)$ is an edge}, \\
+        \displaystyle\frac{1}{2}\left(\frac{\partial}{\partial \rho_\ell}\cot(\theta_{i, j}) + \frac{\partial}{\partial \rho_\ell}\cot(\theta_{j, i})\right) & \text{if $(v_i, v_j)$ is an edge}, \\
         \displaystyle-\frac{1}{2}\sum_{\substack{k \\ \text{$(v_i, v_k)$ is an edge}}}\left(\frac{\partial}{\partial \rho_\ell}\cot(\theta_{i, k}) + \frac{\partial}{\partial \rho_\ell}\cot(\theta_{k, i})\right) & \text{if $i = j$}, \\
         0 & \text{otherwise},
     \end{cases} \\

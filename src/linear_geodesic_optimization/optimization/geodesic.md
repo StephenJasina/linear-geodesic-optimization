@@ -2,7 +2,7 @@ Note: This document assumes the notation found in `../main.md` and `laplacian.md
 
 # Computation
 
-Say we want to find the geodesic distances to a set of points $\gamma$. Following the strategy from [here](https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/), we use the (approximate) heat flow $u^\gamma$, where
+Say we want to find the geodesic distances to a set of points $\gamma$. Following the [Crane et al's heat method](https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/), we use the (approximate) heat flow $u^\gamma$, where
 
 $$\begin{aligned}
     t &\triangleq (\text{mean spacing between mesh points})^2, & \text{Adjustable parameter} \\
@@ -13,7 +13,9 @@ $$\begin{aligned}
     u^\gamma &\triangleq (D - tL_C)^{-1}\delta^\gamma & \text{Heat flow}
 \end{aligned}$$
 
-We can then compute
+Similar to when computing the Laplacian, we need to be careful about computing these values on a mesh with boundary. Following Crane et al's advice, we compute $u^\gamma$ using both the zero Neumann and zero Dirichlet boundary conditions, and then average them.
+
+With $u^\gamma$ in hand, we can then compute
 
 $$\begin{aligned}
     q_{i, j} &\triangleq u^\gamma_i(v_{c(i, j)} - v_j), \\

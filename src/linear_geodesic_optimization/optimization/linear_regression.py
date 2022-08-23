@@ -48,8 +48,8 @@ class Forward:
         self._t = np.copy(t)
 
         # Note that the following disagrees with the notation in the writeup
-        # above. In particular, beta here is the coefficients when relating phi
-        # to t (as opposed to relating d to t).
+        # In particular, beta here is the coefficients when relating phi to t
+        # (as opposed to relating d to t).
         denominator = E * (phi @ phi) - np.sum(phi)**2
         self.beta = (
             (phi @ phi * np.sum(t) - np.sum(phi) * (phi @ t)) / denominator,
@@ -111,6 +111,9 @@ class Reverse:
             return self.dif_lse
 
         self.dif_d_tilde = self._dif_phi - np.sum(self._dif_phi) / E
-        self.dif_d = (self.dif_d_tilde - (self._d @ self.dif_d_tilde) * self._d) / linalg.norm(self._d_tilde)
-        self.dif_residuals = (-self._d @ self._t * self.dif_d - self.dif_d @ self._t * self._d) / E
+        self.dif_d = (self.dif_d_tilde
+                      - (self._d @ self.dif_d_tilde)
+                        * self._d) / linalg.norm(self._d_tilde)
+        self.dif_residuals = -(self._d @ self._t * self.dif_d
+                               + self.dif_d @ self._t * self._d) / E
         self.dif_lse = 2 * self._residuals @ self.dif_residuals

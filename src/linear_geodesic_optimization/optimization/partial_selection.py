@@ -45,4 +45,4 @@ def approximate_geodesics_fpi(mesh, phi, initial_vertices):
 
 def approximate_geodesics_ti():
     # TODO: Write this
-    pass
+    raise NotImplementedError()

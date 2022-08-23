@@ -12,10 +12,10 @@ class Forward:
 
     def __init__(self, mesh, laplacian_forward=None):
         '''
-        Quantities that can be naturally realized as matrices are stored as such
-        (sometimes sparsely if reasonable). All other quantities have a one to
-        one correspondence to pairs (v, f), where f is a face containing the
-        vertex v. In other words, they are in correspondence to
+        Quantities that can be naturally realized as matrices are stored as
+        such (sometimes sparsely if reasonable). All other quantities have a
+        one to one correspondence to pairs (v, f), where f is a face containing
+        the vertex v. In other words, they are in correspondence to
         `mesh.get_all_faces()`, and are thus stored in the same format. If we
         think of the former of a map from vertices to lists of faces, then the
         latter is a map from vertices to lists of quantities. For efficiency
@@ -159,7 +159,7 @@ class Forward:
         X = self.X
         p = self.p
         return np.array([sum([(p[i,j] - p[c[i,j],i]) @ X[i,j]
-                              for j in es]) / 2
+                              for j in es]) / 2.
                          for i, es in enumerate(e)])
 
     def _calc_phi(self):
@@ -280,13 +280,16 @@ class Reverse:
     def _calc_dif_u(self):
         if self._D_h2LC_dirichlet_inv is None:
             return -self._D_h2LC_neumann_inv.solve(
-                (self._dif_D.tocsc() - self._h2 * self._dif_LC_neumann) @ self._u)
+                (self._dif_D.tocsc() - self._h2 * self._dif_LC_neumann)
+                @ self._u)
         else:
             return (
                 -self._D_h2LC_neumann_inv.solve(
-                    (self._dif_D.tocsc() - self._h2 * self._dif_LC_neumann) @ self._u
+                    (self._dif_D.tocsc() - self._h2 * self._dif_LC_neumann)
+                    @ self._u
                 ) - self._D_h2LC_dirichlet_inv.solve(
-                    (self._dif_D.tocsc() - self._h2 * self._dif_LC_dirichlet) @ self._u
+                    (self._dif_D.tocsc() - self._h2 * self._dif_LC_dirichlet)
+                    @ self._u
                 )) / 2.
 
     def _calc_dif_q(self):
@@ -374,11 +377,12 @@ class Reverse:
                 dpij = dif_p[i,j] if (i, j) in dif_p else np.zeros(3)
                 dpki = dif_p[k,i] if (k, i) in dif_p else np.zeros(3)
                 dif_div_X[i] += ((dpij - dpki) @ X[i,j]
-                                 + (p[i,j] - p[k,i]) @ dif_X[i,j]) / 2
+                                 + (p[i,j] - p[k,i]) @ dif_X[i,j]) / 2.
         return dif_div_X
 
     def _calc_dif_phi(self):
-        return self._LC_neumann_inv.solve(self.dif_div_X - self._LC_neumann @ self._phi)
+        return self._LC_neumann_inv.solve(self.dif_div_X
+                                          - self._LC_neumann @ self._phi)
 
     def calc(self, gamma, dif_v, l):
         self._geodesic_forward.calc(gamma)
@@ -390,7 +394,8 @@ class Reverse:
         self._LC_dirichlet = self._geodesic_forward.LC_dirichlet
         self._h2 = self._geodesic_forward.h2
         self._D_h2LC_neumann_inv = self._geodesic_forward.D_h2LC_neumann_inv
-        self._D_h2LC_dirichlet_inv = self._geodesic_forward.D_h2LC_dirichlet_inv
+        self._D_h2LC_dirichlet_inv \
+            = self._geodesic_forward.D_h2LC_dirichlet_inv
         self._LC_neumann_inv = self._geodesic_forward.LC_neumann_inv
         self._u = self._geodesic_forward.u
         self._q = self._geodesic_forward.q

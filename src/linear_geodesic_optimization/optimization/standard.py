@@ -44,6 +44,11 @@ def wolfe(x, d, f, g, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
                 return None
 
 def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
+    '''
+    Implementation of the steepest descent (a.k.a. gradient descent) algorithm,
+    where the step size is chosen to satisfy the Wolfe conditions.
+    '''
+
     for k in itertools.count():
         if k >= max_iterations:
             break
@@ -64,6 +69,11 @@ def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
         diagnostics()
 
 def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
+    '''
+    Implementation of the Limited-memory BFGS algorithm, where the step size is
+    chosen to satisfy the Wolfe conditions.
+    '''
+
     H_0 = 1 # H is a scalar multiple of the identity
     ss = []
     ys = []
@@ -123,6 +133,10 @@ def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
         diagnostics()
 
 class SparseLUDecomposition:
+    '''
+    A reimplementation of the scipy.sparse.linalg.SuperLU that is picklable.
+    '''
+
     def __init__(self, A):
         '''
         Given a matrix A in csr format, find permutation matrices Pc and Pr and
@@ -139,6 +153,10 @@ class SparseLUDecomposition:
         self._Pc = sparse.csc_array((np.ones(n), (lu.perm_r, np.arange(n)))).T
 
     def solve(self, b):
+        '''
+        Find an x such that A @ x = b.
+        '''
+
         x = self._Pr @ b
         x = spsolve_triangular(self._L, x)
         x = spsolve_triangular(self._U, x, False)
