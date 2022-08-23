@@ -3,6 +3,13 @@ import numpy as np
 from linear_geodesic_optimization.mesh import mesh
 
 class Mesh(mesh.Mesh):
+    '''
+    Representation of a mesh that is "approximately" a rectangle. In
+    particular, projecting the vertices of the mesh so that their z-coordinates
+    are 0 will yield a rectangle. The mesh itself looks like a grid where each
+    cell has been cut by its major diagonal.
+    '''
+
     def __init__(self, width, height):
         self._width = width
         self._height = height

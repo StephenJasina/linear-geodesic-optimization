@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import pickle
 
 import numpy as np
 
@@ -9,7 +10,7 @@ from linear_geodesic_optimization.optimization.partial_selection \
     import approximate_geodesics_fpi
 
 class DifferentiationHierarchy:
-    def __init__(self, mesh, ts, lam=0.01):
+    def __init__(self, mesh, ts, lam=0.01, directory=None):
         self.mesh = mesh
         partials = self.mesh.get_partials()
         self.dif_v = {l: partials[l] for l in range(partials.shape[0])}
@@ -38,9 +39,8 @@ class DifferentiationHierarchy:
         # Count of iterations for diagnostic purposes
         self.iterations = 0
 
-        # List of how the parameters have evolved over time. This is useful for
-        # plotting/animation purposes.
-        self.history = []
+        # Location where to save iterations of the hierarchy
+        self.directory = directory
 
     @staticmethod
     def _forwards_call(s_index, t, geodesic_forward):
@@ -158,7 +158,12 @@ class DifferentiationHierarchy:
             return dif_lse + self.lam * dif_L_smooth
         return dif_loss
 
-    def print_diagnostics(self, _):
+    def diagnostics(self, _):
+        if self.directory is not None:
+            with open(os.path.join(self.directory,
+                                   str(self.iterations)), 'wb') as f:
+                pickle.dump(self, f)
+
         lse, L_smooth = self.get_forwards()
         print(f'iteration {self.iterations}:')
         print(f'\tlse: {lse:.6f}')
@@ -166,4 +171,3 @@ class DifferentiationHierarchy:
         print(f'\tLoss: {(lse + self.lam * L_smooth):.6f}')
 
         self.iterations += 1
-        self.history.append(self.mesh.get_parameters())
