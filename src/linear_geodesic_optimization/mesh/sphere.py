@@ -22,8 +22,8 @@ class Mesh(mesh.Mesh):
         '''
 
         # Start by defining a simple icosahedron.
-        p = (2 / (5 + 5**0.5))**0.5
-        q = (2 / (5 - 5**0.5))**0.5
+        p = (2. / (5. + 5.**0.5))**0.5
+        q = (2. / (5. - 5.**0.5))**0.5
         icosahedron_vertices = np.array([
             [0, p, q], [0, p, -q], [0, -p, q], [0, -p, -q],
             [q, 0, p], [-q, 0, p], [q, 0, -p], [-q, 0, -p],
@@ -217,13 +217,25 @@ class Mesh(mesh.Mesh):
         return np.copy(self._rho)
 
     def set_parameters(self, rho):
+        # Start by ensuring none of the rho values are too small (for now,
+        # let's say the minimum value of rho must be at least 1% of the maximum
+        # value of rho).
+        #
+        # TODO: Maybe this should be changed to something like
+        #   rho = np.maximum(rho, 0.)
         rho_max = np.max(np.abs(rho))
-        rho = np.maximum(rho, rho_max / 100)
+        rho = np.maximum(rho, rho_max / 100.)
+
+        # Normalize rho. Note that this does not change the shape (just the
+        # scale), so it does not affect the loss functions we care about
         rho = rho / np.average([linalg.norm(rho[l])
                                 for l in range(rho.shape[0])])
+
+        # Only "do" the update if necessary. This is good for caching purposes
         if not np.allclose(self._rho, rho):
             self._rho = np.copy(rho)
             self._updates += 1
+
         return rho
 
     def updates(self):

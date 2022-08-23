@@ -13,8 +13,8 @@ if __name__ == '__main__':
     os.mkdir(directory)
 
     # Construct the mesh
-    width = 32
-    height = 32
+    width = 5
+    height = 5
     mesh = RectangleMesh(width, height)
     partials = mesh.get_partials()
     V = partials.shape[0]

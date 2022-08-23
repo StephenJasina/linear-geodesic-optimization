@@ -21,23 +21,30 @@ class Mesh(mesh.Mesh):
         self._updates = 0
 
     def _initial_mesh(self, width, height):
-        vertices = np.zeros((width * height, 3))
+        grid = np.zeros((width * height, 2))
+
+        # The vertices are ordered lexicographically as (x, y)
         for i in range(width):
             for j in range(height):
-                vertices[i*height+j:] = np.array([i, j, 0])
-        vertices[:,0] /= (width - 1)
-        vertices[:,1] /= (height - 1)
+                grid[i*height+j:] = np.array([i, j])
+
+        # Normalize the vertices so that the mesh is supported on [0, 1]
+        grid[:,0] /= (width - 1)
+        grid[:,1] /= (height - 1)
 
         edges = [[] for _ in range(width * height)]
         faces = []
         c = {}
+
+        # Add edges and faces cell-by-cell
         for i in range(width - 1):
             for j in range(height - 1):
-                v00 = i * height + j
-                v01 = i * height + j + 1
-                v10 = (i + 1) * height + j
-                v11 = (i + 1) * height + j + 1
+                v00 = i * height + j           # Bottom-left
+                v01 = i * height + j + 1       # Top-left
+                v10 = (i + 1) * height + j     # Bottom-right
+                v11 = (i + 1) * height + j + 1 # Top-right
 
+                # Add the top-left triangle
                 edges[v00].append(v11)
                 edges[v11].append(v01)
                 edges[v01].append(v00)
@@ -46,6 +53,7 @@ class Mesh(mesh.Mesh):
                 c[v11,v01] = v00
                 c[v01,v00] = v11
 
+                # Add the bottom-right triangle
                 edges[v00].append(v10)
                 edges[v10].append(v11)
                 edges[v11].append(v00)
@@ -54,15 +62,14 @@ class Mesh(mesh.Mesh):
                 c[v10,v11] = v00
                 c[v11,v00] = v10
 
-        return vertices, edges, faces, c
+        return grid, edges, faces, c
 
     def get_partials(self):
         return self._partials
 
     def get_vertices(self):
-        vertices = np.copy(self._grid)
-        vertices[:,2] = self._z
-        return vertices
+        return np.concatenate((self._grid,
+                               np.reshape(self._z, (-1, 1))), axis=1)
 
     def get_edges(self):
         return self._edges
@@ -72,18 +79,29 @@ class Mesh(mesh.Mesh):
 
     def get_boundary_vertices(self):
         boundary_vertices = set()
+
+        # Left edge
         boundary_vertices.update(range(self._height))
+
+        # Right edge
         boundary_vertices.update(range(self._height * (self._width - 1),
                                        self._height * self._width))
+
+        # Bottom edge
         boundary_vertices.update(range(self._height,
                                        self._height * (self._width - 1),
                                        self._height))
+
+        # Top edge
         boundary_vertices.update(range(2 * self._height - 1,
                                        self._height * self._width - 1,
                                        self._height))
+
         return boundary_vertices
 
     def get_boundary_edges(self):
+        # Boundary edges are those that appear as a half-edge in one direction,
+        # but not in the opposite direction.
         boundary_edges = set()
         for i, j in self._c:
             if (j, i) not in self._c:
@@ -122,6 +140,7 @@ class Mesh(mesh.Mesh):
         coordinates have been approximately scaled and embedded into our mesh.
         '''
 
+        # Need this check to avoid out-of-bounds errors if coordinates is empty
         if not coordinates:
             return []
 
@@ -130,6 +149,10 @@ class Mesh(mesh.Mesh):
         y_min = coordinates[0][1]
         y_max = coordinates[0][1]
 
+        # Find scaling factors so that the x range and y range are both [0, 1].
+        # If no such scaling factor exists (i.e., the x-coordinate or
+        # y-coordinate is constant), set it to some arbitrary value (in this
+        # case, just set it to 1.)
         for x, y in coordinates:
             x_min = min(x_min, x)
             x_max = max(x_max, x)
