@@ -12,6 +12,11 @@ if __name__ == '__main__':
         sys.exit(0)
 
     directory = sys.argv[1]
+
+    if not os.path.exists(os.path.join(directory, '0')):
+        print('Error: supplied directory must contain file named "0"')
+        sys.exit(0)
+
     scatter_fig_before = None
     scatter_fig_after = None
 
@@ -19,9 +24,6 @@ if __name__ == '__main__':
 
     for i in itertools.count():
         path = os.path.join(directory, str(i))
-        if not os.path.exists(path):
-            break
-
         with open(path, 'rb') as f:
             hierarchy = pickle.load(f)
 
@@ -31,6 +33,7 @@ if __name__ == '__main__':
             path_next = os.path.join(directory, str(i + 1))
             if not os.path.exists(path_next):
                 scatter_fig_after = get_scatter_fig(hierarchy, False)
+                break
 
             animation_3D.add_frame(hierarchy.mesh)
 

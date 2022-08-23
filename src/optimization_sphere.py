@@ -33,4 +33,3 @@ if __name__ == '__main__':
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, rho, method='L-BFGS-B', jac=g,
                             callback=hierarchy.diagnostics)
-

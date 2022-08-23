@@ -10,7 +10,7 @@ from linear_geodesic_optimization.optimization.partial_selection \
     import approximate_geodesics_fpi
 
 class DifferentiationHierarchy:
-    def __init__(self, mesh, ts, lam=0.01, directory=None):
+    def __init__(self, mesh, ts, lam=0.01, directory=None, cores=None):
         self.mesh = mesh
         partials = self.mesh.get_partials()
         self.dif_v = {l: partials[l] for l in range(partials.shape[0])}
@@ -21,16 +21,17 @@ class DifferentiationHierarchy:
 
         self.laplacian_forward = laplacian.Forward(mesh)
         self.geodesic_forwards = \
-            {s_index: geodesic.Forward(mesh, self.laplacian_forward)
-             for s_index in ts}
+            {mesh_index: geodesic.Forward(mesh, self.laplacian_forward)
+             for mesh_index in ts}
         self.linear_regression_forward = linear_regression.Forward()
         self.smooth_forward = smooth.Forward(mesh, self.laplacian_forward)
         self.laplacian_reverse = \
             laplacian.Reverse(mesh, self.laplacian_forward)
         self.geodesic_reverses = \
-            {s_index: geodesic.Reverse(mesh, self.geodesic_forwards[s_index],
-                                       self.laplacian_reverse)
-             for s_index in ts}
+            {mesh_index: geodesic.Reverse(mesh,
+                                          self.geodesic_forwards[mesh_index],
+                                          self.laplacian_reverse)
+             for mesh_index in ts}
         self.linear_regression_reverse = \
             linear_regression.Reverse(self.linear_regression_forward)
         self.smooth_reverse = smooth.Reverse(mesh, self.laplacian_forward,
@@ -42,25 +43,26 @@ class DifferentiationHierarchy:
         # Location where to save iterations of the hierarchy
         self.directory = directory
 
+        self.cores = cores if cores is not None else os.cpu_count() - 2
+
     @staticmethod
-    def _forwards_call(s_index, t, geodesic_forward):
-        gamma = [s_index]
-        connected_s_index, t_s_index = zip(*t)
-        connected_s_index = list(connected_s_index)
+    def _forwards_call(mesh_index, t, geodesic_forward):
+        gamma = [mesh_index]
+        connected_mesh_index, t_mesh_index = zip(*t)
+        connected_mesh_index = list(connected_mesh_index)
         geodesic_forward.calc(gamma)
-        phi = geodesic_forward.phi[connected_s_index]
+        phi = geodesic_forward.phi[connected_mesh_index]
 
-        return t_s_index, phi
+        return t_mesh_index, phi
 
-    def get_forwards(self, s_indices=None):
-        if s_indices is None:
-            s_indices = self.ts.keys()
-
-        with multiprocessing.Pool(os.cpu_count() // 3) as pool:
-            arguments = [(s_index, self.ts[s_index],
-                          self.geodesic_forwards[s_index])
-                         for s_index in s_indices]
-            ts, phis = zip(*pool.starmap(DifferentiationHierarchy._forwards_call, arguments))
+    def get_forwards(self):
+        with multiprocessing.Pool(self.cores) as pool:
+            arguments = [(mesh_index, self.ts[mesh_index],
+                          self.geodesic_forwards[mesh_index])
+                         for mesh_index in self.ts]
+            ts, phis = zip(
+                *pool.starmap(DifferentiationHierarchy._forwards_call,
+                              arguments))
 
         t = []
         for t_part in ts:
@@ -77,42 +79,42 @@ class DifferentiationHierarchy:
         return self.linear_regression_forward.lse, self.smooth_forward.L_smooth
 
     @staticmethod
-    def _reverse_call(s_index, t, mesh, geodesic_forward, geodesic_reverse):
+    def _reverse_call(mesh_index, t, mesh, geodesic_forward, geodesic_reverse):
         partials = mesh.get_partials()
         V = partials.shape[0]
         dif_v = {l: partials[l] for l in range(partials.shape[0])}
 
-        gamma = [s_index]
-        connected_s_index, t_s_index = zip(*t)
-        connected_s_index = list(connected_s_index)
+        gamma = [mesh_index]
+        connected_mesh_index, t_mesh_index = zip(*t)
+        connected_mesh_index = list(connected_mesh_index)
         geodesic_forward.calc(gamma)
-        phi = geodesic_forward.phi[connected_s_index]
+        phi = geodesic_forward.phi[connected_mesh_index]
 
-        ls = approximate_geodesics_fpi(mesh, geodesic_forward.phi, connected_s_index)
+        ls = approximate_geodesics_fpi(mesh, geodesic_forward.phi,
+                                       connected_mesh_index)
         dif_phi = [None for l in range(V)]
         for l in range(V):
             if l in ls:
                 geodesic_reverse.calc(gamma, dif_v[l], l)
-                dif_phi[l] = geodesic_reverse.dif_phi[connected_s_index]
+                dif_phi[l] = geodesic_reverse.dif_phi[connected_mesh_index]
             else:
-                dif_phi[l] = [0 for _ in range(len(connected_s_index))]
+                dif_phi[l] = [0 for _ in range(len(connected_mesh_index))]
 
-        return t_s_index, phi, dif_phi
+        return t_mesh_index, phi, dif_phi
 
-    def get_reverses(self, s_indices=None):
-        if s_indices is None:
-            s_indices = self.ts.keys()
-
+    def get_reverses(self):
         V = self.mesh.get_partials().shape[0]
         dif_lse = np.zeros(V)
         dif_L_smooth = np.zeros(V)
 
-        with multiprocessing.Pool(os.cpu_count() // 3) as pool:
-            arguments = [(s_index, self.ts[s_index], self.mesh,
-                          self.geodesic_forwards[s_index],
-                          self.geodesic_reverses[s_index])
-                         for s_index in s_indices]
-            ts, phis, dif_phis = zip(*pool.starmap(DifferentiationHierarchy._reverse_call, arguments))
+        with multiprocessing.Pool(self.cores) as pool:
+            arguments = [(mesh_index, self.ts[mesh_index], self.mesh,
+                          self.geodesic_forwards[mesh_index],
+                          self.geodesic_reverses[mesh_index])
+                         for mesh_index in self.ts]
+            ts, phis, dif_phis = zip(
+                *pool.starmap(DifferentiationHierarchy._reverse_call,
+                              arguments))
 
         t = []
         for t_part in ts:
@@ -138,23 +140,17 @@ class DifferentiationHierarchy:
 
         return dif_lse, dif_L_smooth
 
-    def get_loss_callback(self, s_indices=None):
-        if s_indices is None:
-            s_indices = self.ts.keys()
-
+    def get_loss_callback(self):
         def loss(parameters):
             self.mesh.set_parameters(parameters)
-            lse, L_smooth = self.get_forwards(s_indices)
+            lse, L_smooth = self.get_forwards()
             return lse + self.lam * L_smooth
         return loss
 
-    def get_dif_loss_callback(self, s_indices=None):
-        if s_indices is None:
-            s_indices = self.ts.keys()
-
+    def get_dif_loss_callback(self):
         def dif_loss(parameters):
             self.mesh.set_parameters(parameters)
-            dif_lse, dif_L_smooth = self.get_reverses(s_indices)
+            dif_lse, dif_L_smooth = self.get_reverses()
             return dif_lse + self.lam * dif_L_smooth
         return dif_loss
 
