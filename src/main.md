@@ -33,18 +33,3 @@ From here, we can take the standard approach of batching the gradient computatio
 Motivated by this, define
 
 $$\mathcal{L}_{\text{geodesic}, v}(M) = \sum_{\substack{v' \in V_G \\ (v, v') \in E_G}} \frac{1}{2}(\text{least squares residual of edge \((v, v')\)})^2.$$
-
-TODO:
-* Try nonuniform meshes (e.g., more detail in America, less in the oceans)
-* Is it possible to first optimize over geodesics, and then optimize over smoothness? (My gut instinct is no, but maybe it could be possible under certain circumstances)
-* Other smoothness functions
-* Same with $\lambda$
-* Later step is to plot the graph representing the network on the sphere
-* Maybe use data from the topology zoo
-* Run multiple combinations on different servers
-* Check out [Cloud Lab](https://cloudlab.us/)
-
-General guidelines
-* In general, think $|G| \approx 500$
-* We really don't care as much about runtime/scalability compared to getting high quality results with low losses (it's okay if a run takes time on the order of days)
-* There is access to powerful servers if I need it
