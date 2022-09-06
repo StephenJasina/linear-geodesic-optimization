@@ -3,7 +3,9 @@ import os
 import pickle
 import sys
 
-from linear_geodesic_optimization.plot import get_scatter_fig, \
+import numpy as np
+
+from linear_geodesic_optimization.plot import get_line_plot, get_scatter_fig, \
     combine_scatter_figs, Animation3D
 
 if __name__ == '__main__':
@@ -17,6 +19,10 @@ if __name__ == '__main__':
         print('Error: supplied directory must contain file named "0"')
         sys.exit(0)
 
+    lses = []
+    L_smooths = []
+    Ls = []
+
     scatter_fig_before = None
     scatter_fig_after = None
 
@@ -26,6 +32,12 @@ if __name__ == '__main__':
         path = os.path.join(directory, str(i))
         with open(path, 'rb') as f:
             hierarchy = pickle.load(f)
+            hierarchy.cores = 2
+
+            lse, L_smooth = hierarchy.get_forwards()
+            lses.append(lse)
+            L_smooths.append(L_smooth)
+            Ls.append(lse + hierarchy.lam * L_smooth)
 
             if i == 0:
                 scatter_fig_before = get_scatter_fig(hierarchy, True)
@@ -36,6 +48,10 @@ if __name__ == '__main__':
                 break
 
             animation_3D.add_frame(hierarchy.mesh)
+
+    get_line_plot(lses, 'Least Squares Loss').show()
+    get_line_plot(L_smooths, 'Smoothness Loss').show()
+    get_line_plot(Ls, 'Total Loss').show()
 
     combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()
     animation_3D.get_fig(duration=50).show()

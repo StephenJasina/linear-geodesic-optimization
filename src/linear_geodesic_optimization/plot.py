@@ -3,6 +3,15 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
+def get_line_plot(loss_by_iteration, loss_name):
+    return px.line(
+        {
+            'iteration': range(len(loss_by_iteration)),
+            loss_name: loss_by_iteration
+        },
+        x='iteration', y=loss_name
+    )
+
 def get_scatter_fig(hierarchy, before=True):
     geodesic_forwards = hierarchy.geodesic_forwards
     linear_regression_forward = hierarchy.linear_regression_forward
@@ -24,7 +33,8 @@ def get_scatter_fig(hierarchy, before=True):
             'Series': ['Before' if before else 'After'] * phis.shape[0]
         }, x='Predicted Latency', y= 'Measured Latency', trendline='ols',
         color_discrete_sequence=['blue' if before else 'red'],
-        color='Series')
+        color='Series'
+    )
 
 def combine_scatter_figs(before, after):
     data = before.data + after.data
