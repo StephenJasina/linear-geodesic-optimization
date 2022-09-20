@@ -241,6 +241,24 @@ class Mesh(mesh.Mesh):
     def updates(self):
         return self._updates
 
+    def get_fat_edges(self, edges, epsilon):
+        def is_on_fat_edge(e, r, epsilon):
+            u, v = e
+
+            ru = r @ u
+            rv = r @ v
+            uv = u @ v
+            cos_eps = np.cos(epsilon)
+
+            c = np.sqrt((ru**2 + rv**2 - 2 * ru * rv * uv) / (1 - uv**2))
+
+            return max(ru, rv) > cos_eps or (c > cos_eps
+                                             and min(ru, rv) > c * uv)
+
+        return [[i for i in range(self._partials.shape[0])
+                 if is_on_fat_edge(e, self._partials.shape[i,:], epsilon)]
+                for e in edges]
+
     def nearest_vertex_index(self, direction):
         '''
         Find the index of the vertex whose direction is closest to the input

@@ -5,7 +5,7 @@ import pickle
 import numpy as np
 
 from linear_geodesic_optimization.optimization \
-    import laplacian, geodesic, linear_regression, smooth
+    import laplacian, geodesic, linear_regression, smooth, curvature
 from linear_geodesic_optimization.optimization.partial_selection \
     import approximate_geodesics_fpi
 
@@ -44,6 +44,9 @@ class DifferentiationHierarchy:
              for mesh_index in ts}
         self.linear_regression_forward = linear_regression.Forward()
         self.smooth_forward = smooth.Forward(mesh, self.laplacian_forward)
+        # TODO: Find Ricci curvatures and put them in here
+        self.curvature_forward = curvature.Forward(mesh, [], [],
+                                                   self.laplacian_forward)
         self.laplacian_reverse = laplacian.Reverse(mesh,
                                                    self.laplacian_forward)
         self.geodesic_reverses = \
@@ -55,6 +58,11 @@ class DifferentiationHierarchy:
             linear_regression.Reverse(self.linear_regression_forward)
         self.smooth_reverse = smooth.Reverse(mesh, self.laplacian_forward,
                                              self.laplacian_reverse)
+        # TODO: Find Ricci curvatures and put them in here
+        self.curvature_reverse = curvature.Reverse(mesh ,[], [],
+                                                   self.laplacian_forward,
+                                                   self.curvature_forward,
+                                                   self.laplacian_reverse)
 
         # Count of iterations for diagnostic purposes
         self.iterations = 0
@@ -88,6 +96,7 @@ class DifferentiationHierarchy:
         ts = None
         phis = None
 
+        # TODO: Write version that doesn't use multiprocessing
         # This just calls _forwards_call once for each city
         with multiprocessing.Pool(self.cores) as pool:
             arguments = [(mesh_index, self.ts[mesh_index],
@@ -111,7 +120,10 @@ class DifferentiationHierarchy:
 
         self.linear_regression_forward.calc(phi, t)
         self.smooth_forward.calc()
-        return self.linear_regression_forward.lse, self.smooth_forward.L_smooth
+        self.curvature_forward.calc()
+        return self.linear_regression_forward.lse, \
+               self.smooth_forward.L_smooth, \
+               self.curvature_forward.L_curvature
 
     @staticmethod
     def _reverses_call(mesh_index, t, mesh, dif_v,
@@ -150,7 +162,9 @@ class DifferentiationHierarchy:
         V = self.mesh.get_partials().shape[0]
         dif_lse = np.zeros(V)
         dif_L_smooth = np.zeros(V)
+        dif_L_curvature = np.zeros(V)
 
+        # TODO: Write version that doesn't use multiprocessing
         # This just calls _reverses_call once for each city
         with multiprocessing.Pool(self.cores) as pool:
             arguments = [(mesh_index, self.ts[mesh_index],
@@ -187,7 +201,10 @@ class DifferentiationHierarchy:
             self.smooth_reverse.calc(self.dif_v[l], l)
             dif_L_smooth[l] += self.smooth_reverse.dif_L_smooth
 
-        return dif_lse, dif_L_smooth
+            self.curvature_reverse.calc(self.dif_v[l], l)
+            dif_L_curvature[l] += self.curvature_reverse.dif_L_curvature
+
+        return dif_lse, dif_L_smooth, dif_L_curvature
 
     def get_loss_callback(self):
         '''
@@ -197,7 +214,8 @@ class DifferentiationHierarchy:
 
         def loss(parameters):
             self.mesh.set_parameters(parameters)
-            lse, L_smooth = self.get_forwards()
+            # TODO: Do something with L_curvature
+            lse, L_smooth, _ = self.get_forwards()
             return lse + self.lam * L_smooth
         return loss
 
@@ -209,7 +227,8 @@ class DifferentiationHierarchy:
 
         def dif_loss(parameters):
             self.mesh.set_parameters(parameters)
-            dif_lse, dif_L_smooth = self.get_reverses()
+            # TODO: Do something with dif_L_curvature
+            dif_lse, dif_L_smooth, _ = self.get_reverses()
             return dif_lse + self.lam * dif_L_smooth
         return dif_loss
 
@@ -224,10 +243,11 @@ class DifferentiationHierarchy:
                                    str(self.iterations)), 'wb') as f:
                 pickle.dump(self, f)
 
-        lse, L_smooth = self.get_forwards()
+        lse, L_smooth, L_curvature = self.get_forwards()
         print(f'iteration {self.iterations}:')
         print(f'\tlse: {lse:.6f}')
         print(f'\tL_smooth: {L_smooth:.6f}\n')
+        print(f'\tL_curvature: {L_curvature:.6f}\n')
         print(f'\tLoss: {(lse + self.lam * L_smooth):.6f}')
 
         self.iterations += 1

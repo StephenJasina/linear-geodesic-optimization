@@ -89,3 +89,12 @@ class Mesh:
         '''
 
         raise NotImplementedError
+
+    def get_fat_edges(self, edges, epsilon):
+        '''
+        For a list of edges in a graph embedded in our mesh (reprsented as
+        pairs of mesh vertex indices) and a width epsilon > 0, return a list of
+        lists of lists of vertices in our mesh
+        '''
+
+        raise NotImplementedError
