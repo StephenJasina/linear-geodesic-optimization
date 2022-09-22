@@ -12,7 +12,7 @@ if __name__ == '__main__':
     os.mkdir(directory)
 
     # Construct the mesh
-    frequency = 2
+    frequency = 1
     mesh = SphereMesh(frequency)
     partials = mesh.get_partials()
     V = partials.shape[0]
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     ts = phony.sphere_random(mesh)
 
     lam = 0.01
-    hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam, directory, cores=2)
+    hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam, directory, cores=1)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()

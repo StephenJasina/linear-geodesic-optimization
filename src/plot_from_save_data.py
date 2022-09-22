@@ -32,9 +32,14 @@ if __name__ == '__main__':
         path = os.path.join(directory, str(i))
         with open(path, 'rb') as f:
             hierarchy = pickle.load(f)
-            hierarchy.cores = 2
+            hierarchy.cores = 1
 
-            lse, L_smooth = hierarchy.get_forwards()
+            animation_3D.add_frame(hierarchy.mesh)
+
+            print(hierarchy.mesh.updates(), hierarchy.laplacian_forward._updates)
+
+            # TODO: Do something with curvature loss
+            lse, L_smooth, _ = hierarchy.get_forwards()
             lses.append(lse)
             L_smooths.append(L_smooth)
             Ls.append(lse + hierarchy.lam * L_smooth)
@@ -47,7 +52,6 @@ if __name__ == '__main__':
                 scatter_fig_after = get_scatter_fig(hierarchy, False)
                 break
 
-            animation_3D.add_frame(hierarchy.mesh)
 
     get_line_plot(lses, 'Least Squares Loss').show()
     get_line_plot(L_smooths, 'Smoothness Loss').show()

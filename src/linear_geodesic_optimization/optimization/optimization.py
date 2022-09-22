@@ -255,16 +255,16 @@ class DifferentiationHierarchy:
         the loss functions.
         '''
 
-        if self.directory is not None:
-            with open(os.path.join(self.directory,
-                                   str(self.iterations)), 'wb') as f:
-                pickle.dump(self, f)
-
         lse, L_smooth, L_curvature = self.get_forwards()
         print(f'iteration {self.iterations}:')
         print(f'\tlse: {lse:.6f}')
         print(f'\tL_smooth: {L_smooth:.6f}\n')
         print(f'\tL_curvature: {L_curvature:.6f}\n')
         print(f'\tLoss: {(lse + self.lam * L_smooth):.6f}')
+
+        if self.directory is not None:
+            with open(os.path.join(self.directory,
+                                   str(self.iterations)), 'wb') as f:
+                pickle.dump(self, f)
 
         self.iterations += 1
