@@ -101,7 +101,8 @@ class Reverse:
     def _calc_dif_kappa(self):
         dif_kappa = {i: 0 for i in range(self._V)}
         for (i, j), cot_ij in self._cot.items():
-            dif_kappa[self._c[i, j]] += self._dif_cot[i, j] / (1 + cot_ij**2)
+            if (i, j) in self._dif_cot:
+                dif_kappa[self._c[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
         return dif_kappa
 
     def _calc_dif_L_curvature(self):
@@ -117,7 +118,7 @@ class Reverse:
         self._curvature_forward.calc()
         self._kappa = self._curvature_forward.kappa
 
-        self._laplacian_reverse.calc()
+        self._laplacian_reverse.calc(dif_v, l)
         self._dif_cot = self._laplacian_reverse.dif_cot
 
         if self._updates != self._mesh.updates() or self._l != l:

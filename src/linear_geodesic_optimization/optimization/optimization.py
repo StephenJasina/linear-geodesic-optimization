@@ -19,7 +19,9 @@ class DifferentiationHierarchy:
         '''
         Parameters:
         * `mesh`: The mesh to optimize over
-        * `ts`: The measured (real world) latencies
+        * `ts`: The measured (real world) latencies. This should be a map from
+                vertex indices to lists of pairs of vertex indices and floats
+                (essentially an annotated adjacency list)
         * `lam`: The strength lambda of the smoothing parameter
         * `directory`: Where to save snapshots of the mesh for each iteration
                        of optimization
@@ -70,7 +72,7 @@ class DifferentiationHierarchy:
         # Location where to save iterations of the hierarchy
         self.directory = directory
 
-        self.cores = cores if cores is not None else os.cpu_count() - 2
+        self.cores = cores if cores is not None else 1
 
     @staticmethod
     def _forwards_call(mesh_index, t, geodesic_forward):
@@ -93,29 +95,33 @@ class DifferentiationHierarchy:
         Returns the losses of the current mesh.
         '''
 
-        ts = None
-        phis = None
-
-        # TODO: Write version that doesn't use multiprocessing
-        # This just calls _forwards_call once for each city
-        with multiprocessing.Pool(self.cores) as pool:
-            arguments = [(mesh_index, self.ts[mesh_index],
-                          self.geodesic_forwards[mesh_index])
-                         for mesh_index in self.ts]
-            ts, phis = zip(
-                *pool.starmap(DifferentiationHierarchy._forwards_call,
-                              arguments))
-
-        # t and phi are parallel arrays
-
         t = []
-        for t_part in ts:
-            t.extend(t_part)
-        t = np.array(t)
-
         phi = []
-        for phi_part in phis:
-            phi.extend(phi_part)
+
+        if self.cores > 1:
+            # This just calls _forwards_call once for each city
+            with multiprocessing.Pool(self.cores) as pool:
+                arguments = [(mesh_index, self.ts[mesh_index],
+                              self.geodesic_forwards[mesh_index])
+                             for mesh_index in self.ts]
+                ts, phis = zip(
+                    *pool.starmap(DifferentiationHierarchy._forwards_call,
+                                  arguments))
+                for t_part in ts:
+                    t.extend(t_part)
+                for phi_part in phis:
+                    phi.extend(phi_part)
+        else:
+            for mesh_index in self.ts:
+                t_part, phi_part = DifferentiationHierarchy._forwards_call(
+                    mesh_index,
+                    self.ts[mesh_index],
+                    self.geodesic_forwards[mesh_index]
+                )
+                t.extend(t_part)
+                phi.extend(phi_part)
+
+        t = np.array(t)
         phi = np.array(phi)
 
         self.linear_regression_forward.calc(phi, t)
@@ -164,35 +170,46 @@ class DifferentiationHierarchy:
         dif_L_smooth = np.zeros(V)
         dif_L_curvature = np.zeros(V)
 
-        # TODO: Write version that doesn't use multiprocessing
-        # This just calls _reverses_call once for each city
-        with multiprocessing.Pool(self.cores) as pool:
-            arguments = [(mesh_index, self.ts[mesh_index],
-                          self.mesh, self.dif_v,
-                          self.geodesic_forwards[mesh_index],
-                          self.geodesic_reverses[mesh_index])
-                         for mesh_index in self.ts]
-            ts, phis, dif_phis = zip(
-                *pool.starmap(DifferentiationHierarchy._reverses_call,
-                              arguments))
-
-        # t and phi are parallel arrays. They are also parallel to each element
-        # of dif_phi
-
         t = []
-        for t_part in ts:
-            t.extend(t_part)
-        t = np.array(t)
-
         phi = []
-        for phi_part in phis:
-            phi.extend(phi_part)
-        phi = np.array(phi)
-
         dif_phi = [[] for _ in range(V)]
-        for dif_phi_part in dif_phis:
-            for l, dif_phi_subpart in enumerate(dif_phi_part):
-                dif_phi[l].extend(dif_phi_subpart)
+
+        if self.cores > 1:
+            # This just calls _reverses_call once for each city
+            with multiprocessing.Pool(self.cores) as pool:
+                arguments = [(mesh_index, self.ts[mesh_index],
+                              self.mesh, self.dif_v,
+                              self.geodesic_forwards[mesh_index],
+                              self.geodesic_reverses[mesh_index])
+                             for mesh_index in self.ts]
+                ts, phis, dif_phis = zip(
+                    *pool.starmap(DifferentiationHierarchy._reverses_call,
+                                  arguments))
+                for t_part in ts:
+                    t.extend(t_part)
+                for phi_part in phis:
+                    phi.extend(phi_part)
+                for dif_phi_part in dif_phis:
+                    for l, dif_phi_subpart in enumerate(dif_phi_part):
+                        dif_phi[l].extend(dif_phi_subpart)
+        else:
+            for mesh_index in self.ts:
+                t_part, phi_part, dif_phi_part = \
+                    DifferentiationHierarchy._reverses_call(
+                        mesh_index,
+                        self.ts[mesh_index],
+                        self.mesh,
+                        self.dif_v,
+                        self.geodesic_forwards[mesh_index],
+                        self.geodesic_reverses[mesh_index]
+                    )
+                t.extend(t_part)
+                phi.extend(phi_part)
+                for l, dif_phi_subpart in enumerate(dif_phi_part):
+                    dif_phi[l].extend(dif_phi_subpart)
+
+        t = np.array(t)
+        phi = np.array(phi)
 
         for l in range(V):
             self.linear_regression_reverse.calc(phi, t, dif_phi[l], l)

@@ -24,7 +24,7 @@ if __name__ == '__main__':
     ts = phony.sphere_random(mesh)
 
     lam = 0.01
-    hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam, directory)
+    hierarchy = optimization.DifferentiationHierarchy(mesh, ts, lam, directory, cores=2)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()
