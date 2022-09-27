@@ -8,8 +8,8 @@ from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 from linear_geodesic_optimization.optimization import optimization
 
 if __name__ == '__main__':
-    directory = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    os.mkdir(directory)
+    directory = os.path.join('..', 'out', datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
+    os.makedirs(directory)
 
     # Construct the mesh
     frequency = 4
