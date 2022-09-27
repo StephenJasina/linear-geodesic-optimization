@@ -166,3 +166,13 @@ class Mesh(mesh.Mesh):
         return [self.nearest_vertex_index((x - x_min) / x_divisor,
                                           (y - y_min) / y_divisor)
                 for x, y in coordinates]
+
+    # Legacy functions
+    def triangles_of_vertex(self):
+        return {i: [face for face in self._faces if i in face] for i in range(self._grid.shape[0])}
+
+    def coord_to_ndx(self, i, j):
+        return i * self._height + j
+
+    def ndx_to_coord(self, b):
+        return [(b // self._height), (b % self._height)]

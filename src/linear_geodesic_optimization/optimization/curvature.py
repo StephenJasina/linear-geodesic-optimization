@@ -30,7 +30,7 @@ class Forward:
         self.L_curvature = None
 
     def _calc_kappa(self):
-        kappa = {i: 2 * np.pi for i in range(self._V)}
+        kappa = np.full(self._V, 2 * np.pi)
         for (i, j), cot_ij in self.cot.items():
             kappa[self._c[i, j]] -= np.arctan(1 / cot_ij) % np.pi
         return kappa
@@ -99,7 +99,7 @@ class Reverse:
         self.dif_L_curvature = None
 
     def _calc_dif_kappa(self):
-        dif_kappa = {i: 0 for i in range(self._V)}
+        dif_kappa = np.zeros(self._V)
         for (i, j), cot_ij in self._cot.items():
             if (i, j) in self._dif_cot:
                 dif_kappa[self._c[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
