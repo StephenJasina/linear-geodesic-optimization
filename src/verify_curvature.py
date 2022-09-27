@@ -1,6 +1,7 @@
 '''
 This is a testing file used to show that the new implementation of curvature
-(and its gradient) match the old implementation found in the surface-gen repo.
+(and its gradient) match the old implementation found in the surface-gen repo
+found at https://github.com/joshuawisc/surface-gen.
 '''
 
 import numpy as np
