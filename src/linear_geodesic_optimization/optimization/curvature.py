@@ -7,7 +7,8 @@ class Forward:
     Implementation of the curvature loss function.
     '''
 
-    def __init__(self, mesh, ricci_curvatures, fat_edges, laplacian_forward):
+    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
+                 epsilon, laplacian_forward=None):
         self._mesh = mesh
         self._updates = self._mesh.updates() - 1
         self._v = None
@@ -16,8 +17,11 @@ class Forward:
 
         self._V = len(self._e)
 
+        self._network_vertices = network_vertices
+        self._network_edges = network_edges
         self._ricci_curvatures = ricci_curvatures
-        self._fat_edges = fat_edges
+        self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
+                                             epsilon)
 
         self._laplacian_forward = laplacian_forward
         if self._laplacian_forward is None:
@@ -36,10 +40,14 @@ class Forward:
         return kappa
 
     def _calc_L_curvature(self):
+        L_curvature = sum((self.kappa[i] - ricci_curvature)**2
+                          for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
+                                                               self._fat_edges)
+                          for i in fat_edge)
         return sum((self.kappa[i] - ricci_curvature)**2
-                for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
-                                                     self._fat_edges)
-                for i in fat_edge)
+                   for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
+                                                        self._fat_edges)
+                   for i in fat_edge)
 
     def calc(self):
         self._laplacian_forward.calc()
@@ -58,8 +66,8 @@ class Reverse:
     This implementation assumes the l-th partial affects only the l-th vertex.
     '''
 
-    def __init__(self, mesh, ricci_curvatures, fat_edges,
-                 laplacian_forward=None, curvature_forward = None,
+    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
+                 epsilon, laplacian_forward=None, curvature_forward = None,
                  laplacian_reverse=None):
         self._mesh = mesh
         self._updates = self._mesh.updates() - 1
@@ -69,8 +77,11 @@ class Reverse:
 
         self._V = len(self._e)
 
+        self._network_vertices = network_vertices
+        self._network_edges = network_edges
         self._ricci_curvatures = ricci_curvatures
-        self._fat_edges = fat_edges
+        self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
+                                             epsilon)
 
         self._dif_v = None
         self._l = None
@@ -107,9 +118,9 @@ class Reverse:
 
     def _calc_dif_L_curvature(self):
         return sum(2 * (self._kappa[i] - ricci_curvature) * self.dif_kappa[i]
-                for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
-                                                     self._fat_edges)
-                for i in fat_edge)
+                   for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
+                                                        self._fat_edges)
+                   for i in fat_edge)
 
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()

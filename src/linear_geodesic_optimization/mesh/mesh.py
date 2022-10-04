@@ -90,11 +90,19 @@ class Mesh:
 
         raise NotImplementedError
 
-    def get_fat_edges(self, edges, epsilon):
+    def get_fat_edges(self, vertices, edges, epsilon):
         '''
         For a list of edges in a graph embedded in our mesh (reprsented as
         pairs of mesh vertex indices) and a width epsilon > 0, return a list of
         lists of lists of vertices in our mesh
+        '''
+
+        raise NotImplementedError
+
+    def get_epsilon(self):
+        '''
+        Return the maximum space between vertices if the mesh were to have a
+        default value of parameters (e.g., a unit sphere or a flat plane)
         '''
 
         raise NotImplementedError

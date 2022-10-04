@@ -241,10 +241,8 @@ class Mesh(mesh.Mesh):
     def updates(self):
         return self._updates
 
-    def get_fat_edges(self, edges, epsilon):
-        def is_on_fat_edge(e, r, epsilon):
-            u, v = e
-
+    def get_fat_edges(self, vertices, edges, epsilon):
+        def is_on_fat_edge(u, v, r, epsilon):
             ru = r @ u
             rv = r @ v
             uv = u @ v
@@ -256,8 +254,13 @@ class Mesh(mesh.Mesh):
                                              and min(ru, rv) > c * uv)
 
         return [[i for i in range(self._partials.shape[0])
-                 if is_on_fat_edge(e, self._partials.shape[i,:], epsilon)]
-                for e in edges]
+                 if is_on_fat_edge(vertices[e1], vertices[e2],
+                                   self._partials[i,:], epsilon)]
+                for (e1, e2) in edges]
+
+    def get_epsilon(self):
+        return max(np.arccos(self._partials[u] @ self._partials[v])
+                   for u, vs in enumerate(self._edges) for v in vs)
 
     def nearest_vertex_index(self, direction):
         '''

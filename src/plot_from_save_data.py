@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
     lses = []
     L_smooths = []
+    L_curvatures = []
     Ls = []
 
     scatter_fig_before = None
@@ -36,13 +37,13 @@ if __name__ == '__main__':
 
             animation_3D.add_frame(hierarchy.mesh)
 
-            print(hierarchy.mesh.updates(), hierarchy.laplacian_forward._updates)
-
-            # TODO: Do something with curvature loss
-            lse, L_smooth, _ = hierarchy.get_forwards()
+            lse, L_smooth, L_curvature = hierarchy.get_forwards()
             lses.append(lse)
             L_smooths.append(L_smooth)
-            Ls.append(lse + hierarchy.lam * L_smooth)
+            L_curvatures.append(L_curvature)
+            Ls.append(hierarchy.lambda_geodesic * lse
+                      + hierarchy.lambda_smooth * L_smooth
+                      + hierarchy.lambda_curvature * L_curvature)
 
             if i == 0:
                 scatter_fig_before = get_scatter_fig(hierarchy, True)
@@ -52,9 +53,11 @@ if __name__ == '__main__':
                 scatter_fig_after = get_scatter_fig(hierarchy, False)
                 break
 
-
+    # TODO: Make these plots a lot nicer (maybe aggregate them into one
+    # visualization?)
     get_line_plot(lses, 'Least Squares Loss').show()
     get_line_plot(L_smooths, 'Smoothness Loss').show()
+    get_line_plot(L_curvatures, 'Curvature Loss').show()
     get_line_plot(Ls, 'Total Loss').show()
 
     combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()

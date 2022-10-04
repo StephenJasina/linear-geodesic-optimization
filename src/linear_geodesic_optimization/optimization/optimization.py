@@ -15,18 +15,22 @@ class DifferentiationHierarchy:
     linear geodesic optimization loss functions.
     '''
 
-    def __init__(self, mesh, ts, lam=0.01, directory=None, cores=None):
+    def __init__(self, mesh, ts, network_vertices, network_edges,
+                 ricci_curvatures,
+                 lambda_geodesic=1., lambda_smooth=0.01, lambda_curvature=1.,
+                 directory=None, cores=None):
         '''
         Parameters:
         * `mesh`: The mesh to optimize over
         * `ts`: The measured (real world) latencies. This should be a map from
                 vertex indices to lists of pairs of vertex indices and floats
                 (essentially an annotated adjacency list)
-        * `lam`: The strength lambda of the smoothing parameter
+        * `lamda_geodesic`: The strength lambda of the geodesic loss
+        * `lamda_smooth`: The strength lambda of the smoothing loss
+        * `lamda_smooth`: The strength lambda of the curvature loss
         * `directory`: Where to save snapshots of the mesh for each iteration
                        of optimization
-        * `cores`: The number of CPU cores to use when optimizing. Defaults to
-                   `os.cpu_count() - 2`
+        * `cores`: The number of CPU cores to use when optimizing
         '''
 
         self.mesh = mesh
@@ -34,9 +38,13 @@ class DifferentiationHierarchy:
         partials = self.mesh.get_partials()
         self.dif_v = {l: partials[l] for l in range(partials.shape[0])}
 
+        epsilon = mesh.get_epsilon()
+
         self.ts = ts
 
-        self.lam = lam
+        self.lambda_geodesic = lambda_geodesic
+        self.lambda_smooth = lambda_smooth
+        self.lambda_curvature = lambda_curvature
 
         # For caching purposes, it's a good idea to keep one copy of the
         # geodesic computation classes for each city.
@@ -46,8 +54,9 @@ class DifferentiationHierarchy:
              for mesh_index in ts}
         self.linear_regression_forward = linear_regression.Forward()
         self.smooth_forward = smooth.Forward(mesh, self.laplacian_forward)
-        # TODO: Find Ricci curvatures and put them in here
-        self.curvature_forward = curvature.Forward(mesh, [], [],
+        self.curvature_forward = curvature.Forward(mesh, network_vertices,
+                                                   network_edges,
+                                                   ricci_curvatures, epsilon,
                                                    self.laplacian_forward)
         self.laplacian_reverse = laplacian.Reverse(mesh,
                                                    self.laplacian_forward)
@@ -60,8 +69,9 @@ class DifferentiationHierarchy:
             linear_regression.Reverse(self.linear_regression_forward)
         self.smooth_reverse = smooth.Reverse(mesh, self.laplacian_forward,
                                              self.laplacian_reverse)
-        # TODO: Find Ricci curvatures and put them in here
-        self.curvature_reverse = curvature.Reverse(mesh ,[], [],
+        self.curvature_reverse = curvature.Reverse(mesh, network_vertices,
+                                                   network_edges,
+                                                   ricci_curvatures, epsilon,
                                                    self.laplacian_forward,
                                                    self.curvature_forward,
                                                    self.laplacian_reverse)
@@ -231,9 +241,9 @@ class DifferentiationHierarchy:
 
         def loss(parameters):
             self.mesh.set_parameters(parameters)
-            # TODO: Do something with L_curvature
-            lse, L_smooth, _ = self.get_forwards()
-            return lse + self.lam * L_smooth
+            lse, L_smooth, L_curvature = self.get_forwards()
+            return self.lambda_geodesic * lse + self.lambda_smooth * L_smooth \
+                + self.lambda_curvature * L_curvature
         return loss
 
     def get_dif_loss_callback(self):
@@ -244,9 +254,10 @@ class DifferentiationHierarchy:
 
         def dif_loss(parameters):
             self.mesh.set_parameters(parameters)
-            # TODO: Do something with dif_L_curvature
-            dif_lse, dif_L_smooth, _ = self.get_reverses()
-            return dif_lse + self.lam * dif_L_smooth
+            dif_lse, dif_L_smooth, dif_L_curvature = self.get_reverses()
+            return self.lambda_geodesic * dif_lse \
+                + self.lambda_smooth * dif_L_smooth \
+                + self.lambda_curvature * dif_L_curvature
         return dif_loss
 
     def diagnostics(self, _):
@@ -256,15 +267,19 @@ class DifferentiationHierarchy:
         '''
 
         lse, L_smooth, L_curvature = self.get_forwards()
+        loss = self.lambda_geodesic * lse \
+            + self.lambda_smooth * L_smooth \
+            + self.lambda_curvature * L_curvature
         print(f'iteration {self.iterations}:')
         print(f'\tlse: {lse:.6f}')
         print(f'\tL_smooth: {L_smooth:.6f}\n')
         print(f'\tL_curvature: {L_curvature:.6f}\n')
-        print(f'\tLoss: {(lse + self.lam * L_smooth):.6f}')
+        print(f'\tLoss: {(loss):.6f}')
 
         if self.directory is not None:
             with open(os.path.join(self.directory,
                                    str(self.iterations)), 'wb') as f:
+                # TODO: Dump something more efficient instead
                 pickle.dump(self, f)
 
         self.iterations += 1
