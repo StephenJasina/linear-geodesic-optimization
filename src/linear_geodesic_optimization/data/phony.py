@@ -57,7 +57,9 @@ def sphere_random(mesh, count=10, connectivity=5):
     for mi in mesh_indices:
         # Compute a list of pairs of (true distance, mesh index). Sorting this
         # lets us easily get the closest few indices mj to mi
-        distances = [(np.arccos(v[mi] @ v[mj]), mj)
+        distances = [(np.arccos(v[mi] @ v[mj]
+                                / np.linalg.norm(v[mi]) / np.linalg.norm(v[mj])),
+                      mj)
                      for mj in mesh_indices if mi != mj]
         for _, mj in sorted(distances)[:connectivity]:
             connections.add((min(mi, mj), max(mi, mj)))

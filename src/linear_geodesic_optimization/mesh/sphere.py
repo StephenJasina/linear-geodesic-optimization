@@ -11,9 +11,9 @@ class Mesh(mesh.Mesh):
     '''
 
     def __init__(self, frequency):
-        self._partials, self._edges, self._faces, self._c \
+        self.directions, self._edges, self._faces, self._c \
             = self._initial_mesh(frequency)
-        self._rho = np.ones(self._partials.shape[0])
+        self._log_rho = np.zeros(self.directions.shape[0])
         self._updates = 0
 
     def _initial_mesh(self, frequency):
@@ -193,10 +193,11 @@ class Mesh(mesh.Mesh):
         return vertices, edges, faces, c
 
     def get_partials(self):
-        return self._partials
+        return np.multiply(self.directions,
+                           np.reshape(np.exp(self._log_rho), (-1, 1)))
 
     def get_vertices(self):
-        return np.multiply(self._partials, np.reshape(self._rho, (-1, 1)))
+        return self.get_partials()
 
     def get_edges(self):
         return self._edges
@@ -214,29 +215,15 @@ class Mesh(mesh.Mesh):
         return self._c
 
     def get_parameters(self):
-        return np.copy(self._rho)
+        return np.copy(self._log_rho)
 
-    def set_parameters(self, rho):
-        # Start by ensuring none of the rho values are too small (for now,
-        # let's say the minimum value of rho must be at least 1% of the maximum
-        # value of rho).
-        #
-        # TODO: Maybe this should be changed to something like
-        #   rho = np.maximum(rho, 0.)
-        rho_max = np.max(np.abs(rho))
-        rho = np.maximum(rho, rho_max / 100.)
-
-        # Normalize rho. Note that this does not change the shape (just the
-        # scale), so it does not affect the loss functions we care about
-        rho = rho / np.average([linalg.norm(rho[l])
-                                for l in range(rho.shape[0])])
-
+    def set_parameters(self, log_rho):
         # Only "do" the update if necessary. This is good for caching purposes
-        if not np.allclose(self._rho, rho):
-            self._rho = np.copy(rho)
+        if not np.allclose(self._log_rho, log_rho):
+            self._log_rho = np.copy(log_rho)
             self._updates += 1
 
-        return rho
+        return log_rho
 
     def updates(self):
         return self._updates
@@ -253,13 +240,13 @@ class Mesh(mesh.Mesh):
             return max(ru, rv) > cos_eps or (c > cos_eps
                                              and min(ru, rv) > c * uv)
 
-        return [[i for i in range(self._partials.shape[0])
+        return [[i for i in range(self.directions.shape[0])
                  if is_on_fat_edge(vertices[e1], vertices[e2],
-                                   self._partials[i,:], epsilon)]
+                                   self.directions[i,:], epsilon)]
                 for (e1, e2) in edges]
 
     def get_epsilon(self):
-        return max(np.arccos(self._partials[u] @ self._partials[v])
+        return max(np.arccos(self.directions[u] @ self.directions[v])
                    for u, vs in enumerate(self._edges) for v in vs)
 
     def nearest_vertex_index(self, direction):
@@ -268,7 +255,7 @@ class Mesh(mesh.Mesh):
         direction.
         '''
 
-        return np.argmax(self._partials @ direction)
+        return np.argmax(self.directions @ direction)
 
     @staticmethod
     def latitude_longitude_to_direction(latitude, longitude):

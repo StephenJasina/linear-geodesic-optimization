@@ -35,9 +35,6 @@ class DifferentiationHierarchy:
 
         self.mesh = mesh
 
-        partials = self.mesh.get_partials()
-        self.dif_v = {l: partials[l] for l in range(partials.shape[0])}
-
         epsilon = mesh.get_epsilon()
 
         self.ts = ts
@@ -175,7 +172,9 @@ class DifferentiationHierarchy:
         return latencies, phi, dif_phi
 
     def get_reverses(self):
-        V = self.mesh.get_partials().shape[0]
+        partials = self.mesh.get_partials()
+        V = partials.shape[0]
+        dif_v = {l: partials[l,:] for l in range(V)}
         dif_lse = np.zeros(V)
         dif_L_smooth = np.zeros(V)
         dif_L_curvature = np.zeros(V)
@@ -188,7 +187,7 @@ class DifferentiationHierarchy:
             # This just calls _reverses_call once for each city
             with multiprocessing.Pool(self.cores) as pool:
                 arguments = [(mesh_index, self.ts[mesh_index],
-                              self.mesh, self.dif_v,
+                              self.mesh, dif_v,
                               self.geodesic_forwards[mesh_index],
                               self.geodesic_reverses[mesh_index])
                              for mesh_index in self.ts]
@@ -209,7 +208,7 @@ class DifferentiationHierarchy:
                         mesh_index,
                         self.ts[mesh_index],
                         self.mesh,
-                        self.dif_v,
+                        dif_v,
                         self.geodesic_forwards[mesh_index],
                         self.geodesic_reverses[mesh_index]
                     )
@@ -225,10 +224,10 @@ class DifferentiationHierarchy:
             self.linear_regression_reverse.calc(phi, t, dif_phi[l], l)
             dif_lse[l] += self.linear_regression_reverse.dif_lse
 
-            self.smooth_reverse.calc(self.dif_v[l], l)
+            self.smooth_reverse.calc(dif_v[l], l)
             dif_L_smooth[l] += self.smooth_reverse.dif_L_smooth
 
-            self.curvature_reverse.calc(self.dif_v[l], l)
+            self.curvature_reverse.calc(dif_v[l], l)
             dif_L_curvature[l] += self.curvature_reverse.dif_L_curvature
 
         return dif_lse, dif_L_smooth, dif_L_curvature

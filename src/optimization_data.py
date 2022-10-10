@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # Good global graphs are DeutcheTelekom, Highwinds, HostwayInternational,
     # HurricaneElectric, Ntt, and Peer1
     network = nx.read_graphml(os.path.join('..', 'data',
-                                        'HostwayInternational.graphml'))
+                                           'HostwayInternational.graphml'))
 
     latitudes = [network.nodes[v]['Latitude'] for v in network.nodes]
     longitudes = [network.nodes[v]['Longitude'] for v in network.nodes]
@@ -51,14 +51,12 @@ if __name__ == '__main__':
     V = partials.shape[0]
     rho = mesh.get_parameters()
 
-    dif_v = {l: partials[l] for l in range(V)}
-
     # Get some (phony) latency measurements
     ts = phony.sphere_random(mesh)
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, ts, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.,
+        lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
         directory=directory)
 
     f = hierarchy.get_loss_callback()
