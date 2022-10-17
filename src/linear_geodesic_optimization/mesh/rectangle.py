@@ -161,11 +161,12 @@ class Mesh(mesh.Mesh):
         j = round(y * (self._height - 1))
         return i * self._height + j
 
-    # TODO: Split this into two functions
-    def coordinates_to_indices(self, coordinates):
+    def scale_coordinates_to_unit_square(self, coordinates, scale_factor=0.8):
         '''
-        Convert a list of (x, y) pairs into a list of indices such that the
-        coordinates have been approximately scaled and embedded into our mesh.
+        Convert a list of (x, y) pairs into a list of new coordinates that have
+        been scaled to lie centered in the unit square. The `scale_factor`
+        parameter determines what proportion of the unit square is used (0.8
+        means 80% of the width and 80% of the height is used).
         '''
 
         # Need this check to avoid out-of-bounds errors if coordinates is empty
@@ -191,9 +192,8 @@ class Mesh(mesh.Mesh):
         y_divisor = y_max - y_min
         y_divisor = 1. if y_divisor == 0. else y_divisor
 
-        scale_factor = 0.8
-        return [self.nearest_vertex_index(((x - x_min) / x_divisor - 0.5) * scale_factor + 0.5,
-                                          ((y - y_min) / y_divisor - 0.5) * scale_factor + 0.5)
+        return [np.array([((x - x_min) / x_divisor - 0.5) * scale_factor + 0.5,
+                          ((y - y_min) / y_divisor - 0.5) * scale_factor + 0.5])
                 for x, y in coordinates]
 
     # Legacy functions

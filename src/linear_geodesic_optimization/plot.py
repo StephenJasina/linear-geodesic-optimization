@@ -3,6 +3,8 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
+from linear_geodesic_optimization.optimization import linear_regression
+
 def get_line_plot(loss_by_iteration, loss_name):
     return px.line(
         {
@@ -12,26 +14,15 @@ def get_line_plot(loss_by_iteration, loss_name):
         x='iteration', y=loss_name
     )
 
-def get_scatter_fig(hierarchy, before=True):
-    geodesic_forwards = hierarchy.geodesic_forwards
-    linear_regression_forward = hierarchy.linear_regression_forward
-    phis = []
-    ts = []
-    for si in hierarchy.ts:
-        geodesic_forwards[si].calc([si])
-        phi = geodesic_forwards[si].phi
-        for sj, tij in hierarchy.ts[si]:
-            phis.append(phi[sj])
-            ts.append(tij)
-    phis = np.array(phis)
-    ts = np.array(ts)
-    beta_0, beta_1 = linear_regression_forward.get_beta(phis, ts)
+def get_scatter_fig(x, y, before=True):
+    linear_regression_forward = linear_regression.Forward()
+    beta_0, beta_1 = linear_regression_forward.get_beta(y, x)
     return px.scatter(
         {
-            'Predicted Latency': (beta_0 + beta_1 * phis),
-            'Measured Latency': ts,
-            'Series': ['Before' if before else 'After'] * phis.shape[0]
-        }, x='Predicted Latency', y= 'Measured Latency', trendline='ols',
+            'Measured Latency': x,
+            'Predicted Latency': (beta_0 + beta_1 * y),
+            'Series': ['Before' if before else 'After'] * y.shape[0]
+        }, x='Measured Latency', y= 'Predicted Latency', trendline='ols',
         color_discrete_sequence=['blue' if before else 'red'],
         color='Series'
     )
@@ -42,11 +33,11 @@ def combine_scatter_figs(before, after):
         'data': data,
         'layout': {},
     }
-    fig_dict['layout']['title'] = 'Measured Latency vs. Predicted Latency'
+    fig_dict['layout']['title'] = 'Predicted Latency vs. Measured Latency'
     fig_dict['layout']['width'] = 600
     fig_dict['layout']['height'] = 600
-    fig_dict['layout']['xaxis'] = {'title': 'Predicted Latency'}
-    fig_dict['layout']['yaxis'] = {'title': 'Measured Latency'}
+    fig_dict['layout']['xaxis'] = {'title': 'Measured Latency'}
+    fig_dict['layout']['yaxis'] = {'title': 'Predicted Latency'}
     return go.Figure(fig_dict)
 
 def get_network_map(coordinates, network_edges):
@@ -66,7 +57,7 @@ def get_network_map(coordinates, network_edges):
         edge_y.append(None)
     edge_trace = go.Scatter(
         x=edge_x, y=edge_y,
-        line=dict(width=0.5, color='#888'),
+        line=dict(width=2., color='#000'),
         hoverinfo='none',
         mode='lines'
     )
@@ -81,7 +72,8 @@ def get_heat_map(x, y, z, network_vertices=None, network_edges=None):
                     ))
 
     if network_vertices is not None and network_edges is not None:
-        map = go.Figure(map.data + get_network_map(network_vertices, network_edges).data)
+        map = go.Figure(map.data + get_network_map(network_vertices,
+                                                   network_edges).data)
 
     return map
 

@@ -175,7 +175,7 @@ class DifferentiationHierarchy:
         partials = self.mesh.get_partials()
         V = partials.shape[0]
         dif_v = {l: partials[l,:] for l in range(V)}
-        dif_lse = np.zeros(V)
+        dif_L_geodesic = np.zeros(V)
         dif_L_smooth = np.zeros(V)
         dif_L_curvature = np.zeros(V)
 
@@ -222,7 +222,7 @@ class DifferentiationHierarchy:
 
         for l in range(V):
             self.linear_regression_reverse.calc(phi, t, dif_phi[l], l)
-            dif_lse[l] += self.linear_regression_reverse.dif_lse
+            dif_L_geodesic[l] += self.linear_regression_reverse.dif_lse
 
             self.smooth_reverse.calc(dif_v[l], l)
             dif_L_smooth[l] += self.smooth_reverse.dif_L_smooth
@@ -230,7 +230,7 @@ class DifferentiationHierarchy:
             self.curvature_reverse.calc(dif_v[l], l)
             dif_L_curvature[l] += self.curvature_reverse.dif_L_curvature
 
-        return dif_lse, dif_L_smooth, dif_L_curvature
+        return dif_L_geodesic, dif_L_smooth, dif_L_curvature
 
     def get_loss_callback(self):
         '''
@@ -240,8 +240,9 @@ class DifferentiationHierarchy:
 
         def loss(parameters):
             self.mesh.set_parameters(parameters)
-            lse, L_smooth, L_curvature = self.get_forwards()
-            return self.lambda_geodesic * lse + self.lambda_smooth * L_smooth \
+            L_geodesic, L_smooth, L_curvature = self.get_forwards()
+            return self.lambda_geodesic * L_geodesic \
+                + self.lambda_smooth * L_smooth \
                 + self.lambda_curvature * L_curvature
         return loss
 
@@ -253,8 +254,8 @@ class DifferentiationHierarchy:
 
         def dif_loss(parameters):
             self.mesh.set_parameters(parameters)
-            dif_lse, dif_L_smooth, dif_L_curvature = self.get_reverses()
-            return self.lambda_geodesic * dif_lse \
+            dif_L_geodesic, dif_L_smooth, dif_L_curvature = self.get_reverses()
+            return self.lambda_geodesic * dif_L_geodesic \
                 + self.lambda_smooth * dif_L_smooth \
                 + self.lambda_curvature * dif_L_curvature
         return dif_loss
@@ -265,20 +266,41 @@ class DifferentiationHierarchy:
         the loss functions.
         '''
 
-        lse, L_smooth, L_curvature = self.get_forwards()
-        loss = self.lambda_geodesic * lse \
+        L_geodesic, L_smooth, L_curvature = self.get_forwards()
+        loss = self.lambda_geodesic * L_geodesic \
             + self.lambda_smooth * L_smooth \
             + self.lambda_curvature * L_curvature
         print(f'iteration {self.iterations}:')
-        print(f'\tlse: {lse:.6f}')
-        print(f'\tL_smooth: {L_smooth:.6f}\n')
-        print(f'\tL_curvature: {L_curvature:.6f}\n')
+        print(f'\tL_geodesic: {self.lambda_geodesic * L_geodesic:.6f}')
+        print(f'\tL_smooth: {self.lambda_smooth * L_smooth:.6f}\n')
+        print(f'\tL_curvature: {self.lambda_curvature * L_curvature:.6f}\n')
         print(f'\tLoss: {(loss):.6f}')
 
         if self.directory is not None:
             with open(os.path.join(self.directory,
                                    str(self.iterations)), 'wb') as f:
-                # TODO: Dump something more efficient instead
-                pickle.dump(self, f)
+
+                phis = []
+                ts = []
+                for si in self.ts:
+                    self.geodesic_forwards[si].calc([si])
+                    phi = self.geodesic_forwards[si].phi
+                    for sj, tij in self.ts[si]:
+                        phis.append(phi[sj])
+                        ts.append(tij)
+                phis = np.array(phis)
+                ts = np.array(ts)
+
+                pickle.dump({
+                    'mesh': self.mesh,
+                    'L_geodesic': L_geodesic,
+                    'L_smooth': L_smooth,
+                    'L_curvature': L_curvature,
+                    'lambda_geodesic': self.lambda_geodesic,
+                    'lambda_smooth': self.lambda_smooth,
+                    'lambda_curvature': self.lambda_curvature,
+                    'true_latencies': ts,
+                    'estimated_latencies': phis,
+                }, f)
 
         self.iterations += 1

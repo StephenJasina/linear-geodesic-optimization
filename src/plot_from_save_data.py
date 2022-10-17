@@ -20,7 +20,7 @@ if __name__ == '__main__':
         print('Error: supplied directory must contain file named "0"')
         sys.exit(0)
 
-    lses = []
+    L_geodesics = []
     L_smooths = []
     L_curvatures = []
     Ls = []
@@ -33,50 +33,57 @@ if __name__ == '__main__':
     for i in itertools.count():
         path = os.path.join(directory, str(i))
         with open(path, 'rb') as f:
-            hierarchy = pickle.load(f)
-            hierarchy.cores = 1
-            break
+            data = pickle.load(f)
 
-            animation_3D.add_frame(hierarchy.mesh)
+            mesh = data['mesh']
+            animation_3D.add_frame(mesh)
 
-            lse, L_smooth, L_curvature = hierarchy.get_forwards()
-            lses.append(lse)
+            L_geodesic = data['L_geodesic']
+            L_smooth = data['L_smooth']
+            L_curvature = data['L_curvature']
+            L_geodesics.append(L_geodesic)
             L_smooths.append(L_smooth)
             L_curvatures.append(L_curvature)
-            Ls.append(hierarchy.lambda_geodesic * lse
-                      + hierarchy.lambda_smooth * L_smooth
-                      + hierarchy.lambda_curvature * L_curvature)
 
+            lambda_geodesic = data['lambda_geodesic']
+            lambda_smooth = data['lambda_smooth']
+            lambda_curvature = data['lambda_curvature']
+            Ls.append(lambda_geodesic * L_geodesic + lambda_smooth * L_smooth
+                      + lambda_curvature * L_curvature)
+
+            true_latencies = data['true_latencies']
+            estimated_latencies = data['estimated_latencies']
             if i == 0:
-                scatter_fig_before = get_scatter_fig(hierarchy, True)
+                scatter_fig_before = get_scatter_fig(true_latencies,
+                                                     estimated_latencies, True)
 
             path_next = os.path.join(directory, str(i + 1))
             if not os.path.exists(path_next):
-                scatter_fig_after = get_scatter_fig(hierarchy, False)
+                scatter_fig_after = get_scatter_fig(true_latencies,
+                                                    estimated_latencies, False)
                 break
 
     # TODO: Make these plots a lot nicer (maybe aggregate them into one
     # visualization?)
-    # get_line_plot(lses, 'Least Squares Loss').show()
-    # get_line_plot(L_smooths, 'Smoothness Loss').show()
-    # get_line_plot(L_curvatures, 'Curvature Loss').show()
-    # get_line_plot(Ls, 'Total Loss').show()
+    get_line_plot(L_geodesics, 'Geodesic Loss').show()
+    get_line_plot(L_smooths, 'Smoothness Loss').show()
+    get_line_plot(L_curvatures, 'Curvature Loss').show()
+    get_line_plot(Ls, 'Total Loss').show()
 
-    mesh = hierarchy.mesh
     vertices = mesh.get_vertices()
     coordinates = None
     label_to_index = {}
     with open(os.path.join('..', 'data', 'toy', 'position.json')) as f:
         position_json = json.load(f)
 
-        label_to_index = {label: index for index, label in enumerate(position_json)}
+        label_to_index = {label: index
+                          for index, label in enumerate(position_json)}
 
         coordinates = [None for _ in range(len(position_json))]
         for vertex, position in position_json.items():
             coordinates[label_to_index[vertex]] = position
 
-    network_vertices = [vertices[i,:2]
-                        for i in mesh.coordinates_to_indices(coordinates)]
+    network_vertices = mesh.scale_coordinates_to_unit_square(coordinates)
 
     network_edges = []
     ts = {i: [] for i in range(len(network_vertices))}
@@ -96,7 +103,6 @@ if __name__ == '__main__':
     y = list(sorted(set(vertices[:,1])))
     z = vertices[:,2].reshape(len(x), len(y))
     get_heat_map(x, y, z, network_vertices, network_edges).show()
-    # get_network_map(coordinates, network_edges).show()
 
-    # combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()
-    # animation_3D.get_fig(duration=50).show()
+    combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()
+    animation_3D.get_fig(duration=50).show()

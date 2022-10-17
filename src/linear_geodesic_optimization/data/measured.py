@@ -82,7 +82,8 @@ def rectangle_north_america(mesh):
 
             city_ids.append(city_id)
             coordinates.append((latitude, longitude))
-    mesh_indices = mesh.coordinates_to_indices(coordinates)
+    mesh_indices = [mesh.nearest_vertex_index(x, y)
+                    for x, y in mesh.scale_coordinates_to_unit_square(coordinates)]
 
     # Map from city codes (arbitrary integers) to the nearest corresponding
     # vertices in the mesh

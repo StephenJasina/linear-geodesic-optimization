@@ -10,8 +10,8 @@ from linear_geodesic_optimization.optimization import optimization
 
 if __name__ == '__main__':
     # Construct a mesh
-    width = 20
-    height = 20
+    width = 5
+    height = 5
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
@@ -33,8 +33,7 @@ if __name__ == '__main__':
         for vertex, position in position_json.items():
             coordinates[label_to_index[vertex]] = position
 
-    network_vertices = [vertices[i,:]
-                        for i in mesh.coordinates_to_indices(coordinates)]
+    network_vertices = mesh.scale_coordinates_to_unit_square(coordinates)
 
     network_edges = []
     ts = {i: [] for i in range(len(network_vertices))}
@@ -61,7 +60,7 @@ if __name__ == '__main__':
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, ts, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
+        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
         directory=directory)
 
     f = hierarchy.get_loss_callback()
@@ -69,4 +68,5 @@ if __name__ == '__main__':
 
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-                            callback=hierarchy.diagnostics)
+                            callback=hierarchy.diagnostics,
+                            options=dict(maxiter=100))
