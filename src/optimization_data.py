@@ -36,8 +36,15 @@ if __name__ == '__main__':
     latencies = np.zeros((len(network.nodes), len(network.nodes)))
     for u, u_paths in nx.shortest_path(network).items():
         for v, path in u_paths.items():
-            latencies[int(u), int(v)] = sum(network.edges[(path[i], path[i + 1])]['latency']
+            latencies[int(u),int(v)] = sum(network.edges[(path[i], path[i + 1])]['latency']
                                             for i in range(len(path) - 1))
+
+    # Put latencies into the right format
+    # TODO: Make this format less redundant (make it parallel with
+    # `network_edges``)
+    ts = {u: [(v, latencies[u,v])
+              for v in range(len(network.nodes))]
+          for u in range(len(network.nodes))}
 
     # Setup snapshots
     directory = os.path.join('..', 'out',
@@ -45,14 +52,9 @@ if __name__ == '__main__':
     os.makedirs(directory)
 
     # Construct the mesh
-    frequency = 2
+    frequency = 4
     mesh = SphereMesh(frequency)
-    partials = mesh.get_partials()
-    V = partials.shape[0]
-    rho = mesh.get_parameters()
-
-    # Get some (phony) latency measurements
-    ts = phony.sphere_random(mesh)
+    log_rho = mesh.get_parameters()
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, ts, network_vertices, network_edges, ricci_curvatures,
@@ -63,5 +65,5 @@ if __name__ == '__main__':
     g = hierarchy.get_dif_loss_callback()
 
     hierarchy.diagnostics(None)
-    scipy.optimize.minimize(f, rho, method='L-BFGS-B', jac=g,
+    scipy.optimize.minimize(f, log_rho, method='L-BFGS-B', jac=g,
                             callback=hierarchy.diagnostics)

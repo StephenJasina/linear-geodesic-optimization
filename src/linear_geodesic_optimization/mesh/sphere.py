@@ -230,6 +230,10 @@ class Mesh(mesh.Mesh):
 
     def get_fat_edges(self, vertices, edges, epsilon):
         def is_on_fat_edge(u, v, r, epsilon):
+            u = u / linalg.norm(u)
+            v = v / linalg.norm(v)
+            r = r / linalg.norm(r)
+
             ru = r @ u
             rv = r @ v
             uv = u @ v
@@ -246,7 +250,7 @@ class Mesh(mesh.Mesh):
                 for (e1, e2) in edges]
 
     def get_epsilon(self):
-        return max(np.arccos(self.directions[u] @ self.directions[v])
+        return max(np.arccos(self.directions[u,:] @ self.directions[v,:])
                    for u, vs in enumerate(self._edges) for v in vs)
 
     def nearest_vertex_index(self, direction):
