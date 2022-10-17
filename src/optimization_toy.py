@@ -10,7 +10,9 @@ from linear_geodesic_optimization.optimization import optimization
 
 if __name__ == '__main__':
     # Construct a mesh
-    mesh = RectangleMesh(10, 10)
+    width = 20
+    height = 20
+    mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
     z = mesh.get_parameters()
@@ -18,7 +20,7 @@ if __name__ == '__main__':
     # TODO: Do something smarter here
     # Make the mesh a little noisy for symmetry breaking
     rng = np.random.default_rng(0)
-    z = mesh.set_parameters(rng.random(100) / 100)
+    z = mesh.set_parameters(rng.random(width * height) / 100)
 
     coordinates = None
     label_to_index = {}

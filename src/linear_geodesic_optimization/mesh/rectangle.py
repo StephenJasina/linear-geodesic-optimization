@@ -191,8 +191,9 @@ class Mesh(mesh.Mesh):
         y_divisor = y_max - y_min
         y_divisor = 1. if y_divisor == 0. else y_divisor
 
-        return [self.nearest_vertex_index((x - x_min) / (2 * x_divisor) + 0.25,
-                                          (y - y_min) / (2 * y_divisor) + 0.25)
+        scale_factor = 0.8
+        return [self.nearest_vertex_index(((x - x_min) / x_divisor - 0.5) * scale_factor + 0.5,
+                                          ((y - y_min) / y_divisor - 0.5) * scale_factor + 0.5)
                 for x, y in coordinates]
 
     # Legacy functions

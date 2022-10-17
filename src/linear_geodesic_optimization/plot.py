@@ -49,6 +49,42 @@ def combine_scatter_figs(before, after):
     fig_dict['layout']['yaxis'] = {'title': 'Measured Latency'}
     return go.Figure(fig_dict)
 
+def get_network_map(coordinates, network_edges):
+    node_x = [x for x, _ in coordinates]
+    node_y = [y for _, y in coordinates]
+    node_trace = go.Scatter(x=node_x, y=node_y, mode='markers')
+
+    edge_x = []
+    edge_y = []
+    for edge in network_edges:
+        edge_x.append(coordinates[edge[0]][0])
+        edge_x.append(coordinates[edge[1]][0])
+        edge_x.append(None)
+
+        edge_y.append(coordinates[edge[0]][1])
+        edge_y.append(coordinates[edge[1]][1])
+        edge_y.append(None)
+    edge_trace = go.Scatter(
+        x=edge_x, y=edge_y,
+        line=dict(width=0.5, color='#888'),
+        hoverinfo='none',
+        mode='lines'
+    )
+
+    return go.Figure(data=[edge_trace, node_trace])
+
+def get_heat_map(x, y, z, network_vertices=None, network_edges=None):
+    map = go.Figure(data=go.Heatmap(x=x, y=y, z=z),
+                    layout=dict(
+                        xaxis=dict(range=[0,1]),
+                        yaxis=dict(range=[0,1])
+                    ))
+
+    if network_vertices is not None and network_edges is not None:
+        map = go.Figure(map.data + get_network_map(network_vertices, network_edges).data)
+
+    return map
+
 class Animation3D:
     '''
     Animator for meshes. Frames should be added one-by-one via `add_frame`, and
