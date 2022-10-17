@@ -65,11 +65,7 @@ def get_network_map(coordinates, network_edges):
     return go.Figure(data=[edge_trace, node_trace])
 
 def get_heat_map(x, y, z, network_vertices=None, network_edges=None):
-    map = go.Figure(data=go.Heatmap(x=x, y=y, z=z),
-                    layout=dict(
-                        xaxis=dict(range=[0,1]),
-                        yaxis=dict(range=[0,1])
-                    ))
+    map = go.Figure(data=go.Heatmap(x=x, y=y, z=z))
 
     if network_vertices is not None and network_edges is not None:
         map = go.Figure(map.data + get_network_map(network_vertices,

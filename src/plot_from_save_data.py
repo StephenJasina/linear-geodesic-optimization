@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
-    z = vertices[:,2].reshape(len(x), len(y))
+    z = vertices[:,2].reshape(len(x), len(y)).T
     get_heat_map(x, y, z, network_vertices, network_edges).show()
 
     combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()

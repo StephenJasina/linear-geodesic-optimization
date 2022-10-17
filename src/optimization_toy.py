@@ -10,8 +10,8 @@ from linear_geodesic_optimization.optimization import optimization
 
 if __name__ == '__main__':
     # Construct a mesh
-    width = 5
-    height = 5
+    width = 10
+    height = 10
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
