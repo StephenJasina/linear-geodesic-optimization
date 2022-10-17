@@ -48,8 +48,8 @@ mesh.set_parameters(z)
 
 laplacian_forward = laplacian.Forward(mesh)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
-curvature_forward = curvature.Forward(mesh, [], [], laplacian_forward)
-curvature_reverse = curvature.Reverse(mesh, [], [], laplacian_forward, curvature_forward, laplacian_reverse)
+curvature_forward = curvature.Forward(mesh, [], [], [], 0, laplacian_forward)
+curvature_reverse = curvature.Reverse(mesh, [], [], [], 0, laplacian_forward, curvature_forward, laplacian_reverse)
 
 curvature_forward.calc()
 kappa_0 = curvature_forward.kappa
