@@ -123,6 +123,33 @@ class Mesh(mesh.Mesh):
     def updates(self):
         return self._updates
 
+    def get_fat_edges(self, vertices, edges, epsilon):
+        def is_on_fat_edge(u, v, r, epsilon):
+            # Only care about the first two coordinates
+            u = u[:2]
+            v = v[:2]
+            r = r[:2]
+
+            ru = r - u
+            rv = r - v
+            uv = u - v
+
+            if ru @ uv <= 0 and rv @ uv >= 0:
+                if uv @ uv == 0:
+                    return ru @ ru < epsilon**2
+                return rv @ rv - (uv @ rv)**2 / (uv @ uv) < epsilon**2
+            else:
+                return ru @ ru < epsilon**2 or rv @ rv < epsilon**2
+
+        return [[i for i in range(self._grid.shape[0])
+                 if is_on_fat_edge(vertices[e1], vertices[e2],
+                                   self._grid[i,:], epsilon)]
+                for (e1, e2) in edges]
+
+    def get_epsilon(self):
+        return max(np.linalg.norm(self._grid[u,:] - self._grid[v,:])
+                   for u, vs in enumerate(self._edges) for v in vs)
+
     def nearest_vertex_index(self, x, y):
         '''
         Find the index of the vertex whose (x, y) coordinate pair is closest to
@@ -134,6 +161,7 @@ class Mesh(mesh.Mesh):
         j = round(y * (self._height - 1))
         return i * self._height + j
 
+    # TODO: Split this into two functions
     def coordinates_to_indices(self, coordinates):
         '''
         Convert a list of (x, y) pairs into a list of indices such that the
@@ -163,13 +191,14 @@ class Mesh(mesh.Mesh):
         y_divisor = y_max - y_min
         y_divisor = 1. if y_divisor == 0. else y_divisor
 
-        return [self.nearest_vertex_index((x - x_min) / x_divisor,
-                                          (y - y_min) / y_divisor)
+        return [self.nearest_vertex_index((x - x_min) / (2 * x_divisor) + 0.25,
+                                          (y - y_min) / (2 * y_divisor) + 0.25)
                 for x, y in coordinates]
 
     # Legacy functions
     def triangles_of_vertex(self):
-        return {i: [face for face in self._faces if i in face] for i in range(self._grid.shape[0])}
+        return {i: [face for face in self._faces if i in face]
+                for i in range(self._grid.shape[0])}
 
     def coord_to_ndx(self, i, j):
         return i * self._height + j
