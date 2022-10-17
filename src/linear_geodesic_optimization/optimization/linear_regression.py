@@ -30,7 +30,7 @@ class Forward:
         self.d_tilde = phi - np.sum(phi) / E
         self.d = self.d_tilde / (self.d_tilde @ self.d_tilde / E)**0.5
         self.residuals = t - np.sum(t) / E - (self.d @ t / E) * self.d
-        self.lse = self.residuals @ self.residuals
+        self.lse = self.residuals @ self.residuals / (t.shape[0] * t @ t)
         self.beta = None
 
     def get_beta(self, phi, t):
@@ -116,4 +116,4 @@ class Reverse:
                         * self._d) / linalg.norm(self._d_tilde)
         self.dif_residuals = -(self._d @ self._t * self.dif_d
                                + self.dif_d @ self._t * self._d) / E
-        self.dif_lse = 2 * self._residuals @ self.dif_residuals
+        self.dif_lse = 2 * self._residuals @ self.dif_residuals / (t.shape[0] * t @ t)

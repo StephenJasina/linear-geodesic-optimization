@@ -35,19 +35,18 @@ class Forward:
 
     def _calc_kappa(self):
         kappa = np.full(self._V, 2 * np.pi)
+        # On the boundary, use Geodesic curvature instead of Gaussian curvature
+        kappa[list(self._mesh.get_boundary_vertices())] = np.pi
         for (i, j), cot_ij in self.cot.items():
-            kappa[self._c[i, j]] -= np.arctan(1 / cot_ij) % np.pi
+            # TODO: Make this more numerically stable
+            kappa[self._c[i, j]] -= np.arctan(1 / cot_ij) % np.pi if cot_ij != 0 else np.pi / 2
         return kappa
 
     def _calc_L_curvature(self):
-        L_curvature = sum((self.kappa[i] - ricci_curvature)**2
-                          for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
-                                                               self._fat_edges)
-                          for i in fat_edge)
         return sum((self.kappa[i] - ricci_curvature)**2
                    for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
                                                         self._fat_edges)
-                   for i in fat_edge)
+                   for i in fat_edge) / len(self._ricci_curvatures)
 
     def calc(self):
         self._laplacian_forward.calc()
@@ -120,7 +119,7 @@ class Reverse:
         return sum(2 * (self._kappa[i] - ricci_curvature) * self.dif_kappa[i]
                    for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
                                                         self._fat_edges)
-                   for i in fat_edge)
+                   for i in fat_edge) / len(self._ricci_curvatures)
 
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()
