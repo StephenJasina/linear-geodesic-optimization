@@ -49,9 +49,8 @@ class Mesh:
 
     def get_boundary_edges(self):
         '''
-        Return a set of the indices of the edges on the boundary of the mesh.
-        By convention, these edges will be oriented in a "counterclockwise"
-        fashion.
+        Return a set of the edges on the boundary of the mesh. By convention,
+        these edges will be oriented in a "counterclockwise" fashion.
         '''
 
         raise NotImplementedError
@@ -93,8 +92,9 @@ class Mesh:
     def get_fat_edges(self, vertices, edges, epsilon):
         '''
         For a list of edges in a graph embedded in our mesh (represented as
-        pairs of mesh vertex indices) and a width epsilon > 0, return a list of
-        lists of vertices in our mesh.
+        pairs of indices into `vertices`) and a width epsilon > 0, return a
+        list of lists of vertices in our mesh. Each list of vertices
+        corresponds to a fattened edge.
         '''
 
         raise NotImplementedError

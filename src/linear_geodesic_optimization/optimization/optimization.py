@@ -15,16 +15,24 @@ class DifferentiationHierarchy:
     linear geodesic optimization loss functions.
     '''
 
-    def __init__(self, mesh, ts, network_vertices, network_edges,
+    def __init__(self, mesh, latencies, network_vertices, network_edges,
                  ricci_curvatures,
                  lambda_geodesic=1., lambda_smooth=0.01, lambda_curvature=1.,
                  directory=None, cores=None):
         '''
         Parameters:
         * `mesh`: The mesh to optimize over
-        * `ts`: The measured (real world) latencies. This should be a map from
-                vertex indices to lists of pairs of vertex indices and floats
-                (essentially an annotated adjacency list)
+        * `latencies`: The measured (real world) latencies. This should be a
+                       map from vertex indices to lists of pairs of vertex
+                       indices and floats (essentially an annotated adjacency
+                       list)
+        * `network_vertices`: A list of vertices in coordinate form.
+                              Alternatively, a numpy array of the vertices. In
+                              particular, these vertices should be embedded
+                              into the mesh
+        * `network_edges`: A list of edges in the network, where each edge is
+                           represented as a pair of indices into
+                           `network_vertices`
         * `lamda_geodesic`: The strength lambda of the geodesic loss
         * `lamda_smooth`: The strength lambda of the smoothing loss
         * `lamda_smooth`: The strength lambda of the curvature loss
@@ -37,7 +45,7 @@ class DifferentiationHierarchy:
 
         epsilon = mesh.get_epsilon()
 
-        self.ts = ts
+        self.latencies = latencies
 
         self.lambda_geodesic = lambda_geodesic
         self.lambda_smooth = lambda_smooth
@@ -48,7 +56,7 @@ class DifferentiationHierarchy:
         self.laplacian_forward = laplacian.Forward(mesh)
         self.geodesic_forwards = \
             {mesh_index: geodesic.Forward(mesh, self.laplacian_forward)
-             for mesh_index in ts}
+             for mesh_index in latencies}
         self.linear_regression_forward = linear_regression.Forward()
         self.smooth_forward = smooth.Forward(mesh, self.laplacian_forward)
         self.curvature_forward = curvature.Forward(mesh, network_vertices,
@@ -61,7 +69,7 @@ class DifferentiationHierarchy:
             {mesh_index: geodesic.Reverse(mesh,
                                           self.geodesic_forwards[mesh_index],
                                           self.laplacian_reverse)
-             for mesh_index in ts}
+             for mesh_index in latencies}
         self.linear_regression_reverse = \
             linear_regression.Reverse(self.linear_regression_forward)
         self.smooth_reverse = smooth.Reverse(mesh, self.laplacian_forward,
@@ -108,9 +116,9 @@ class DifferentiationHierarchy:
         if self.cores > 1:
             # This just calls _forwards_call once for each city
             with multiprocessing.Pool(self.cores) as pool:
-                arguments = [(mesh_index, self.ts[mesh_index],
+                arguments = [(mesh_index, self.latencies[mesh_index],
                               self.geodesic_forwards[mesh_index])
-                             for mesh_index in self.ts]
+                             for mesh_index in self.latencies]
                 ts, phis = zip(
                     *pool.starmap(DifferentiationHierarchy._forwards_call,
                                   arguments))
@@ -119,10 +127,10 @@ class DifferentiationHierarchy:
                 for phi_part in phis:
                     phi.extend(phi_part)
         else:
-            for mesh_index in self.ts:
+            for mesh_index in self.latencies:
                 t_part, phi_part = DifferentiationHierarchy._forwards_call(
                     mesh_index,
-                    self.ts[mesh_index],
+                    self.latencies[mesh_index],
                     self.geodesic_forwards[mesh_index]
                 )
                 t.extend(t_part)
@@ -186,11 +194,11 @@ class DifferentiationHierarchy:
         if self.cores > 1:
             # This just calls _reverses_call once for each city
             with multiprocessing.Pool(self.cores) as pool:
-                arguments = [(mesh_index, self.ts[mesh_index],
+                arguments = [(mesh_index, self.latencies[mesh_index],
                               self.mesh, dif_v,
                               self.geodesic_forwards[mesh_index],
                               self.geodesic_reverses[mesh_index])
-                             for mesh_index in self.ts]
+                             for mesh_index in self.latencies]
                 ts, phis, dif_phis = zip(
                     *pool.starmap(DifferentiationHierarchy._reverses_call,
                                   arguments))
@@ -202,11 +210,11 @@ class DifferentiationHierarchy:
                     for l, dif_phi_subpart in enumerate(dif_phi_part):
                         dif_phi[l].extend(dif_phi_subpart)
         else:
-            for mesh_index in self.ts:
+            for mesh_index in self.latencies:
                 t_part, phi_part, dif_phi_part = \
                     DifferentiationHierarchy._reverses_call(
                         mesh_index,
-                        self.ts[mesh_index],
+                        self.latencies[mesh_index],
                         self.mesh,
                         dif_v,
                         self.geodesic_forwards[mesh_index],
@@ -282,10 +290,10 @@ class DifferentiationHierarchy:
 
                 phis = []
                 ts = []
-                for si in self.ts:
+                for si in self.latencies:
                     self.geodesic_forwards[si].calc([si])
                     phi = self.geodesic_forwards[si].phi
-                    for sj, tij in self.ts[si]:
+                    for sj, tij in self.latencies[si]:
                         phis.append(phi[sj])
                         ts.append(tij)
                 phis = np.array(phis)
