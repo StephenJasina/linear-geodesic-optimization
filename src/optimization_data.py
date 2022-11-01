@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     # Good global graphs are DeutcheTelekom, Highwinds, HostwayInternational,
     # HurricaneElectric, Ntt, and Peer1
-    network = nx.read_graphml(os.path.join('..', 'data',
+    network = nx.read_graphml(os.path.join('..', 'data', 'graphml',
                                            'HostwayInternational.graphml'))
 
     latitudes = [network.nodes[v]['Latitude'] for v in network.nodes]
