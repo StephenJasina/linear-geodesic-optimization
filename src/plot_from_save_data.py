@@ -77,7 +77,7 @@ if __name__ == '__main__':
     vertices = mesh.get_vertices()
     coordinates = None
     label_to_index = {}
-    with open(os.path.join('..', 'data', 'toy', 'position.json')) as f:
+    with open(os.path.join('..', 'data', 'symmetric_toy', 'position.json')) as f:
         position_json = json.load(f)
 
         label_to_index = {label: index
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 
     network_edges = []
     ts = {i: [] for i in range(len(network_vertices))}
-    with open(os.path.join('..', 'data', 'toy', 'latency.json')) as f:
+    with open(os.path.join('..', 'data', 'symmetric_toy', 'latency.json')) as f:
         latency_json = json.load(f)
 
         for edge, latency in latency_json.items():

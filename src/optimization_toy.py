@@ -9,6 +9,8 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
 if __name__ == '__main__':
+    toy_directory = os.path.join('..', 'data', 'symmetric_toy')
+
     # Construct a mesh
     width = 10
     height = 10
@@ -24,7 +26,7 @@ if __name__ == '__main__':
 
     coordinates = None
     label_to_index = {}
-    with open(os.path.join('..', 'data', 'toy', 'position.json')) as f:
+    with open(os.path.join(toy_directory, 'position.json')) as f:
         position_json = json.load(f)
 
         label_to_index = {label: index for index, label in enumerate(position_json)}
@@ -37,7 +39,7 @@ if __name__ == '__main__':
 
     network_edges = []
     ts = {i: [] for i in range(len(network_vertices))}
-    with open(os.path.join('..', 'data', 'toy', 'latency.json')) as f:
+    with open(os.path.join(toy_directory, 'latency.json')) as f:
         latency_json = json.load(f)
 
         for edge, latency in latency_json.items():
@@ -50,7 +52,7 @@ if __name__ == '__main__':
             ts[v].append((u, latency))
 
     ricci_curvatures = []
-    with open(os.path.join('..', 'data', 'toy', 'ricci_curvature.json')) as f:
+    with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
         ricci_curvatures = list(json.load(f).values())
 
     # Setup snapshots
@@ -60,7 +62,7 @@ if __name__ == '__main__':
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, ts, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
+        lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
         directory=directory)
 
     f = hierarchy.get_loss_callback()
