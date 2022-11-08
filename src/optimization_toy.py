@@ -9,20 +9,14 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
 if __name__ == '__main__':
-    toy_directory = os.path.join('..', 'data', 'symmetric_toy')
+    toy_directory = os.path.join('..', 'data', 'toy')
 
     # Construct a mesh
-    width = 10
-    height = 10
+    width = 30
+    height = 30
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
-    z = mesh.get_parameters()
-
-    # TODO: Do something smarter here
-    # Make the mesh a little noisy for symmetry breaking
-    rng = np.random.default_rng(0)
-    z = mesh.set_parameters(rng.random(width * height) / 100)
 
     coordinates = None
     label_to_index = {}
@@ -60,10 +54,22 @@ if __name__ == '__main__':
                              datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
     os.makedirs(directory)
 
+    # Initialize mesh
+    fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon())
+    positive_sums = np.zeros(width * height)
+    positive_counts = np.zeros(width * height)
+    for fat_edge, ricci_curvature in zip(fat_edges, ricci_curvatures):
+        for vertex in fat_edge:
+            positive_sums[vertex] += ricci_curvature
+            positive_counts[vertex] += 1
+    z = np.zeros(width * height)
+    np.divide(positive_sums, positive_counts, out=z, where=(positive_counts != 0))
+    z = mesh.set_parameters(z)
+
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, ts, network_vertices, network_edges, ricci_curvatures,
         lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
-        directory=directory)
+        directory=directory, cores=30)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()
