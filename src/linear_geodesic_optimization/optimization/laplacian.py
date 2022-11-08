@@ -35,9 +35,6 @@ class Forward:
         # one above
         self.LC_dirichlet = None
 
-        # A sparse matrix L
-        self.L = None
-
     def _calc_N(self):
         v = self._v
         e = self._e
@@ -112,7 +109,6 @@ class Forward:
                 self.LC_dirichlet = self._calc_LC(False)
             else:
                 self.LC_dirichlet = None
-            self.L = self._calc_L()
 
 class Reverse:
     '''
@@ -142,7 +138,6 @@ class Reverse:
         self._cot = None
         self._LC_neumann = None
         self._LC_dirichlet = None
-        self._L = None
 
         # Derivatives are stored as maps sending l to the partial with respect
         # to rho_l. The types of the outputs of the maps match the types of
@@ -249,9 +244,6 @@ class Reverse:
         return sparse.coo_array((data, (row, col)),
                                  shape=(self._V, self._V)).tocsc()
 
-    def _calc_dif_L(self):
-        return self._D_inv @ (self.dif_LC_neumann - self.dif_D @ self._L)
-
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()
         self._N = self._laplacian_forward.N
@@ -261,7 +253,6 @@ class Reverse:
         self._cot = self._laplacian_forward.cot
         self._LC_neumann = self._laplacian_forward.LC_neumann
         self._LC_dirichlet = self._laplacian_forward.LC_dirichlet
-        self._L = self._laplacian_forward.L
 
         if self._updates != self._mesh.updates() or self._l != l:
             self._updates = self._mesh.updates()
@@ -278,4 +269,3 @@ class Reverse:
                 self.dif_LC_dirichlet = self._calc_dif_LC(False)
             else:
                 self.dif_LC_dirichlet = None
-            self.dif_L = self._calc_dif_L()
