@@ -1,0 +1,58 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsfonts, amsmath, amssymb, amsthm}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{hyperref}
+
+\allowdisplaybreaks
+\delimitershortfall-1pt
+
+\newcommand*\delimeter[3]{
+	\ensuremath{\mathopen{}\left#2 #1\right#3\mathclose{}{\vphantom{\left#2 #1\right#3}}}
+}
+
+\newcommand*\pof[1]{\delimeter{#1}{(}{)}}
+\newcommand*\sof[1]{\delimeter{#1}{[}{]}}
+\newcommand*\cof[1]{\delimeter{#1}{\{}{\}}}
+\newcommand*\aof[1]{\delimeter{#1}{\langle}{\rangle}}
+
+\newcommand*\abs[1]{\delimeter{#1}{|}{|}}
+\newcommand*\norm[1]{\delimeter{#1}{\|}{\|}}
+\newcommand*\floor[1]{\delimeter{#1}{\lfloor}{\rfloor}}
+\newcommand*\ceil[1]{\delimeter{#1}{\lceil}{\rceil}}
+
+\newcommand*\ooint[1]{\delimeter{#1}{(}{)}}
+\newcommand*\ocint[1]{\delimeter{#1}{(}{]}}
+\newcommand*\coint[1]{\delimeter{#1}{[}{)}}
+\newcommand*\ccint[1]{\delimeter{#1}{[}{]}}
+
+\newcommand*\eval[1]{\delimeter{#1}{.}{|}}
+
+\newcommand*\Dif{\ensuremath{\mathrm{D}}}
+\newcommand*\dif{\ensuremath{\mathrm{d}}}
+
+\begin{document}
+	\pagenumbering{gobble}
+
+	\section{Problem Setup}
+
+	As input, we are given a graph \(G = \pof{V_G, E_G}\), where each vertex is a geographic position \(s_i \in S^2\), and each edge \(\pof{i, j}\) has an associated (Olivier-Ricci) curvature \(R_{i, j} \in \ooint{-2, 1}\) and an associated latency \(t_{i, j} \in \mathbb{R}_{\ge 0}\).
+
+	Intuitively, we want to return a surface in \(\mathbb{R}^3\) that is the graph of a function \(\rho : S^2 \to \mathbb{R}_{> 0}\) whose geodesics \(g_{i, j}\) between \(s_i\) and \(s_j\) (and their missing \(\rho\)-coordinates) have length \(\phi_{i, j}\) that is in a linear relationship with the latency.
+
+	The strategy to realize this intuition is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\) that contains our input positions. Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V\). This setup is made explicit in \texttt{mesh/sphere.py}. A similar setup is found in \texttt{mesh/rectangle.py}, where we use \(\ccint{0, 1}^2\) instead of \(S^2\).
+
+	\section{Objective/Loss Functions}
+
+	To enforce that the mesh approximates our desired surface, we define the objective functions \begin{align*}
+		\mathcal{L}_{\mathrm{geodesic}}\pof{M} &\triangleq \sum_{e \in E_G} \pof{\text{least squares residual of edge \(e\)}}^2, \\
+		\mathcal{L}_{\mathrm{smooth}}\pof{M} &\triangleq -\rho^\intercal L_C\rho, \\
+		\mathcal{L}_{\mathrm{curvature}}\pof{M} &\triangleq \sum_{\substack{v \in V_M \\ \text{\(v\) close to \(\pof{i, j}\)}}} \pof{\kappa\pof{v} - R_{i, j}}^2, \\
+		\mathcal{L}\pof{M} &\triangleq \lambda_{\mathrm{geodesic}}\mathcal{L}_{\mathrm{geodesic}}\pof{M} + \lambda_{\mathrm{curvature}}\mathcal{L}_{\mathrm{curvature}}\pof{M} + \lambda_{\mathrm{smooth}}\mathcal{L}_{\mathrm{smooth}}\pof{M},
+	\end{align*} where the \(\lambda\)'s are tunable hyperparameters. The other variables will be defined in the upcoming subsections. Our goal is then to minimize \(\mathcal{L}\pof{M}\).
+
+	Note that the loss functions (particularly the geodesic and total ones) also have a dependence on the measured latencies. We omit that as a written parameter because they are treated as fixed (we are really optimizing over the manifold, not over the measured latencies).
+
+	\subsection{Laplacian}
+	\input{laplacian.tex}
+\end{document}
