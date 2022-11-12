@@ -104,9 +104,7 @@ class Reverse:
 
         self._dif_cot = None
 
-        # Derivatives are stored as maps sending l to the partial with respect
-        # to rho_l. The types of the outputs of the maps match the types of
-        # what are being differentiated.
+        # Derivatives match the types of what are being differentiated.
         self.dif_kappa = None
         self.dif_L_curvature = None
 

@@ -3,6 +3,15 @@
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
 \usepackage[margin=0.5in]{geometry}
 \usepackage{hyperref}
+\usepackage{xcolor}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Computation Documentation}
+}
 
 \allowdisplaybreaks
 \delimitershortfall-1pt
@@ -40,7 +49,9 @@
 
 	Intuitively, we want to return a surface in \(\mathbb{R}^3\) that is the graph of a function \(\rho : S^2 \to \mathbb{R}_{> 0}\) whose geodesics \(g_{i, j}\) between \(s_i\) and \(s_j\) (and their missing \(\rho\)-coordinates) have length \(\phi_{i, j}\) that is in a linear relationship with the latency.
 
-	The strategy to realize this intuition is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\) that contains our input positions. Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V\). This setup is made explicit in \texttt{mesh/sphere.py}. A similar setup is found in \texttt{mesh/rectangle.py}, where we use \(\ccint{0, 1}^2\) instead of \(S^2\).
+	The strategy to realize this intuition is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\) that contains our input positions. Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V\). This setup is made explicit in \texttt{mesh/sphere.py}.
+
+	A similar setup is found in \texttt{mesh/rectangle.py}, where we use \(\ccint{0, 1}^2\) instead of \(S^2\). In general, this setup 
 
 	\section{Objective/Loss Functions}
 
@@ -55,4 +66,7 @@
 
 	\subsection{Laplacian}
 	\input{laplacian.tex}
+
+	\subsection{Geodesic Distance via the Heat Method}
+	\input{geodesic.tex}
 \end{document}

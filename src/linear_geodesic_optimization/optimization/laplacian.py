@@ -91,9 +91,6 @@ class Forward:
         return sparse.coo_array((data, (row, col)),
                                  shape=(self._V, self._V)).tocsr()
 
-    def _calc_L(self):
-        return self.D_inv @ self.LC_neumann
-
     def calc(self):
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
@@ -139,9 +136,7 @@ class Reverse:
         self._LC_neumann = None
         self._LC_dirichlet = None
 
-        # Derivatives are stored as maps sending l to the partial with respect
-        # to rho_l. The types of the outputs of the maps match the types of
-        # what are being differentiated.
+        # Derivatives match the types of what are being differentiated.
         self.dif_N = None
         self.dif_A = None
         self.dif_D = None

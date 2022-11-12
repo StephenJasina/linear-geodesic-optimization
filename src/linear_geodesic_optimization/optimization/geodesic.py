@@ -59,7 +59,7 @@ class Forward:
         # A vector
         self.u = None
 
-        # A vector
+        # A map (i, j) -> q_ij
         self.q = None
 
         # A map (i, j) -> m_ij
@@ -184,7 +184,9 @@ class Forward:
             self._updates = self._mesh.updates()
             self._v = self._mesh.get_vertices()
 
-            self.h2 = self._calc_h2()
+            # TODO: Reincorporate h2
+            # self.h2 = self._calc_h2()
+            self.h2 = self._mesh.get_epsilon()**2
             self.D_h2LC_neumann_inv = self._calc_D_h2LC_neumann_inv()
             if self.LC_dirichlet is not None:
                 self.D_h2LC_dirichlet_inv = self._calc_D_h2LC_dirichlet_inv()
@@ -267,9 +269,7 @@ class Reverse:
         self._div_X = None
         self._phi = None
 
-        # Derivatives are stored as maps sending l to the partial with respect
-        # to rho_l. The types of the outputs of the maps match the types of
-        # what are being differentiated.
+        # Derivatives match the types of what are being differentiated.
         self.dif_u = None
         self.dif_grad_u = None
         self.dif_X = None
@@ -329,19 +329,17 @@ class Reverse:
         for i, es in enumerate(e):
             for j in es:
                 dif_grad_u[i,j] = np.cross(N[i,j], dif_m[i,j])
-        for (i, j) in dif_N:
+        for i, j in dif_N:
             dif_grad_u[i,j] += np.cross(dif_N[i,j], m[i,j])
         return dif_grad_u
 
     def _calc_dif_X(self):
-        e = self._e
         grad_u = self._grad_u
         X = self._X
         dif_grad_u = self.dif_grad_u
-        return {(i, j): ((X[i,j] @ dif_grad_u[i,j]) * X[i,j] - dif_grad_u[i,j])
+        return {(i, j): (np.outer(X[i,j], X[i,j]) - np.eye(3)) @ dif_grad_u[i,j]
                         / linalg.norm(grad_u[i,j])
-                for i, es in enumerate(e)
-                for j in es}
+                for i, j in X}
 
     def _calc_dif_p(self):
         dif_p = {}

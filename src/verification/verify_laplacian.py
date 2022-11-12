@@ -11,10 +11,10 @@ laplacian_forward = laplacian.Forward(mesh)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
 
 laplacian_forward.calc()
-LC_0 = laplacian_forward.LC_neumann
+LC_0 = laplacian_forward.LC_dirichlet
 
 laplacian_reverse.calc(mesh.get_partials()[37], 37)
-dif_LC = laplacian_reverse.dif_LC_neumann
+dif_LC = laplacian_reverse.dif_LC_dirichlet
 
 # Can't be too much smaller than 1e-5 or we get underflow
 delta = 1e-5
@@ -22,9 +22,11 @@ z[37] += delta
 mesh.set_parameters(z)
 
 laplacian_forward.calc()
-LC_delta = laplacian_forward.LC_neumann
+LC_delta = laplacian_forward.LC_dirichlet
 
 approx_dif_LC = np.array(LC_delta - LC_0) / delta
 
 # Check derivative is close
 print(np.max(np.abs(approx_dif_LC - dif_LC)))
+
+print(np.linalg.norm(LC_0.toarray() - LC_0.toarray().T))
