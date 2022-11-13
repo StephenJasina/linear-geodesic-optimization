@@ -63,12 +63,14 @@ class Forward:
                 for j in es}
 
     def _calc_LC(self, neumann=True):
+        boundary_vertices = self._mesh.get_boundary_vertices()
         row = []
         col = []
         data = []
         for (i, j), cot_ij in self.cot.items():
             # Ignore the boundary in the Dirichlet boundary case
-            if not neumann and (j, i) not in self.cot:
+            if not neumann and (i in boundary_vertices
+                                or j in boundary_vertices):
                 continue
 
             half_cot_ij = cot_ij / 2.
@@ -102,10 +104,7 @@ class Forward:
             self.D_inv = sparse.diags(1. / self.D.data.flatten())
             self.cot = self._calc_cot()
             self.LC_neumann = self._calc_LC(True)
-            if self._mesh.get_boundary_vertices():
-                self.LC_dirichlet = self._calc_LC(False)
-            else:
-                self.LC_dirichlet = None
+            self.LC_dirichlet = self._calc_LC(False)
 
 class Reverse:
     '''
@@ -210,13 +209,15 @@ class Reverse:
         return dif_cot
 
     def _calc_dif_LC(self, neumann=True):
+        boundary_vertices = self._mesh.get_boundary_vertices()
         dif_cot = self.dif_cot
         row = []
         col = []
         data = []
         for (i, j), dif_cot_ij in dif_cot.items():
             # Ignore the boundary in the Dirichlet boundary case
-            if not neumann and (j, i) not in self.dif_cot:
+            if not neumann and (i in boundary_vertices
+                                or j in boundary_vertices):
                 continue
 
             half_dif_cot_ij = dif_cot_ij / 2.
@@ -260,7 +261,4 @@ class Reverse:
             self.dif_D = self._calc_dif_D()
             self.dif_cot = self._calc_dif_cot()
             self.dif_LC_neumann = self._calc_dif_LC(True)
-            if self._LC_dirichlet is not None:
-                self.dif_LC_dirichlet = self._calc_dif_LC(False)
-            else:
-                self.dif_LC_dirichlet = None
+            self.dif_LC_dirichlet = self._calc_dif_LC(False)

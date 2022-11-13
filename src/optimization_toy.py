@@ -12,8 +12,8 @@ if __name__ == '__main__':
     toy_directory = os.path.join('..', 'data', 'toy')
 
     # Construct a mesh
-    width = 30
-    height = 30
+    width = 5
+    height = 5
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, ts, network_vertices, network_edges, ricci_curvatures,
         lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
-        directory=directory, cores=30)
+        directory=directory, cores=None)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()

@@ -6,6 +6,7 @@ from linear_geodesic_optimization.optimization import laplacian
 mesh = RectangleMesh(10, 10)
 z = np.random.rand(100)
 mesh.set_parameters(z)
+l=37
 
 laplacian_forward = laplacian.Forward(mesh)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
@@ -13,12 +14,12 @@ laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
 laplacian_forward.calc()
 LC_0 = laplacian_forward.LC_dirichlet
 
-laplacian_reverse.calc(mesh.get_partials()[37], 37)
+laplacian_reverse.calc(mesh.get_partials()[l], l)
 dif_LC = laplacian_reverse.dif_LC_dirichlet
 
 # Can't be too much smaller than 1e-5 or we get underflow
 delta = 1e-5
-z[37] += delta
+z[l] += delta
 mesh.set_parameters(z)
 
 laplacian_forward.calc()
