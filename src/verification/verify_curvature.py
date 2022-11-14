@@ -1,74 +1,80 @@
-'''
-This is a testing file used to show that the new implementation of curvature
-(and its gradient) match the old implementation found in the surface-gen repo
-found at https://github.com/joshuawisc/surface-gen.
-'''
+import datetime
+import json
+import os
 
 import numpy as np
+import scipy
 
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import curvature, laplacian
 
-def angle_of_b_in_t(b, T, vertices):
-    '''
-    for a vertex b which is an index into vertices
-    and a triangle T (which is a triple)
-    return the angle formed by the two triangles sides at vertex b
-    '''
-    others = [t for t in T if t != b]
-    u = np.array(vertices[others[0]] - vertices[b])
-    v = np.array(vertices[others[1]] - vertices[b])
-    return np.arccos((u.T @ v) / (np.linalg.norm(u) * np.linalg.norm(v)))
+toy_directory = os.path.join('..', 'data', 'toy')
 
-def vertex_curvature(b, t_of_v, vertices):
-    '''
-    return the curvature at vertex b
-    '''
-    # find the angles of the edges incident at each vertex b
-    # t_of_v[b] is the set of triangles incident to vertex b
-    angles = [angle_of_b_in_t(b, t, vertices) for t in t_of_v[b]]
-    if len(angles) == 6:
-        # this is an interior vertex
-        return 2 * np.pi - np.sum(angles)
-    else:
-        # this vertex does not have the standard number of neighbors (6)
-        # which happens at the edge of the mesh
-        # so just ignore it - will be filtered out of downstream processing
-        return np.nan
+# Construct a mesh
+width = 10
+height = 10
+mesh = RectangleMesh(width, height)
+vertices = mesh.get_vertices()
+V = vertices.shape[0]
 
-def get_curvature(vertices, t_of_v):
-    '''
-    return an array containing the curvature at each vertex in vertices
-    '''
-    return np.array([vertex_curvature(v, t_of_v, vertices) for v in range(len(vertices))])
+coordinates = None
+label_to_index = {}
+with open(os.path.join(toy_directory, 'position.json')) as f:
+    position_json = json.load(f)
 
-mesh = RectangleMesh(10, 10)
-z = np.random.rand(100)
-mesh.set_parameters(z)
+    label_to_index = {label: index for index, label in enumerate(position_json)}
+
+    coordinates = [None for _ in range(len(position_json))]
+    for vertex, position in position_json.items():
+        coordinates[label_to_index[vertex]] = position
+
+network_vertices = mesh.scale_coordinates_to_unit_square(coordinates)
+
+network_edges = []
+ts = {i: [] for i in range(len(network_vertices))}
+with open(os.path.join(toy_directory, 'latency.json')) as f:
+    latency_json = json.load(f)
+
+    for edge, latency in latency_json.items():
+        u = label_to_index[edge[0]]
+        v = label_to_index[edge[1]]
+
+        network_edges.append((u, v))
+
+        ts[u].append((v, latency))
+
+ricci_curvatures = []
+with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
+    ricci_curvatures = list(json.load(f).values())
 
 laplacian_forward = laplacian.Forward(mesh)
+curvature_forward = curvature.Forward(mesh, network_vertices,
+                                      network_edges, ricci_curvatures,
+                                      mesh.get_epsilon(),
+                                      laplacian_forward)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
-curvature_forward = curvature.Forward(mesh, [], [], [], 0, laplacian_forward)
-curvature_reverse = curvature.Reverse(mesh, [], [], [], 0, laplacian_forward, curvature_forward, laplacian_reverse)
+curvature_reverse = curvature.Reverse(mesh, network_vertices,
+                                      network_edges, ricci_curvatures,
+                                      mesh.get_epsilon(),
+                                      laplacian_forward, curvature_forward,
+                                      laplacian_reverse)
 
-curvature_forward.calc()
-kappa_0 = curvature_forward.kappa
-
-curvature_reverse.calc(mesh.get_partials()[37], 37)
-dif_kappa = curvature_reverse.dif_kappa
-
-# Can't be too much smaller than 1e-5 or we get underflow
+l = 37
 delta = 1e-5
-z[37] += delta
-mesh.set_parameters(z)
 
+rng = np.random.default_rng()
+z_0 = rng.random(V)
+mesh.set_parameters(z_0)
 curvature_forward.calc()
-kappa_delta = curvature_forward.kappa
+L_curvature_0 = curvature_forward.L_curvature
 
-approx_dif_kappa = np.array([(kappa_delta[i] - kappa_0[i]) / delta for i in range(100)])
+curvature_reverse.calc(mesh.get_partials()[l], l)
+dif_L_curvature_0 = curvature_reverse.dif_L_curvature
 
-# Check curvatures are close
-print(np.max(np.abs(np.nan_to_num(get_curvature(mesh.get_vertices(), mesh.triangles_of_vertex()) - curvature_forward.kappa))))
+z_delta = np.copy(z_0)
+z_delta[l] += delta
+mesh.set_parameters(z_delta)
+curvature_forward.calc()
+L_curvature_delta = curvature_forward.L_curvature
 
-# Check derivative is close
-print(np.max(np.abs(approx_dif_kappa - dif_kappa)))
+print(dif_L_curvature_0 / ((L_curvature_delta - L_curvature_0) / delta))
