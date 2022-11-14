@@ -18,18 +18,20 @@ We have the following (standard) definition of the Laplace-Beltrami operator on 
 	N_{i, j} &= \pof{v_i - v_{c\pof{i, j}}} \times \pof{v_j - v_{c\pof{i, j}}}, \\
 	A_{i, j} &= \frac{1}{2}\norm{N_{i, j}}_2, \\
 	D_{i, j} &= \begin{cases}
-		\displaystyle\frac{1}{3}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}A_{i, k} & \text{if \(i = j\)}, \\
+		\frac{1}{3}{\displaystyle\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}A_{i, k}} & \text{if \(i = j\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
 	\cot\pof{\theta_{i, j}} &= \frac{\pof{v_i - v_{c\pof{i, j}}} \cdot \pof{v_j - v_{c\pof{i, j}}}}{2A_{i, j}}, \\
 	\pof{L_C^{\text{Neumann}}}_{i, j} &= \begin{cases}
-		\displaystyle\frac{1}{2}\pof{\cot\pof{\theta_{i, j}} + \cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) or \(\pof{v_j, v_i}\) is a half-edge}, \\
-		\displaystyle-\frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) or \(\pof{v_k, v_i}\)} \\ \text{is a half-edge}}}\pof{\cot\pof{\theta_{i, k}} + \cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
+		\frac{1}{2}\cot\pof{\theta_{i, j}} & \text{if \(\pof{v_i, v_j}\) is a half-edge on \(\partial M\)}, \\
+		\frac{1}{2}\cot\pof{\theta_{j, i}} & \text{if \(\pof{v_j, v_i}\) is a half-edge on \(\partial M\)}, \\
+		\frac{1}{2}\pof{\cot\pof{\theta_{i, j}} + \cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) is a half-edge not on \(\partial M\)}, \\
+		-\frac{1}{2}\pof{\displaystyle\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\cot\pof{\theta_{i, k}} + \sum_{\substack{k \\ \text{\(\pof{v_k, v_i}\) is} \\ \text{a half-edge}}}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)} \\
 		0 & \text{otherwise},
 	\end{cases} \\
 	\pof{L_C^{\text{Dirichlet}}}_{i, j} &= \begin{cases}
-		\displaystyle\frac{1}{2}\pof{\cot\pof{\theta_{i, j}} + \cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) and \(\pof{v_j, v_i}\) are half-edges}, \\
-		\displaystyle-\frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) and \(\pof{v_k, v_i}\)} \\ \text{are half-edges}}}\pof{\cot\pof{\theta_{i, k}} + \cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
+		\frac{1}{2}\pof{\cot\pof{\theta_{i, j}} + \cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) is a half-edge and \(i, j \not\in \partial M\)}, \\
+		-\frac{1}{2}{\displaystyle\sum_{\substack{k \not\in \partial M \\ \text{\(\pof{v_i, v_k}\) and \(\pof{v_k, v_i}\)} \\ \text{are half-edges}}}\pof{\cot\pof{\theta_{i, k}} + \cot\pof{\theta_{k, i}}}} & \text{if \(i = j\) and \(v_i \not\in \partial M\)}, \\
 		0 & \text{otherwise}.
 	\end{cases}
 \end{align*}
@@ -55,23 +57,25 @@ We compute
 	\end{cases} \\
 	\frac{\partial A_{i, j}}{\partial \rho_\ell} &= \frac{1}{4A_{i, j}}N_{i, j} \cdot \frac{\partial N_{i, j}}{\partial \rho_\ell}, \\
 	\pof{\frac{\partial D}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
-		\displaystyle\frac{1}{3}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\frac{\partial A_{i, k}}{\partial \rho_\ell} & \text{if \(i = j\)}, \\
+		\frac{1}{3}{\displaystyle\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\frac{\partial A_{i, k}}{\partial \rho_\ell}} & \text{if \(i = j\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
 	\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} &= \begin{cases}
-		\displaystyle\frac{\pof{v_j - v_{c\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = i\)}, \\
-		\displaystyle\frac{\pof{v_i - v_{c\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = j\)}, \\
-		\displaystyle\frac{\pof{2v_{c\pof{i, j}} - v_i - v_j} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = c\pof{i, j}\)}, \\
+		\frac{\pof{v_j - v_{c\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = i\)}, \\
+		\frac{\pof{v_i - v_{c\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = j\)}, \\
+		\frac{\pof{2v_{c\pof{i, j}} - v_i - v_j} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = c\pof{i, j}\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
 	\pof{\frac{\partial L_C^{\text{Neumann}}}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
-		\displaystyle\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) or \(\pof{v_j, v_i}\) is a half-edge}, \\
-		\displaystyle-\frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) or \(\pof{v_k, v_i}\)} \\ \text{is a half-edge}}}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, k}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
+		\frac{1}{2}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} & \text{if \(\pof{v_i, v_j}\) is a half-edge on \(\partial M\)}, \\
+		\frac{1}{2}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}} & \text{if \(\pof{v_j, v_i}\) is a half-edge on \(\partial M\)}, \\
+		\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) is a half-edge not on \(\partial M\)}, \\
+		-\frac{1}{2}\pof{\displaystyle\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, k}} + \sum_{\substack{k \\ \text{\(\pof{v_k, v_i}\) is} \\ \text{a half-edge}}}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)} \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\pof{\frac{\partial L_C^{\text{Neumann}}}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
-		\displaystyle\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) and \(\pof{v_j, v_i}\) are half-edges}, \\
-		\displaystyle-\frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) and \(\pof{v_k, v_i}\)} \\ \text{are half-edges}}}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, k}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
+	\pof{\frac{\partial L_C^{\text{Dirichlet}}}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
+		\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}\) is a half-edge and \(i, j \not\in \partial M\)}, \\
+		-\frac{1}{2}{\displaystyle\sum_{\substack{k \not\in \partial M \\ \text{\(\pof{v_i, v_k}\) and \(\pof{v_k, v_i}\)} \\ \text{are half-edges}}}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, k}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{k, i}}}} & \text{if \(i = j\) and \(v_i \not\in \partial M\)}, \\
 		0 & \text{otherwise}.
 	\end{cases}
 \end{align*}

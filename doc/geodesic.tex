@@ -1,7 +1,9 @@
 Here are the variables used for this part of the computation: \begin{center}\begin{tabular}{r|l}
 	\(\gamma\) & Set of points in \(V_M\) \\ \hline
-	\(t\) & Square of mean half-edge length \\ \hline
+	\(h\) & Mean half-edge length \\ \hline
 	\(\delta^\gamma\) & Heat source (indicator on \(\gamma\)) \\ \hline
+	\(u^{\gamma, \text{N}}\) & Heat flow with zero-Neumann boundary condition \\ \hline
+	\(u^{\gamma, \text{D}}\) & Heat flow with zero-Dirichlet boundary condition \\ \hline
 	\(u^\gamma\) & Heat flow \\ \hline
 	\(q^\gamma_{i, j}\) & Intermediate value for computation \\ \hline
 	\(m^\gamma_{i, j}\) & Intermediate value for computation \\ \hline
@@ -15,56 +17,52 @@ Here are the variables used for this part of the computation: \begin{center}\beg
 Say we want to find the geodesic distances to a set of points \(\gamma \subseteq V_M\). Following the \href{https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/}{Crane et al's Heat Method}, we use the (approximate) heat flow \(u^\gamma\), where
 
 \begin{align*}
-	t &\triangleq (\text{mean spacing between mesh points})^2, & \text{Adjustable parameter} \\
-	\delta^\gamma &\triangleq \begin{cases}
-		1 & \text{if $v_i \in \gamma$}, \\
-		0 & \text{if $v_i \not\in \gamma$},
-	\end{cases} & \text{Heat source} \\
-	u^\gamma &\triangleq (D - tL_C)^{-1}\delta^\gamma & \text{Heat flow}
+	h &= \text{TODO}, \\
+	\delta^\gamma &= \begin{cases}
+		1 & \text{if \(v_i \in \gamma\)}, \\
+		0 & \text{if \(v_i \not\in \gamma\)},
+	\end{cases} \\
+	u^{\gamma, \text{N}} &= \pof{D - h^2L_C^{\text{N}}}^{-1}\delta^\gamma, \\
+	u^{\gamma, \text{D}} &= \pof{D - h^2L_C^{\text{D}}}^{-1}\delta^\gamma, \\
+	u^\gamma &= \frac{1}{2}\pof{u^{\gamma, \text{N}} + u^{\gamma, \text{D}}}, \\
+	q^\gamma_{i, j} &= u^\gamma_i\pof{v_{c\pof{i, j}} - v_j}, \\
+	m^\gamma_{i, j} &= q^\gamma_{i, j} + q^\gamma_{j, c\pof{i, j}} + q^\gamma_{c\pof{i, j}, i}, \\
+	\pof{\nabla u^\gamma}_{i, j} &= N_{i, j} \times m^\gamma_{i, j}, \\
+	X^\gamma_{i, j} &= -\frac{\pof{\nabla u^\gamma}_{i, j}}{\norm{\pof{\nabla u^\gamma}_{i, j}}_2}, \\
+	p_{i, j} &= \cot\pof{\theta_{i, j}}\pof{v_j - v_i}, \\
+	\pof{\nabla \cdot X^\gamma}_i &= \frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot X^\gamma_{i, k}, \\
+	\phi^\gamma &= \pof{L_C^{\text{N}}}^+ \cdot \pof{\nabla \cdot X^\gamma}.
 \end{align*}
 
-Similar to when computing the Laplacian, we need to be careful about computing these values on a mesh with boundary. Following Crane et al's advice, we compute $u^\gamma$ using both the zero Neumann and zero Dirichlet boundary conditions, and then average them.
+Here, \(\pof{L_C^{\text{N}}}^+\) is the \href{https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse}{pseudoinverse} of \(L_C^{\text{N}}\) (as it is singular).
 
-With $u^\gamma$ in hand, we can then compute
-
-$$\begin{aligned}
-	q_{i, j} &\triangleq u^\gamma_i(v_{c(i, j)} - v_j), \\
-	m_{i, j} &\triangleq q_{i, j} + q_{j, c(i, j)} + q_{c(i, j), i}, \\
-	(\widetilde{\nabla} u^\gamma)_{i, j} &\triangleq N_{i, j} \times m_{i, j}, \\
-	X^\gamma_{i, j} &\triangleq -\frac{(\widetilde{\nabla} u^\gamma)_{i, j}}{\|(\widetilde{\nabla} u^\gamma)_{i, j}\|_2}, \\
-	p_{i, j} &\triangleq \cot(\theta_{i, j})(v_j - v_i), \\
-	(\nabla \cdot X^\gamma)_i &= \frac{1}{2}\sum_{\substack{k \\ \text{$(v_i, v_k)$ is an edge}}}(p_{i, k} - p_{c(i, k), i}) \cdot X^\gamma_{i, k}, \\
-	\phi^\gamma &= L_C^+ \cdot (\nabla \cdot X^\gamma).
-\end{aligned}$$
-
-Here, $L_C^+$ is the \href{https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse}{pseudoinverse} of $L_C$ (as it is singular). Note that the integrated divergence can be thought of as taking a sum over triangles $v_i \to v_k \to v_{c(i, k)}$.
-
-Note that we're being careful about which pieces have a dependence on $\gamma$, as we can reuse certain computations if we want to compute distances from multiple sources. Abusing notation, we can get the distance matrix (that is, get rid of the $\gamma$ dependence) from
-
-$$\phi_{i, j} = \left(\phi^{\{v_j\}}\right)_i.$$
+Note that we're being careful about which pieces have a dependence on \(\gamma\), as we can reuse certain computations if we want to compute distances from multiple sources. We can get the distance matrix (that is, get rid of the \(\gamma\) dependence) from \[\phi_{i, j} = \pof{\phi^{\cof{v_j}}}_i.\]
 
 \subsubsection{Reverse Computation}
 
-Note that $c(i, c(j, i)) = j$. This is helpful for reindexing some sums (in particular, the one for $\nabla \cdot X$).
+Note that \(c\pof{i, c\pof{j, i}} = j\). This is helpful for reindexing some sums (in particular, the one for \(\nabla \cdot X\)).
 
 We then have the following partial derivatives:
 
-$$\begin{aligned}
-	\frac{\partial u^\gamma}{\partial \rho_\ell} &= -(D - tL_C)^{-1}\left(\frac{\partial D}{\partial \rho_\ell} - t\frac{\partial L_C}{\partial \rho_\ell}\right)u^\gamma, \\
-	\frac{\partial q_{i, j}}{\partial \rho_\ell} &= \begin{cases}
-		\displaystyle\frac{\partial u^\gamma_i}{\rho_\ell}(v_{c(i, j)} - v_j) - u^\gamma_i\frac{\partial v_\ell}{\rho_\ell} & \text{if $\ell = j$}, \\
-		\displaystyle\frac{\partial u^\gamma_i}{\rho_\ell}(v_{c(i, j)} - v_j) + u^\gamma_i\frac{\partial v_\ell}{\partial \rho_\ell} & \text{if $\ell = c(i, j)$}, \\
-		\displaystyle\frac{\partial u^\gamma_i}{\rho_\ell}(v_{c(i, j)} - v_j) & \text{otherwise},
+\begin{align*}
+	\frac{\partial h}{\partial \rho_\ell} &= \text{TODO} \\
+	\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{N}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{N}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{N}}, \\
+	\frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{D}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{D}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{D}}, \\
+	\frac{\partial u^\gamma}{\partial \rho_\ell} &= \frac{1}{2}\pof{\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} + \frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell}}, \\
+	\frac{\partial q^\gamma_{i, j}}{\partial \rho_\ell} &= \begin{cases}
+		\frac{\partial u^\gamma_i}{\rho_\ell}\pof{v_{c\pof{i, j}} - v_j} - u^\gamma_i\frac{\partial v_\ell}{\rho_\ell} & \text{if \(\ell = j\)}, \\
+		\frac{\partial u^\gamma_i}{\rho_\ell}\pof{v_{c\pof{i, j}} - v_j} + u^\gamma_i\frac{\partial v_\ell}{\partial \rho_\ell} & \text{if \(\ell = c\pof{i, j}\)}, \\
+		\frac{\partial u^\gamma_i}{\rho_\ell}\pof{v_{c\pof{i, j}} - v_j} & \text{otherwise},
 	\end{cases} \\
-	\frac{\partial m_{i, j}}{\partial \rho_\ell} &= \frac{\partial q_{i, j}}{\partial \rho_\ell} + \frac{\partial q_{j, c(i, j)}}{\partial \rho_\ell} + \frac{\partial q_{c(i, j), i}}{\partial \rho_\ell}, \\
-	\frac{\partial (\widetilde{\nabla} u^\gamma)_{i, j}}{\partial \rho_\ell} &= \frac{\partial N_{i, j}}{\partial \rho_\ell} \times m_{i, j} + N_{i, j} \times \frac{\partial m_{i, j}}{\partial \rho_\ell}, \\
-	\frac{\partial X^\gamma_{i, j}}{\partial \rho_\ell} &= -\frac{1}{\|(\widetilde{\nabla} u^\gamma)_{i, j}\|_2}(I - X^\gamma_{i, j}(X^\gamma_{i, j})^\intercal)\frac{\partial (\widetilde{\nabla} u^\gamma)_{i, j}}{\partial \rho_\ell}, \\
+	\frac{\partial m^\gamma_{i, j}}{\partial \rho_\ell} &= \frac{\partial q^\gamma_{i, j}}{\partial \rho_\ell} + \frac{\partial q^\gamma_{j, c\pof{i, j}}}{\partial \rho_\ell} + \frac{\partial q^\gamma_{c\pof{i, j}, i}}{\partial \rho_\ell}, \\
+	\frac{\partial \pof{\nabla u^\gamma}_{i, j}}{\partial \rho_\ell} &= \frac{\partial N_{i, j}}{\partial \rho_\ell} \times m^\gamma_{i, j} + N_{i, j} \times \frac{\partial m^\gamma_{i, j}}{\partial \rho_\ell}, \\
+	\frac{\partial X^\gamma_{i, j}}{\partial \rho_\ell} &= -\frac{1}{\norm{\pof{\nabla u^\gamma}_{i, j}}_2}\pof{I - X^\gamma_{i, j}\pof{X^\gamma_{i, j}}^\intercal}\frac{\partial \pof{\nabla u^\gamma}_{i, j}}{\partial \rho_\ell}, \\
 	\frac{\partial p_{i, j}}{\partial \rho} &= \begin{cases}
-		\displaystyle\left(\frac{\partial}{\partial \rho_\ell}\cot(\theta_{i, j})\right)(v_j - v_i) - \cot(\theta_{i, j})\frac{\partial v_\ell}{\rho_\ell} & \text{if $\ell = i$}, \\
-		\displaystyle\left(\frac{\partial}{\partial \rho_\ell}\cot(\theta_{i, j})\right)(v_j - v_i) + \cot(\theta_{i, j})\frac{\partial v_\ell}{\rho_\ell} & \text{if $\ell = j$}, \\
-		\displaystyle\left(\frac{\partial}{\partial \rho_\ell}\cot(\theta_{i, j})\right)(v_j - v_i) & \text{if $\ell = c(i, j)$}, \\
+		\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}}}\pof{v_j - v_i} - \cot\pof{\theta_{i, j}}\frac{\partial v_\ell}{\rho_\ell} & \text{if \(\ell = i\)}, \\
+		\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}}}\pof{v_j - v_i} + \cot\pof{\theta_{i, j}}\frac{\partial v_\ell}{\rho_\ell} & \text{if \(\ell = j\)}, \\
+		\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}}}\pof{v_j - v_i} & \text{if \(\ell = c\pof{i, j}\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\frac{\partial (\nabla \cdot X^\gamma)_i}{\partial \rho_\ell} &= \frac{1}{2}\sum_{\substack{k \\ \text{$(v_i, v_k)$ is an edge}}}\left(\left(\frac{\partial p_{i, k}}{\partial \rho_\ell} - \frac{\partial p_{c(i, k), i}}{\partial \rho_\ell}\right) \cdot X^\gamma_{i, k} + (p_{i, k} - p_{c(i, k), i}) \cdot \frac{\partial X^\gamma_{i, k}}{\partial \rho_\ell}\right) \\
-	\frac{\partial \phi^\gamma}{\partial \rho_\ell} &= L_C^+\left(\frac{\partial (\nabla \cdot X^\gamma)}{\partial \rho_\ell} - \frac{\partial L_C}{\partial \rho_\ell}\phi^\gamma\right).
-\end{aligned}$$
+	\frac{\partial \pof{\nabla \cdot X^\gamma}_i}{\partial \rho_\ell} &= \frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\pof{\pof{\frac{\partial p_{i, k}}{\partial \rho_\ell} - \frac{\partial p_{c\pof{i, k}, i}}{\partial \rho_\ell}} \cdot X^\gamma_{i, k} + \pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot \frac{\partial X^\gamma_{i, k}}{\partial \rho_\ell}} \\
+	\frac{\partial \phi^\gamma}{\partial \rho_\ell} &= \pof{L_C^{\text{N}}}^+\pof{\frac{\partial \pof{\nabla \cdot X^\gamma}}{\partial \rho_\ell} - \frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}\phi^\gamma}.
+\end{align*}
