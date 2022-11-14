@@ -7,23 +7,26 @@ mesh = RectangleMesh(10, 10)
 z = np.random.rand(100)
 mesh.set_parameters(z)
 
+l = 37
+gamma = [83]
+
 laplacian_forward = laplacian.Forward(mesh)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
 geodesic_forward = geodesic.Forward(mesh, laplacian_forward)
 geodesic_reverse = geodesic.Reverse(mesh, geodesic_forward, laplacian_reverse)
 
-geodesic_forward.calc([83])
+geodesic_forward.calc(gamma)
 phi_0 = geodesic_forward.phi
 
-geodesic_reverse.calc([83], mesh.get_partials()[37], 37)
+geodesic_reverse.calc(gamma, mesh.get_partials()[l], l)
 dif_phi = geodesic_reverse.dif_phi
 
 # Can't be too much smaller than 1e-5 or we get underflow
 delta = 1e-5
-z[37] += delta
+z[l] += delta
 mesh.set_parameters(z)
 
-geodesic_forward.calc([83])
+geodesic_forward.calc(gamma)
 phi_delta = geodesic_forward.phi
 
 approx_dif_phi = np.array(phi_delta - phi_0) / delta

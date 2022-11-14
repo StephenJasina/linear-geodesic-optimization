@@ -65,13 +65,23 @@ def get_network_map(coordinates, network_edges):
     return go.Figure(data=[edge_trace, node_trace])
 
 def get_heat_map(x, y, z, network_vertices=None, network_edges=None):
-    map = go.Figure(data=go.Heatmap(x=x, y=y, z=z))
+    if network_vertices is None or network_edges is None:
+        data = go.Heatmap(x=x, y=y, z=z)
+    else:
+        data = (
+            go.Figure(data=go.Heatmap(x=x, y=y, z=z)).data
+            + get_network_map(network_vertices, network_edges).data
+        )
 
-    if network_vertices is not None and network_edges is not None:
-        map = go.Figure(map.data + get_network_map(network_vertices,
-                                                   network_edges).data)
+    fig_dict = {
+        'data': data,
+        'layout': {},
+    }
 
-    return map
+    fig_dict['layout']['width'] = 600
+    fig_dict['layout']['height'] = 600
+
+    return go.Figure(fig_dict)
 
 class Animation3D:
     '''
