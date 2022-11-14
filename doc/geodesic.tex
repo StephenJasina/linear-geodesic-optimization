@@ -30,13 +30,13 @@ Say we want to find the geodesic distances to a set of points \(\gamma \subseteq
 	\pof{\nabla u^\gamma}_{i, j} &= N_{i, j} \times m^\gamma_{i, j}, \\
 	X^\gamma_{i, j} &= -\frac{\pof{\nabla u^\gamma}_{i, j}}{\norm{\pof{\nabla u^\gamma}_{i, j}}_2}, \\
 	p_{i, j} &= \cot\pof{\theta_{i, j}}\pof{v_j - v_i}, \\
-	\pof{\nabla \cdot X^\gamma}_i &= \frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot X^\gamma_{i, k}, \\
+	\pof{\nabla \cdot X^\gamma}_i &= \frac{1}{2}\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot X^\gamma_{i, k}, \\
 	\phi^\gamma &= \pof{L_C^{\text{N}}}^+ \cdot \pof{\nabla \cdot X^\gamma}.
 \end{align*}
 
-Here, \(\pof{L_C^{\text{N}}}^+\) is the \href{https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse}{pseudoinverse} of \(L_C^{\text{N}}\) (as it is singular).
+Here, \(\pof{L_C^{\text{N}}}^+\) is the \href{https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse}{pseudoinverse} of \(L_C^{\text{N}}\) (this is necessary as it is singular).
 
-Note that we're being careful about which pieces have a dependence on \(\gamma\), as we can reuse certain computations if we want to compute distances from multiple sources. We can get the distance matrix (that is, get rid of the \(\gamma\) dependence) from \[\phi_{i, j} = \pof{\phi^{\cof{v_j}}}_i.\]
+Note that we're being careful about which pieces have a dependence on \(\gamma\), as we can reuse certain computations if we want to compute distances from multiple sources. We can get the pairwise distance matrix (that is, get rid of the \(\gamma\) dependence) from \[\phi_{i, j} = \pof{\phi^{\cof{v_j}}}_i.\]
 
 \subsubsection{Reverse Computation}
 
@@ -45,7 +45,7 @@ Note that \(c\pof{i, c\pof{j, i}} = j\). This is helpful for reindexing some sum
 We then have the following partial derivatives:
 
 \begin{align*}
-	\frac{\partial h}{\partial \rho_\ell} &= \text{TODO} \\
+	\frac{\partial h}{\partial \rho_\ell} &= \text{TODO}, \\
 	\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{N}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{N}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{N}}, \\
 	\frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{D}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{D}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{D}}, \\
 	\frac{\partial u^\gamma}{\partial \rho_\ell} &= \frac{1}{2}\pof{\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} + \frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell}}, \\
@@ -63,6 +63,6 @@ We then have the following partial derivatives:
 		\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}}}\pof{v_j - v_i} & \text{if \(\ell = c\pof{i, j}\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\frac{\partial \pof{\nabla \cdot X^\gamma}_i}{\partial \rho_\ell} &= \frac{1}{2}\sum_{\substack{k \\ \text{\(\pof{v_i, v_k}\) is} \\ \text{a half-edge}}}\pof{\pof{\frac{\partial p_{i, k}}{\partial \rho_\ell} - \frac{\partial p_{c\pof{i, k}, i}}{\partial \rho_\ell}} \cdot X^\gamma_{i, k} + \pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot \frac{\partial X^\gamma_{i, k}}{\partial \rho_\ell}} \\
+	\frac{\partial \pof{\nabla \cdot X^\gamma}_i}{\partial \rho_\ell} &= \frac{1}{2}\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\pof{\pof{\frac{\partial p_{i, k}}{\partial \rho_\ell} - \frac{\partial p_{c\pof{i, k}, i}}{\partial \rho_\ell}} \cdot X^\gamma_{i, k} + \pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot \frac{\partial X^\gamma_{i, k}}{\partial \rho_\ell}}, \\
 	\frac{\partial \phi^\gamma}{\partial \rho_\ell} &= \pof{L_C^{\text{N}}}^+\pof{\frac{\partial \pof{\nabla \cdot X^\gamma}}{\partial \rho_\ell} - \frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}\phi^\gamma}.
 \end{align*}
