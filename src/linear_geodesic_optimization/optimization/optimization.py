@@ -63,23 +63,26 @@ class DifferentiationHierarchy:
                                                    network_edges,
                                                    ricci_curvatures, epsilon,
                                                    self.laplacian_forward)
-        self.laplacian_reverse = laplacian.Reverse(mesh,
-                                                   self.laplacian_forward)
+        self.laplacian_reverses = \
+            {mesh_index: laplacian.Reverse(mesh, self.laplacian_forward)
+             for mesh_index in latencies}
         self.geodesic_reverses = \
             {mesh_index: geodesic.Reverse(mesh,
                                           self.geodesic_forwards[mesh_index],
-                                          self.laplacian_reverse)
+                                          self.laplacian_reverses[mesh_index])
              for mesh_index in latencies}
         self.linear_regression_reverse = \
             linear_regression.Reverse(self.linear_regression_forward)
-        self.smooth_reverse = smooth.Reverse(mesh, self.laplacian_forward,
-                                             self.laplacian_reverse)
-        self.curvature_reverse = curvature.Reverse(mesh, network_vertices,
-                                                   network_edges,
-                                                   ricci_curvatures, epsilon,
-                                                   self.laplacian_forward,
-                                                   self.curvature_forward,
-                                                   self.laplacian_reverse)
+        self.smooth_reverse = smooth.Reverse(
+            mesh, self.laplacian_forward,
+            next(iter(self.laplacian_reverses.values())))
+        self.curvature_reverse = curvature.Reverse(
+            mesh, network_vertices,
+            network_edges,
+            ricci_curvatures, epsilon,
+            self.laplacian_forward,
+            self.curvature_forward,
+            next(iter(self.laplacian_reverses.values())))
 
         # Count of iterations for diagnostic purposes
         self.iterations = 0
@@ -112,6 +115,8 @@ class DifferentiationHierarchy:
 
         t = []
         phi = []
+
+        self.laplacian_forward.calc()
 
         if self.cores > 1:
             # This just calls _forwards_call once for each city
@@ -186,6 +191,8 @@ class DifferentiationHierarchy:
         dif_L_geodesic = np.zeros(V)
         dif_L_smooth = np.zeros(V)
         dif_L_curvature = np.zeros(V)
+
+        self.laplacian_forward.calc()
 
         t = []
         phi = []
