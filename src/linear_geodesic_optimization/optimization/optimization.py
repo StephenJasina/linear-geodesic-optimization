@@ -101,7 +101,9 @@ class DifferentiationHierarchy:
         and the corresponding geodesic distances on the mesh.
         '''
 
-        mesh_indices, latencies = zip(*t)
+        mesh_indices, latencies = [], []
+        if t:
+            mesh_indices, latencies = zip(*t)
         mesh_indices = list(mesh_indices)
         geodesic_forward.calc([mesh_index])
         phi = geodesic_forward.phi[mesh_indices]
@@ -164,15 +166,19 @@ class DifferentiationHierarchy:
 
         V = len(dif_v)
 
-        mesh_indices, latencies = zip(*t)
+        mesh_indices, latencies = [], []
+        if t:
+            mesh_indices, latencies = zip(*t)
         mesh_indices = list(mesh_indices)
         geodesic_forward.calc([mesh_index])
         phi = geodesic_forward.phi[mesh_indices]
 
         # For efficiency, only compute the relevant partial derivatives (or,
         # at least, try to compute as few irrelevant ones as possible)
-        ls = approximate_geodesics_fpi(mesh, geodesic_forward.phi,
-                                       mesh_indices)
+        # TODO: Fix this call
+        # ls = approximate_geodesics_fpi(mesh, geodesic_forward.phi,
+        #                                mesh_indices)
+        ls = set(range(V))
         dif_phi = [None for _ in range(V)]
         for l in range(V):
             if l in ls:
@@ -236,7 +242,7 @@ class DifferentiationHierarchy:
         phi = np.array(phi)
 
         for l in range(V):
-            self.linear_regression_reverse.calc(phi, t, dif_phi[l], l)
+            self.linear_regression_reverse.calc(phi, t, dif_phi[l])
             dif_L_geodesic[l] += self.linear_regression_reverse.dif_lse
 
             self.smooth_reverse.calc(dif_v[l], l)
@@ -287,9 +293,9 @@ class DifferentiationHierarchy:
             + self.lambda_curvature * L_curvature
         print(f'iteration {self.iterations}:')
         print(f'\tL_geodesic: {self.lambda_geodesic * L_geodesic:.6f}')
-        print(f'\tL_smooth: {self.lambda_smooth * L_smooth:.6f}\n')
-        print(f'\tL_curvature: {self.lambda_curvature * L_curvature:.6f}\n')
-        print(f'\tLoss: {(loss):.6f}')
+        print(f'\tL_smooth: {self.lambda_smooth * L_smooth:.6f}')
+        print(f'\tL_curvature: {self.lambda_curvature * L_curvature:.6f}')
+        print(f'\tLoss: {(loss):.6f}\n')
 
         if self.directory is not None:
             with open(os.path.join(self.directory,

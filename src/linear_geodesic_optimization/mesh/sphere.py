@@ -219,11 +219,11 @@ class Mesh(mesh.Mesh):
 
     def set_parameters(self, log_rho):
         # Only "do" the update if necessary. This is good for caching purposes
-        if not np.allclose(self._log_rho, log_rho):
+        if not np.array_equal(self._log_rho, log_rho):
             self._log_rho = np.copy(log_rho)
             self._updates += 1
 
-        return log_rho
+        return np.copy(log_rho)
 
     def updates(self):
         return self._updates

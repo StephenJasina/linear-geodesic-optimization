@@ -12,8 +12,8 @@ if __name__ == '__main__':
     toy_directory = os.path.join('..', 'data', 'toy')
 
     # Construct a mesh
-    width = 5
-    height = 5
+    width = 4
+    height = 4
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
@@ -41,9 +41,7 @@ if __name__ == '__main__':
             v = label_to_index[edge[1]]
 
             network_edges.append((u, v))
-
             ts[u].append((v, latency))
-            ts[v].append((u, latency))
 
     ricci_curvatures = []
     with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:

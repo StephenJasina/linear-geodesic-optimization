@@ -115,10 +115,10 @@ class Mesh(mesh.Mesh):
         return np.copy(self._z)
 
     def set_parameters(self, z):
-        if not np.allclose(self._z, z):
+        if not np.array_equal(self._z, z):
             self._z = np.copy(z)
             self._updates += 1
-        return z
+        return np.copy(z)
 
     def updates(self):
         return self._updates

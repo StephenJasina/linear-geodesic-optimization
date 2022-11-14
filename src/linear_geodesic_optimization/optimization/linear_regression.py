@@ -14,14 +14,6 @@ class Forward:
     def calc(self, phi, t):
         E = phi.shape[0]
 
-        # If phi and t haven't changed, don't do any additional work.
-        if (self._phi is not None and self._phi.shape == phi.shape
-            and np.allclose(self._phi, phi)
-            and self._t is not None and self._t.shape == t.shape
-            and np.allclose(self._t, t)
-            and self.lse is not None):
-            return self.lse
-
         self._phi = np.copy(phi)
         self._t = np.copy(t)
 
@@ -63,31 +55,18 @@ class Reverse:
         self.dif_residuals = None
         self.dif_lse = None
 
-    def calc(self, phi, t, dif_phi, l):
+    def calc(self, phi, t, dif_phi):
         E = phi.shape[0]
 
-        pair_changed = False
-        if (self._phi is None or self._phi.shape != phi.shape
-            or not np.allclose(self._phi, phi)
-            or self._t is None or self._t.shape != t.shape
-            or not np.allclose(self._t, t) or self._l != l
-            or self._dif_phi is None
-            or not np.allclose(self._dif_phi, dif_phi)):
-            pair_changed = True
-            self._phi = np.copy(phi)
-            self._t = np.copy(t)
-            self._dif_phi = dif_phi
+        self._phi = np.copy(phi)
+        self._t = np.copy(t)
+        self._dif_phi = dif_phi
 
-            self._l = l
-
-            self._linear_regression_forward.calc(self._phi, self._t)
-            self._d_tilde = self._linear_regression_forward.d_tilde
-            self._d = self._linear_regression_forward.d
-            self._residuals = self._linear_regression_forward.residuals
-            self._lse = self._linear_regression_forward.lse
-
-        if not pair_changed:
-            return self.dif_lse
+        self._linear_regression_forward.calc(self._phi, self._t)
+        self._d_tilde = self._linear_regression_forward.d_tilde
+        self._d = self._linear_regression_forward.d
+        self._residuals = self._linear_regression_forward.residuals
+        self._lse = self._linear_regression_forward.lse
 
         self.dif_d_tilde = self._dif_phi - np.sum(self._dif_phi) / E
         self.dif_d = (self.dif_d_tilde
