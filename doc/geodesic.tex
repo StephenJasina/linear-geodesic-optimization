@@ -45,9 +45,9 @@ Note that \(c\pof{i, c\pof{j, i}} = j\). This is helpful for reindexing some sum
 We then have the following partial derivatives:
 
 \begin{align*}
-	\frac{\partial h}{\partial \rho_\ell} &= \frac{1}{\abs{E_M}}\pof{\sum_{\substack{k \\ \pof{v_\ell, v_k} \in E_M}} \frac{\pof{v_\ell - v_k} \cdot v_\ell}{\norm{v_\ell - v_k}_2} + \sum_{\substack{k \\ \pof{v_k, v_\ell} \in E_M}} \frac{\pof{v_\ell - v_k} \cdot v_\ell}{\norm{v_\ell - v_k}_2}}, \\
-	\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{N}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{N}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{N}}, \\
-	\frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{D}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{D}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{D}}, \\
+	\frac{\partial h}{\partial \rho_\ell} &= \frac{1}{\abs{E_M}}\pof{\sum_{\substack{k \\ \pof{v_\ell, v_k} \in E_M}} \frac{\pof{v_\ell - v_k}}{\norm{v_\ell - v_k}_2} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} + \sum_{\substack{k \\ \pof{v_k, v_\ell} \in E_M}} \frac{\pof{v_\ell - v_k}}{\norm{v_\ell - v_k}_2} \cdot \frac{\partial v_\ell}{\partial \rho_\ell}}, \\
+	\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{N}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{N}} - h^2\frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}}u^{\gamma, \text{N}}, \\
+	\frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{D}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{D}} - h^2\frac{\partial L_C^{\text{D}}}{\partial \rho_\ell}}u^{\gamma, \text{D}}, \\
 	\frac{\partial u^\gamma}{\partial \rho_\ell} &= \frac{1}{2}\pof{\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} + \frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell}}, \\
 	\frac{\partial q^\gamma_{i, j}}{\partial \rho_\ell} &= \begin{cases}
 		\frac{\partial u^\gamma_i}{\rho_\ell}\pof{v_{c\pof{i, j}} - v_j} - u^\gamma_i\frac{\partial v_\ell}{\rho_\ell} & \text{if \(\ell = j\)}, \\

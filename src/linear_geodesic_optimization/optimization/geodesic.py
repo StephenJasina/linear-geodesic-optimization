@@ -42,7 +42,7 @@ class Forward:
         self.LC_dirichlet = None
 
         # A float
-        self.h2 = self._mesh.get_epsilon()**2
+        self.h = None
 
         # Objects with a `.solve` method that take a vector as input and
         # return a vector
@@ -80,22 +80,25 @@ class Forward:
         self.div_X = None
 
         # A matrix
+        self.phi_offset = None
+
+        # A matrix
         self.phi = None
 
-    def _calc_h2(self):
+    def _calc_h(self):
         v = self._v
         e = self._e
         return np.mean([linalg.norm(v[i] - v[j])
                         for i, es in enumerate(e)
-                        for j in es])**2
+                        for j in es])
 
     def _calc_D_h2LC_neumann_inv(self):
         return standard.SparseLUDecomposition(self.D.tocsr()
-                                              - self.h2 * self.LC_neumann)
+                                              - self.h**2 * self.LC_neumann)
 
     def _calc_D_h2LC_dirichlet_inv(self):
         return standard.SparseLUDecomposition(self.D.tocsr()
-                                              - self.h2 * self.LC_dirichlet)
+                                              - self.h**2 * self.LC_dirichlet)
 
     def _calc_LC_neumann_inv(self):
         # Need to add a small offset to guarantee that the inverse exists.
@@ -168,12 +171,15 @@ class Forward:
                               for j in es]) / 2.
                          for i, es in enumerate(e)])
 
+    def _calc_phi_offset(self):
+        return self.LC_neumann_inv.solve(self.div_X)
+
     def _calc_phi(self):
-        phi = self.LC_neumann_inv.solve(self.div_X)
+        phi_offset = self.phi_offset
         # We subtract off the minimum here so that we satisfy the obvious
         # initial conidition (namely, the distance from gamma to itself
         # should be 0)
-        return phi - min(phi)
+        return phi_offset - min(phi_offset)
 
     def calc(self, gamma):
         self._laplacian_forward.calc()
@@ -190,9 +196,7 @@ class Forward:
             self._updates = self._mesh.updates()
             self._v = self._mesh.get_vertices()
 
-            # TODO: Reincorporate h2
-            # self.h2 = self._calc_h2()
-            # self.h2 = self._mesh.get_epsilon()**2
+            self.h = self._calc_h()
             self.D_h2LC_neumann_inv = self._calc_D_h2LC_neumann_inv()
             self.D_h2LC_dirichlet_inv = self._calc_D_h2LC_dirichlet_inv()
             self.LC_neumann_inv = self._calc_LC_neumann_inv()
@@ -213,6 +217,7 @@ class Forward:
             self.X = self._calc_X()
             self.p = self._calc_p()
             self.div_X = self._calc_div_X()
+            self.phi_offset = self._calc_phi_offset()
             self.phi = self._calc_phi()
 
 class Reverse:
@@ -250,7 +255,7 @@ class Reverse:
         self._cot = None
         self._LC_neumann = None
         self._LC_dirichlet = None
-        self._h2 = None
+        self._h = None
         self._D_h2LC_neumann_inv = None
         self._D_h2LC_dirichlet_inv = None
         self._LC_neumann_inv = None
@@ -274,9 +279,11 @@ class Reverse:
         self._X = None
         self._p = None
         self._div_X = None
+        self._phi_offset = None
         self._phi = None
 
         # Derivatives match the types of what are being differentiated.
+        self.dif_h = None
         self.dif_u_neumann = None
         self.dif_u_dirichlet = None
         self.dif_u = None
@@ -284,17 +291,36 @@ class Reverse:
         self.dif_X = None
         self.dif_p = None
         self.dif_div_X = None
+        self.dif_phi_offset = None
         self.dif_phi = None
 
+    def _calc_dif_h(self):
+        v = self._v
+        e = self._e
+        l = self._l
+        dif_v = self._dif_v
+        return (
+            sum((v[l] - v[k]) @ dif_v / linalg.norm(v[l] - v[k])
+                for k, es in enumerate(e)
+                for j in es
+                if j == l)
+            + sum((v[l] - v[k]) @ dif_v / linalg.norm(v[l] - v[k])
+                for k in e[l])
+        ) / (3 * len(self._mesh.get_faces()))
+
     def _calc_dif_u_neumann(self):
+        h = self._h
         return -self._D_h2LC_neumann_inv.solve(
-            (self._dif_D.tocsc() - self._h2 * self._dif_LC_neumann)
+            (self._dif_D.tocsc() - 2 * h * self.dif_h * self._LC_neumann
+             - h**2 * self._dif_LC_neumann)
             @ self._u_neumann
         )
 
     def _calc_dif_u_dirichlet(self):
+        h = self._h
         return -self._D_h2LC_dirichlet_inv.solve(
-            (self._dif_D.tocsc() - self._h2 * self._dif_LC_dirichlet)
+            (self._dif_D.tocsc() - 2 * h * self.dif_h * self._LC_dirichlet
+             - h**2 * self._dif_LC_dirichlet)
             @ self._u_dirichlet
         )
 
@@ -387,9 +413,13 @@ class Reverse:
                                  + (p[i,j] - p[k,i]) @ dif_X[i,j]) / 2.
         return dif_div_X
 
+    def _calc_dif_phi_offset(self):
+        return self._LC_neumann_inv.solve(
+            self.dif_div_X - self._dif_LC_neumann @ self._phi_offset)
+
     def _calc_dif_phi(self):
-        return self._LC_neumann_inv.solve(self.dif_div_X
-                                          - self._dif_LC_neumann @ self._phi)
+        dif_phi_offset = self.dif_phi_offset
+        return dif_phi_offset - dif_phi_offset[self._gamma[0]]
 
     def calc(self, gamma, dif_v, l):
         self._geodesic_forward.calc(gamma)
@@ -399,7 +429,7 @@ class Reverse:
         self._cot = self._geodesic_forward.cot
         self._LC_neumann = self._geodesic_forward.LC_neumann
         self._LC_dirichlet = self._geodesic_forward.LC_dirichlet
-        self._h2 = self._geodesic_forward.h2
+        self._h = self._geodesic_forward.h
         self._D_h2LC_neumann_inv = self._geodesic_forward.D_h2LC_neumann_inv
         self._D_h2LC_dirichlet_inv \
             = self._geodesic_forward.D_h2LC_dirichlet_inv
@@ -413,6 +443,7 @@ class Reverse:
         self._X = self._geodesic_forward.X
         self._p = self._geodesic_forward.p
         self._div_X = self._geodesic_forward.div_X
+        self._phi_offset = self._geodesic_forward.phi_offset
         self._phi = self._geodesic_forward.phi
 
         self._laplacian_reverse.calc(dif_v, l)
@@ -431,6 +462,7 @@ class Reverse:
             self._dif_v = dif_v
             self._l = l
 
+            self.dif_h = self._calc_dif_h()
             self.dif_u_neumann = self._calc_dif_u_neumann()
             self.dif_u_dirichlet = self._calc_dif_u_dirichlet()
             self.dif_u = self._calc_dif_u()
@@ -440,4 +472,5 @@ class Reverse:
             self.dif_X = self._calc_dif_X()
             self.dif_p = self._calc_dif_p()
             self.dif_div_X = self._calc_dif_div_X()
+            self.dif_phi_offset = self._calc_dif_phi_offset()
             self.dif_phi = self._calc_dif_phi()
