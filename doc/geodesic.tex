@@ -9,7 +9,8 @@ Here are the variables used for this part of the computation: \begin{center}\beg
 	\(m^\gamma_{i, j}\) & Intermediate value for computation \\ \hline
 	\(X^\gamma_{i, j}\) & Unit vector in same direction as \(\nabla u^\gamma_{i, j}\) \\ \hline
 	\(p^\gamma_{i, j}\) & Intermediate value for computation \\ \hline
-	\(\phi^\gamma\) & Vector of geodesic distances
+	\(\widetilde{\phi}^\gamma\) & Vector of offset geodesic distances \\ \hline
+	\(\phi^\gamma\) & Vector of offset geodesic distances
 \end{tabular}\end{center}
 
 \subsubsection{Forward Computation}
@@ -31,7 +32,8 @@ Say we want to find the geodesic distances to a set of points \(\gamma \subseteq
 	X^\gamma_{i, j} &= -\frac{\pof{\nabla u^\gamma}_{i, j}}{\norm{\pof{\nabla u^\gamma}_{i, j}}_2}, \\
 	p_{i, j} &= \cot\pof{\theta_{i, j}}\pof{v_j - v_i}, \\
 	\pof{\nabla \cdot X^\gamma}_i &= \frac{1}{2}\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot X^\gamma_{i, k}, \\
-	\phi^\gamma &= \pof{L_C^{\text{N}}}^+ \cdot \pof{\nabla \cdot X^\gamma}.
+	\widetilde{\phi}^\gamma &= \pof{L_C^{\text{N}}}^+ \cdot \pof{\nabla \cdot X^\gamma}, \\
+	\phi^\gamma &= \widetilde{\phi}^\gamma - \min\pof{\widetilde{\phi}^\gamma}.
 \end{align*}
 
 Here, \(\pof{L_C^{\text{N}}}^+\) is the \href{https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse}{pseudoinverse} of \(L_C^{\text{N}}\) (this is necessary as it is singular).
@@ -64,5 +66,6 @@ We then have the following partial derivatives:
 		0 & \text{otherwise},
 	\end{cases} \\
 	\frac{\partial \pof{\nabla \cdot X^\gamma}_i}{\partial \rho_\ell} &= \frac{1}{2}\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\pof{\pof{\frac{\partial p_{i, k}}{\partial \rho_\ell} - \frac{\partial p_{c\pof{i, k}, i}}{\partial \rho_\ell}} \cdot X^\gamma_{i, k} + \pof{p_{i, k} - p_{c\pof{i, k}, i}} \cdot \frac{\partial X^\gamma_{i, k}}{\partial \rho_\ell}}, \\
-	\frac{\partial \phi^\gamma}{\partial \rho_\ell} &= \pof{L_C^{\text{N}}}^+\pof{\frac{\partial \pof{\nabla \cdot X^\gamma}}{\partial \rho_\ell} - \frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}\phi^\gamma}.
-\end{align*}
+	\frac{\partial \widetilde{\phi}^\gamma}{\partial \rho_\ell} &= \pof{L_C^{\text{N}}}^+\pof{\frac{\partial \pof{\nabla \cdot X^\gamma}}{\partial \rho_\ell} - \frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}\phi^\gamma}, \\
+	\frac{\partial \phi^\gamma}{\partial \rho_\ell} &= \frac{\partial \widetilde{\phi}^\gamma}{\partial \rho_\ell} - \pof{\frac{\partial \widetilde{\phi}^\gamma}{\partial \rho_\ell}}_{\gamma}.
+\end{align*} Note that \(\gamma = \mathrm{arg\,min}\pof{\phi}\), which is where the final subtraction comes from.
