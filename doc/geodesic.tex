@@ -17,7 +17,7 @@ Here are the variables used for this part of the computation: \begin{center}\beg
 Say we want to find the geodesic distances to a set of points \(\gamma \subseteq V_M\). Following the \href{https://www.cs.cmu.edu/~kmcrane/Projects/HeatMethod/}{Crane et al's Heat Method}, we use the (approximate) heat flow \(u^\gamma\), where
 
 \begin{align*}
-	h &= \text{TODO}, \\
+	h &= \frac{1}{\abs{E_M}}\sum_{\substack{i, j \\ \pof{v_i, v_j} \in E_M}}\norm{v_i - v_j}_2, \\
 	\delta^\gamma &= \begin{cases}
 		1 & \text{if \(v_i \in \gamma\)}, \\
 		0 & \text{if \(v_i \not\in \gamma\)},
@@ -45,7 +45,7 @@ Note that \(c\pof{i, c\pof{j, i}} = j\). This is helpful for reindexing some sum
 We then have the following partial derivatives:
 
 \begin{align*}
-	\frac{\partial h}{\partial \rho_\ell} &= \text{TODO}, \\
+	\frac{\partial h}{\partial \rho_\ell} &= \frac{1}{\abs{E_M}}\pof{\sum_{\substack{k \\ \pof{v_\ell, v_k} \in E_M}} \frac{\pof{v_\ell - v_k} \cdot v_\ell}{\norm{v_\ell - v_k}_2} + \sum_{\substack{k \\ \pof{v_k, v_\ell} \in E_M}} \frac{\pof{v_\ell - v_k} \cdot v_\ell}{\norm{v_\ell - v_k}_2}}, \\
 	\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{N}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{N}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{N}}, \\
 	\frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell} &= -\pof{D - h^2L_C^{\text{D}}}^{-1}\pof{\frac{\partial D}{\partial \rho_\ell} - 2h\frac{\partial h}{\partial \rho_\ell}L_C^{\text{D}} - h^2\frac{\partial L_C}{\partial \rho_\ell}}u^{\gamma, \text{D}}, \\
 	\frac{\partial u^\gamma}{\partial \rho_\ell} &= \frac{1}{2}\pof{\frac{\partial u^{\gamma, \text{N}}}{\partial \rho_\ell} + \frac{\partial u^{\gamma, \text{D}}}{\partial \rho_\ell}}, \\
