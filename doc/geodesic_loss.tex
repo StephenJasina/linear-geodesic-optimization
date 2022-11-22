@@ -1,0 +1,15 @@
+We will define the following in this section: \begin{center}\begin{tabular}{r|l}
+	\(\widetilde{\phi}\) & Geodesic distances corresponding to edges in \(E_G\) \\ \hline
+	\(\widetilde{d}\) & Centered version of \(\widetilde{\phi}\) \\ \hline
+	\(d\) & Normalized and centered version of \(\widetilde{\phi}\) \\ \hline
+	\(\beta\) & The least squares linear estimator between \(\widetilde{\phi}\) and \(t\) \\ \hline
+	\(L_{\mathrm{geodesic}}\) & The sum of squared residuals when using \(\beta\) as an estimator
+\end{tabular}\end{center} In this section, we will abuse notation a bit and write things like \(\phi_e\) to mean \(\phi_{i, j}\), where \(e = \pof{i, j} \in E_G\).
+
+\subsubsection{Forward Computation}
+We make the following computations: \begin{align*}
+	\widetilde{\phi}_e &= \phi_e \text{ when \(e \in E_G\)}, \\
+	\widetilde{d} &= \widetilde{\phi} - \frac{1}{\abs{E_G}}\pof{\widetilde{\phi} \cdot \mathbf{1}}\mathbf{1},
+\end{align*}
+
+\subsubsection{Reverse Computation}

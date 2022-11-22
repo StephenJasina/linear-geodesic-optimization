@@ -45,11 +45,11 @@
 
 	\section{Problem Setup}
 
-	As input, we are given a graph \(G = \pof{V_G, E_G}\), where each vertex is a geographic position \(s_i \in S^2\), and each edge \(\pof{i, j}\) has an associated (Olivier-Ricci) curvature \(R_{i, j} \in \ooint{-2, 1}\) and an associated latency \(t_{i, j} \in \mathbb{R}_{\ge 0}\).
+	As input, we are given a directed graph \(G = \pof{V_G, E_G}\), where each vertex is a geographic position \(s_i \in S^2\), and each edge \(\pof{i, j}\) has an associated (Olivier-Ricci) curvature \(R_{i, j} \in \ooint{-2, 1}\) and an associated latency \(t_{i, j} \in \mathbb{R}_{\ge 0}\).
 
 	Intuitively, we want to return a surface in \(\mathbb{R}^3\) that is the graph of a function \(\rho : S^2 \to \mathbb{R}_{> 0}\) whose geodesics \(g_{i, j}\) between \(s_i\) and \(s_j\) (and their missing \(\rho\)-coordinates) have length \(\phi_{i, j}\) that is in a linear relationship with the latency.
 
-	The strategy to realize this intuition is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\) that contains our input positions. We use a standard \href{https://en.wikipedia.org/wiki/Doubly_connected_edge_list}{half-edge} setup, so that \(E_M\) is a set of ordered pairs (edges are directed). Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V\). This setup is made explicit in \texttt{mesh/sphere.py}.
+	The strategy to realize this intuition is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\) that contains our input positions \(V_G\). We use a standard \href{https://en.wikipedia.org/wiki/Doubly_connected_edge_list}{half-edge} setup, so that \(E_M\) is a set of ordered pairs (edges are directed). Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V\). This setup is made explicit in \texttt{mesh/sphere.py}.
 
 	A similar setup is found in \texttt{mesh/rectangle.py}, where we use \(\ccint{0, 1}^2\) instead of \(S^2\). In general, this setup just requires that the position of any mesh vertex is controlled by a single scalar parameter.
 
@@ -68,5 +68,8 @@
 	\input{laplacian.tex}
 
 	\subsection{Geodesic Distance via the Heat Method}
-	\input{geodesic.tex}
+	\input{geodesic_distance.tex}
+
+	\subsection{Geodesic Loss}
+	\input{geodesic_loss.tex}
 \end{document}
