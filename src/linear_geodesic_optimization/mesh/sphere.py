@@ -259,7 +259,7 @@ class Mesh(mesh.Mesh):
         direction.
         '''
 
-        return np.argmax(self.directions @ direction)
+        return np.argmax(self.directions @ direction / linalg.norm(direction))
 
     @staticmethod
     def latitude_longitude_to_direction(latitude, longitude):

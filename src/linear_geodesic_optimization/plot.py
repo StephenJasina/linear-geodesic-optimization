@@ -38,7 +38,12 @@ def combine_scatter_figs(before, after):
     fig_dict['layout']['height'] = 600
     fig_dict['layout']['xaxis'] = {'title': 'Measured Latency'}
     fig_dict['layout']['yaxis'] = {'title': 'Predicted Latency'}
-    return go.Figure(fig_dict)
+    fig = go.Figure(fig_dict)
+    fig.update_yaxes(
+        scaleanchor = "x",
+        scaleratio = 1,
+    )
+    return fig
 
 def get_network_map(coordinates, network_edges):
     node_x = [x for x, _ in coordinates]

@@ -150,21 +150,21 @@ class Mesh(mesh.Mesh):
         return max(np.linalg.norm(self._grid[u,:] - self._grid[v,:])
                    for u, vs in enumerate(self._edges) for v in vs)
 
-    def nearest_vertex_index(self, x, y):
+    def nearest_vertex_index(self, v):
         '''
         Find the index of the vertex whose (x, y) coordinate pair is closest to
-        the input coordinate pair. We assume x and y are between 0 and 1,
-        inclusive.
+        the input coordinate pair. We assume the input lies over/under the
+        unit square in the first octant.
         '''
 
-        i = round(x * (self._width - 1))
-        j = round(y * (self._height - 1))
+        i = round(v[0] * (self._width - 1))
+        j = round(v[1] * (self._height - 1))
         return i * self._height + j
 
-    def scale_coordinates_to_unit_square(self, coordinates, scale_factor=0.8):
+    def map_coordinates_to_support(self, coordinates, scale_factor=0.8):
         '''
-        Convert a list of (x, y) pairs into a list of new coordinates that have
-        been scaled to lie centered in the unit square. The `scale_factor`
+        Convert a list of (x, y, z) triples into a list of new coordinates that
+        have been scaled to lie centered in the unit square. The `scale_factor`
         parameter determines what proportion of the unit square is used (0.8
         means 80% of the width and 80% of the height is used).
         '''
@@ -193,7 +193,8 @@ class Mesh(mesh.Mesh):
         y_divisor = 1. if y_divisor == 0. else y_divisor
 
         return [np.array([((x - x_min) / x_divisor - 0.5) * scale_factor + 0.5,
-                          ((y - y_min) / y_divisor - 0.5) * scale_factor + 0.5])
+                          ((y - y_min) / y_divisor - 0.5) * scale_factor + 0.5,
+                          0])
                 for x, y in coordinates]
 
     # Legacy functions

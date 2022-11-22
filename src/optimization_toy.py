@@ -29,10 +29,10 @@ if __name__ == '__main__':
         for vertex, position in position_json.items():
             coordinates[label_to_index[vertex]] = position
 
-    network_vertices = mesh.scale_coordinates_to_unit_square(coordinates)
+    network_vertices = mesh.map_coordinates_to_support(coordinates)
 
     network_edges = []
-    ts = {i: [] for i in range(len(network_vertices))}
+    latencies = {mesh.nearest_vertex_index(network_vertices[i]): [] for i in range(len(network_vertices))}
     with open(os.path.join(toy_directory, 'latency.json')) as f:
         latency_json = json.load(f)
 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
             v = label_to_index[edge[1]]
 
             network_edges.append((u, v))
-            ts[u].append((v, latency))
+            latencies[mesh.nearest_vertex_index(network_vertices[u])].append((v, latency))
 
     ricci_curvatures = []
     with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     z = mesh.set_parameters(z)
 
     hierarchy = optimization.DifferentiationHierarchy(
-        mesh, ts, network_vertices, network_edges, ricci_curvatures,
+        mesh, latencies, network_vertices, network_edges, ricci_curvatures,
         lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
         directory=directory, cores=None)
 

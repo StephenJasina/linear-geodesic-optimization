@@ -29,7 +29,7 @@ if __name__ == '__main__':
         for vertex, position in position_json.items():
             coordinates[label_to_index[vertex]] = position
 
-    network_vertices = mesh.scale_coordinates_to_unit_square(coordinates)
+    network_vertices = mesh.map_coordinates_to_support(coordinates)
 
     network_edges = []
     ts = {i: [] for i in range(len(network_vertices))}
