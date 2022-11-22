@@ -21,6 +21,8 @@ if __name__ == '__main__':
         print('Error: supplied directory must contain file named "0"')
         sys.exit(0)
 
+    toy_directory = os.path.join('..', 'data', 'toy')
+
     L_geodesics = []
     L_smooths = []
     L_curvatures = []
@@ -78,7 +80,7 @@ if __name__ == '__main__':
     vertices = mesh.get_vertices()
     coordinates = None
     label_to_index = {}
-    with open(os.path.join('..', 'data', 'toy', 'position.json')) as f:
+    with open(os.path.join(toy_directory, 'position.json')) as f:
         position_json = json.load(f)
 
         label_to_index = {label: index
@@ -91,8 +93,7 @@ if __name__ == '__main__':
     network_vertices = mesh.map_coordinates_to_support(coordinates)
 
     network_edges = []
-    ts = {i: [] for i in range(len(network_vertices))}
-    with open(os.path.join('..', 'data', 'toy', 'latency.json')) as f:
+    with open(os.path.join(toy_directory, 'latency.json')) as f:
         latency_json = json.load(f)
 
         for edge, latency in latency_json.items():
@@ -100,9 +101,6 @@ if __name__ == '__main__':
             v = label_to_index[edge[1]]
 
             network_edges.append((u, v))
-
-            ts[u].append((v, latency))
-            ts[v].append((u, latency))
 
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
