@@ -45,7 +45,8 @@ class Forward:
         return (sum((self.kappa[i] - ricci_curvature)**2
                     for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
                                                         self._fat_edges)
-                    for i in fat_edge) / len(self._ricci_curvatures)
+                    for i in fat_edge)
+                / sum(len(fat_edge) for fat_edge in self._fat_edges)
                 if self._ricci_curvatures else 0)
 
     def calc(self):
@@ -119,7 +120,8 @@ class Reverse:
         return (sum(2 * (self._kappa[i] - ricci_curvature) * self.dif_kappa[i]
                     for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
                                                         self._fat_edges)
-                    for i in fat_edge) / len(self._ricci_curvatures)
+                    for i in fat_edge)
+                / sum(len(fat_edge) for fat_edge in self._fat_edges)
                 if self._ricci_curvatures else 0)
 
     def calc(self, dif_v, l):
