@@ -6,6 +6,7 @@ import sys
 
 import numpy as np
 
+from linear_geodesic_optimization.optimization import curvature
 from linear_geodesic_optimization.plot import get_line_plot, get_scatter_fig, \
     combine_scatter_figs, get_heat_map, get_network_map, Animation3D
 
@@ -87,7 +88,7 @@ if __name__ == '__main__':
         for vertex, position in position_json.items():
             coordinates[label_to_index[vertex]] = position
 
-    network_vertices = mesh.scale_coordinates_to_unit_square(coordinates)
+    network_vertices = mesh.map_coordinates_to_support(coordinates)
 
     network_edges = []
     ts = {i: [] for i in range(len(network_vertices))}
@@ -107,6 +108,11 @@ if __name__ == '__main__':
     y = list(sorted(set(vertices[:,1])))
     z = vertices[:,2].reshape(len(x), len(y), order='F')
     get_heat_map(x, y, z, network_vertices, network_edges).show()
+
+    curvature_forward = curvature.Forward(mesh, [], [], [], 0.)
+    curvature_forward.calc()
+    kappa = curvature_forward.kappa.reshape(len(x), len(y), order='F')
+    get_heat_map(x, y, kappa, network_vertices, network_edges).show()
 
     combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()
     animation_3D.get_fig(duration=50).show()
