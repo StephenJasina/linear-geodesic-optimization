@@ -48,7 +48,7 @@ def combine_scatter_figs(before, after):
 def get_network_map(coordinates, network_edges):
     node_x = [x for x, _, _ in coordinates]
     node_y = [y for _, y, _ in coordinates]
-    node_trace = go.Scatter(x=node_x, y=node_y, mode='markers')
+    node_trace = go.Scatter(x=node_x, y=node_y, mode='markers', hoverinfo='skip')
 
     edge_x = []
     edge_y = []
