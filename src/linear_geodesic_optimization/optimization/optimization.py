@@ -175,10 +175,8 @@ class DifferentiationHierarchy:
 
         # For efficiency, only compute the relevant partial derivatives (or,
         # at least, try to compute as few irrelevant ones as possible)
-        # TODO: Fix this call
-        # ls = approximate_geodesics_fpi(mesh, geodesic_forward.phi,
-        #                                mesh_indices)
-        ls = set(range(V))
+        ls = approximate_geodesics_fpi(mesh, geodesic_forward.phi,
+                                       mesh_indices)
         dif_phi = [None for _ in range(V)]
         for l in range(V):
             if l in ls:
