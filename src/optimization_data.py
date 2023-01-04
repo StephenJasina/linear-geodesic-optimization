@@ -12,7 +12,7 @@ from linear_geodesic_optimization.optimization import optimization
 if __name__ == '__main__':
     # Get graph data first
 
-    # Good global graphs are DeutcheTelekom, Highwinds, HostwayInternational,
+    # Good global graphs are DeutscheTelekom, Highwinds, HostwayInternational,
     # HurricaneElectric, Ntt, and Peer1
     network = nx.read_graphml(os.path.join('..', 'data', 'graphml',
                                            'HostwayInternational.graphml'))

@@ -12,8 +12,8 @@ if __name__ == '__main__':
     toy_directory = os.path.join('..', 'data', 'toy')
 
     # Construct a mesh
-    width = 15
-    height = 15
+    width = 20
+    height = 20
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
@@ -52,7 +52,8 @@ if __name__ == '__main__':
     # Setup snapshots
     directory = os.path.join('..', 'out',
                              datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
-    os.makedirs(directory)
+    os.makedirs(directory+'a')
+    os.makedirs(directory+'b')
 
     # Initialize mesh
     fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon())
@@ -66,15 +67,31 @@ if __name__ == '__main__':
     np.divide(positive_sums, positive_counts, out=z, where=(positive_counts != 0))
     z = mesh.set_parameters(z)
 
+    # First optimize without geodesic loss
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
-        directory=directory, cores=None)
+        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
+        directory=directory+'a', cores=6)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()
 
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-                            callback=hierarchy.diagnostics,
-                            options=dict(maxiter=100))
+                            callback=hierarchy.diagnostics)
+
+    z = mesh.get_parameters()
+
+    # Then optimize with geodesic loss
+    hierarchy = optimization.DifferentiationHierarchy(
+        mesh, latencies, network_vertices, network_edges, ricci_curvatures,
+        lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
+        directory=directory+'b', cores=6)
+
+    f = hierarchy.get_loss_callback()
+    g = hierarchy.get_dif_loss_callback()
+
+    hierarchy.diagnostics(None)
+    scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
+                            callback=hierarchy.diagnostics)
+

@@ -204,46 +204,48 @@ class DifferentiationHierarchy:
         phi = []
         dif_phi = [[] for _ in range(V)]
 
-        if self.cores > 1:
-            # This just calls _reverses_call once for each city
-            with multiprocessing.Pool(self.cores) as pool:
-                arguments = [(mesh_index, self.latencies[mesh_index],
-                              self.mesh, dif_v,
-                              self.geodesic_forwards[mesh_index],
-                              self.geodesic_reverses[mesh_index])
-                             for mesh_index in self.latencies]
-                ts, phis, dif_phis = zip(
-                    *pool.starmap(DifferentiationHierarchy._reverses_call,
-                                  arguments))
-                for t_part in ts:
+        if self.lambda_geodesic != 0:
+            if self.cores > 1:
+                # This just calls _reverses_call once for each city
+                with multiprocessing.Pool(self.cores) as pool:
+                    arguments = [(mesh_index, self.latencies[mesh_index],
+                                  self.mesh, dif_v,
+                                  self.geodesic_forwards[mesh_index],
+                                  self.geodesic_reverses[mesh_index])
+                                 for mesh_index in self.latencies]
+                    ts, phis, dif_phis = zip(
+                        *pool.starmap(DifferentiationHierarchy._reverses_call,
+                                      arguments))
+                    for t_part in ts:
+                        t.extend(t_part)
+                    for phi_part in phis:
+                        phi.extend(phi_part)
+                    for dif_phi_part in dif_phis:
+                        for l, dif_phi_subpart in enumerate(dif_phi_part):
+                            dif_phi[l].extend(dif_phi_subpart)
+            else:
+                for mesh_index in self.latencies:
+                    t_part, phi_part, dif_phi_part = \
+                        DifferentiationHierarchy._reverses_call(
+                            mesh_index,
+                            self.latencies[mesh_index],
+                            self.mesh,
+                            dif_v,
+                            self.geodesic_forwards[mesh_index],
+                            self.geodesic_reverses[mesh_index]
+                        )
                     t.extend(t_part)
-                for phi_part in phis:
                     phi.extend(phi_part)
-                for dif_phi_part in dif_phis:
                     for l, dif_phi_subpart in enumerate(dif_phi_part):
                         dif_phi[l].extend(dif_phi_subpart)
-        else:
-            for mesh_index in self.latencies:
-                t_part, phi_part, dif_phi_part = \
-                    DifferentiationHierarchy._reverses_call(
-                        mesh_index,
-                        self.latencies[mesh_index],
-                        self.mesh,
-                        dif_v,
-                        self.geodesic_forwards[mesh_index],
-                        self.geodesic_reverses[mesh_index]
-                    )
-                t.extend(t_part)
-                phi.extend(phi_part)
-                for l, dif_phi_subpart in enumerate(dif_phi_part):
-                    dif_phi[l].extend(dif_phi_subpart)
 
-        t = np.array(t)
-        phi = np.array(phi)
+            t = np.array(t)
+            phi = np.array(phi)
 
         for l in range(V):
-            self.linear_regression_reverse.calc(phi, t, dif_phi[l])
-            dif_L_geodesic[l] += self.linear_regression_reverse.dif_lse
+            if self.lambda_geodesic != 0:
+                self.linear_regression_reverse.calc(phi, t, dif_phi[l])
+                dif_L_geodesic[l] += self.linear_regression_reverse.dif_lse
 
             self.smooth_reverse.calc(dif_v[l], l)
             dif_L_smooth[l] += self.smooth_reverse.dif_L_smooth
@@ -292,9 +294,9 @@ class DifferentiationHierarchy:
             + self.lambda_smooth * L_smooth \
             + self.lambda_curvature * L_curvature
         print(f'iteration {self.iterations}:')
-        print(f'\tL_geodesic: {self.lambda_geodesic * L_geodesic:.6f}')
-        print(f'\tL_smooth: {self.lambda_smooth * L_smooth:.6f}')
-        print(f'\tL_curvature: {self.lambda_curvature * L_curvature:.6f}')
+        print(f'\tL_geodesic: {L_geodesic:.6f}')
+        print(f'\tL_smooth: {L_smooth:.6f}')
+        print(f'\tL_curvature: {L_curvature:.6f}')
         print(f'\tLoss: {(loss):.6f}\n')
 
         if self.directory is not None:
