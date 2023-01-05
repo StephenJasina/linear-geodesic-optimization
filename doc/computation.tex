@@ -1,7 +1,7 @@
 \documentclass[10pt]{article}
 
 \usepackage{amsfonts, amsmath, amssymb, amsthm}
-\usepackage[margin=0.5in]{geometry}
+\usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
 \usepackage{xcolor}
 
@@ -39,6 +39,7 @@
 
 \newcommand*\Dif{\ensuremath{\mathrm{D}}}
 \newcommand*\dif{\ensuremath{\mathrm{d}}}
+\newcommand*\Var{\ensuremath{\mathrm{Var}}}
 
 \begin{document}
 	\pagestyle{empty}
@@ -55,9 +56,9 @@
 
 	\section{Objective/Loss Functions}
 
-	To enforce that the mesh approximates our desired surface, we define the objective functions \begin{align*}
+	To enforce that the mesh approximates our desired surface, we roughly\footnote{The actual definitions are scaled so that the values are comparable regardless of the choice of mesh.} define the objective functions \begin{align*}
 		\mathcal{L}_{\mathrm{geodesic}}\pof{M} &\triangleq \sum_{e \in E_G} \pof{\text{least squares residual of edge \(e\)}}^2, \\
-		\mathcal{L}_{\mathrm{smooth}}\pof{M} &\triangleq -\rho^\intercal L_C\rho, \\
+		\mathcal{L}_{\mathrm{smooth}}\pof{M} &\triangleq -\rho^\intercal L_C^{\text{N}}\rho, \\
 		\mathcal{L}_{\mathrm{curvature}}\pof{M} &\triangleq \sum_{\substack{v \in V_M \\ \text{\(v\) close to \(\pof{i, j}\)}}} \pof{\kappa\pof{v} - R_{i, j}}^2, \\
 		\mathcal{L}\pof{M} &\triangleq \lambda_{\mathrm{geodesic}}\mathcal{L}_{\mathrm{geodesic}}\pof{M} + \lambda_{\mathrm{curvature}}\mathcal{L}_{\mathrm{curvature}}\pof{M} + \lambda_{\mathrm{smooth}}\mathcal{L}_{\mathrm{smooth}}\pof{M},
 	\end{align*} where the \(\lambda\)'s are tunable hyperparameters. The other variables will be defined in the upcoming subsections. Our goal is then to minimize \(\mathcal{L}\pof{M}\).

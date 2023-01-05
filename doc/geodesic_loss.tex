@@ -3,13 +3,25 @@ We will define the following in this section: \begin{center}\begin{tabular}{r|l}
 	\(\widetilde{d}\) & Centered version of \(\widetilde{\phi}\) \\ \hline
 	\(d\) & Normalized and centered version of \(\widetilde{\phi}\) \\ \hline
 	\(\beta\) & The least squares linear estimator between \(\widetilde{\phi}\) and \(t\) \\ \hline
-	\(L_{\mathrm{geodesic}}\) & The sum of squared residuals when using \(\beta\) as an estimator
+	\(L_{\mathrm{geodesic}}\) & The sum of squared residuals when using \(\beta\) as an estimator, scaled to be unitless
 \end{tabular}\end{center} In this section, we will abuse notation a bit and write things like \(\phi_e\) to mean \(\phi_{i, j}\), where \(e = \pof{i, j} \in E_G\).
 
 \subsubsection{Forward Computation}
 We make the following computations: \begin{align*}
 	\widetilde{\phi}_e &= \phi_e \text{ when \(e \in E_G\)}, \\
-	\widetilde{d} &= \widetilde{\phi} - \frac{1}{\abs{E_G}}\pof{\widetilde{\phi} \cdot \mathbf{1}}\mathbf{1},
+	\widetilde{d} &= \widetilde{\phi} - \frac{1}{\abs{E_G}}\pof{\widetilde{\phi} \cdot \mathbf{1}}\mathbf{1}, \\
+	d &= \frac{1}{\sqrt{\frac{1}{\abs{E_G}}\widetilde{d} \cdot \widetilde{d}}}\widetilde{d}, \\
+	\beta_0 &= \frac{1}{\abs{E_G}}t \cdot \mathbf{1}, \\
+	\beta_1 &= \frac{1}{\abs{E_G}}t \cdot d, \\
+	\mathcal{L}_{\mathrm{geodesic}}\pof{M} &= \frac{1}{\abs{E_G}\Var\pof{t}}\norm{t - \pof{\beta_0\mathbf{1} + \beta_1d}}_2^2. \\
 \end{align*}
 
 \subsubsection{Reverse Computation}
+The partials of the above quantities are as follows: \begin{align*}
+	\frac{\partial\widetilde{\phi}_e}{\partial\rho_\ell} &= \frac{\partial\phi_e}{\partial\rho_\ell}, \\
+	\frac{\partial \widetilde{d}}{\partial \rho_\ell} &= \frac{\partial\widetilde{\phi}}{\partial\rho_\ell} - \frac{1}{\abs{E_G}}\pof{\frac{\partial\widetilde{\phi}}{\partial\rho_\ell} \cdot \mathbf{1}}\mathbf{1}, \\
+	\frac{\partial d}{\partial\rho_\ell} &= \frac{1}{\sqrt{\frac{1}{\abs{E_G}}\widetilde{d} \cdot \widetilde{d}}}\pof{\frac{\partial\widetilde{d}}{\partial\rho_\ell} - \frac{1}{\abs{E_G}}\pof{d \cdot \frac{\partial\widetilde{d}}{\partial\rho_\ell}}d}, \\
+	\frac{\partial\beta_0}{\partial\rho_\ell} &= 0, \\
+	\frac{\partial\beta_1}{\partial\rho_\ell} &= \frac{1}{\abs{E_G}}t \cdot \frac{\partial d}{\partial\rho_\ell},\\
+	\frac{\partial\pof{\mathcal{L}_{\mathrm{geodesic}}\pof{M}}}{\partial\rho_\ell} &= -\frac{2}{\abs{E_G}\Var\pof{t}}\pof{t - \pof{\beta_0\mathbf{1} + \beta_1d}} \cdot \pof{\frac{\partial\beta_1}{\partial\rho_\ell}d + \beta_1\frac{\partial d}{\partial\rho_\ell}}.
+\end{align*}

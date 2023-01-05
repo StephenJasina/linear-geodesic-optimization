@@ -27,7 +27,7 @@ We have the following (standard) definition of the Laplace-Beltrami operator on 
 	\pof{L_C^{\text{N}}}_{i, j} &= \begin{cases}
 		\frac{1}{2}\cot\pof{\theta_{i, j}} & \text{if \(\pof{v_i, v_j} \in \partial M\)}, \\
 		\frac{1}{2}\cot\pof{\theta_{j, i}} & \text{if \(\pof{v_j, v_i} \in \partial M\)}, \\
-		\frac{1}{2}\pof{\cot\pof{\theta_{i, j}} + \cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j} \in E_M\) and \(\pof{v_j, v_i} \in E_M\)}, \\
+		\frac{1}{2}\pof{\cot\pof{\theta_{i, j}} + \cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}, \pof{v_j, v_i} \in E_M\)}, \\
 		-\frac{1}{2}\pof{\displaystyle\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\cot\pof{\theta_{i, k}} + \sum_{\substack{k \\ \pof{v_k, v_i} \in E_M}}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
@@ -38,7 +38,7 @@ We have the following (standard) definition of the Laplace-Beltrami operator on 
 	\end{cases}
 \end{align*}
 
-Flipping our attention back to meshes without boundary, the two definitions above coincide, so we can write \[L_C = L_C^{\text{Neumann}} = L_C^{\text{Dirichlet}}.\]
+Flipping our attention to meshes without boundary, the two definitions above coincide, so we can write \[L_C = L_C^{\text{Neumann}} = L_C^{\text{Dirichlet}}.\] We take special note of this case as this is what is described in great detail in the original heat method paper.
 
 \subsubsection{Reverse Computation}
 
@@ -71,7 +71,7 @@ We compute
 	\pof{\frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
 		\frac{1}{2}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} & \text{if \(\pof{v_i, v_j} \in \partial M\)}, \\
 		\frac{1}{2}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}} & \text{if \(\pof{v_j, v_i} \in \partial M\)}, \\
-		\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j} \in E_M\) and \(\pof{v_j, v_i} \in E_M\)}, \\
+		\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}, \pof{v_j, v_i} \in E_M\)}, \\
 		-\frac{1}{2}\pof{\displaystyle\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, k}} + \sum_{\substack{k \\ \pof{v_k, v_i} \in E_M}}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
