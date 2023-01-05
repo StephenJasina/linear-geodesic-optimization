@@ -10,6 +10,8 @@ from linear_geodesic_optimization.optimization import curvature
 from linear_geodesic_optimization.plot import get_line_plot, get_scatter_fig, \
     combine_scatter_figs, get_heat_map, get_network_map, Animation3D
 
+animate = False
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print('Usage: python3 <directory name>')
@@ -21,7 +23,7 @@ if __name__ == '__main__':
         print('Error: supplied directory must contain file named "0"')
         sys.exit(0)
 
-    toy_directory = os.path.join('..', 'data', 'pyramid')
+    toy_directory = os.path.join('..', 'data', 'toy')
 
     L_geodesics = []
     L_smooths = []
@@ -39,7 +41,8 @@ if __name__ == '__main__':
             data = pickle.load(f)
 
             mesh = data['mesh']
-            animation_3D.add_frame(mesh)
+            if animate:
+                animation_3D.add_frame(mesh)
 
             L_geodesic = data['L_geodesic']
             L_smooth = data['L_smooth']
@@ -113,4 +116,6 @@ if __name__ == '__main__':
     get_heat_map(x, y, kappa, network_vertices, network_edges).show()
 
     combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()
-    animation_3D.get_fig(duration=50).show()
+
+    if animate:
+        animation_3D.get_fig(duration=50).show()
