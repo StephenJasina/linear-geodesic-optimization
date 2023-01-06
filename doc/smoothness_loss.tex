@@ -1,0 +1,17 @@
+% It would be nice to have something like [SI-MVS](https://www2.eecs.berkeley.edu/Pubs/TechRpts/1993/CSD-93-732.pdf#page=142) (see [this](https://www2.eecs.berkeley.edu/Pubs/TechRpts/1992/CSD-92-664.pdf) too). [Willmore Energy](https://en.wikipedia.org/wiki/Willmore_energy) is another possibility.
+
+% [This](https://www.cad-journal.net/files/vol_4/CAD_4(5)_2007_607-617.pdf) gives a good overview.
+
+We will define the following: \begin{center}\begin{tabular}{r|l}
+	\(\mathcal{L}_{\mathrm{smooth}}\pof{M}\) & A discrete approximation to the Dirichlet energy of \(M\)
+\end{tabular}\end{center}
+
+\subsubsection{Forward Computation}
+Following \href{https://www.cs.cmu.edu/~kmcrane/Projects/Other/SwissArmyLaplacian.pdf#page=28}{this tutorial}, we have \begin{align*}
+	\mathcal{L}_{\mathrm{smooth}}\pof{M} &\propto -\rho^\intercal L_C^{\text{N}}\rho.
+\end{align*} In terms of scaling, we divide by the surface area of the mesh when \(\rho = 0\) (that is, the area of a flat plane, a sphere, or similar).
+
+\subsubsection{Reverse Computation}
+Differentiating, \begin{align*}
+	\frac{\partial\pof{\mathcal{L}_{\mathrm{smooth}}\pof{M}}}{\partial\rho_\ell} &\propto -e_\ell^\intercal L_C^{\text{N}}\rho - \rho^\intercal\frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}\rho - \rho^\intercal L_C^{\text{N}}e_\ell.
+\end{align*}
