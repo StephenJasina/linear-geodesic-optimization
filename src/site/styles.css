@@ -1,0 +1,255 @@
+:root {
+  --main-bg-color: #f3f3f3;
+  font-family: 'Roboto Mono', monospace;
+}
+/* ::selection { */
+  /* background: #4CAF50;
+  color: white; */
+/* } */
+body {
+  margin: 0;
+}
+canvas {
+  display: block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: -1;
+}
+button {
+  font-family: 'Roboto Mono', monospace;
+  background-color: white;
+  color: #4CAF50;
+  border: 2px solid #4CAF50; /* Green */
+  min-width: 120px;
+  height: 40px;
+  margin: 5px;
+  font-size: 15px;
+  transition-duration: 0.2s;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+button:hover {
+  background-color: #4CAF50; /* Green */
+  color: white;
+}
+button.btn-delete {
+  min-width: 30px;
+  height: 30px;
+  margin-bottom: 0px;
+  position: relative;
+  top: 2.5px;
+  background-color: red;
+  color: white;
+  border-color: red;
+  font-weight: bold;
+}
+button.btn-delete:hover {
+  background-color: white;
+  color: red;
+  border-color: red;
+
+}
+svg {
+  float: right;
+}
+#btn-add-edge {
+  display: inline-block;
+}
+#btn-calc-curv {
+  display: inline-block;
+}
+#btn-help {
+  border-radius: 50px;
+  min-width: 50px;
+  height: 50px;
+  margin: 20px;
+  border-color: #E5E5E5;
+  outline: none;
+  float: right;
+}
+#btn-help:hover {
+  background-color: #ffffff;
+  color: #4CAF50;
+  box-shadow: 0px 0px 15px #c2c2c2;
+  cursor: pointer;
+}
+span {
+  color: #4CAF50
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 50%;
+  height: 10px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 5px;
+  margin-bottom: 25px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+.name {
+  min-width: 80px;
+}
+input[type=text] {
+  width: 30px;
+  /* background-color: var(--main-bg-color) */
+  margin-left: 0px;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.gui-box>label {
+  margin-right: 0px;
+  display: inline-block;
+}
+#gui {
+  font-size: 15px;
+  position: absolute;
+  z-index:1;
+  margin: 10px;
+  height: 600px;
+  margin-left: 50px;
+  /* overflow-y: auto; */
+
+}
+.gui-box {
+  margin: 5px;
+  padding-left: 20px;
+  padding-top: 15px;
+  height: 250px;
+  border-style: solid;
+  border-color: #E5E5E5;
+  border-width: 5px;
+  border-radius: 5px;
+  background-color: rgb(229, 229, 229, 0.2);
+  /* box-shadow: 0 0 0 13px #E5E5E5 inset; */
+}
+.gui-box>*{
+  display: block;
+}
+.form-box *{
+  padding: 5px;
+  margin: 5px;
+}
+#div-extra {
+  margin-top: 10px;
+  display: inline-block;
+  overflow-y: auto;
+  width: 450px;
+}
+#div-vertex {
+  /* TODO: inline-block and auto scroll */
+  display: inline-block;
+  overflow-y: auto;
+  width: 450px;
+  /* background-color: #E5E5E5; */
+}
+#div-edge {
+  display: block;
+  overflow-y: auto;
+}
+#div-help {
+  display: none;
+  background-color: #ffffff;
+  border-radius: 5px;
+  width: 400px;
+  float: right;
+  position: relative;
+  top: 90px;
+  right: -60px;
+  box-shadow: 0px 0px 15px #c2c2c2;
+  padding: 10px;
+}
+#display-slider {
+  text-align: center;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+}
+input[type="range"] {
+  width: 300px;
+}
+#div-calc-surface {
+  padding: 5px;
+  border-radius: 5px;
+  background-color: rgb(229, 229, 229, 1.0);
+  width: 70%;
+  margin-bottom: 10px;
+
+}
+li {
+  padding: 5px;
+}
+#heatmap-div {
+  display:block;
+  float:right;
+  border: none;
+}
+
+#zoom-out {
+  display: none;
+}
+
+kbd.key {
+  border-radius: 3px;
+  border: 1px solid black;
+  padding: 2px;
+}
+kbd.button {
+  font-family: 'Roboto Mono', monospace;
+  background-color: white;
+  color: #4CAF50;
+  border: 2px solid #4CAF50; /* Green */
+  border-radius: 5px;
+  padding: 1px 5px;
+  font-size: 13px;
+}
+
+.drop-box{
+  background-color: #E5E5E5;
+  display: inline-block;
+  height: 100px;
+  width: 150px;
+  text-align: center;
+  padding-top: 60px;
+  border-radius: 5px;
+}
+.selectBox {
+				border: 1px solid #55aaff;
+				background-color: rgba(75, 160, 255, 0.3);
+				position: fixed;
+}
+
+#map {
+  height: 995px;
+  width: 995px;
+  /* height: 696px;
+  width: 995px; */
+}
+
+label[for=id] {
+  color: #4CAF50;
+  /* background: white; */
+  margin: 0px;
+}
+input[type="checkbox"] {
+  display: inline-block;
+}
+
+canvas {
+  /* z-index: 1000 */
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Surface Generation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="icon" href="icon2.png">
+  </head>
+  <body>
+    <script src="js/three.js"></script>
+    <script src="js/scripts/OrbitControls.js"></script>
+    <script type="module" src="js/scripts/ClearPass.js"></script>
+    <script type="module" src="js/scripts/CopyShader.js"></script>
+    <script type="module" src="js/scripts/EffectComposer.js"></script>
+    <script type="module" src="js/scripts/FXAAShader.js"></script>
+    <script type="module" src="js/scripts/MaskPass.js"></script>
+    <script type="module" src="js/scripts/Pass.js"></script>
+    <script type="module" src="js/scripts/RenderPass.js"></script>
+    <script type="module" src="js/scripts/ShaderPass.js"></script>
+    <script type="module" src="js/scripts/LineGeometry.js"></script>
+    <script type="module" src="js/scripts/LineSegmentsGeometry.js"></script>
+    <script type="module" src="js/scripts/Line2.js"></script>
+    <script type="module" src="js/scripts/LineSegments2.js"></script>
+    <script type="module" src="js/scripts/LineMaterial.js"></script>
+    <script type="module" src="js/scripts/conrec.js"></script>
+    <script type="module" src="js/scripts/SelectionBox.js"></script>
+    <script type="module" src="js/scripts/SelectionHelper.js"></script>
+    <script type="module" src="js/GreatCircle/GreatCircle.js"></script>
+    <script src="https://unpkg.com/mathjs/lib/browser/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.3.4/dist/gsap.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-contour.v1.min.js"></script>
+
+
+
+    <script type="module" src="js/scripts/three.module.js"></script>
+
+    <script src="js/perlin.js"></script>
+    <script type="module" src="js/script.js"></script>
+    <div id="heatmap-div">
+      <img id="heatmap-img" width="350" height="350"/>
+    </div>
+    <div id="gui">
+      <div id="div-vertex" class="gui-box">
+        <button type="button" id="btn-add-vertex">Add vertex</button>
+      </div>
+      <div id="div-edge" class="gui-box">
+        <button type="button" id="btn-add-edge">Add edge</button>
+        <button type="button" id="btn-calc-curv">Calc Curvature</button>
+      </div>
+      <div id="div-extra" class="gui-box">
+        <!-- <button type="button" id="btn-scrn">Take screenshot</button> -->
+        <div id="div-calc-surface">
+          <button type="button" id="btn-calc-surface">Calculate Surface</button>
+          <br>
+          <label for="input-smooth">Smoothness</label>
+          <input type="text" value="1" id="input-smooth">
+          <br>
+          <label for="input-niter">No. of iterations</label>
+          <input type="text" value="20" id="input-niter">
+        </div>
+
+        <button type="button" id="btn-update">Update surface</button>
+        <button type="button" id="btn-refine">Refine surface</button>
+        <button type="button" id="btn-gen-graph">Generate sample graph</button>
+        <button type="button" id="btn-calc-dist">Calculate Distance</button>
+        <button type="button" id="btn-gen-graph-empty">Generate graph (No Weights)</button>
+
+
+
+        <div id="dropzone">
+          <div id="drop-nodes" class="drop-box">Drop location files here</div>
+          <output id="node-list"></output>
+          <div id="drop-edges" class="drop-box">Drop edge files here</div>
+          <output id="edge-list"></output>
+        </div>
+        <p>Threshold:</p>
+        <input type="range" min="0" max="5" value="0" class="slider" step="1" id="threshold-slider">
+        <button type="button" id="btn-cycle-thresholds">Cycle Thresholds</button>
+        <input type="checkbox" id="show-map" name="show-map">
+        <label for="show-map"> Show map</label><br>
+        <input type="checkbox" id="use-transparency" name="use-transparency">
+        <label for="use-transparency"> Use transparent surface</label><br>
+        <input type="checkbox" id="show-graph" name="show-graph" checked>
+        <label for="show-graph"> Show graph</label><br>
+        <input type="checkbox" id="hide-surface" name="hide-surface" checked>
+        <label for="hide-surface" id="hide-surface-label"> Hide extra surface</label><br>
+        <input type="checkbox" id="use-calc-surface" name="use-calc-surface">
+        <label for="use-calc-surface"> Use calculated surface</label><br>
+
+        <p>Positive Height: <span id="posheight-slider-val"></span></p>
+        <input type="range" min="0.01" max="20" value="1.0" class="slider" step="0.01" id="posheight-slider">
+        <!-- <input type="range" min="0.01" max="20" value="2" class="slider" step="0.01" id="posheight-slider"> -->
+
+
+        <p>Positive Range: <span id="posrange-slider-val"></span></p>
+        <input type="range" min="0" max="10" value="2.5" class="slider" step="0.01" id="posrange-slider">
+        <p>Positive Amplitude: <span id="amp-slider-val"></span></p>
+        <!-- <input type="range" min="0.01" max="3" value="1.5" class="slider" step="0.01" id="amp-slider"> -->
+        <input type="range" min="0.01" max="3" value="2.5" class="slider" step="0.01" id="amp-slider">
+        <p>Saddle X Range (Along Edge): <span id="xspread-slider-val" color="#4CAF50"></span></p>
+        <input type="range" min="-20" max="20" value="0" class="slider" step="0.000001" id="xspread-slider">
+        <p>Saddle Y Range (Across Edge): <span id="yspread-slider-val"></span></p>
+        <input type="range" min="-10" max="10" value="1.5" class="slider" step="0.000001" id="yspread-slider">
+        <p>Saddle Steepness: <span id="xlimit-slider-val"></span></p>
+        <!-- <input type="range" min="0.001" max="2" value="0.50" class="slider" step="0.000001" id="xlimit-slider"> -->
+        <input type="range" min="0.001" max="2" value="0.75" class="slider" step="0.000001" id="xlimit-slider">
+        <p>Saddle Steepness 2: <span id="xlimit2-slider-val"></span></p>
+        <!-- <input type="range" min="0.001" max="2" value="0.50" class="slider" step="0.000001" id="xlimit2-slider"> -->
+        <input type="range" min="0.001" max="2" value="0.75" class="slider" step="0.000001" id="xlimit2-slider">
+        <p>Saddle Narrowness: <span id="ylimit-slider-val"></span></p>
+        <input type="range" min="0.001" max="10" value="2" class="slider" step="0.000001" id="ylimit-slider">
+        <p>Saddle Height: <span id="height-slider-val"></span></p>
+        <!-- <input type="range" min="-2" max="4" value="0.75" class="slider" step="0.000001" id="height-slider"> -->
+        <input type="range" min="-2" max="4" value="1.50" class="slider" step="0.000001" id="height-slider">
+        <p>Saddle Rotation: <span id="rotation-slider-val"></span></p>
+        <input type="range" min="-3.14" max="3.14" value="0" class="slider" step="0.000001" id="rotation-slider">
+
+
+        <!-- <p>Hide +X:</p>
+        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide+x-slider">
+        <p>Hide -X:</p>
+        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide-x-slider">
+        <p>Hide +Y:</p>
+
+        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide+y-slider">
+        <p>Hide -Y:</p>
+        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide-y-slider"> -->
+      </div>
+
+
+    </div>
+    <div id="display-slider">
+
+    </div>
+    <button type="button" id="btn-help"><b>?</b></button>
+    <div id="div-help" style="display: none;">
+      <ul>
+        <li> Left click + drag to rotate </li>
+        <li> Right click + drag to pan </li>
+        <li> Scroll to zoom </li>
+        <li> <kbd class="key">Shift</kbd> + Left click + drag to select subgraph </li>
+        <li> <kbd class="key">Esc</kbd> to exit subgraph </li>
+        <li> Click <kbd class="button">Calculate Surface</kbd> to generate surface based on graph </li>
+      </ul>
+      <p style="padding: 10px;">Map tiles by <a href="http://stamen.com">Stamen Design</a>,
+        under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+        Data by <a href="http://openstreetmap.org">OpenStreetMap</a>,
+        under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.
+      </p>
+    </div>
+  </body>
+</html>
