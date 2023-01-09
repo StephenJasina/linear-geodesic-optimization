@@ -40,17 +40,18 @@
 \newcommand*\Dif{\ensuremath{\mathrm{D}}}
 \newcommand*\dif{\ensuremath{\mathrm{d}}}
 \newcommand*\Var{\ensuremath{\mathrm{Var}}}
+\newcommand*\proj{\ensuremath{\mathrm{proj}}}
 
 \begin{document}
 	\pagestyle{empty}
 
 	\section{Problem Setup}
 
-	As input, we are given a directed graph \(G = \pof{V_G, E_G}\), where each vertex is a geographic position \(s_i \in S^2\), and each edge \(\pof{i, j}\) has an associated (Olivier-Ricci) curvature \(R_{i, j} \in \ooint{-2, 1}\) and an associated latency \(t_{i, j} \in \mathbb{R}_{\ge 0}\).
+	As input, we are given a directed (multi-)graph \(G = \pof{V_G, E_G}\), where each vertex \(s \in V_G \subseteq S^2\) is a geographic position, and each edge \(e = \pof{s, s'}\) has an associated (Olivier-Ricci) curvature \(R_e \in \ooint{-2, 1}\) and an associated latency \(t_e \in \mathbb{R}_{\ge 0}\).
 
-	Intuitively, we want to return a surface in \(\mathbb{R}^3\) that is the graph of a function \(\rho : S^2 \to \mathbb{R}_{> 0}\) whose geodesics \(g_{i, j}\) between \(s_i\) and \(s_j\) (and their missing \(\rho\)-coordinates) have length \(\phi_{i, j}\) that is in a linear relationship with the latency.
+	We want to return a surface in \(\mathbb{R}^3\) that is the graph of a function \(\rho : S^2 \to \mathbb{R}_{> 0}\) whose minimal geodesics \(g_e\) between \(\pof{s, \rho\pof{s}}\) and \(\pof{s', \rho\pof{s'}}\) have length \(\phi_e\) that is in a linear relationship with the latency.
 
-	The strategy to realize this intuition is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\) that contains our input positions \(V_G\). We use a standard \href{https://en.wikipedia.org/wiki/Doubly_connected_edge_list}{half-edge} setup, so that \(E_M\) is a set of ordered pairs (edges are directed). Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V\). This setup is made explicit in \texttt{mesh/sphere.py}.
+	The strategy to realize this idea is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\). We use a standard \href{https://en.wikipedia.org/wiki/Doubly_connected_edge_list}{half-edge} setup, so that \(E_M\) is a set of ordered pairs (edges are directed). Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V_M\). This setup is made explicit in \texttt{mesh/sphere.py}. Note that there is an assumption that if we project \(V_M\) onto \(S^2\), then that set contains \(V_G\). In practice, we can just use a fine enough mesh and map the vertices in \(V_G\) to their nearest projections.
 
 	A similar setup is found in \texttt{mesh/rectangle.py}, where we use \(\ccint{0, 1}^2\) instead of \(S^2\). In general, this setup just requires that the position of any mesh vertex is controlled by a single scalar parameter.
 
@@ -59,7 +60,7 @@
 	To enforce that the mesh approximates our desired surface, we roughly\footnote{The actual definitions are scaled so that the values are comparable regardless of the choice of mesh.} define the objective functions \begin{align*}
 		\mathcal{L}_{\mathrm{geodesic}}\pof{M} &\triangleq \sum_{e \in E_G} \pof{\text{least squares residual of edge \(e\)}}^2, \\
 		\mathcal{L}_{\mathrm{smooth}}\pof{M} &\triangleq -\rho^\intercal L_C^{\text{N}}\rho, \\
-		\mathcal{L}_{\mathrm{curvature}}\pof{M} &\triangleq \sum_{\substack{v \in V_M \\ \text{\(v\) close to \(\pof{i, j}\)}}} \pof{\kappa\pof{v} - R_{i, j}}^2, \\
+		\mathcal{L}_{\mathrm{curvature}}\pof{M} &\triangleq \sum_{\substack{v \in V_M \\ e \in E_G \\ \text{\(v\) close to \(e\)}}} \pof{\kappa\pof{v} - R_e}^2, \\
 		\mathcal{L}\pof{M} &\triangleq \lambda_{\mathrm{geodesic}}\mathcal{L}_{\mathrm{geodesic}}\pof{M} + \lambda_{\mathrm{curvature}}\mathcal{L}_{\mathrm{curvature}}\pof{M} + \lambda_{\mathrm{smooth}}\mathcal{L}_{\mathrm{smooth}}\pof{M},
 	\end{align*} where the \(\lambda\)'s are tunable hyperparameters. The other variables will be defined in the upcoming subsections. Our goal is then to minimize \(\mathcal{L}\pof{M}\).
 
