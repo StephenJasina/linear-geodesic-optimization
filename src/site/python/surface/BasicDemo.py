@@ -321,8 +321,8 @@ def generate_surface(smooth_pen, rate, momentum, kappa, xf, yf, t_of_v, niter = 
         # elif (zf[i] < 0):
         #     zf[i] = (np.random.random() + 0.1)*0.1
     # initialize variables that will be used in gradient descent
-    plt.ion()
-    plt.show()
+    # plt.ion()
+    # plt.show()
 
     vertices = get_vertices(xf, yf, zf)
     cv = get_curvature(vertices, t_of_v)
@@ -335,8 +335,8 @@ def generate_surface(smooth_pen, rate, momentum, kappa, xf, yf, t_of_v, niter = 
 
     print("pre plot")
     generate_plots('python/surface/Output/sp{:d}i{:d}'.format(smooth_pen, niter), gridsize, xf, yf, zf, kappa, 'Data/map_points.csv')
-    plt.draw()
-    plt.pause(0.001)
+    # plt.draw()
+    # plt.pause(0.001)
     #
     # initial rate - decrease rate until a single step does not increase the objective
     if verbose:
@@ -398,11 +398,12 @@ def generate_surface(smooth_pen, rate, momentum, kappa, xf, yf, t_of_v, niter = 
                 if verbose:
                     print('step: {}, obj fn: {}'.format(i, of))
             if (0 == i % 10):
-                    plt.figure()
-                    sns.heatmap(np.reshape(cv, (gridsize, gridsize)), cmap = cm.bwr, vmin = -1, vmax = 1, center = 0)
-                    plt.suptitle('Output Curvature Map')
-                    plt.draw()
-                    plt.pause(0.001)
+                pass
+                # plt.figure()
+                # sns.heatmap(np.reshape(cv, (gridsize, gridsize)), cmap = cm.bwr, vmin = -1, vmax = 1, center = 0)
+                # plt.suptitle('Output Curvature Map')
+                # plt.draw()
+                # plt.pause(0.001)
 
     if verbose:
         print('Done: final error: {}'.format(of))
@@ -648,7 +649,7 @@ def main(data, smooth_pen=5, niter=20, hmap=[0]):
 
     cmap = cm.seismic
     maxscale = 0.1
-    plt.scatter(xf, yf, color = [cmap(rmap(p, -maxscale, 0, maxscale, 1, 0.5)) for p in curvatures.flatten()])
+    # plt.scatter(xf, yf, color = [cmap(rmap(p, -maxscale, 0, maxscale, 1, 0.5)) for p in curvatures.flatten()])
 
 
 

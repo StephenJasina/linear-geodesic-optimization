@@ -16,7 +16,13 @@ import concurrent.futures
 import sys
 import io
 import time
+import pickle
 from python.geodesic import GeodesicDistanceComputation
+
+sys.path.append('..')
+from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
+
+mesh_path = '/home/jasina/Desktop/out/20230105_125532a/1695'
 
 sys.path.append(r'python/surface/src')
 
@@ -103,6 +109,16 @@ def refine():
     print(send_data.keys())
     return json.dumps(send_data)
 
+def get_z_from_path(path):
+    with open(path, 'rb') as f:
+        data = pickle.load(f)
+        mesh = data['mesh']
+        vertices = mesh.get_vertices()
+        x = list(sorted(set(vertices[:,0])))
+        y = list(sorted(set(vertices[:,1])))
+        z = np.rot90(vertices[:,2].reshape(len(x), len(y))).reshape((-1,))
+        return z.tolist()
+
 @app.route('/calc-surface', methods=['POST'])
 def calc_surface():
     global retval
@@ -149,7 +165,7 @@ def calc_surface():
     #         yield json.dumps(i+10)
     #         import time
     #         time.sleep(5)
-    return Response(generate(), mimetype='text/plain')
+    return Response(json.dumps(get_z_from_path(mesh_path)), mimetype='text/plain')
 
     # Generator test
     # for val in bd.main(ret):

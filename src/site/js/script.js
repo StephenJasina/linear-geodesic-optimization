@@ -65,7 +65,7 @@ let planeXMin = -10, planeXMax = 10
 let planeYMin = -10, planeYMax = 10
 let planeW = planeXMax - planeXMin
 let planeH = planeYMax - planeYMin
-let divisions = 50 // Was 150
+let divisions = 20 // Was 150
 let heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 let opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 let curvMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
@@ -3546,14 +3546,11 @@ function calcSurface() {
             hm = calcHeightMap
           for (let i = 0 ; i < divisions ; i++) {
             for (let j = 0 ; j < divisions ; j++) {
-              hm[j][49-i] = data[i*divisions + j]*scale
-              if (data[i*divisions + j] < -0.1) {
-                hm[j][49-i] = data[i*divisions + j]*scale
-              }
+              hm[j][divisions-1-i] = data[i*divisions + j]*scale
             }
           }
 
-
+          updatePlaneHeights(hm);
       }
   }
   xmlHttp.open("post", "calc-surface");
