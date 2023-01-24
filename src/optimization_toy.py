@@ -68,25 +68,25 @@ if __name__ == '__main__':
     z = mesh.set_parameters(z)
 
     # # First optimize without geodesic loss
-    # hierarchy = optimization.DifferentiationHierarchy(
-    #     mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-    #     lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
-    #     directory=directory+'a', cores=3)
+    hierarchy = optimization.DifferentiationHierarchy(
+        mesh, latencies, network_vertices, network_edges, ricci_curvatures,
+        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
+        directory=directory+'a', cores=60)
 
-    # f = hierarchy.get_loss_callback()
-    # g = hierarchy.get_dif_loss_callback()
+    f = hierarchy.get_loss_callback()
+    g = hierarchy.get_dif_loss_callback()
 
-    # hierarchy.diagnostics(None)
-    # scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-    #                         callback=hierarchy.diagnostics)
+    hierarchy.diagnostics(None)
+    scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
+                            callback=hierarchy.diagnostics)
 
-    # z = mesh.get_parameters()
+    z = mesh.get_parameters()
 
     # Then optimize with geodesic loss
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
-        directory=directory+'b', cores=3)
+        lambda_geodesic=10., lambda_curvature=1., lambda_smooth=0.01,
+        directory=directory+'b', cores=60)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()

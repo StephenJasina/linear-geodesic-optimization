@@ -23,7 +23,7 @@ if __name__ == '__main__':
         print('Error: supplied directory must contain file named "0"')
         sys.exit(0)
 
-    toy_directory = os.path.join('..', 'data', 'toy')
+    toy_directory = os.path.join('..', 'data', 'two_islands')
 
     L_geodesics = []
     L_smooths = []

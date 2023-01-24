@@ -2,7 +2,6 @@
 import json
 import flask
 import numpy as np
-import potpourri3d as pp3d
 import csv
 from flask import request
 from flask import Response
@@ -48,6 +47,7 @@ def calc_curvature():
 
 @app.route('/calc-distance', methods=['POST'])
 def calc_distance():
+    import potpourri3d as pp3d
     data = request.json
     # print(data)
     verts = np.array(data['verts'])
