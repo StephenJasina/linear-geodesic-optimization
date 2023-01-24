@@ -67,7 +67,7 @@ if __name__ == '__main__':
     np.divide(positive_sums, positive_counts, out=z, where=(positive_counts != 0))
     z = mesh.set_parameters(z)
 
-    # # First optimize without geodesic loss
+    # First optimize without geodesic loss
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
         lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
