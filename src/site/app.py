@@ -116,7 +116,6 @@ def get_z_from_path(path):
         vertices = mesh.get_vertices()
         x = list(sorted(set(vertices[:,0])))
         y = list(sorted(set(vertices[:,1])))
-        # z = np.rot90(vertices[:,2].reshape(len(x), len(y))).reshape((-1,))
         z = vertices[:,2]
         z = z - np.mean(z)
         z = z / (max(z) - min(z))
