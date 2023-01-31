@@ -28,9 +28,10 @@ class Mesh(mesh.Mesh):
             for j in range(height):
                 grid[i*height+j:] = np.array([i, j])
 
-        # Normalize the vertices so that the mesh is supported on [0, 1]
+        # Normalize the vertices so that the mesh is supported on [-0.5, 0.5]^2
         grid[:,0] /= (width - 1)
         grid[:,1] /= (height - 1)
+        grid -= 0.5
 
         edges = [[] for _ in range(width * height)]
         faces = []
@@ -161,12 +162,12 @@ class Mesh(mesh.Mesh):
         j = round(v[1] * (self._height - 1))
         return i * self._height + j
 
-    def map_coordinates_to_support(self, coordinates, scale_factor=0.8):
+    def map_coordinates_to_support(self, coordinates, scale_factor=0.45):
         '''
         Convert a list of (x, y, z) triples into a list of new coordinates that
         have been scaled to lie centered in the unit square. The `scale_factor`
-        parameter determines what proportion of the unit square is used (0.8
-        means 80% of the width and 80% of the height is used).
+        parameter determines what proportion of the unit square is used (0.45
+        means 45% of the width and 45% of the height is used).
         '''
 
         # Need this check to avoid out-of-bounds errors if coordinates is empty
