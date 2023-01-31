@@ -277,3 +277,6 @@ class Mesh(mesh.Mesh):
             np.sin(longitude) * np.cos(latitude),
             np.sin(latitude)
         ])
+
+    def get_support_area(self):
+        return 4 * np.pi

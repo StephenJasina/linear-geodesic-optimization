@@ -22,7 +22,10 @@ class Forward:
             self._updates = self._mesh.updates()
             self._parameters = self._mesh.get_parameters()
 
-            self.L_smooth = -self._parameters.T @ (self.LC @ self._parameters)
+            self.L_smooth = (
+                -self._parameters.T @ (self.LC @ self._parameters)
+                / self._mesh.get_support_area()
+            )
 
 class Reverse:
     def __init__(self, mesh, laplacian_forward=None, laplacian_reverse=None):
@@ -59,5 +62,10 @@ class Reverse:
             self._dif_v = dif_v
             self._l = l
 
-            L_parameters = self._LC @ self._parameters + self._LC.T @ self._parameters
-            self.dif_L_smooth = -L_parameters[l] - self._parameters @ (self.dif_LC @ self._parameters)
+            L_parameters = self._LC @ self._parameters \
+                + self._LC.T @ self._parameters
+            self.dif_L_smooth = (
+                (-L_parameters[l]
+                 - self._parameters @ (self.dif_LC @ self._parameters))
+                / self._mesh.get_support_area()
+            )

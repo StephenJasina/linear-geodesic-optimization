@@ -198,6 +198,9 @@ class Mesh(mesh.Mesh):
                           0])
                 for x, y in coordinates]
 
+    def get_support_area(self):
+        return 1.
+
     # Legacy functions
     def triangles_of_vertex(self):
         return {i: [face for face in self._faces if i in face]
