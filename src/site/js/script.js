@@ -2824,15 +2824,15 @@ function generateGraph() {
 
   {
     // Graph 1
-    addVertex(null, 0.0, 0.0, true, name="A")
-    addVertex(null, 1.0, 1.0, true, name="B")
-    addVertex(null, 1.75, -0.75, true, name="C")
-    addVertex(null, 2.0, 0.0, true, name="E")
-    addVertex(null, 3.0, 0.1, true, name="F")
-    addVertex(null, 6.0, 1.0, true, name="H")
-    addVertex(null, 6.1, -0.5, true, name="G")
-    addVertex(null, 7.0, -0.5, true, name="I")
-    addVertex(null, 10.0, -2.5, true, name="J")
+    addVertex(null, 0.09999999999999998, 0.6714285714285715, true, name="A");
+    addVertex(null, 0.17999999999999994, 0.9, true, name="B");
+    addVertex(null, 0.24, 0.5, true, name="C");
+    addVertex(null, 0.26, 0.6714285714285715, true, name="E");
+    addVertex(null, 0.33999999999999997, 0.6942857142857143, true, name="F");
+    addVertex(null, 0.58, 0.9, true, name="H");
+    addVertex(null, 0.588, 0.5571428571428572, true, name="G");
+    addVertex(null, 0.6599999999999999, 0.5571428571428572, true, name="I");
+    addVertex(null, 0.9, 0.09999999999999998, true, name="J");
 
 
     addEdge(null, 0, 1, 0.25)
@@ -2844,11 +2844,11 @@ function generateGraph() {
     addEdge(null, 2, 4, 0.25)
     addEdge(null, 3, 4, 0.5)
     addEdge(null, 4, 5, -0.8333)
-    addEdge(null, 5, 5, 0.0)
-    addEdge(null, 5, 6, 0.0)
+    addEdge(null, 6, 5, 0.0)
+    addEdge(null, 6, 7, 0.0)
+    addEdge(null, 6, 8, 0.0)
     addEdge(null, 5, 7, 0.0)
-    addEdge(null, 6, 6, 0.0)
-    addEdge(null, 7, 7, 0.0)
+    addEdge(null, 7, 8, 0.0)
   }
 
 
