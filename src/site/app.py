@@ -21,7 +21,8 @@ from python.geodesic import GeodesicDistanceComputation
 sys.path.append('..')
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-mesh_path = '/home/jasina/Desktop/out/20230105_125532a/1695'
+# mesh_path = '/home/jasina/Desktop/out/0_1_1'
+mesh_path = '/home/jasina/Desktop/out/initial_state'
 
 sys.path.append(r'python/surface/src')
 
@@ -117,6 +118,8 @@ def get_z_from_path(path):
         x = list(sorted(set(vertices[:,0])))
         y = list(sorted(set(vertices[:,1])))
         z = np.rot90(vertices[:,2].reshape(len(x), len(y))).reshape((-1,))
+        z = z - np.mean(z)
+        z = z / (max(z) - min(z))
         return z.tolist()
 
 @app.route('/calc-surface', methods=['POST'])
