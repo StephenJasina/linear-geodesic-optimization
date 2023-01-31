@@ -2824,12 +2824,12 @@ function generateGraph() {
 
   {
     // Graph 1
-    addVertex(null, 0.9999999999999998, 9.0, true, name="A");
-    addVertex(null, 2.814207650273224, 5.0, true, name="B");
-    addVertex(null, 0.9999999999999998, 0.9999999999999998, true, name="C");
-    addVertex(null, 9.0, 0.9999999999999998, true, name="D");
-    addVertex(null, 7.185792349726777, 5.0, true, name="E");
-    addVertex(null, 9.0, 9.0, true, name="F");
+    addVertex(null, -5.6000000000000005, 8.0, true, name="A");
+    addVertex(null, -3.0601092896174866, 0.0, true, name="B");
+    addVertex(null, -5.6000000000000005, -8.0, true, name="C");
+    addVertex(null, 5.6000000000000005, -8.0, true, name="D");
+    addVertex(null, 3.0601092896174866, 0.0, true, name="E");
+    addVertex(null, 5.6000000000000005, 8.0, true, name="F");
 
     addEdge(null, 0, 1, 1.0);
     addEdge(null, 1, 2, 1.0);
