@@ -4,7 +4,7 @@ import os
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 if __name__ == '__main__':
-    toy_directory = os.path.join('..', 'data', 'toy')
+    toy_directory = os.path.join('..', 'data', 'two_islands')
 
     # These two parameters shouldn't actually matter, but are required
     # to instantiate a RectangleMesh object
@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     for index, label in enumerate(position_json):
         position = network_vertices[index]
-        print(f'addVertex(null, {position[0]}, {position[1]}, true, name="{label}");')
+        print(f'addVertex(null, {position[0] * 10.}, {position[1] * 10.}, true, name="{label}");')
 
     print()
 
@@ -38,4 +38,4 @@ if __name__ == '__main__':
             u = label_to_index[edge[0]]
             v = label_to_index[edge[1]]
 
-            print(f'addEdge(null, {u}, {v}, {curvature})')
+            print(f'addEdge(null, {u}, {v}, {curvature});')
