@@ -56,16 +56,29 @@ if __name__ == '__main__':
     os.makedirs(directory+'b')
 
     # Initialize mesh
-    fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon())
-    positive_sums = np.zeros(width * height)
-    positive_counts = np.zeros(width * height)
-    for fat_edge, ricci_curvature in zip(fat_edges, ricci_curvatures):
-        for vertex in fat_edge:
-            positive_sums[vertex] += ricci_curvature
-            positive_counts[vertex] += 1
-    z = np.zeros(width * height)
-    np.divide(positive_sums, positive_counts, out=z, where=(positive_counts != 0))
-    z = mesh.set_parameters(z)
+
+    # This is the old fat edge style initialization
+    # fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon())
+    # positive_sums = np.zeros(width * height)
+    # positive_counts = np.zeros(width * height)
+    # for fat_edge, ricci_curvature in zip(fat_edges, ricci_curvatures):
+    #     for vertex in fat_edge:
+    #         positive_sums[vertex] += ricci_curvature
+    #         positive_counts[vertex] += 1
+    # z = np.zeros(width * height)
+    # np.divide(positive_sums, positive_counts, out=z, where=(positive_counts != 0))
+    # z = mesh.set_parameters(z)
+
+    # This is the new everywhere positive curvature initialization
+    initial_curvature = 0.5
+    z = np.array([
+        (initial_curvature**-2
+            - (i / (width - 1) - 0.5)**2
+            - (j / (width - 1) - 0.5)**2)**0.5
+        for i in range(width)
+        for j in range(height)
+    ]).reshape((width * height,))
+    z = mesh.set_parameters(z - min(z))
 
     # First optimize without geodesic loss
     hierarchy = optimization.DifferentiationHierarchy(
@@ -80,18 +93,20 @@ if __name__ == '__main__':
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
                             callback=hierarchy.diagnostics)
 
-    z = mesh.get_parameters()
+    # For now, just run the optimization sans geodesic loss
 
-    # Then optimize with geodesic loss
-    hierarchy = optimization.DifferentiationHierarchy(
-        mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=10., lambda_curvature=1., lambda_smooth=0.01,
-        directory=directory+'b', cores=60)
+    # z = mesh.get_parameters()
 
-    f = hierarchy.get_loss_callback()
-    g = hierarchy.get_dif_loss_callback()
+    # # Then optimize with geodesic loss
+    # hierarchy = optimization.DifferentiationHierarchy(
+    #     mesh, latencies, network_vertices, network_edges, ricci_curvatures,
+    #     lambda_geodesic=10., lambda_curvature=1., lambda_smooth=0.01,
+    #     directory=directory+'b', cores=60)
 
-    hierarchy.diagnostics(None)
-    scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-                            callback=hierarchy.diagnostics)
+    # f = hierarchy.get_loss_callback()
+    # g = hierarchy.get_dif_loss_callback()
+
+    # hierarchy.diagnostics(None)
+    # scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
+    #                         callback=hierarchy.diagnostics)
 
