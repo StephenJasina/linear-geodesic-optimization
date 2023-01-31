@@ -14,7 +14,7 @@ def get_line_plot(data, title):
 
     ax.plot(range(len(data)), data)
     ax.set_title(title)
-    ax.set_xlabel('iteration')
+    ax.set_xlabel('Iteration')
     ax.set_ylabel('Loss')
 
     return fig
