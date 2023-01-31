@@ -4,13 +4,12 @@ import os
 import pickle
 import sys
 
+from matplotlib import pyplot as plt
 import numpy as np
 
 from linear_geodesic_optimization.optimization import curvature
-from linear_geodesic_optimization.plot import get_line_plot, get_scatter_fig, \
-    combine_scatter_figs, get_heat_map, get_network_map, Animation3D
-
-animate = False
+from linear_geodesic_optimization.plot import get_line_plot, \
+    get_scatter_plot, get_heat_map
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -23,17 +22,18 @@ if __name__ == '__main__':
         print('Error: supplied directory must contain file named "0"')
         sys.exit(0)
 
+    # TODO: Automate this (save it when doing the computations)
     toy_directory = os.path.join('..', 'data', 'two_islands')
+
+    mesh = None
 
     L_geodesics = []
     L_smooths = []
     L_curvatures = []
     Ls = []
 
-    scatter_fig_before = None
-    scatter_fig_after = None
-
-    animation_3D = Animation3D()
+    before_data = None
+    after_data = None
 
     for i in itertools.count():
         path = os.path.join(directory, str(i))
@@ -41,16 +41,17 @@ if __name__ == '__main__':
             data = pickle.load(f)
 
             mesh = data['mesh']
-            if animate:
-                animation_3D.add_frame(mesh)
 
             L_geodesic = data['L_geodesic']
-            L_smooth = data['L_smooth']
-            L_curvature = data['L_curvature']
             L_geodesics.append(L_geodesic)
+
+            L_smooth = data['L_smooth']
             L_smooths.append(L_smooth)
+
+            L_curvature = data['L_curvature']
             L_curvatures.append(L_curvature)
 
+            # TODO: Only save these once, probably
             lambda_geodesic = data['lambda_geodesic']
             lambda_smooth = data['lambda_smooth']
             lambda_curvature = data['lambda_curvature']
@@ -64,21 +65,30 @@ if __name__ == '__main__':
                 print(f'\tlambda_geodesic = {lambda_geodesic}')
                 print(f'\tlambda_smooth = {lambda_smooth}')
                 print(f'\tlambda_curvature = {lambda_curvature}')
-                scatter_fig_before = get_scatter_fig(true_latencies,
-                                                     estimated_latencies, True)
+                before_data = (true_latencies, estimated_latencies)
 
             path_next = os.path.join(directory, str(i + 1))
             if not os.path.exists(path_next):
-                scatter_fig_after = get_scatter_fig(true_latencies,
-                                                    estimated_latencies, False)
+                after_data = (true_latencies, estimated_latencies)
                 break
 
-    # TODO: Make these plots a lot nicer (maybe aggregate them into one
-    # visualization?)
-    get_line_plot(L_geodesics, 'Geodesic Loss').show()
-    get_line_plot(L_smooths, 'Smoothness Loss').show()
-    get_line_plot(L_curvatures, 'Curvature Loss').show()
-    get_line_plot(Ls, 'Total Loss').show()
+    figures = []
+
+    lambda_string = ' ($\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) \
+        + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) + '$)'
+
+    figures.append(get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string))
+    figures[-1].savefig(os.path.join(directory, 'geodesic_loss.png'))
+
+    figures.append(get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string))
+    figures[-1].savefig(os.path.join(directory, 'smoothness_loss.png'))
+
+    figures.append(get_line_plot(L_curvatures,
+                                 'Curvature Loss' + lambda_string))
+    figures[-1].savefig(os.path.join(directory, 'curvature_loss.png'))
+
+    figures.append(get_line_plot(Ls, 'Total Loss' + lambda_string))
+    figures[-1].savefig(os.path.join(directory, 'total_loss.png'))
 
     vertices = mesh.get_vertices()
     coordinates = None
@@ -108,14 +118,22 @@ if __name__ == '__main__':
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
     z = vertices[:,2].reshape(len(x), len(y), order='F')
-    get_heat_map(x, y, z, network_vertices, network_edges).show()
+    z = z - np.amin(z)
+    figures.append(get_heat_map(x, y, z, 'Altitude' + lambda_string,
+                                network_vertices, network_edges))
+    figures[-1].savefig(os.path.join(directory, 'altitude.png'))
 
     curvature_forward = curvature.Forward(mesh, [], [], [], 0.)
     curvature_forward.calc()
     kappa = curvature_forward.kappa.reshape(len(x), len(y), order='F')
-    get_heat_map(x, y, kappa, network_vertices, network_edges).show()
+    figures.append(get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
+                   network_vertices, network_edges))
+    figures[-1].savefig(os.path.join(directory, 'curvature.png'))
 
-    combine_scatter_figs(scatter_fig_before, scatter_fig_after).show()
+    figures.append(get_scatter_plot(before_data, after_data,
+                                    'Latency Prediction' + lambda_string))
+    figures[-1].savefig(os.path.join(directory, 'scatter.png'))
 
-    if animate:
-        animation_3D.get_fig(duration=50).show()
+    for figure in figures:
+        figure.show()
+    plt.show()
