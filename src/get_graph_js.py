@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     for index, label in enumerate(position_json):
         position = network_vertices[index]
-        print(f'addVertex(null, {(position[0] - 0.5) * 14.}, {(position[1] - 0.5) * 20.}, true, name="{label}");')
+        print(f'addVertex(null, {position[0] * 14.}, {position[1] * 20.}, true, name="{label}");')
 
     print()
 

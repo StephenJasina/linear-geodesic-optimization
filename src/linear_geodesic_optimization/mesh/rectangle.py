@@ -193,8 +193,8 @@ class Mesh(mesh.Mesh):
         y_divisor = y_max - y_min
         y_divisor = 1. if y_divisor == 0. else y_divisor
 
-        return [np.array([((x - x_min) / x_divisor - 0.5) * scale_factor + 0.5,
-                          ((y - y_min) / y_divisor - 0.5) * scale_factor + 0.5,
+        return [np.array([((x - x_min) / x_divisor - 0.5) * scale_factor,
+                          ((y - y_min) / y_divisor - 0.5) * scale_factor,
                           0])
                 for x, y in coordinates]
 
