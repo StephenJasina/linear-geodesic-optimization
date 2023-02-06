@@ -20,9 +20,10 @@ class Forward:
         if self._laplacian_forward is None:
             self._laplacian_forward = laplacian.Forward(mesh)
 
-        self.D = None
+        self.N = None
+        self.D_inv = None
         self.cot = None
-        self.LC_dirichlet = None
+        self.LC = None
 
         # A map i -> kappa_G(i)
         self.kappa_G = None
@@ -41,14 +42,19 @@ class Forward:
         return kappa_G
 
     def _calc_kappa_H(self):
-        v = self._v
-        pass
+        kappa_Hn = -self.D_inv @ (self.LC @ self._v) / 2
+        kappa_H = np.linalg.norm(kappa_Hn, axis=1)
+        for i in range(self._V):
+            if kappa_Hn[i] @ self.N[(i, self._e[i][0])] < 0:
+                kappa_H[i] *= -1
+        return kappa_H
 
     def calc(self):
         self._laplacian_forward.calc()
-        self.D = self._laplacian_forward.D
+        self.N = self._laplacian_forward.N
+        self.D_inv = self._laplacian_forward.D_inv
         self.cot = self._laplacian_forward.cot
-        self.LC_dirichlet = self._laplacian_forward.LC_dirichlet
+        self.LC = self._laplacian_forward.LC_neumann
 
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
