@@ -5,7 +5,7 @@ import pickle
 import numpy as np
 
 from linear_geodesic_optimization.optimization \
-    import laplacian, geodesic, linear_regression, smooth, curvature
+    import laplacian, geodesic, linear_regression, curvature, curvature_loss, smooth
 from linear_geodesic_optimization.optimization.partial_selection \
     import approximate_geodesics_fpi
 
@@ -59,8 +59,11 @@ class DifferentiationHierarchy:
              for mesh_index in latencies}
         self.linear_regression_forward = linear_regression.Forward()
         self.curvature_forward = curvature.Forward(
+            mesh, self.laplacian_forward
+        )
+        self.curvature_loss_forward = curvature_loss.Forward(
             mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
-            self.laplacian_forward
+            self.curvature_forward
         )
         self.smooth_forward = smooth.Forward(
             mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
@@ -78,14 +81,19 @@ class DifferentiationHierarchy:
         self.linear_regression_reverse = \
             linear_regression.Reverse(self.linear_regression_forward)
         self.curvature_reverse = curvature.Reverse(
+            mesh, self.laplacian_forward, self.curvature_forward,
+            next(iter(self.laplacian_reverses.values()))
+        )
+        self.curvature_loss_reverse = curvature_loss.Reverse(
             mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
-            self.laplacian_forward, self.curvature_forward,
-            next(iter(self.laplacian_reverses.values())))
+            self.curvature_forward, self.curvature_reverse
+        )
         self.smooth_reverse = smooth.Reverse(
             mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
             self.laplacian_forward, self.curvature_forward,
             next(iter(self.laplacian_reverses.values())),
-            self.curvature_reverse)
+            self.curvature_reverse
+        )
 
         # Count of iterations for diagnostic purposes
         self.iterations = 0
@@ -151,10 +159,10 @@ class DifferentiationHierarchy:
 
         self.linear_regression_forward.calc(phi, t)
         self.smooth_forward.calc()
-        self.curvature_forward.calc()
+        self.curvature_loss_forward.calc()
         return self.linear_regression_forward.lse, \
                self.smooth_forward.L_smooth, \
-               self.curvature_forward.L_curvature
+               self.curvature_loss_forward.L_curvature
 
     @staticmethod
     def _reverses_call(mesh_index, t, mesh, dif_v,
@@ -253,8 +261,8 @@ class DifferentiationHierarchy:
             self.smooth_reverse.calc(dif_v[l], l)
             dif_L_smooth[l] += self.smooth_reverse.dif_L_smooth
 
-            self.curvature_reverse.calc(dif_v[l], l)
-            dif_L_curvature[l] += self.curvature_reverse.dif_L_curvature
+            self.curvature_loss_reverse.calc(dif_v[l], l)
+            dif_L_curvature[l] += self.curvature_loss_reverse.dif_L_curvature
 
         return dif_L_geodesic, dif_L_smooth, dif_L_curvature
 

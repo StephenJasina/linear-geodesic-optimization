@@ -4,11 +4,10 @@ from linear_geodesic_optimization.optimization import laplacian
 
 class Forward:
     '''
-    Implementation of the curvature loss function.
+    Implementation various curvature functions.
     '''
 
-    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
-                 epsilon, laplacian_forward=None):
+    def __init__(self, mesh, laplacian_forward=None):
         self._mesh = mesh
         self._updates = self._mesh.updates() - 1
         self._v = None
@@ -17,48 +16,46 @@ class Forward:
 
         self._V = len(self._e)
 
-        self._network_vertices = network_vertices
-        self._network_edges = network_edges
-        self._ricci_curvatures = ricci_curvatures
-        self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
-                                             epsilon)
-
         self._laplacian_forward = laplacian_forward
         if self._laplacian_forward is None:
             self._laplacian_forward = laplacian.Forward(mesh)
 
+        self.D = None
         self.cot = None
+        self.LC_dirichlet = None
 
-        # A map i -> kappa(i)
-        self.kappa = None
+        # A map i -> kappa_G(i)
+        self.kappa_G = None
+
+        # A map i -> kappa_H(i)
+        self.kappa_H = None
+
         self.L_curvature = None
 
-    def _calc_kappa(self):
-        kappa = np.full(self._V, 2 * np.pi)
+    def _calc_kappa_G(self):
+        kappa_G = np.full(self._V, 2 * np.pi)
         # On the boundary, use Geodesic curvature instead of Gaussian curvature
-        kappa[list(self._mesh.get_boundary_vertices())] = np.pi
+        kappa_G[list(self._mesh.get_boundary_vertices())] = np.pi
         for (i, j), cot_ij in self.cot.items():
-            kappa[self._c[i, j]] -= np.arccos(cot_ij / (1 + cot_ij**2)**0.5)
-        return kappa
+            kappa_G[self._c[i, j]] -= np.arccos(cot_ij / (1 + cot_ij**2)**0.5)
+        return kappa_G
 
-    def _calc_L_curvature(self):
-        return (sum((self.kappa[i] - ricci_curvature)**2
-                    for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
-                                                        self._fat_edges)
-                    for i in fat_edge)
-                / sum(len(fat_edge) for fat_edge in self._fat_edges)
-                if self._ricci_curvatures else 0)
+    def _calc_kappa_H(self):
+        v = self._v
+        pass
 
     def calc(self):
         self._laplacian_forward.calc()
+        self.D = self._laplacian_forward.D
         self.cot = self._laplacian_forward.cot
+        self.LC_dirichlet = self._laplacian_forward.LC_dirichlet
 
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
             self._v = self._mesh.get_vertices()
 
-            self.kappa = self._calc_kappa()
-            self.L_curvature = self._calc_L_curvature()
+            self.kappa_G = self._calc_kappa_G()
+            self.kappa_H = self._calc_kappa_H()
 
 class Reverse:
     '''
@@ -66,8 +63,7 @@ class Reverse:
     This implementation assumes the l-th partial affects only the l-th vertex.
     '''
 
-    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
-                 epsilon, laplacian_forward=None, curvature_forward=None,
+    def __init__(self, mesh, laplacian_forward=None, curvature_forward=None,
                  laplacian_reverse=None):
         self._mesh = mesh
         self._updates = self._mesh.updates() - 1
@@ -76,12 +72,6 @@ class Reverse:
         self._c = self._mesh.get_c()
 
         self._V = len(self._e)
-
-        self._network_vertices = network_vertices
-        self._network_edges = network_edges
-        self._ricci_curvatures = ricci_curvatures
-        self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
-                                             epsilon)
 
         self._dif_v = None
         self._l = None
@@ -92,44 +82,34 @@ class Reverse:
 
         self._curvature_forward = curvature_forward
         if self._curvature_forward is None:
-            self._curvature_forward = Forward(mesh, network_vertices,
-                                              network_edges, ricci_curvatures,
-                                              epsilon, self._laplacian_forward)
+            self._curvature_forward = Forward(mesh, self._laplacian_forward)
 
         self._laplacian_reverse = laplacian_reverse
         if self._laplacian_reverse is None:
             self._laplacian_reverse = laplacian.Reverse(mesh)
 
         self._cot = None
-        self._kappa = None
+        self._kappa_G = None
 
         self._dif_cot = None
 
         # Derivatives match the types of what are being differentiated.
-        self.dif_kappa = None
+        self.dif_kappa_G = None
         self.dif_L_curvature = None
 
-    def _calc_dif_kappa(self):
-        dif_kappa = np.zeros(self._V)
+    def _calc_dif_kappa_G(self):
+        dif_kappa_G = np.zeros(self._V)
         for (i, j), cot_ij in self._cot.items():
             if (i, j) in self._dif_cot:
-                dif_kappa[self._c[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
-        return dif_kappa
-
-    def _calc_dif_L_curvature(self):
-        return (sum(2 * (self._kappa[i] - ricci_curvature) * self.dif_kappa[i]
-                    for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
-                                                        self._fat_edges)
-                    for i in fat_edge)
-                / sum(len(fat_edge) for fat_edge in self._fat_edges)
-                if self._ricci_curvatures else 0)
+                dif_kappa_G[self._c[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
+        return dif_kappa_G
 
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()
         self._cot = self._laplacian_forward.cot
 
         self._curvature_forward.calc()
-        self._kappa = self._curvature_forward.kappa
+        self._kappa_G = self._curvature_forward.kappa_G
 
         self._laplacian_reverse.calc(dif_v, l)
         self._dif_cot = self._laplacian_reverse.dif_cot
@@ -140,5 +120,4 @@ class Reverse:
             self._dif_v = dif_v
             self._l = l
 
-            self.dif_kappa = self._calc_dif_kappa()
-            self.dif_L_curvature = self._calc_dif_L_curvature()
+            self.dif_kappa_G = self._calc_dif_kappa_G()

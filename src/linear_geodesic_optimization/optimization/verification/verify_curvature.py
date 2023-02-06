@@ -6,7 +6,7 @@ import numpy as np
 import scipy
 
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
-from linear_geodesic_optimization.optimization import curvature, laplacian
+from linear_geodesic_optimization.optimization import curvature_loss, laplacian, curvature
 
 toy_directory = os.path.join('..', 'data', 'toy')
 
@@ -48,16 +48,16 @@ with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
     ricci_curvatures = list(json.load(f).values())
 
 laplacian_forward = laplacian.Forward(mesh)
-curvature_forward = curvature.Forward(mesh, network_vertices,
-                                      network_edges, ricci_curvatures,
-                                      mesh.get_epsilon(),
-                                      laplacian_forward)
+curvature_forward = curvature.Forward(mesh, laplacian_forward)
+curvature_loss_forward = curvature_loss.Forward(
+    mesh, network_vertices, network_edges, ricci_curvatures, mesh.get_epsilon()
+)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
-curvature_reverse = curvature.Reverse(mesh, network_vertices,
-                                      network_edges, ricci_curvatures,
-                                      mesh.get_epsilon(),
-                                      laplacian_forward, curvature_forward,
+curvature_reverse = curvature.Reverse(mesh, laplacian_forward, curvature_forward,
                                       laplacian_reverse)
+curvature_loss_reverse = curvature_loss.Reverse(
+    mesh, network_vertices, network_edges, ricci_curvatures, mesh.get_epsilon()
+)
 
 l = 37
 delta = 1e-5
@@ -65,16 +65,16 @@ delta = 1e-5
 rng = np.random.default_rng()
 z_0 = rng.random(V)
 mesh.set_parameters(z_0)
-curvature_forward.calc()
-L_curvature_0 = curvature_forward.L_curvature
+curvature_loss_forward.calc()
+L_curvature_0 = curvature_loss_forward.L_curvature
 
-curvature_reverse.calc(mesh.get_partials()[l], l)
-dif_L_curvature_0 = curvature_reverse.dif_L_curvature
+curvature_loss_reverse.calc(mesh.get_partials()[l], l)
+dif_L_curvature_0 = curvature_loss_reverse.dif_L_curvature
 
 z_delta = np.copy(z_0)
 z_delta[l] += delta
 mesh.set_parameters(z_delta)
-curvature_forward.calc()
-L_curvature_delta = curvature_forward.L_curvature
+curvature_loss_forward.calc()
+L_curvature_delta = curvature_loss_forward.L_curvature
 
 print(dif_L_curvature_0 / ((L_curvature_delta - L_curvature_0) / delta))

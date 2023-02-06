@@ -48,14 +48,14 @@ mesh.set_parameters(z)
 
 laplacian_forward = laplacian.Forward(mesh)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
-curvature_forward = curvature.Forward(mesh, [], [], [], 0, laplacian_forward)
-curvature_reverse = curvature.Reverse(mesh, [], [], [], 0, laplacian_forward, curvature_forward, laplacian_reverse)
+curvature_forward = curvature.Forward(mesh, laplacian_forward)
+curvature_reverse = curvature.Reverse(mesh, laplacian_forward, curvature_forward, laplacian_reverse)
 
 curvature_forward.calc()
-kappa_0 = curvature_forward.kappa
+kappa_0 = curvature_forward.kappa_G
 
 curvature_reverse.calc(mesh.get_partials()[37], 37)
-dif_kappa = curvature_reverse.dif_kappa
+dif_kappa = curvature_reverse.dif_kappa_G
 
 # Can't be too much smaller than 1e-5 or we get underflow
 delta = 1e-5
@@ -63,12 +63,12 @@ z[37] += delta
 mesh.set_parameters(z)
 
 curvature_forward.calc()
-kappa_delta = curvature_forward.kappa
+kappa_delta = curvature_forward.kappa_G
 
 approx_dif_kappa = np.array([(kappa_delta[i] - kappa_0[i]) / delta for i in range(100)])
 
 # Check curvatures are close
-print(np.max(np.abs(np.nan_to_num(get_curvature(mesh.get_vertices(), mesh.triangles_of_vertex()) - curvature_forward.kappa))))
+print(np.max(np.abs(np.nan_to_num(get_curvature(mesh.get_vertices(), mesh.triangles_of_vertex()) - curvature_forward.kappa_G))))
 
 # Check derivative is close
 print(np.max(np.abs(approx_dif_kappa - dif_kappa)))

@@ -131,9 +131,9 @@ if __name__ == '__main__':
                                 network_vertices, network_edges))
     figures[-1].savefig(os.path.join(directory, 'altitude.png'))
 
-    curvature_forward = curvature.Forward(mesh, [], [], [], 0.)
+    curvature_forward = curvature.Forward(mesh)
     curvature_forward.calc()
-    kappa = curvature_forward.kappa.reshape(width, height, order='F')[1:width - 1,1:height - 1]
+    kappa = curvature_forward.kappa_G.reshape(width, height, order='F')[1:width - 1,1:height - 1]
     figures.append(get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
                    network_vertices, network_edges))
     figures[-1].savefig(os.path.join(directory, 'curvature.png'))

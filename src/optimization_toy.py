@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
+        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.05,
         directory=directory, cores=None)
 
     f = hierarchy.get_loss_callback()
