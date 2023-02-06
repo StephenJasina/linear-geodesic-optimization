@@ -58,11 +58,15 @@ class DifferentiationHierarchy:
             {mesh_index: geodesic.Forward(mesh, self.laplacian_forward)
              for mesh_index in latencies}
         self.linear_regression_forward = linear_regression.Forward()
-        self.smooth_forward = smooth.Forward(mesh, self.laplacian_forward)
-        self.curvature_forward = curvature.Forward(mesh, network_vertices,
-                                                   network_edges,
-                                                   ricci_curvatures, epsilon,
-                                                   self.laplacian_forward)
+        self.curvature_forward = curvature.Forward(
+            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
+            self.laplacian_forward
+        )
+        self.smooth_forward = smooth.Forward(
+            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
+            self.laplacian_forward, self.curvature_forward
+        )
+
         self.laplacian_reverses = \
             {mesh_index: laplacian.Reverse(mesh, self.laplacian_forward)
              for mesh_index in latencies}
@@ -73,16 +77,15 @@ class DifferentiationHierarchy:
              for mesh_index in latencies}
         self.linear_regression_reverse = \
             linear_regression.Reverse(self.linear_regression_forward)
-        self.smooth_reverse = smooth.Reverse(
-            mesh, self.laplacian_forward,
-            next(iter(self.laplacian_reverses.values())))
         self.curvature_reverse = curvature.Reverse(
-            mesh, network_vertices,
-            network_edges,
-            ricci_curvatures, epsilon,
-            self.laplacian_forward,
-            self.curvature_forward,
+            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
+            self.laplacian_forward, self.curvature_forward,
             next(iter(self.laplacian_reverses.values())))
+        self.smooth_reverse = smooth.Reverse(
+            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
+            self.laplacian_forward, self.curvature_forward,
+            next(iter(self.laplacian_reverses.values())),
+            self.curvature_reverse)
 
         # Count of iterations for diagnostic purposes
         self.iterations = 0

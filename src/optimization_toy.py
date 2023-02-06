@@ -52,8 +52,7 @@ if __name__ == '__main__':
     # Setup snapshots
     directory = os.path.join('..', 'out',
                              datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
-    os.makedirs(directory+'a')
-    os.makedirs(directory+'b')
+    os.makedirs(directory)
 
     # Initialize mesh
 
@@ -70,21 +69,20 @@ if __name__ == '__main__':
     # z = mesh.set_parameters(z)
 
     # This is the new everywhere positive curvature initialization
-    initial_curvature = 0.5
+    initial_radius = 2
     z = np.array([
-        (initial_curvature**-2
+        (initial_radius**2
             - (i / (width - 1) - 0.5)**2
-            - (j / (width - 1) - 0.5)**2)**0.5
+            - (j / (height - 1) - 0.5)**2)**0.5
         for i in range(width)
         for j in range(height)
     ]).reshape((width * height,))
     z = mesh.set_parameters(z - min(z))
 
-    # First optimize without geodesic loss
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
         lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
-        directory=directory+'a', cores=60)
+        directory=directory, cores=None)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()
@@ -92,21 +90,3 @@ if __name__ == '__main__':
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
                             callback=hierarchy.diagnostics)
-
-    # For now, just run the optimization sans geodesic loss
-
-    # z = mesh.get_parameters()
-
-    # # Then optimize with geodesic loss
-    # hierarchy = optimization.DifferentiationHierarchy(
-    #     mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-    #     lambda_geodesic=10., lambda_curvature=1., lambda_smooth=0.01,
-    #     directory=directory+'b', cores=60)
-
-    # f = hierarchy.get_loss_callback()
-    # g = hierarchy.get_dif_loss_callback()
-
-    # hierarchy.diagnostics(None)
-    # scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-    #                         callback=hierarchy.diagnostics)
-

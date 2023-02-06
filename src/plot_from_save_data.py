@@ -118,14 +118,22 @@ if __name__ == '__main__':
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
     z = vertices[:,2].reshape(len(x), len(y), order='F')
+
+    width = len(x)
+    height = len(y)
+
+    x = x[1:width - 1]
+    y = y[1:height - 1]
+    z = z[1:width - 1,1:height - 1]
     z = z - np.amin(z)
+
     figures.append(get_heat_map(x, y, z, 'Altitude' + lambda_string,
                                 network_vertices, network_edges))
     figures[-1].savefig(os.path.join(directory, 'altitude.png'))
 
     curvature_forward = curvature.Forward(mesh, [], [], [], 0.)
     curvature_forward.calc()
-    kappa = curvature_forward.kappa.reshape(len(x), len(y), order='F')
+    kappa = curvature_forward.kappa.reshape(width, height, order='F')[1:width - 1,1:height - 1]
     figures.append(get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
                    network_vertices, network_edges))
     figures[-1].savefig(os.path.join(directory, 'curvature.png'))
