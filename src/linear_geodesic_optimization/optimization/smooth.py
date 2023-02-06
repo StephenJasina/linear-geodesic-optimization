@@ -32,10 +32,12 @@ class Forward:
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
 
-            self.L_smooth = (
-                -self.kappa.T @ (self.LC @ self.kappa)
-                / self._mesh.get_support_area()
-            )
+            # self.L_smooth = (
+            #     -self.kappa.T @ (self.LC @ self.kappa)
+            #     / self._mesh.get_support_area()
+            # )
+            z = self._mesh.get_parameters()
+            self.L_smooth = z.T @ (self._mesh.get_graph_laplacian() @ z)
 
 class Reverse:
     def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
@@ -87,7 +89,7 @@ class Reverse:
         self._kappa = self._curvature_forward.kappa
 
         self._laplacian_reverse.calc(dif_v, l)
-        self.dif_LC = self._laplacian_reverse.dif_LC_neumann
+        self.dif_LC = self._laplacian_reverse.dif_LC_dirichlet
 
         self._curvature_reverse.calc(dif_v, l)
         self.dif_kappa = self._curvature_reverse.dif_kappa
@@ -97,8 +99,10 @@ class Reverse:
             self._dif_v = dif_v
             self._l = l
 
-            self.dif_L_smooth =  -(
-                self.dif_kappa.T @ (self._LC @ self._kappa)
-                + self._kappa.T @ (self.dif_LC @ self._kappa)
-                + self._kappa.T @ (self._LC @ self.dif_kappa)
-            )
+            # self.dif_L_smooth = -(
+            #     self.dif_kappa.T @ (self._LC @ self._kappa)
+            #     + self._kappa.T @ (self.dif_LC @ self._kappa)
+            #     + self._kappa.T @ (self._LC @ self.dif_kappa)
+            # )
+            z = self._mesh.get_parameters()
+            self.dif_L_smooth = 2 * (self._mesh.get_graph_laplacian() @ z)[l]

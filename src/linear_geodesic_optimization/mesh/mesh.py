@@ -1,3 +1,5 @@
+from scipy import sparse
+
 class Mesh:
     def get_partials(self):
         '''
@@ -114,3 +116,35 @@ class Mesh:
         '''
 
         raise NotImplementedError
+
+    def get_graph_laplacian(self):
+        '''
+        Return the graph Laplacian of the mesh as a CSR sparse matrix.
+        '''
+        size = self.get_vertices().shape[0]
+        boundary_edges = self.get_boundary_edges()
+        row = []
+        col = []
+        data = []
+        for u, vs in enumerate(self.get_edges()):
+            for v in vs:
+                row.append(u)
+                col.append(v)
+                data.append(-1)
+
+                row.append(u)
+                col.append(u)
+                data.append(1)
+
+                # Need to check the boundary so that the returned matix is
+                # symmetric
+                if (u, v) in boundary_edges:
+                    row.append(v)
+                    col.append(u)
+                    data.append(-1)
+
+                    row.append(v)
+                    col.append(v)
+                    data.append(1)
+        return sparse.coo_array((data, (row, col)),
+                                shape=(size, size)).tocsr()
