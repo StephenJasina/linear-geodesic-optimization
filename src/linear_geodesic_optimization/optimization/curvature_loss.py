@@ -95,8 +95,10 @@ class Reverse:
         self._curvature_reverse.calc(dif_v, l)
         self.dif_kappa_G = self._curvature_reverse.dif_kappa_G
 
-        if self._updates != self._mesh.updates():
+        if self._updates != self._mesh.updates() or self._l != l:
             self._updates = self._mesh.updates()
+            self._dif_v = dif_v
+            self._l = l
             self.dif_L_curvature = (
                 sum(2 * (self.kappa_G[i] - ricci_curvature) * self.dif_kappa_G[i]
                     for ricci_curvature, fat_edge in zip(self._ricci_curvatures,

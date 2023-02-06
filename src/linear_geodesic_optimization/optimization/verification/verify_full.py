@@ -52,7 +52,7 @@ if __name__ == '__main__':
     z_0 = rng.random(V)
 
     hierarchy = optimization.DifferentiationHierarchy(
-        mesh, ts, network_vertices, [], [],
+        mesh, ts, network_vertices, network_edges, ricci_curvatures,
         lambda_geodesic=1., lambda_curvature=1., lambda_smooth=1.,
         cores=None)
 
