@@ -1,8 +1,7 @@
 from linear_geodesic_optimization.optimization import laplacian, curvature
 
 class Forward:
-    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
-                 epsilon, laplacian_forward=None, curvature_forward=None):
+    def __init__(self, mesh, laplacian_forward=None, curvature_forward=None):
         self._mesh = mesh
 
         self._updates = self._mesh.updates() - 1
@@ -14,8 +13,7 @@ class Forward:
         self._curvature_forward = curvature_forward
         if self._curvature_forward is None:
             self._curvature_forward = curvature.Forward(
-                mesh, network_vertices, network_edges, ricci_curvatures,
-                epsilon, laplacian_forward
+                mesh, laplacian_forward
             )
 
         self.LC = None
@@ -40,8 +38,7 @@ class Forward:
             self.L_smooth = z.T @ (self._mesh.get_graph_laplacian() @ z)
 
 class Reverse:
-    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
-                 epsilon, laplacian_forward=None, curvature_forward=None,
+    def __init__(self, mesh, laplacian_forward=None, curvature_forward=None,
                  laplacian_reverse=None, curvature_reverse=None):
         self._mesh = mesh
         self._updates = self._mesh.updates() - 1
@@ -61,16 +58,13 @@ class Reverse:
         self._curvature_forward = curvature_forward
         if self._curvature_forward is None:
             self._curvature_forward = curvature.Forward(
-                mesh, network_vertices, network_edges, ricci_curvatures,
-                epsilon, laplacian_forward
+                mesh, laplacian_forward
             )
 
         self._curvature_reverse = curvature_reverse
         if self._curvature_reverse is None:
             self._curvature_reverse = curvature.Reverse(
-                mesh, network_vertices, network_edges, ricci_curvatures,
-                epsilon, laplacian_forward, curvature_forward,
-                laplacian_reverse
+                mesh, laplacian_forward, curvature_forward, laplacian_reverse
             )
 
         self._LC = None

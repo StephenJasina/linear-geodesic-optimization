@@ -66,8 +66,7 @@ class DifferentiationHierarchy:
             self.curvature_forward
         )
         self.smooth_forward = smooth.Forward(
-            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
-            self.laplacian_forward, self.curvature_forward
+            mesh, self.laplacian_forward, self.curvature_forward
         )
 
         self.laplacian_reverses = \
@@ -89,8 +88,7 @@ class DifferentiationHierarchy:
             self.curvature_forward, self.curvature_reverse
         )
         self.smooth_reverse = smooth.Reverse(
-            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
-            self.laplacian_forward, self.curvature_forward,
+            mesh, self.laplacian_forward, self.curvature_forward,
             next(iter(self.laplacian_reverses.values())),
             self.curvature_reverse
         )
