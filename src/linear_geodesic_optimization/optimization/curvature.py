@@ -34,12 +34,12 @@ class Forward:
         self.L_curvature = None
 
     def _calc_kappa_G(self):
-        kappa_G = np.full(self._V, 2 * np.pi)
+        Dkappa_G = np.full(self._V, 2 * np.pi)
         # On the boundary, use Geodesic curvature instead of Gaussian curvature
-        kappa_G[list(self._mesh.get_boundary_vertices())] = np.pi
+        Dkappa_G[list(self._mesh.get_boundary_vertices())] = np.pi
         for (i, j), cot_ij in self.cot.items():
-            kappa_G[self._c[i, j]] -= np.arccos(cot_ij / (1 + cot_ij**2)**0.5)
-        return kappa_G
+            Dkappa_G[self._c[i, j]] -= np.arccos(cot_ij / (1 + cot_ij**2)**0.5)
+        return self.D_inv @ Dkappa_G
 
     def _calc_kappa_H(self):
         kappa_Hn = -self.D_inv @ (self.LC @ self._v) / 2
@@ -94,9 +94,12 @@ class Reverse:
         if self._laplacian_reverse is None:
             self._laplacian_reverse = laplacian.Reverse(mesh)
 
+        self._D_inv = None
         self._cot = None
+
         self._kappa_G = None
 
+        self._dif_D = None
         self._dif_cot = None
 
         # Derivatives match the types of what are being differentiated.
@@ -104,20 +107,22 @@ class Reverse:
         self.dif_L_curvature = None
 
     def _calc_dif_kappa_G(self):
-        dif_kappa_G = np.zeros(self._V)
+        dif_Dkappa_G = np.zeros(self._V)
         for (i, j), cot_ij in self._cot.items():
             if (i, j) in self._dif_cot:
-                dif_kappa_G[self._c[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
-        return dif_kappa_G
+                dif_Dkappa_G[self._c[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
+        return self._D_inv @ (dif_Dkappa_G - self._dif_D @ self._kappa_G)
 
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()
+        self._D_inv = self._laplacian_forward.D_inv
         self._cot = self._laplacian_forward.cot
 
         self._curvature_forward.calc()
         self._kappa_G = self._curvature_forward.kappa_G
 
         self._laplacian_reverse.calc(dif_v, l)
+        self._dif_D = self._laplacian_reverse.dif_D
         self._dif_cot = self._laplacian_reverse.dif_cot
 
         if self._updates != self._mesh.updates() or self._l != l:

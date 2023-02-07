@@ -64,8 +64,9 @@ Putting this together, \(r \in B_\epsilon\pof{\pof{u, v}}\) if and only if one o
 \subsubsection{Forward Computation}
 We have \begin{align*}
 	\theta_{i, j} &= \arctan\pof{\frac{1}{\cot\pof{\theta_{i, j}}}} \bmod \pi, \\
-	\kappa_i &= 2\pi - \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \theta_{k, c\pof{i, k}}, \\
-	\mathcal{L}_{\mathrm{curvature}}\pof{M} &\propto \sum_{e \in E_G} \sum_{\substack{k \\ v_k \in B_\epsilon\pof{e}}} \pof{R_e - \kappa_k}^2.
+	\widetilde{\kappa^G}_i &= 2\pi - \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \theta_{k, c\pof{i, k}}, \\
+	\kappa^G &= D^{-1}\widetilde{\kappa^G}, \\
+	\mathcal{L}_{\mathrm{curvature}}\pof{M} &\propto \sum_{e \in E_G} \sum_{\substack{k \\ v_k \in B_\epsilon\pof{e}}} \pof{R_e - \kappa^G_k}^2.
 \end{align*}
 
 Here, we scale \(\mathcal{L}_{\mathrm{curvature}}\pof{M}\) proportional to the number of vertices in the ``fat edges,'' counted with multiplicity.
@@ -73,6 +74,7 @@ Here, we scale \(\mathcal{L}_{\mathrm{curvature}}\pof{M}\) proportional to the n
 \subsubsection{Reverse Computation}
 Differentiating, \begin{align*}
 	\frac{\partial\theta_{i, j}}{\partial\rho_\ell} &= -\frac{\partial \cot\pof{\theta_{i, j}}}{\partial \rho_\ell} \cdot \frac{1}{1 + \cot^2\pof{\theta_{i, j}}}, \\
-	\frac{\partial\kappa_i}{\partial\rho_\ell} &= -\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial\theta_{k, c\pof{i, k}}}{\partial\rho_\ell}, \\
-	\frac{\partial\pof{\mathcal{L}_{\mathrm{curvature}}\pof{M}}}{\partial\rho_\ell} &\propto \sum_{e \in E_G} \sum_{\substack{k \\ v_k \in B_\epsilon\pof{e}}} -2\pof{R_e - \kappa_k}\frac{\partial\kappa_k}{\partial\rho_\ell}.
+	\frac{\partial\widetilde{\kappa^G}_i}{\partial\rho_\ell} &= -\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial\theta_{k, c\pof{i, k}}}{\partial\rho_\ell}, \\
+	\frac{\dif\kappa^G}{\partial\rho_\ell} &= D^{-1}\pof{\frac{\dif\widetilde{\kappa^G}}{\partial\rho_\ell} - \frac{\dif D}{\partial\rho_\ell}\kappa^G}, \\
+	\frac{\partial\pof{\mathcal{L}_{\mathrm{curvature}}\pof{M}}}{\partial\rho_\ell} &\propto \sum_{e \in E_G} \sum_{\substack{k \\ v_k \in B_\epsilon\pof{e}}} -2\pof{R_e - \kappa^G_k}\frac{\partial\kappa^G_k}{\partial\rho_\ell}.
 \end{align*}
