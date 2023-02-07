@@ -12,8 +12,8 @@ if __name__ == '__main__':
     toy_directory = os.path.join('..', 'data', 'two_islands')
 
     # Construct a mesh
-    width = 20
-    height = 20
+    width = 30
+    height = 30
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # z = mesh.set_parameters(z)
 
     # This is the new everywhere positive curvature initialization
-    initial_radius = 2
+    initial_radius = 8
     z = np.array([
         (initial_radius**2
             - (i / (width - 1) - 0.5)**2
