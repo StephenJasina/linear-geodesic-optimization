@@ -55,20 +55,6 @@ if __name__ == '__main__':
     os.makedirs(directory)
 
     # Initialize mesh
-
-    # This is the old fat edge style initialization
-    # fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon())
-    # positive_sums = np.zeros(width * height)
-    # positive_counts = np.zeros(width * height)
-    # for fat_edge, ricci_curvature in zip(fat_edges, ricci_curvatures):
-    #     for vertex in fat_edge:
-    #         positive_sums[vertex] += ricci_curvature
-    #         positive_counts[vertex] += 1
-    # z = np.zeros(width * height)
-    # np.divide(positive_sums, positive_counts, out=z, where=(positive_counts != 0))
-    # z = mesh.set_parameters(z)
-
-    # This is the new everywhere positive curvature initialization
     initial_radius = 20
     z = np.array([
         (initial_radius**2
@@ -83,7 +69,7 @@ if __name__ == '__main__':
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.01,
+        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.005,
         directory=directory, cores=None)
 
     f = hierarchy.get_loss_callback()
