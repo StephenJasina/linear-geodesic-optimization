@@ -12,8 +12,8 @@ if __name__ == '__main__':
     toy_directory = os.path.join('..', 'data', 'two_islands')
 
     # Construct a mesh
-    width = 30
-    height = 30
+    width = 20
+    height = 20
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # z = mesh.set_parameters(z)
 
     # This is the new everywhere positive curvature initialization
-    initial_radius = 8
+    initial_radius = 20
     z = np.array([
         (initial_radius**2
             - (i / (width - 1) - 0.5)**2
@@ -77,7 +77,9 @@ if __name__ == '__main__':
         for i in range(width)
         for j in range(height)
     ]).reshape((width * height,))
-    z = mesh.set_parameters(z - min(z))
+    z = z - np.amin(z)
+    z[list(mesh.get_boundary_vertices())] = 0.
+    z = mesh.set_parameters(z)
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,

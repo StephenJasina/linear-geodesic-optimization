@@ -37,7 +37,11 @@ class Forward:
         # A map i -> kappa_H(i)
         self.kappa_H = None
 
-        self.L_curvature = None
+        # A map i -> kappa_1(i)
+        self.kappa_1 = None
+
+        # A map i -> kappa_2(i)
+        self.kappa_2 = None
 
     def _calc_kappa_G(self):
         Dkappa_G = np.full(self._V, 2 * np.pi)
@@ -62,6 +66,12 @@ class Forward:
         right = self.mean_curvature_normal
         return np.array([left[i,:] @ right[i,:] for i in range(self._V)])
 
+    def _calc_kappa_1(self):
+        return self.kappa_H + np.sqrt(np.maximum(0., self.kappa_H**2 - self.kappa_G))
+
+    def _calc_kappa_2(self):
+        return self.kappa_H - np.sqrt(np.maximum(0., self.kappa_H**2 - self.kappa_G))
+
     def calc(self):
         self._laplacian_forward.calc()
         self.N = self._laplacian_forward.N
@@ -77,6 +87,8 @@ class Forward:
             self.vertex_normal = self._calc_vertex_normal()
             self.mean_curvature_normal = self._calc_mean_curvature_normal()
             self.kappa_H = self._calc_kappa_H()
+            self.kappa_1 = self._calc_kappa_1()
+            self.kappa_2 = self._calc_kappa_2()
 
 class Reverse:
     '''
@@ -128,6 +140,8 @@ class Reverse:
         self.dif_vertex_normal = None
         self.dif_mean_curvature_normal = None
         self.dif_kappa_H = None
+        self.dif_kappa_1 = None
+        self.dif_kappa_2 = None
 
     def _calc_dif_kappa_G(self):
         dif_Dkappa_G = np.zeros(self._V)
@@ -165,6 +179,22 @@ class Reverse:
             dif_kappa_H[i] = (dif_vn.T @ ((np.eye(3) - np.outer(vn, vn) / (vn @ vn)) @ mcn) + vn.T @ dif_mcn) / np.linalg.norm(vn)
         return dif_kappa_H
 
+    def _calc_dif_kappa_1(self):
+        return np.divide(
+            2 * self._kappa_1 * self.dif_kappa_H - self.dif_kappa_G,
+            self._kappa_1 - self._kappa_2,
+            np.copy(self.dif_kappa_H),
+            where=(self._kappa_1 != self._kappa_2)
+        )
+
+    def _calc_dif_kappa_2(self):
+        return np.divide(
+            self.dif_kappa_G - 2 * self._kappa_2 * self.dif_kappa_H,
+            self._kappa_1 - self._kappa_2,
+            np.copy(self.dif_kappa_H),
+            where=(self._kappa_1 != self._kappa_2)
+        )
+
     def calc(self, dif_v, l):
         self._laplacian_forward.calc()
         self._N = self._laplacian_forward.N
@@ -176,6 +206,9 @@ class Reverse:
         self._kappa_G = self._curvature_forward.kappa_G
         self._vertex_normal = self._curvature_forward.vertex_normal
         self._mean_curvature_normal = self._curvature_forward.mean_curvature_normal
+        self._kappa_H = self._curvature_forward.kappa_H
+        self._kappa_1 = self._curvature_forward.kappa_1
+        self._kappa_2 = self._curvature_forward.kappa_2
 
         self._laplacian_reverse.calc(dif_v, l)
         self._dif_N = self._laplacian_reverse.dif_N
@@ -193,3 +226,5 @@ class Reverse:
             self.dif_vertex_normal = self._calc_dif_vertex_normal()
             self.dif_mean_curvature_normal = self._calc_dif_mean_curvature_normal()
             self.dif_kappa_H = self._calc_dif_kappa_H()
+            self.dif_kappa_1 = self._calc_dif_kappa_1()
+            self.dif_kappa_2 = self._calc_dif_kappa_2()

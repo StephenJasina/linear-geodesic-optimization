@@ -25,7 +25,7 @@ class Forward:
         self.LC = self._laplacian_forward.LC_dirichlet
 
         self._curvature_forward.calc()
-        self.kappa = self._curvature_forward.kappa_G
+        self.kappa = self._curvature_forward.kappa_H
 
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
@@ -80,13 +80,13 @@ class Reverse:
         self._LC = self._laplacian_forward.LC_dirichlet
 
         self._curvature_forward.calc()
-        self._kappa = self._curvature_forward.kappa_G
+        self._kappa = self._curvature_forward.kappa_H
 
         self._laplacian_reverse.calc(dif_v, l)
         self.dif_LC = self._laplacian_reverse.dif_LC_dirichlet
 
         self._curvature_reverse.calc(dif_v, l)
-        self.dif_kappa = self._curvature_reverse.dif_kappa_G
+        self.dif_kappa = self._curvature_reverse.dif_kappa_H
 
         if self._updates != self._mesh.updates() or self._l != l:
             self._updates = self._mesh.updates()
