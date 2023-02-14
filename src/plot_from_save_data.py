@@ -7,7 +7,7 @@ import sys
 from matplotlib import pyplot as plt
 import numpy as np
 
-from linear_geodesic_optimization.optimization import curvature
+from linear_geodesic_optimization.optimization import curvature, linear_regression
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # TODO: Automate this (save it when doing the computations)
-    toy_directory = os.path.join('..', 'data', 'two_islands')
+    toy_directory = os.path.join('..', 'data', 'toy')
 
     mesh = None
 
@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     before_data = None
     after_data = None
+    linear_regression_forward = linear_regression.Forward()
 
     for i in itertools.count():
         path = os.path.join(directory, str(i))
@@ -65,11 +66,14 @@ if __name__ == '__main__':
                 print(f'\tlambda_geodesic = {lambda_geodesic}')
                 print(f'\tlambda_smooth = {lambda_smooth}')
                 print(f'\tlambda_curvature = {lambda_curvature}')
-                before_data = (true_latencies, estimated_latencies)
+
+                beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
+                before_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
 
             path_next = os.path.join(directory, str(i + 1))
             if not os.path.exists(path_next):
-                after_data = (true_latencies, estimated_latencies)
+                beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
+                after_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
                 break
 
     figures = []
