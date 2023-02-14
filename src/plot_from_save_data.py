@@ -142,6 +142,4 @@ if __name__ == '__main__':
                                     'Latency Prediction' + lambda_string))
     figures[-1].savefig(os.path.join(directory, 'scatter.png'))
 
-    for figure in figures:
-        figure.show()
     plt.show()

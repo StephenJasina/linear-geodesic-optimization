@@ -25,17 +25,17 @@ class Forward:
         self.LC = self._laplacian_forward.LC_dirichlet
 
         self._curvature_forward.calc()
-        self.kappa = self._curvature_forward.kappa_G
+        self.kappa_1 = self._curvature_forward.kappa_1
+        self.kappa_2 = self._curvature_forward.kappa_2
 
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
 
-            # self.L_smooth = (
-            #     -self.kappa.T @ (self.LC @ self.kappa)
-            #     / self._mesh.get_support_area()
-            # )
-            z = self._mesh.get_parameters()
-            self.L_smooth = z.T @ (self._mesh.get_graph_laplacian() @ z)
+            self.L_smooth = (
+                -(self.kappa_1.T @ (self.LC @ self.kappa_1)
+                    + self.kappa_2.T @ (self.LC @ self.kappa_2))
+                / self._mesh.get_support_area()
+            )
 
 class Reverse:
     def __init__(self, mesh, laplacian_forward=None, curvature_forward=None,
@@ -68,10 +68,12 @@ class Reverse:
             )
 
         self._LC = None
-        self._kappa = None
+        self._kappa_1 = None
+        self._kappa_2 = None
 
         self.dif_LC = None
-        self.dif_kappa = None
+        self.dif_kappa_1 = None
+        self.dif_kappa_2 = None
 
         self.dif_L_smooth = None
 
@@ -80,23 +82,26 @@ class Reverse:
         self._LC = self._laplacian_forward.LC_dirichlet
 
         self._curvature_forward.calc()
-        self._kappa = self._curvature_forward.kappa_G
+        self._kappa_1 = self._curvature_forward.kappa_1
+        self._kappa_2 = self._curvature_forward.kappa_2
 
         self._laplacian_reverse.calc(dif_v, l)
         self.dif_LC = self._laplacian_reverse.dif_LC_dirichlet
 
         self._curvature_reverse.calc(dif_v, l)
-        self.dif_kappa = self._curvature_reverse.dif_kappa_G
+        self.dif_kappa_1 = self._curvature_reverse.dif_kappa_1
+        self.dif_kappa_2 = self._curvature_reverse.dif_kappa_2
 
         if self._updates != self._mesh.updates() or self._l != l:
             self._updates = self._mesh.updates()
             self._dif_v = dif_v
             self._l = l
 
-            # self.dif_L_smooth = -(
-            #     self.dif_kappa.T @ (self._LC @ self._kappa)
-            #     + self._kappa.T @ (self.dif_LC @ self._kappa)
-            #     + self._kappa.T @ (self._LC @ self.dif_kappa)
-            # )
-            z = self._mesh.get_parameters()
-            self.dif_L_smooth = 2 * (self._mesh.get_graph_laplacian() @ z)[l]
+            self.dif_L_smooth = -(
+                self.dif_kappa_1.T @ (self._LC @ self._kappa_1)
+                + self._kappa_1.T @ (self.dif_LC @ self._kappa_1)
+                + self._kappa_1.T @ (self._LC @ self.dif_kappa_1)
+                + self.dif_kappa_2.T @ (self._LC @ self._kappa_2)
+                + self._kappa_2.T @ (self.dif_LC @ self._kappa_2)
+                + self._kappa_2.T @ (self._LC @ self.dif_kappa_2)
+            )

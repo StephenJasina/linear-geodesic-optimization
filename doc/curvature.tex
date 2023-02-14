@@ -1,0 +1,38 @@
+% See
+% https://libigl.github.io/libigl-python-bindings/tut-chapter1/
+% http://multires.caltech.edu/pubs/diffGeoOps.pdf
+
+We will define the following: \begin{center}\begin{tabular}{r|l}
+	\(B_{\epsilon}\pof{e}\) & A ``fat edge'' on the sphere around \(e\) \\ \hline
+	\(\widetilde{\kappa^\text{G}}_i\) & The discrete Gaussian curvature at \(v_i\), scaled by vertex area \\ \hline
+	\(\kappa^\text{G}_i\) & The discrete Gaussian curvature at \(v_i\) \\ \hline
+	\(\widetilde{N}_i\) & The outward pointing normal at \(v_i\) \\ \hline
+	\(\widetilde{\kappa^\text{H}}_i\) & The mean curvature normal at \(v_i\) \\ \hline
+	\(\kappa^\text{H}_i\) & The mean curvature at \(v_i\) \\ \hline
+	\(\kappa^+_i\) & The first principal curvature at \(v_i\) \\ \hline
+	\(\kappa^-_i\) & The second principal curvature at \(v_i\)
+\end{tabular}\end{center} These quantities can be computed following \href{https://libigl.github.io/libigl-python-bindings/tut-chapter1/}{this tutorial}\footnote{Technically, the mean curvature is off by a factor of \(2\) here, but this aligns with the mean curvature of the surface we're estimating, in the sense that \(\kappa^{\text{H}}\) is the mean of \(\kappa^+\) and \(\kappa^-\).}.
+
+\subsubsection{Forward Computation}
+For these computations (particularly the mean curvature one), consider \(v\) as a matrix of vertex positions, where each row corresponds to a vertex. We will also use \(e_i\) to denote the \(i\)th standard basis vector. We have \begin{align*}
+	\theta_{i, j} &= \arctan\pof{\frac{1}{\cot\pof{\theta_{i, j}}}} \bmod \pi, \\
+	\widetilde{\kappa^\text{G}}_i &= 2\pi - \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \theta_{k, c\pof{i, k}}, \\
+	\kappa^\text{G} &= D^{-1}\widetilde{\kappa^\text{G}}, \\
+	\widetilde{N}_i &= \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{1}{\sqrt{1 + \cot^2\pof{\theta_{i, k}}}} \cdot N_{i, k}, \\
+	\widetilde{\kappa^\text{H}}_i &= -\frac{1}{2}e_i^\intercal D^{-1}L_C^{\text{N}}v, \\
+	\kappa^\text{H}_i &= \frac{\widetilde{N}_i^\intercal}{\norm{\widetilde{N}_i}_2}\widetilde{\kappa^\text{H}}_i, \\
+	\kappa^+_i &= \kappa^{\text{H}}_i + \sqrt{\pof{\kappa^{\text{H}}_i}^2 - \kappa^{\text{G}}_i}, \\
+	\kappa^-_i &= \kappa^{\text{H}}_i - \sqrt{\pof{\kappa^{\text{H}}_i}^2 - \kappa^{\text{G}}_i}.
+\end{align*}
+
+\subsubsection{Reverse Computation}
+Differentiating, \begin{align*}
+	\frac{\partial\theta_{i, j}}{\partial\rho_\ell} &= -\frac{\partial\cot\pof{\theta_{i, j}}}{\partial \rho_\ell} \cdot \frac{1}{1 + \cot^2\pof{\theta_{i, j}}}, \\
+	\frac{\partial\widetilde{\kappa^\text{G}}_i}{\partial\rho_\ell} &= -\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial\theta_{k, c\pof{i, k}}}{\partial\rho_\ell}, \\
+	\frac{\partial\kappa^\text{G}}{\partial\rho_\ell} &= D^{-1}\pof{\frac{\dif\widetilde{\kappa^\text{G}}}{\partial\rho_\ell} - \frac{\dif D}{\partial\rho_\ell}\kappa^\text{G}}, \\
+	\frac{\partial\widetilde{N}_i}{\partial\rho_\ell} &= \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{1}{\sqrt{1 + \cot^2\pof{\theta_{i, k}}}} \cdot \pof{\frac{\partial N_{i, k}}{\partial\rho_\ell} - \frac{\cot\pof{\theta_{i, k}}}{1 + \cot^2\pof{\theta_{i, k}}} \cdot \frac{\partial\cot\pof{\theta_{i, j}}}{\partial \rho_\ell}N_{i, k}}, \\
+	\frac{\partial\widetilde{\kappa^\text{H}}_i}{\partial\rho_\ell} &= -\frac{1}{2}e_i^\intercal D^{-1}\pof{\pof{\frac{\partial L_C^{\text{N}}}{\partial\rho_\ell} - \frac{\partial D}{\partial\rho_\ell}D^{-1}L_C^{\text{N}}}v + L_C^{\text{N}}\frac{\partial v}{\partial\rho_\ell}}, \\
+	\frac{\partial\kappa_i^\text{H}}{\partial\rho_\ell} &= \frac{1}{\norm{\widetilde{N}_i}_2}\pof{\frac{\partial\widetilde{N}_i^\intercal}{\partial\rho_\ell}\pof{I - \frac{\widetilde{N}_i^\intercal\widetilde{N}_i}{\norm{\widetilde{N}_i}_2^2}}\widetilde{\kappa^\text{H}}_i + \widetilde{N}_i^\intercal\frac{\partial\widetilde{\kappa^\text{H}}_i}{\partial\rho_\ell}}, \\
+	\frac{\partial\kappa^+_i}{\partial\rho_\ell} &= \frac{2\kappa^+_i\frac{\partial\kappa^{\text{H}}_i}{\partial\rho_i} - \frac{\partial\kappa^{\text{G}}_i}{\partial\rho_i}}{\kappa^+_i - \kappa^-_i}, \\
+	\frac{\partial\kappa^-_i}{\partial\rho_\ell} &= \frac{\frac{\partial\kappa^{\text{G}}_i}{\partial\rho_i} - 2\kappa^-_i\frac{\partial\kappa^{\text{H}}_i}{\partial\rho_i}}{\kappa^+_i - \kappa^-_i}.
+\end{align*}
