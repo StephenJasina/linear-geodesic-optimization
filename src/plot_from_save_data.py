@@ -23,7 +23,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # TODO: Automate this (save it when doing the computations)
-    toy_directory = os.path.join('..', 'data', 'toy')
+    toy_directory = os.path.join('..', 'data', 'two_islands')
 
     mesh = None
 

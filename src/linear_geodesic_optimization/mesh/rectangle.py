@@ -174,27 +174,21 @@ class Mesh(mesh.Mesh):
         if not coordinates:
             return []
 
-        x_min = coordinates[0][0]
-        x_max = coordinates[0][0]
-        y_min = coordinates[0][1]
-        y_max = coordinates[0][1]
+        coordinate_min = coordinates[0][0]
+        coordinate_max = coordinates[0][0]
 
         # Find scaling factors so that the x range and y range are both [0, 1].
         # If no such scaling factor exists (i.e., the x-coordinate or
         # y-coordinate is constant), set it to some arbitrary value (in this
         # case, just set it to 1.)
         for x, y in coordinates:
-            x_min = min(x_min, x)
-            x_max = max(x_max, x)
-            y_min = min(y_min, y)
-            y_max = max(y_max, y)
-        x_divisor = x_max - x_min
-        x_divisor = 1. if x_divisor == 0. else x_divisor
-        y_divisor = y_max - y_min
-        y_divisor = 1. if y_divisor == 0. else y_divisor
+            coordinate_min = min(coordinate_min, x, y)
+            coordinate_max = max(coordinate_max, x, y)
+        divisor = coordinate_max - coordinate_min
+        divisor = 1. if divisor == 0. else divisor
 
-        return [np.array([((x - x_min) / x_divisor - 0.5) * scale_factor,
-                          ((y - y_min) / y_divisor - 0.5) * scale_factor,
+        return [np.array([((x - coordinate_min) / divisor - 0.5) * scale_factor,
+                          ((y - coordinate_min) / divisor - 0.5) * scale_factor,
                           0])
                 for x, y in coordinates]
 
