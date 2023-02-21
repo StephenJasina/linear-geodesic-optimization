@@ -78,22 +78,22 @@ if __name__ == '__main__':
 
     figures = []
 
-    lambda_string = ' ($\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
-        + '$, $\lambda_{\mathrm{geodesic}} = ' + str(lambda_geodesic) \
+    lambda_string = ' ($\lambda_{\mathrm{geodesic}} = ' + str(lambda_geodesic) \
+        + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
         + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
     figures.append(get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string))
-    figures[-1].savefig(os.path.join(directory, 'geodesic_loss.png'))
+    figures[-1].savefig(os.path.join(directory, 'geodesic_loss.png'), dpi=300)
 
     figures.append(get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string))
-    figures[-1].savefig(os.path.join(directory, 'smoothness_loss.png'))
+    figures[-1].savefig(os.path.join(directory, 'smoothness_loss.png'), dpi=300)
 
     figures.append(get_line_plot(L_curvatures,
                                  'Curvature Loss' + lambda_string))
-    figures[-1].savefig(os.path.join(directory, 'curvature_loss.png'))
+    figures[-1].savefig(os.path.join(directory, 'curvature_loss.png'), dpi=300)
 
     figures.append(get_line_plot(Ls, 'Total Loss' + lambda_string))
-    figures[-1].savefig(os.path.join(directory, 'total_loss.png'))
+    figures[-1].savefig(os.path.join(directory, 'total_loss.png'), dpi=300)
 
     vertices = mesh.get_vertices()
     coordinates = None
@@ -134,17 +134,17 @@ if __name__ == '__main__':
 
     figures.append(get_heat_map(x, y, z, 'Altitude' + lambda_string,
                                 network_vertices, network_edges))
-    figures[-1].savefig(os.path.join(directory, 'altitude.png'))
+    figures[-1].savefig(os.path.join(directory, 'altitude.png'), dpi=300)
 
     curvature_forward = curvature.Forward(mesh)
     curvature_forward.calc()
     kappa = curvature_forward.kappa_G.reshape(width, height, order='F')[1:width - 1,1:height - 1]
     figures.append(get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
-                   network_vertices, network_edges))
-    figures[-1].savefig(os.path.join(directory, 'curvature.png'))
+                   network_vertices, network_edges, (-2., 5.)))
+    figures[-1].savefig(os.path.join(directory, 'curvature.png'), dpi=300)
 
     figures.append(get_scatter_plot(before_data, after_data,
                                     'Latency Prediction' + lambda_string))
-    figures[-1].savefig(os.path.join(directory, 'scatter.png'))
+    figures[-1].savefig(os.path.join(directory, 'scatter.png'), dpi=300)
 
-    plt.show()
+    # plt.show()

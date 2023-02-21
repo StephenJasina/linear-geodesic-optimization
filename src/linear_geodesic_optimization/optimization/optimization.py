@@ -17,7 +17,7 @@ class DifferentiationHierarchy:
 
     def __init__(self, mesh, latencies, network_vertices, network_edges,
                  ricci_curvatures,
-                 lambda_geodesic=1., lambda_smooth=0.01, lambda_curvature=1.,
+                 lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
                  directory=None, cores=None):
         '''
         Parameters:
@@ -34,8 +34,8 @@ class DifferentiationHierarchy:
                            represented as a pair of indices into
                            `network_vertices`
         * `lamda_geodesic`: The strength lambda of the geodesic loss
+        * `lamda_curvature`: The strength lambda of the curvature loss
         * `lamda_smooth`: The strength lambda of the smoothing loss
-        * `lamda_smooth`: The strength lambda of the curvature loss
         * `directory`: Where to save snapshots of the mesh for each iteration
                        of optimization
         * `cores`: The number of CPU cores to use when optimizing

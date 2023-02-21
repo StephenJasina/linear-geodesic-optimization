@@ -13,6 +13,7 @@ def get_line_plot(data, title):
     fig, ax = plt.subplots(1, 1)
 
     ax.plot(range(len(data)), data)
+    ax.set_ylim(ymin=0)
     ax.set_title(title)
     ax.set_xlabel('Iteration')
     ax.set_ylabel('Loss')
@@ -63,11 +64,13 @@ def get_scatter_plot(before_data, after_data, title):
 
     return fig
 
-def get_heat_map(x, y, z, title, network_vertices=[], network_edges=[]):
+def get_heat_map(x, y, z, title, network_vertices=[], network_edges=[],
+                 v_range=(None, None)):
     fig, ax = plt.subplots(1, 1)
 
     # Plot the heat map
-    im = ax.imshow(z, origin='lower', extent=(-0.5, 0.5, -0.5, 0.5))
+    im = ax.imshow(z, origin='lower', extent=(-0.5, 0.5, -0.5, 0.5),
+                   vmin=v_range[0], vmax=v_range[1])
 
     # Plot the edges
     for u, v in network_edges:

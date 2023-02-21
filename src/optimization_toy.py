@@ -8,7 +8,7 @@ import scipy
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
-if __name__ == '__main__':
+def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
     toy_directory = os.path.join('..', 'data', 'two_islands')
 
     # Construct a mesh
@@ -50,12 +50,15 @@ if __name__ == '__main__':
         ricci_curvatures = list(json.load(f).values())
 
     # Setup snapshots
-    directory = os.path.join('..', 'out',
-                             datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
+    # directory = os.path.join('..', 'out',
+    #                          datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
+    directory = os.path.join(
+        '..', 'out', 'two_islands',
+        f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}'
+    )
     os.makedirs(directory)
 
     # Initialize mesh
-    initial_radius = 20
     z = np.array([
         (initial_radius**2
             - (i / (width - 1) - 0.5)**2
@@ -64,12 +67,11 @@ if __name__ == '__main__':
         for j in range(height)
     ]).reshape((width * height,))
     z = z - np.amin(z)
-    z[list(mesh.get_boundary_vertices())] = 0.
     z = mesh.set_parameters(z)
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic=0., lambda_curvature=1., lambda_smooth=0.005,
+        lambda_geodesic, lambda_curvature, lambda_smooth,
         directory=directory, cores=None)
 
     f = hierarchy.get_loss_callback()
@@ -77,4 +79,10 @@ if __name__ == '__main__':
 
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-                            callback=hierarchy.diagnostics)
+                            callback=hierarchy.diagnostics,
+                            options={'maxiter': 100})
+
+if __name__ == '__main__':
+    for initial_radius in [1., 2., 4., 8., 16.]:
+        for lambda_smooth in [0.001, 0.002, 0.004, 0.01, 0.02]:
+            main(0., 1., lambda_smooth, initial_radius)
