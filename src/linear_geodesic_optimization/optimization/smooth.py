@@ -40,15 +40,12 @@ class Forward:
             self._updates = self._mesh.updates()
 
             if self.strategy == 'gaussian':
-                print('g')
                 self.L_smooth = -self.kappa_G.T @ (self.LC @ self.kappa_G) \
                     / self._mesh.get_support_area()
             elif self.strategy == 'mean':
-                print('h')
                 self.L_smooth = -self.kappa_H.T @ (self.LC @ self.kappa_H) \
                     / self._mesh.get_support_area()
             else:
-                print('m')
                 self.L_smooth = (
                     -(self.kappa_1.T @ (self.LC @ self.kappa_1)
                         + self.kappa_2.T @ (self.LC @ self.kappa_2))
