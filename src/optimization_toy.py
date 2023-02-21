@@ -10,7 +10,8 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
 def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
-    toy_directory = os.path.join('..', 'data', 'two_islands_mean')
+    toy_directory = os.path.join('..', 'data', 'two_islands')
+    smoothness_strategy = 'mean'
 
     # Construct a mesh
     width = 20
@@ -54,7 +55,7 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
     # directory = os.path.join('..', 'out',
     #                          datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
     directory = os.path.join(
-        '..', 'out', 'two_islands',
+        '..', 'out', f'two_islands_{smoothness_strategy}',
         f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}'
     )
     os.makedirs(directory)
@@ -72,7 +73,7 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic, lambda_curvature, lambda_smooth, 'mean',
+        lambda_geodesic, lambda_curvature, lambda_smooth, smoothness_strategy,
         directory=directory, cores=None)
 
     f = hierarchy.get_loss_callback()
