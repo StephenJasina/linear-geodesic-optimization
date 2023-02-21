@@ -1,5 +1,6 @@
 import datetime
 import json
+import multiprocessing
 import os
 
 import numpy as np
@@ -83,6 +84,9 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
                             options={'maxiter': 100})
 
 if __name__ == '__main__':
+    arguments = []
     for initial_radius in [1., 2., 4., 8., 16.]:
         for lambda_smooth in [0.001, 0.002, 0.004, 0.01, 0.02]:
-            main(0., 1., lambda_smooth, initial_radius)
+            arguments.append((0., 1., lambda_smooth, initial_radius))
+    with multiprocessing.Pool(25) as p:
+        p.starmap(main, arguments)
