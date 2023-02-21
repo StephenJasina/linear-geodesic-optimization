@@ -78,8 +78,9 @@ if __name__ == '__main__':
 
     figures = []
 
-    lambda_string = ' ($\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) \
-        + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) + '$)'
+    lambda_string = ' ($\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
+        + '$, $\lambda_{\mathrm{geodesic}} = ' + str(lambda_geodesic) \
+        + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
     figures.append(get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string))
     figures[-1].savefig(os.path.join(directory, 'geodesic_loss.png'))
