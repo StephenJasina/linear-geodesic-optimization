@@ -8,6 +8,8 @@ from linear_geodesic_optimization.optimization import laplacian, curvature, smoo
 
 toy_directory = os.path.join('..', 'data', 'toy')
 
+strategy = 'gaussian'
+
 # Construct a mesh
 width = 10
 height = 10
@@ -18,12 +20,12 @@ l=37
 
 laplacian_forward = laplacian.Forward(mesh)
 curvature_forward = curvature.Forward(mesh, laplacian_forward)
-smooth_forward = smooth.Forward(mesh, laplacian_forward, curvature_forward)
+smooth_forward = smooth.Forward(mesh, laplacian_forward, curvature_forward, strategy)
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
 curvature_reverse = curvature.Reverse(mesh, laplacian_forward,
                                       curvature_forward, laplacian_reverse)
 smooth_reverse = smooth.Reverse(mesh, laplacian_forward, curvature_forward,
-                                laplacian_reverse, curvature_reverse)
+                                laplacian_reverse, curvature_reverse, strategy)
 
 smooth_forward.calc()
 L_smooth_0 = smooth_forward.L_smooth

@@ -11,6 +11,8 @@ from linear_geodesic_optimization.optimization import optimization
 if __name__ == '__main__':
     toy_directory = os.path.join('..', 'data', 'toy')
 
+    smooth_strategy = 'gaussian'
+
     # Construct a mesh
     width = 4
     height = 4
@@ -54,7 +56,7 @@ if __name__ == '__main__':
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, ts, network_vertices, network_edges, ricci_curvatures,
         lambda_geodesic=1., lambda_curvature=1., lambda_smooth=1.,
-        cores=None)
+        smooth_strategy=smooth_strategy, cores=None)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()

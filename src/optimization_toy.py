@@ -10,7 +10,7 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
 def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
-    toy_directory = os.path.join('..', 'data', 'two_islands')
+    toy_directory = os.path.join('..', 'data', 'two_islands_mean')
 
     # Construct a mesh
     width = 20
@@ -72,7 +72,7 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
 
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, ricci_curvatures,
-        lambda_geodesic, lambda_curvature, lambda_smooth,
+        lambda_geodesic, lambda_curvature, lambda_smooth, 'mean',
         directory=directory, cores=None)
 
     f = hierarchy.get_loss_callback()
