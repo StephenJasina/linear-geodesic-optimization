@@ -9,11 +9,12 @@ plt.rcParams.update({
     'text.usetex': True,
 })
 
-def get_line_plot(data, title):
+def get_line_plot(data, title, x_max=None, y_max=None):
     fig, ax = plt.subplots(1, 1)
 
     ax.plot(range(len(data)), data)
-    ax.set_ylim(ymin=0)
+    ax.set_xlim(xmax=x_max)
+    ax.set_ylim(ymin=0, ymax=y_max)
     ax.set_title(title)
     ax.set_xlabel('Iteration')
     ax.set_ylabel('Loss')
@@ -87,4 +88,29 @@ def get_heat_map(x, y, z, title, network_vertices=[], network_edges=[],
     ax.set_ylim(-0.5, 0.5)
     fig.colorbar(im)
 
+    return fig
+
+def get_mesh_plot(mesh):
+    vertices = mesh.get_vertices()
+    x, y, z = vertices[:,0], vertices[:,1], vertices[:,2]
+
+    boundary_vertices = mesh.get_boundary_vertices()
+    faces = [
+        face for face in mesh.get_faces()
+        if face[0] not in boundary_vertices and
+           face[1] not in boundary_vertices and
+           face[2] not in boundary_vertices
+    ]
+
+    interior_vertices = [v for v in range(len(z)) if v not in boundary_vertices]
+    z_interior = z[interior_vertices]
+    z_min = np.amin(z_interior)
+    z_max = np.amax(z_interior)
+    z = (z - z_min) / (z_max - z_min) / 4.
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+    ax.plot_trisurf(x, y, z, triangles=faces)
+    ax.set_aspect('equal')
     return fig
