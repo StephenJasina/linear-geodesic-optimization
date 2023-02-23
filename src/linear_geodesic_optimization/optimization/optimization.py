@@ -320,17 +320,12 @@ class DifferentiationHierarchy:
                     for sj, tij in self.latencies[si]:
                         phis.append(phi[sj])
                         ts.append(tij)
-                phis = np.array(phis)
-                ts = np.array(ts)
 
                 pickle.dump({
-                    'mesh': self.mesh,
+                    'mesh_parameters': list(self.mesh.get_parameters()),
                     'L_geodesic': L_geodesic,
                     'L_smooth': L_smooth,
                     'L_curvature': L_curvature,
-                    'lambda_geodesic': self.lambda_geodesic,
-                    'lambda_smooth': self.lambda_smooth,
-                    'lambda_curvature': self.lambda_curvature,
                     'true_latencies': ts,
                     'estimated_latencies': phis,
                 }, f)

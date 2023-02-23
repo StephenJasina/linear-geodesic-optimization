@@ -2,6 +2,7 @@ import datetime
 import json
 import multiprocessing
 import os
+import pickle
 
 import numpy as np
 import scipy
@@ -9,20 +10,18 @@ import scipy
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
-def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
-    toy_directory = os.path.join('..', 'data', 'two_islands')
-    smoothness_strategy = 'mean'
+def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
+         smoothness_strategy='mean', width=20, height=20, maxiter=1000):
+    data_directory = os.path.join('..', 'data', data_name)
 
     # Construct a mesh
-    width = 20
-    height = 20
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
 
     coordinates = None
     label_to_index = {}
-    with open(os.path.join(toy_directory, 'position.json')) as f:
+    with open(os.path.join(data_directory, 'position.json')) as f:
         position_json = json.load(f)
 
         label_to_index = {label: index for index, label in enumerate(position_json)}
@@ -35,7 +34,7 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
 
     network_edges = []
     latencies = {mesh.nearest_vertex_index(network_vertices[i]): [] for i in range(len(network_vertices))}
-    with open(os.path.join(toy_directory, 'latency.json')) as f:
+    with open(os.path.join(data_directory, 'latency.json')) as f:
         latency_json = json.load(f)
 
         for edge, latency in latency_json.items():
@@ -48,17 +47,27 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
             )
 
     ricci_curvatures = []
-    with open(os.path.join(toy_directory, 'curvature.json')) as f:
+    with open(os.path.join(data_directory, 'curvature.json')) as f:
         ricci_curvatures = list(json.load(f).values())
 
     # Setup snapshots
-    # directory = os.path.join('..', 'out',
-    #                          datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
     directory = os.path.join(
-        '..', 'out', f'two_islands_{smoothness_strategy}',
+        '..', 'out', f'{data_name}_{smoothness_strategy}',
         f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}'
     )
     os.makedirs(directory)
+
+    with open(os.path.join(directory, 'parameters'), 'wb') as f:
+        pickle.dump({
+            'data_name': data_name,
+            'lambda_geodesic': lambda_geodesic,
+            'lambda_curvature': lambda_curvature,
+            'lambda_smooth': lambda_smooth,
+            'initial_radius': initial_radius,
+            'smoothness_strategy': smoothness_strategy,
+            'width': width,
+            'height': height
+        }, f)
 
     # Initialize mesh
     z = np.array([
@@ -82,12 +91,13 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
     hierarchy.diagnostics(None)
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
                             callback=hierarchy.diagnostics,
-                            options={'maxiter': 100})
+                            options={'maxiter': maxiter})
 
 if __name__ == '__main__':
     arguments = []
-    for initial_radius in [1., 2., 4., 8., 16.]:
-        for lambda_smooth in [0.001, 0.002, 0.004, 0.01, 0.02]:
-            arguments.append((0., 1., lambda_smooth, initial_radius))
-    with multiprocessing.Pool(25) as p:
+    for smoothness_strategy in ['gaussian', 'mean', 'mvs_cross']:
+        for initial_radius in [1., 2., 4., 8., 16.]:
+            for lambda_smooth in [0., 0.001, 0.002, 0.004, 0.01, 0.02]:
+                arguments.append(('elbow', 0., 1., lambda_smooth, initial_radius, smoothness_strategy))
+    with multiprocessing.Pool(45) as p:
         p.starmap(main, arguments)
