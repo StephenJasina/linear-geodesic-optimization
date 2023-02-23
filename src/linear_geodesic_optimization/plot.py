@@ -70,7 +70,7 @@ def get_heat_map(x, y, z, title, network_vertices=[], network_edges=[],
     fig, ax = plt.subplots(1, 1)
 
     # Plot the heat map
-    im = ax.imshow(z, origin='lower', extent=(-0.5, 0.5, -0.5, 0.5),
+    im = ax.imshow(z, origin='lower', extent=(np.amin(x), np.amax(x), np.amin(y), np.amax(y)),
                    vmin=v_range[0], vmax=v_range[1])
 
     # Plot the edges
@@ -84,8 +84,8 @@ def get_heat_map(x, y, z, title, network_vertices=[], network_edges=[],
         ax.plot(vertex[0], vertex[1], 'w.')
 
     ax.set_title(title)
-    ax.set_xlim(-0.5, 0.5)
-    ax.set_ylim(-0.5, 0.5)
+    ax.set_xlim(np.amin(x), np.amax(x))
+    ax.set_ylim(np.amin(y), np.amax(y))
     fig.colorbar(im)
 
     return fig
