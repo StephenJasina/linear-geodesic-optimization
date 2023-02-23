@@ -103,14 +103,14 @@ if __name__ == '__main__':
     network_vertices = mesh.map_coordinates_to_support(coordinates)
 
     network_edges = []
-    with open(os.path.join(toy_directory, 'latency.json')) as f:
-        latency_json = json.load(f)
+    with open(os.path.join(toy_directory, 'curvature.json')) as f:
+        curvature_json = json.load(f)
 
-        for edge, latency in latency_json.items():
+        for edge, kappa in curvature_json.items():
             u = label_to_index[edge[0]]
             v = label_to_index[edge[1]]
 
-            network_edges.append((u, v))
+            network_edges.append(((u, v), kappa))
 
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))

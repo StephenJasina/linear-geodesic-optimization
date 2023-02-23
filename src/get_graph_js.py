@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     print()
 
-    with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
+    with open(os.path.join(toy_directory, 'curvature.json')) as f:
         curvature_json = json.load(f)
 
         for edge, curvature in curvature_json.items():

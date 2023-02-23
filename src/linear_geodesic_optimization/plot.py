@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import matplotlib as mpl
 import numpy as np
 
 from linear_geodesic_optimization.optimization import linear_regression
@@ -65,23 +66,23 @@ def get_scatter_plot(before_data, after_data, title):
 
     return fig
 
-def get_heat_map(x, y, z, title, network_vertices=[], network_edges=[],
+def get_heat_map(x, y, z, title, network_vertices=[], network_curvatures=[],
                  v_range=(None, None)):
     fig, ax = plt.subplots(1, 1)
 
     # Plot the heat map
     im = ax.imshow(z, origin='lower', extent=(np.amin(x), np.amax(x), np.amin(y), np.amax(y)),
-                   vmin=v_range[0], vmax=v_range[1])
+                   vmin=v_range[0], vmax=v_range[1], cmap=mpl.colormaps['gray'])
 
     # Plot the edges
-    for u, v in network_edges:
+    for (u, v), curvature in network_curvatures:
         ax.plot([network_vertices[u][0], network_vertices[v][0]],
                 [network_vertices[u][1], network_vertices[v][1]],
-                'k-')
+                color=mpl.colormaps['RdBu']((curvature + 2) / 3))
 
     # Plot the vertices
     for vertex in network_vertices:
-        ax.plot(vertex[0], vertex[1], 'w.')
+        ax.plot(vertex[0], vertex[1], '.', color='purple')
 
     ax.set_title(title)
     ax.set_xlim(np.amin(x), np.amax(x))

@@ -47,7 +47,7 @@ if __name__ == '__main__':
             ts[u].append((v, latency))
 
     ricci_curvatures = []
-    with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
+    with open(os.path.join(toy_directory, 'curvature.json')) as f:
         ricci_curvatures = list(json.load(f).values())
 
     rng = np.random.default_rng(0)

@@ -44,7 +44,7 @@ with open(os.path.join(toy_directory, 'latency.json')) as f:
         ts[u].append((v, latency))
 
 ricci_curvatures = []
-with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
+with open(os.path.join(toy_directory, 'curvature.json')) as f:
     ricci_curvatures = list(json.load(f).values())
 
 laplacian_forward = laplacian.Forward(mesh)

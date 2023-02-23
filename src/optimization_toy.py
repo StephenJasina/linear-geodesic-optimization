@@ -48,7 +48,7 @@ def main(lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius):
             )
 
     ricci_curvatures = []
-    with open(os.path.join(toy_directory, 'ricci_curvature.json')) as f:
+    with open(os.path.join(toy_directory, 'curvature.json')) as f:
         ricci_curvatures = list(json.load(f).values())
 
     # Setup snapshots
