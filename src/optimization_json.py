@@ -52,7 +52,7 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
 
     # Setup snapshots
     directory = os.path.join(
-        '..', 'out', f'{data_name}_{smoothness_strategy}',
+        '..', 'out', f'{data_name}', f'{smoothness_strategy}',
         f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}'
     )
     os.makedirs(directory)
