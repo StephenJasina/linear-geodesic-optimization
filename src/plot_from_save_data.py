@@ -12,6 +12,8 @@ from linear_geodesic_optimization.optimization import curvature, linear_regressi
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
+maxiters = 500
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print('Usage: python3 <directory name>')
@@ -75,11 +77,11 @@ if __name__ == '__main__':
                 beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
                 before_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
 
-            path_next = os.path.join(directory, str(i + 1))
-            if not os.path.exists(path_next):
-                beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
-                after_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
-                break
+        path_next = os.path.join(directory, str(i + 1))
+        if i == maxiters or not os.path.exists(path_next):
+            beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
+            after_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
+            break
 
     figures = {}
 
@@ -87,10 +89,10 @@ if __name__ == '__main__':
         + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
         + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
-    figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, 200)
-    figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, 200)
-    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, 200, 2.25)
-    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, 200, 2.25)
+    figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
+    figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
+    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters, 2.25)
+    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters, 2.25)
 
     vertices = mesh.get_vertices()
     coordinates = None
