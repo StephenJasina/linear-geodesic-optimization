@@ -72,11 +72,6 @@ if __name__ == '__main__':
             true_latencies = np.array(data['true_latencies'])
             estimated_latencies = np.array(data['estimated_latencies'])
             if i == 0:
-                print('Using')
-                print(f'\tlambda_geodesic = {lambda_geodesic}')
-                print(f'\tlambda_smooth = {lambda_smooth}')
-                print(f'\tlambda_curvature = {lambda_curvature}')
-
                 beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
                 before_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
 
@@ -150,4 +145,3 @@ if __name__ == '__main__':
 
     for filename, figure in figures.items():
         figure.savefig(os.path.join(directory, filename + '.png'), dpi=300)
-    # plt.show()
