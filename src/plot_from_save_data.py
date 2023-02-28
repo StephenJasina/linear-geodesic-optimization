@@ -143,7 +143,7 @@ if __name__ == '__main__':
     figures['scatter'] = get_scatter_plot(before_data, after_data,
                                               'Latency Prediction' + lambda_string)
 
-    figures['mesh_plot'] = get_mesh_plot(mesh)
+    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
     for filename, figure in figures.items():
         figure.savefig(os.path.join(directory, filename + '.png'), dpi=300)

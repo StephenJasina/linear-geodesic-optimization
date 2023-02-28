@@ -7,10 +7,11 @@ import numpy as np
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.plot import get_heat_map
 
-width = 30
-height = 30
+width = 20
+height = 20
 mesh = RectangleMesh(width, height)
 
+network_name = 'Four Islands'
 data_directory = os.path.join('..', 'data', 'four_islands')
 
 coordinates = None
@@ -51,6 +52,5 @@ y = y[1:height - 1]
 z = z[1:width - 1,1:height - 1]
 z = z - np.amin(z)
 
-# get_heat_map(x, y, z, '', network_vertices, network_curvatures)
-get_heat_map(x, y, None, '', network_vertices, network_curvatures)
+get_heat_map(x, y, None, network_name, network_vertices, network_curvatures)
 plt.show()
