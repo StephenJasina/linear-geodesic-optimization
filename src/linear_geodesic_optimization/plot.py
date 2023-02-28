@@ -24,6 +24,7 @@ def get_line_plot(data, title, x_max=None, y_max=None):
 
 def get_scatter_plot(before_data, after_data, title):
     fig, ax = plt.subplots(1, 1)
+    ax.set_aspect('equal')
     linear_regression_forward = linear_regression.Forward()
 
     lim_min = min(
@@ -66,13 +67,19 @@ def get_scatter_plot(before_data, after_data, title):
 
     return fig
 
-def get_heat_map(x, y, z, title, network_vertices=[], network_curvatures=[],
+def get_heat_map(x=None, y=None, z=None, title='',
+                 network_vertices=[], network_curvatures=[],
                  v_range=(None, None)):
     fig, ax = plt.subplots(1, 1)
+    ax.set_aspect('equal')
 
     # Plot the heat map
-    im = ax.imshow(z, origin='lower', extent=(np.amin(x), np.amax(x), np.amin(y), np.amax(y)),
-                   vmin=v_range[0], vmax=v_range[1], cmap=mpl.colormaps['gray'])
+    if x is not None and y is not None and z is not None:
+        im = ax.imshow(z, origin='lower',
+                       extent=(np.amin(x), np.amax(x), np.amin(y), np.amax(y)),
+                       vmin=v_range[0], vmax=v_range[1],
+                       cmap=mpl.colormaps['gray'])
+        fig.colorbar(im)
 
     # Plot the edges
     for (u, v), curvature in network_curvatures:
@@ -87,7 +94,6 @@ def get_heat_map(x, y, z, title, network_vertices=[], network_curvatures=[],
     ax.set_title(title)
     ax.set_xlim(np.amin(x), np.amax(x))
     ax.set_ylim(np.amin(y), np.amax(y))
-    fig.colorbar(im)
 
     return fig
 

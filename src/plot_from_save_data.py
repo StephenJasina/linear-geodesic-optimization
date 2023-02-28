@@ -12,7 +12,7 @@ from linear_geodesic_optimization.optimization import curvature, linear_regressi
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
-maxiters = 500
+maxiters = 1000
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
