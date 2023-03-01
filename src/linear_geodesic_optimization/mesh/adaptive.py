@@ -13,23 +13,62 @@ class Mesh(mesh.Mesh):
         self._epsilon = epsilon
 
         # Internally store vertices in 2 dimensions
-        self._vertices, self._edges, self._faces, self._c \
-            = self._initial_mesh()
+        self._vertices, self._edges, self._faces, self._nxt \
+            = self._get_initial_mesh(points, epsilon)
         self._parameters = np.zeros(self._vertices.shape[0])
         self._partials = np.zeros((self._vertices.shape[0], 3))
         self._partials[:,2] = 1.
         self._updates = 0
 
-    def _split_face(self, index):
-        raise NotImplementedError
+    @staticmethod
+    def _split_face(edge, vertices, nxt):
+        '''
+        Given an oriented edge, repeatedly split the triangle containing that
+        edge until the edge has been bisected. The splits are done by finding
+        the largest angle in the triangle and bisecting the opposing edge.
+        '''
 
-    def _initial_mesh(self):
-        vertices = [[0, 0], [1, 0], [0, 1], [1, 1]]
-        edges = [[1, 3], [3], [0], [0, 2]]
-        faces = [(0, 1, 3), (0, 3, 2)]
-        c = {(0, 1): 3, (0, 3): 2, (1, 3): 0, (2, 0): 3, (3, 0): 1, (3, 2): 0}
+        # TODO: Passed in edge should not be required to be the longest edge
 
-        return np.array(vertices), edges, faces, c
+        i, j = edge
+        u = vertices[i]
+        v = vertices[j]
+        c = np.linalg.norm(v - u)
+        while True:
+            k = nxt[i,j]
+            w = vertices[k]
+            a = np.linalg.norm(w - v)
+            b = np.linalg.norm(u - w)
+
+            if c >= a and c >= b:
+                break
+
+            if a >= b:
+                Mesh._split_face((v, w), vertices, c)
+            else:
+                Mesh._split_face((w, u), vertices, c)
+
+        # At this point, the input edge is the longest in the triangle
+
+
+
+    def _get_initial_mesh(self, points, epsilon):
+        vertices = [
+            np.array([0, 0]),
+            np.array([1, 0]),
+            np.array([0, 1]),
+            np.array([1, 1])
+        ]
+        nxt = {(0, 1): 3, (0, 3): 2, (1, 3): 0, (2, 0): 3, (3, 0): 1, (3, 2): 0}
+
+        edges = [[] for _ in vertices]
+        faces = []
+        for (i, j), k in nxt.items():
+            edges[i].append(j)
+            if i < j and i < k:
+                faces.append((i, j, k))
+
+        return np.array(vertices), edges, faces, nxt
 
     def get_partials(self):
         return np.copy(self._partials)
@@ -45,14 +84,14 @@ class Mesh(mesh.Mesh):
         return self._faces
 
     def get_boundary_vertices(self):
-        return set(u for u, _ in self.get_boundary_edges())
+        return set(i for i, _ in self.get_boundary_edges())
 
     def get_boundary_edges(self):
-        c = self.get_c()
-        return set((v, u) for u, v in c if (v, u) not in c)
+        nxt = self.get_nxt()
+        return set((j, i) for i, j in nxt if (j, i) not in nxt)
 
-    def get_c(self):
-        return self._c
+    def get_nxt(self):
+        return self._nxt
 
     def get_parameters(self):
         return np.copy(self._parameters)
