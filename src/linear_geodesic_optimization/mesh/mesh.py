@@ -57,7 +57,7 @@ class Mesh:
 
         raise NotImplementedError
 
-    def get_c(self):
+    def get_nxt(self):
         '''
         Return a map from pairs of indices to indices where (i, j) maps to k
         precisely when i -> j -> k is a face oriented counterclockwise.

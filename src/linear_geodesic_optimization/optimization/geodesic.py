@@ -26,7 +26,7 @@ class Forward:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 
@@ -128,17 +128,17 @@ class Forward:
     def _calc_q(self):
         v = self._v
         e = self._e
-        c = self._c
+        nxt = self._nxt
         u = self.u
-        return {(i, j): u[i] * (v[c[i,j]] - v[j])
+        return {(i, j): u[i] * (v[nxt[i,j]] - v[j])
                 for i, es in enumerate(e)
                 for j in es}
 
     def _calc_m(self):
         e = self._e
-        c = self._c
+        nxt = self._nxt
         q = self.q
-        return {(i, j): q[i,j] + q[j,c[i,j]] + q[c[i,j],i]
+        return {(i, j): q[i,j] + q[j,nxt[i,j]] + q[nxt[i,j],i]
                 for i, es in enumerate(e)
                 for j in es}
 
@@ -164,10 +164,10 @@ class Forward:
 
     def _calc_div_X(self):
         e = self._e
-        c = self._c
+        nxt = self._nxt
         X = self.X
         p = self.p
-        return np.array([sum([(p[i,j] - p[c[i,j],i]) @ X[i,j]
+        return np.array([sum([(p[i,j] - p[nxt[i,j],i]) @ X[i,j]
                               for j in es]) / 2.
                          for i, es in enumerate(e)])
 
@@ -234,7 +234,7 @@ class Reverse:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 
@@ -331,14 +331,14 @@ class Reverse:
         dif_q = {}
         v = self._v
         e = self._e
-        c = self._c
+        nxt = self._nxt
         l = self._l
         dif_v = self._dif_v
         u = self._u
         dif_u = self.dif_u
         for i, es in enumerate(e):
             for j in es:
-                k = c[i,j]
+                k = nxt[i,j]
                 dif_q[i,j] = dif_u[i] * (v[k] - v[j])
                 if l == j:
                     dif_q[i,j] -= u[i] * dif_v
@@ -348,9 +348,9 @@ class Reverse:
 
     def _calc_dif_m(self):
         e = self._e
-        c = self._c
+        nxt = self._nxt
         dif_q = self.dif_q
-        return {(i, j): dif_q[i,j] + dif_q[j,c[i,j]] + dif_q[c[i,j],i]
+        return {(i, j): dif_q[i,j] + dif_q[j,nxt[i,j]] + dif_q[nxt[i,j],i]
                 for i, es in enumerate(e)
                 for j in es}
 
@@ -379,7 +379,7 @@ class Reverse:
     def _calc_dif_p(self):
         dif_p = {}
         v = self._v
-        c = self._c
+        nxt = self._nxt
         l = self._l
         dif_v = self._dif_v
         cot = self._cot
@@ -392,21 +392,21 @@ class Reverse:
                 elif l == j:
                     dif_p[i,j] = dif_cot[i,j] * (v[j] - v[i]) \
                         + cot[i,j] * dif_v
-                elif l == c[i,j]:
+                elif l == nxt[i,j]:
                     dif_p[i,j] = dif_cot[i,j] * (v[j] - v[i])
         return dif_p
 
     def _calc_dif_div_X(self):
         dif_div_X = np.zeros(self._V)
         e = self._e
-        c = self._c
+        nxt = self._nxt
         X = self._X
         p = self._p
         dif_X = self.dif_X
         dif_p = self.dif_p
         for i, es in enumerate(e):
             for j in es:
-                k = c[i,j]
+                k = nxt[i,j]
                 dpij = dif_p[i,j] if (i, j) in dif_p else np.zeros(3)
                 dpki = dif_p[k,i] if (k, i) in dif_p else np.zeros(3)
                 dif_div_X[i] += ((dpij - dpki) @ X[i,j]

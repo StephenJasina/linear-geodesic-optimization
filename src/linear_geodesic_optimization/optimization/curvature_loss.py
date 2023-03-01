@@ -14,7 +14,7 @@ class Forward:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 
@@ -61,7 +61,7 @@ class Reverse:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 

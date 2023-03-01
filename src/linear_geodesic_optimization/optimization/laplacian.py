@@ -12,7 +12,7 @@ class Forward:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 
@@ -38,8 +38,8 @@ class Forward:
     def _calc_N(self):
         v = self._v
         e = self._e
-        c = self._c
-        return {(i, j): np.cross(v[i] - v[c[i,j]], v[j] - v[c[i,j]])
+        nxt = self._nxt
+        return {(i, j): np.cross(v[i] - v[nxt[i,j]], v[j] - v[nxt[i,j]])
                 for i, es in enumerate(e)
                 for j in es}
 
@@ -56,9 +56,9 @@ class Forward:
     def _calc_cot(self):
         v = self._v
         e = self._e
-        c = self._c
+        nxt = self._nxt
         A = self.A
-        return {(i, j): (v[i] - v[c[i,j]]) @ (v[j] - v[c[i,j]]) / (2. * A[i,j])
+        return {(i, j): (v[i] - v[nxt[i,j]]) @ (v[j] - v[nxt[i,j]]) / (2. * A[i,j])
                 for i, es in enumerate(e)
                 for j in es}
 
@@ -117,7 +117,7 @@ class Reverse:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 
@@ -148,13 +148,13 @@ class Reverse:
         dif_N = {}
         v = self._v
         e = self._e
-        c = self._c
+        nxt = self._nxt
         l = self._l
         dif_v = self._dif_v
         for i, es in enumerate(e):
             vi = v[i]
             for j in es:
-                k = c[i,j]
+                k = nxt[i,j]
                 vj = v[j]
                 vk = v[k]
                 if l == i:
@@ -188,13 +188,13 @@ class Reverse:
         dif_cot = {}
         v = self._v
         e = self._e
-        c = self._c
+        nxt = self._nxt
         l = self._l
         dif_v = self._dif_v
         dif_A = self.dif_A
         vl = v[l]
         for j in e[l]:
-            k = c[l,j]
+            k = nxt[l,j]
             vj = v[j]
             vk = v[k]
             dif_cot[l,j] = (((vj - vk) @ dif_v

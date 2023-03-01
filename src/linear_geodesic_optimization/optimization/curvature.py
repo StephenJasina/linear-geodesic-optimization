@@ -12,7 +12,7 @@ class Forward:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 
@@ -48,7 +48,7 @@ class Forward:
         # On the boundary, use Geodesic curvature instead of Gaussian curvature
         Dkappa_G[list(self._mesh.get_boundary_vertices())] = np.pi
         for (i, j), cot_ij in self.cot.items():
-            Dkappa_G[self._c[i, j]] -= np.arccos(cot_ij / (1 + cot_ij**2)**0.5)
+            Dkappa_G[self._nxt[i, j]] -= np.arccos(cot_ij / (1 + cot_ij**2)**0.5)
         return self.D_inv @ Dkappa_G
 
     def _calc_vertex_normal(self):
@@ -102,7 +102,7 @@ class Reverse:
         self._updates = self._mesh.updates() - 1
         self._v = None
         self._e = self._mesh.get_edges()
-        self._c = self._mesh.get_c()
+        self._nxt = self._mesh.get_nxt()
 
         self._V = len(self._e)
 
@@ -147,7 +147,7 @@ class Reverse:
         dif_Dkappa_G = np.zeros(self._V)
         for (i, j), cot_ij in self._cot.items():
             if (i, j) in self._dif_cot:
-                dif_Dkappa_G[self._c[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
+                dif_Dkappa_G[self._nxt[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
         return self._D_inv @ (dif_Dkappa_G - self._dif_D @ self._kappa_G)
 
     def _calc_dif_vertex_normal(self):

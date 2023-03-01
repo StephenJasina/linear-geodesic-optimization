@@ -11,7 +11,7 @@ class Mesh(mesh.Mesh):
     '''
 
     def __init__(self, frequency):
-        self.directions, self._edges, self._faces, self._c \
+        self.directions, self._edges, self._faces, self._nxt \
             = self._initial_mesh(frequency)
         self._log_rho = np.zeros(self.directions.shape[0])
         self._updates = 0
@@ -184,13 +184,13 @@ class Mesh(mesh.Mesh):
                     edges[u].append(s)
                     faces.append((s, t, u))
 
-        c = {}
+        nxt = {}
         for i, j, k in faces:
-            c[i,j] = k
-            c[j,k] = i
-            c[k,i] = j
+            nxt[i,j] = k
+            nxt[j,k] = i
+            nxt[k,i] = j
 
-        return vertices, edges, faces, c
+        return vertices, edges, faces, nxt
 
     def get_partials(self):
         return np.multiply(self.directions,
@@ -211,8 +211,8 @@ class Mesh(mesh.Mesh):
     def get_boundary_edges(self):
         return set()
 
-    def get_c(self):
-        return self._c
+    def get_nxt(self):
+        return self._nxt
 
     def get_parameters(self):
         return np.copy(self._log_rho)

@@ -13,7 +13,7 @@ class Mesh(mesh.Mesh):
     def __init__(self, width, height):
         self._width = width
         self._height = height
-        self._grid, self._edges, self._faces, self._c \
+        self._grid, self._edges, self._faces, self._nxt \
             = self._initial_mesh(width, height)
         self._partials = np.zeros((self._grid.shape[0], 3))
         self._partials[:,2] = 1.
@@ -35,7 +35,7 @@ class Mesh(mesh.Mesh):
 
         edges = [[] for _ in range(width * height)]
         faces = []
-        c = {}
+        nxt = {}
 
         # Add edges and faces cell-by-cell
         for i in range(width - 1):
@@ -50,20 +50,20 @@ class Mesh(mesh.Mesh):
                 edges[v11].append(v01)
                 edges[v01].append(v00)
                 faces.append((v00, v11, v01))
-                c[v00,v11] = v01
-                c[v11,v01] = v00
-                c[v01,v00] = v11
+                nxt[v00,v11] = v01
+                nxt[v11,v01] = v00
+                nxt[v01,v00] = v11
 
                 # Add the bottom-right triangle
                 edges[v00].append(v10)
                 edges[v10].append(v11)
                 edges[v11].append(v00)
                 faces.append((v00, v10, v11))
-                c[v00,v10] = v11
-                c[v10,v11] = v00
-                c[v11,v00] = v10
+                nxt[v00,v10] = v11
+                nxt[v10,v11] = v00
+                nxt[v11,v00] = v10
 
-        return grid, edges, faces, c
+        return grid, edges, faces, nxt
 
     def get_partials(self):
         return self._partials
@@ -104,13 +104,13 @@ class Mesh(mesh.Mesh):
         # Boundary edges are those that appear as a half-edge in one direction,
         # but not in the opposite direction.
         boundary_edges = set()
-        for i, j in self._c:
-            if (j, i) not in self._c:
+        for i, j in self._nxt:
+            if (j, i) not in self._nxt:
                 boundary_edges.add((i, j))
         return boundary_edges
 
-    def get_c(self):
-        return self._c
+    def get_nxt(self):
+        return self._nxt
 
     def get_parameters(self):
         return np.copy(self._z)
