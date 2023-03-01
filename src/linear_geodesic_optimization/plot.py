@@ -111,9 +111,10 @@ def get_mesh_plot(mesh, title):
 
     interior_vertices = [v for v in range(len(z)) if v not in boundary_vertices]
     z_interior = z[interior_vertices]
-    z_min = np.amin(z_interior)
-    z_max = np.amax(z_interior)
-    z = (z - z_min) / (z_max - z_min) / 4.
+    if len(z_interior) != 0:
+        z_min = np.amin(z_interior)
+        z_max = np.amax(z_interior)
+        z = (z - z_min) / (z_max - z_min) / 4.
 
 
     fig = plt.figure()
