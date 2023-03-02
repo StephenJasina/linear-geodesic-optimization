@@ -24,7 +24,25 @@ with open(os.path.join(data_directory, 'position.json')) as f:
 
 network_vertices = AdaptiveMesh.map_coordinates_to_support(coordinates)
 
-mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(network_vertices), 0.05)
-get_heat_map(network_vertices=list(mesh.get_vertices()) + network_vertices,
-             network_curvatures=[((i, j), 1.) for i, js in enumerate(mesh.get_edges()) for j in js])
+network_curvatures = []
+with open(os.path.join(data_directory, 'curvature.json')) as f:
+    curvature_json = json.load(f)
+
+    for edge, curvature in curvature_json.items():
+        i = label_to_index[edge[0]]
+        j = label_to_index[edge[1]]
+
+        network_curvatures.append(((i, j), curvature))
+
+points = set(tuple(network_vertex) for network_vertex in network_vertices)
+for (i, j), _ in network_curvatures:
+    for p in np.linspace(network_vertices[i], network_vertices[j], 10):
+        points.add(tuple(p))
+points = list(points)
+
+mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(points), 0.1)
+get_heat_map(network_vertices=list(mesh.get_vertices()),
+             network_curvatures=[((i, j), 1.) for i, js in enumerate(mesh.get_edges()) for j in js],
+             extra_points=points)
+print(mesh.get_vertices().shape[0])
 plt.show()

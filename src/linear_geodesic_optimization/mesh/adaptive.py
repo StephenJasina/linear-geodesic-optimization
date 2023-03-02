@@ -88,8 +88,6 @@ class Mesh(mesh.Mesh):
         i, j = edge
         k = nxt[i,j]
 
-        print(f'splitting {vertices[i]}, {vertices[j]}, {vertices[k]}')
-
         # Update nxt
         del nxt[i,j]
         nxt[i,l] = k
@@ -177,10 +175,10 @@ class Mesh(mesh.Mesh):
             (1, 0): [point for point in points if point[1] < point[0]],
         }
         while faces_to_points:
-            print(faces_to_points)
             edge, contained_points = next(iter(faces_to_points.items()))
+            edge_vector = vertices[edge[1]] - vertices[edge[0]]
 
-            if len(contained_points) <= 1:
+            if edge_vector @ edge_vector < epsilon**2 and len(contained_points) <= 1:
                 del faces_to_points[edge]
                 continue
 

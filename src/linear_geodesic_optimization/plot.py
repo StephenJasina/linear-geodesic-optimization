@@ -68,7 +68,7 @@ def get_scatter_plot(before_data, after_data, title):
     return fig
 
 def get_heat_map(x=None, y=None, z=None, title='',
-                 network_vertices=[], network_curvatures=[],
+                 network_vertices=[], network_curvatures=[], extra_points=[],
                  v_range=(None, None)):
     fig, ax = plt.subplots(1, 1)
     ax.set_aspect('equal')
@@ -88,7 +88,7 @@ def get_heat_map(x=None, y=None, z=None, title='',
                 color=mpl.colormaps['RdBu']((curvature + 2) / 3))
 
     # Plot the vertices
-    for vertex in network_vertices:
+    for vertex in extra_points:
         ax.plot(vertex[0], vertex[1], '.', color='purple')
 
     ax.set_title(title)
