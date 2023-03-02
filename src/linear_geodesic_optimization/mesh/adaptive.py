@@ -58,21 +58,6 @@ class Mesh(mesh.Mesh):
         ]) for x, y in coordinates]
 
     @staticmethod
-    def _is_in_face(point, edge, vertices, nxt):
-        u = vertices[edge[0]]
-        v = vertices[edge[1]]
-        w = vertices[nxt[edge]]
-        rot90 = np.array([[0., -1.], [1., 0.]])
-        vu = rot90 @ (v - u)
-        wv = rot90 @ (w - v)
-        uw = rot90 @ (u - w)
-        # Take advantage of the fact that a triangle is the intersection of
-        # three half-planes
-        return (vu @ (w - u)) * (vu @ (point - u)) >= 0 \
-            and (wv @ (u - v)) * (wv @ (point - v)) >= 0 \
-            and (uw @ (v - w)) * (uw @ (point - w)) >= 0
-
-    @staticmethod
     def _get_face_id(edge, vertices, nxt):
         '''
         Return the longest edge of the face that the input edge is incident to.
