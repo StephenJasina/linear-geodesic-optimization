@@ -7,12 +7,12 @@ import sys
 from matplotlib import pyplot as plt
 import numpy as np
 
-from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
+from linear_geodesic_optimization.mesh.adaptive import Mesh as AdaptiveMesh
 from linear_geodesic_optimization.optimization import curvature, linear_regression
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
-maxiters = 1000
+maxiters = 100
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -36,12 +36,44 @@ if __name__ == '__main__':
         lambda_geodesic = parameters['lambda_geodesic']
         lambda_smooth = parameters['lambda_smooth']
         lambda_curvature = parameters['lambda_curvature']
-        width = parameters['width']
-        height = parameters['height']
+        epsilon = parameters['epsilon']
 
     data_directory = os.path.join('..', 'data', data_name)
 
-    mesh = RectangleMesh(width, height)
+    # Get the network vertices
+    coordinates = None
+    label_to_index = {}
+    with open(os.path.join(data_directory, 'position.json')) as f:
+        position_json = json.load(f)
+
+        label_to_index = {label: index for index, label in enumerate(position_json)}
+
+        coordinates = [None for _ in range(len(position_json))]
+        for vertex, position in position_json.items():
+            coordinates[label_to_index[vertex]] = position
+
+    network_vertices = AdaptiveMesh.map_coordinates_to_support(coordinates)
+
+    # Get the network edges and curvatures
+    network_edges = []
+    network_curvatures = []
+    with open(os.path.join(data_directory, 'curvature.json')) as f:
+        curvature_json = json.load(f)
+
+        for edge, network_curvature in curvature_json.items():
+            u = label_to_index[edge[0]]
+            v = label_to_index[edge[1]]
+
+            network_edges.append((u, v))
+            network_curvatures.append(network_curvature)
+
+    # Create the mesh
+    points = set(tuple(network_vertex) for network_vertex in network_vertices)
+    for i, j in network_edges:
+        for p in np.linspace(network_vertices[i], network_vertices[j], 10):
+            points.add(tuple(p))
+    points = list(points)
+    mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(points), epsilon)
 
     L_geodesics = []
     L_smooths = []
@@ -94,56 +126,10 @@ if __name__ == '__main__':
     figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters, 2.25)
     figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters, 2.25)
 
-    vertices = mesh.get_vertices()
-    coordinates = None
-    label_to_index = {}
-    with open(os.path.join(data_directory, 'position.json')) as f:
-        position_json = json.load(f)
-
-        label_to_index = {label: index
-                          for index, label in enumerate(position_json)}
-
-        coordinates = [None for _ in range(len(position_json))]
-        for vertex, position in position_json.items():
-            coordinates[label_to_index[vertex]] = position
-
-    network_vertices = mesh.map_coordinates_to_support(coordinates)
-
-    network_edges = []
-    network_curvatures = []
-    with open(os.path.join(data_directory, 'curvature.json')) as f:
-        curvature_json = json.load(f)
-
-        for edge, network_curvature in curvature_json.items():
-            u = label_to_index[edge[0]]
-            v = label_to_index[edge[1]]
-
-            network_edges.append((u, v))
-            network_curvatures.append(network_curvature)
-
-    x = list(sorted(set(vertices[:,0])))
-    y = list(sorted(set(vertices[:,1])))
-    z = vertices[:,2].reshape(len(x), len(y), order='F')
-
-    width = len(x)
-    height = len(y)
-
-    x = x[1:width - 1]
-    y = y[1:height - 1]
-    z = z[1:width - 1,1:height - 1]
-    z = z - np.amin(z)
-
-    figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
-                                       network_vertices, network_edges, network_curvatures)
-
-    curvature_forward = curvature.Forward(mesh)
-    curvature_forward.calc()
-    kappa = curvature_forward.kappa_G.reshape(width, height, order='F')[1:width - 1,1:height - 1]
-    figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
-                                        network_vertices, network_edges, network_curvatures, v_range=(-2., 5.))
-
     figures['scatter'] = get_scatter_plot(before_data, after_data,
                                           'Latency Prediction' + lambda_string)
+
+    # TODO: Figure out heatmaps
 
     figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 

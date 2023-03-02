@@ -6,6 +6,9 @@ class Mesh(mesh.Mesh):
     '''
     Representation of a mesh that refines itself so that, given a set of
     points, each cell contains at most one point.
+
+    Frankly, this implementation is a bit inefficient, but it's fine since the
+    initialization is only run once.
     '''
 
     def __init__(self, points, epsilon):
@@ -231,8 +234,40 @@ class Mesh(mesh.Mesh):
     def get_fat_edges(self, vertices, edges, epsilon):
         raise NotImplementedError
 
+    def get_fat_edges(self, vertices, edges, epsilon):
+        def is_on_fat_edge(u, v, r, epsilon):
+            # Only care about the first two coordinates
+            u = u[:2]
+            v = v[:2]
+            r = r[:2]
+
+            ru = r - u
+            rv = r - v
+            uv = u - v
+
+            if ru @ uv <= 0 and rv @ uv >= 0:
+                if uv @ uv == 0:
+                    return ru @ ru < epsilon**2
+                return rv @ rv - (uv @ rv)**2 / (uv @ uv) < epsilon**2
+            else:
+                return ru @ ru < epsilon**2 or rv @ rv < epsilon**2
+
+        return [[i for i in range(self._vertices.shape[0])
+                 if is_on_fat_edge(vertices[e1], vertices[e2],
+                                   self._vertices[i,:], epsilon)]
+                for (e1, e2) in edges]
+
     def get_epsilon(self):
         return self._epsilon
 
     def get_support_area(self):
         return 1.
+
+    def nearest_vertex_index(self, v):
+        '''
+        Find the index of the vertex whose (x, y) coordinate pair is closest to
+        the input coordinate pair. We assume the input lies in
+        [-0.5, 0.5] x [-0.5, 0.5].
+        '''
+
+        return np.argmin(np.linalg.norm(self._vertices - v, axis=1))

@@ -41,8 +41,14 @@ for (i, j), _ in network_curvatures:
 points = list(points)
 
 mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(points), 0.1)
+z = np.array([
+    (4**2 - x**2 - y**2)**0.5
+    for x, y, _ in mesh.get_vertices()
+])
+z = z - np.amin(z)
+z = mesh.set_parameters(z)
 get_heat_map(network_vertices=list(mesh.get_vertices()),
              network_curvatures=[((i, j), 1.) for i, js in enumerate(mesh.get_edges()) for j in js],
              extra_points=points)
-print(mesh.get_vertices().shape[0])
+# get_mesh_plot(mesh, 'Adaptive Mesh Test', remove_boundary=False)
 plt.show()

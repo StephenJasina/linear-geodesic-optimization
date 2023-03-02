@@ -68,7 +68,7 @@ def get_scatter_plot(before_data, after_data, title):
     return fig
 
 def get_heat_map(x=None, y=None, z=None, title='',
-                 network_vertices=[], network_curvatures=[], extra_points=[],
+                 network_vertices=[], network_edges=[], network_curvatures=[], extra_points=[],
                  v_range=(None, None)):
     fig, ax = plt.subplots(1, 1)
     ax.set_aspect('equal')
@@ -82,7 +82,7 @@ def get_heat_map(x=None, y=None, z=None, title='',
         fig.colorbar(im)
 
     # Plot the edges
-    for (u, v), curvature in network_curvatures:
+    for (u, v), curvature in zip(network_edges, network_curvatures):
         ax.plot([network_vertices[u][0], network_vertices[v][0]],
                 [network_vertices[u][1], network_vertices[v][1]],
                 color=mpl.colormaps['RdBu']((curvature + 2) / 3))
@@ -122,5 +122,6 @@ def get_mesh_plot(mesh, title, remove_boundary=True):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
     ax.plot_trisurf(x, y, z, triangles=faces)
+    ax.set_title(title)
     ax.set_aspect('equal')
     return fig

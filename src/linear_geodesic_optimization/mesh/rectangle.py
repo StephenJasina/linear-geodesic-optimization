@@ -154,8 +154,8 @@ class Mesh(mesh.Mesh):
     def nearest_vertex_index(self, v):
         '''
         Find the index of the vertex whose (x, y) coordinate pair is closest to
-        the input coordinate pair. We assume the input lies over/under the
-        unit square in the first octant.
+        the input coordinate pair. We assume the input lies in
+        [-0.5, 0.5] x [-0.5, 0.5].
         '''
 
         i = round(v[0] * (self._width - 1))
