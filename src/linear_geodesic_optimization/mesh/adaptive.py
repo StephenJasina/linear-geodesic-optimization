@@ -231,31 +231,64 @@ class Mesh(mesh.Mesh):
     def updates(self):
         return self._updates
 
-    def get_fat_edges(self, vertices, edges, epsilon):
-        raise NotImplementedError
+    @staticmethod
+    def _segments_cross(a, b):
+        '''
+        Determine whether two line segments (defined by pairs of 2-vectors)
+        intersect
+        '''
+        p, q = a
+        u, v = b
+        rot90 = np.array([[0., -1.], [1., 0.]])
+        qp = rot90 @ (q - p)
+        vu = rot90 @ (v - u)
+        s = (qp @ (u - p)) * (qp @ (v - p))
+        t = (vu @ (p - u)) * (vu @ (q - u))
+        return (s <= 0 and t < 0) or (s < 0 and t <= 0) \
+            or (s == 0 and t == 0 and ((p - u) @ (q - u) <= 0 or (p - v) @ (q - v) <= 0))
+
+    @staticmethod
+    def _is_in_face(point, face):
+        '''
+        Determine whether a point is inside a face, where the face is
+        represented as an ordered triple.
+        '''
+        u, v, w = face
+        rot90 = np.array([[0., -1.], [1., 0.]])
+        vu = rot90 @ (v - u)
+        wv = rot90 @ (w - v)
+        uw = rot90 @ (u - w)
+        # Take advantage of the fact that a triangle is the intersection of
+        # three half-planes
+        return (vu @ (w - u)) * (vu @ (point - u)) >= 0 \
+            and (wv @ (u - v)) * (wv @ (point - v)) >= 0 \
+            and (uw @ (v - w)) * (uw @ (point - w)) >= 0
 
     def get_fat_edges(self, vertices, edges, epsilon):
-        def is_on_fat_edge(u, v, r, epsilon):
-            # Only care about the first two coordinates
-            u = u[:2]
-            v = v[:2]
-            r = r[:2]
+        fat_edges = []
+        for edge in edges:
+            fat_edge = set()
+            p = vertices[edge[0]]
+            q = vertices[edge[1]]
 
-            ru = r - u
-            rv = r - v
-            uv = u - v
+            for i, js in enumerate(self._edges):
+                u = self._vertices[i]
+                for j in js:
+                    k = self._nxt[i,j]
+                    v = self._vertices[j]
+                    w = self._vertices[k]
+                    face = (u, v, w)
 
-            if ru @ uv <= 0 and rv @ uv >= 0:
-                if uv @ uv == 0:
-                    return ru @ ru < epsilon**2
-                return rv @ rv - (uv @ rv)**2 / (uv @ uv) < epsilon**2
-            else:
-                return ru @ ru < epsilon**2 or rv @ rv < epsilon**2
+                    if Mesh._is_in_face(p, face) or Mesh._is_in_face(q, face) \
+                        or Mesh._segments_cross((p, q), (u, v)) \
+                        or Mesh._segments_cross((p, q), (v, w)) \
+                        or Mesh._segments_cross((p, q), (w, u)):
+                        fat_edge.add(i)
+                        fat_edge.add(j)
+                        fat_edge.add(k)
 
-        return [[i for i in range(self._vertices.shape[0])
-                 if is_on_fat_edge(vertices[e1], vertices[e2],
-                                   self._vertices[i,:], epsilon)]
-                for (e1, e2) in edges]
+            fat_edges.append(list(fat_edge))
+        return fat_edges
 
     def get_epsilon(self):
         return self._epsilon
