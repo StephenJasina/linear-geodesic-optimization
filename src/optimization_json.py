@@ -46,9 +46,9 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
                 (mesh.nearest_vertex_index(network_vertices[v]), latency)
             )
 
-    ricci_curvatures = []
+    network_curvatures = []
     with open(os.path.join(data_directory, 'curvature.json')) as f:
-        ricci_curvatures = list(json.load(f).values())
+        network_curvatures = list(json.load(f).values())
 
     # Setup snapshots
     directory = os.path.join(
@@ -81,7 +81,7 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
     z = mesh.set_parameters(z)
 
     hierarchy = optimization.DifferentiationHierarchy(
-        mesh, latencies, network_vertices, network_edges, ricci_curvatures,
+        mesh, latencies, network_vertices, network_edges, network_curvatures,
         lambda_geodesic, lambda_curvature, lambda_smooth, smoothness_strategy,
         directory=directory, cores=None)
 

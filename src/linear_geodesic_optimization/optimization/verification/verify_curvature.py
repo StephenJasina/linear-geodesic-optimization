@@ -43,20 +43,20 @@ with open(os.path.join(toy_directory, 'latency.json')) as f:
 
         ts[u].append((v, latency))
 
-ricci_curvatures = []
+network_curvatures = []
 with open(os.path.join(toy_directory, 'curvature.json')) as f:
-    ricci_curvatures = list(json.load(f).values())
+    network_curvatures = list(json.load(f).values())
 
 laplacian_forward = laplacian.Forward(mesh)
 curvature_forward = curvature.Forward(mesh, laplacian_forward)
 curvature_loss_forward = curvature_loss.Forward(
-    mesh, network_vertices, network_edges, ricci_curvatures, mesh.get_epsilon()
+    mesh, network_vertices, network_edges, network_curvatures, mesh.get_epsilon()
 )
 laplacian_reverse = laplacian.Reverse(mesh, laplacian_forward)
 curvature_reverse = curvature.Reverse(mesh, laplacian_forward, curvature_forward,
                                       laplacian_reverse)
 curvature_loss_reverse = curvature_loss.Reverse(
-    mesh, network_vertices, network_edges, ricci_curvatures, mesh.get_epsilon()
+    mesh, network_vertices, network_edges, network_curvatures, mesh.get_epsilon()
 )
 
 l = 37

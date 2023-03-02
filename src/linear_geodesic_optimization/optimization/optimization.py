@@ -16,7 +16,7 @@ class DifferentiationHierarchy:
     '''
 
     def __init__(self, mesh, latencies, network_vertices, network_edges,
-                 ricci_curvatures,
+                 network_curvatures,
                  lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
                  smooth_strategy='mvs_cross', directory=None, cores=None):
         '''
@@ -62,7 +62,7 @@ class DifferentiationHierarchy:
             mesh, self.laplacian_forward
         )
         self.curvature_loss_forward = curvature_loss.Forward(
-            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
+            mesh, network_vertices, network_edges, network_curvatures, epsilon,
             self.curvature_forward
         )
         self.smooth_forward = smooth.Forward(
@@ -84,7 +84,7 @@ class DifferentiationHierarchy:
             next(iter(self.laplacian_reverses.values()))
         )
         self.curvature_loss_reverse = curvature_loss.Reverse(
-            mesh, network_vertices, network_edges, ricci_curvatures, epsilon,
+            mesh, network_vertices, network_edges, network_curvatures, epsilon,
             self.curvature_forward, self.curvature_reverse
         )
         self.smooth_reverse = smooth.Reverse(

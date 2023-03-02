@@ -8,7 +8,7 @@ class Forward:
     particular, is used for curvature loss.
     '''
 
-    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
+    def __init__(self, mesh, network_vertices, network_edges, network_curvatures,
                  epsilon, curvature_forward=None):
         self._mesh = mesh
         self._updates = self._mesh.updates() - 1
@@ -20,7 +20,7 @@ class Forward:
 
         self._network_vertices = network_vertices
         self._network_edges = network_edges
-        self._ricci_curvatures = ricci_curvatures
+        self._network_curvatures = network_curvatures
         self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
                                              epsilon)
 
@@ -39,14 +39,14 @@ class Forward:
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
             self.L_curvature = (
-                sum((self.kappa_G[i] - ricci_curvature)**2
-                    for ricci_curvature, fat_edge in zip(
-                        self._ricci_curvatures,
+                sum((self.kappa_G[i] - network_curvature)**2
+                    for network_curvature, fat_edge in zip(
+                        self._network_curvatures,
                         self._fat_edges
                     )
                     for i in fat_edge) / sum(len(fat_edge)
                                              for fat_edge in self._fat_edges)
-                if self._ricci_curvatures else 0
+                if self._network_curvatures else 0
             )
 
 class Reverse:
@@ -55,7 +55,7 @@ class Reverse:
     This implementation assumes the l-th partial affects only the l-th vertex.
     '''
 
-    def __init__(self, mesh, network_vertices, network_edges, ricci_curvatures,
+    def __init__(self, mesh, network_vertices, network_edges, network_curvatures,
                  epsilon, curvature_forward=None, curvature_reverse=None):
         self._mesh = mesh
         self._updates = self._mesh.updates() - 1
@@ -67,7 +67,7 @@ class Reverse:
 
         self._network_vertices = network_vertices
         self._network_edges = network_edges
-        self._ricci_curvatures = ricci_curvatures
+        self._network_curvatures = network_curvatures
         self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
                                              epsilon)
 
@@ -100,10 +100,10 @@ class Reverse:
             self._dif_v = dif_v
             self._l = l
             self.dif_L_curvature = (
-                sum(2 * (self.kappa_G[i] - ricci_curvature) * self.dif_kappa_G[i]
-                    for ricci_curvature, fat_edge in zip(self._ricci_curvatures,
+                sum(2 * (self.kappa_G[i] - network_curvature) * self.dif_kappa_G[i]
+                    for network_curvature, fat_edge in zip(self._network_curvatures,
                                                          self._fat_edges)
                     for i in fat_edge) / sum(len(fat_edge)
                                              for fat_edge in self._fat_edges)
-                if self._ricci_curvatures else 0
+                if self._network_curvatures else 0
             )

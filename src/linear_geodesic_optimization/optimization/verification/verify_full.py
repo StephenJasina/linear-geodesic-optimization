@@ -46,15 +46,15 @@ if __name__ == '__main__':
 
             ts[u].append((v, latency))
 
-    ricci_curvatures = []
+    network_curvatures = []
     with open(os.path.join(toy_directory, 'curvature.json')) as f:
-        ricci_curvatures = list(json.load(f).values())
+        network_curvatures = list(json.load(f).values())
 
     rng = np.random.default_rng(0)
     z_0 = rng.random(V)
 
     hierarchy = optimization.DifferentiationHierarchy(
-        mesh, ts, network_vertices, network_edges, ricci_curvatures,
+        mesh, ts, network_vertices, network_edges, network_curvatures,
         lambda_geodesic=1., lambda_curvature=1., lambda_smooth=1.,
         smooth_strategy=smooth_strategy, cores=None)
 
