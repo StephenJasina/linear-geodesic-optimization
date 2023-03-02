@@ -9,86 +9,197 @@ class Mesh(mesh.Mesh):
     '''
 
     def __init__(self, points, epsilon):
+        '''
+        Initialize an adaptive mesh to a set of points. This function assumes
+        the points all lie in [-0.5, 0.5] x [-0.5, 0.5]. This can be done by
+        calling Mesh.map_coordinates_to_support.
+        '''
+
         self._points = points
         self._epsilon = epsilon
 
         # Internally store vertices in 2 dimensions
         self._vertices, self._edges, self._faces, self._nxt \
-            = self._get_initial_mesh(points, epsilon)
+            = Mesh._get_initial_mesh(points, epsilon)
         self._parameters = np.zeros(self._vertices.shape[0])
         self._partials = np.zeros((self._vertices.shape[0], 3))
         self._partials[:,2] = 1.
         self._updates = 0
 
     @staticmethod
-    def _split_face(edge, vertices, nxt):
+    def map_coordinates_to_support(coordinates, scale_factor=0.45):
         '''
-        Given an oriented edge, repeatedly split the triangle containing that
-        edge until the edge has been bisected. The splits are done by finding
-        the largest angle in the triangle and bisecting the opposing edge.
+        Convert a list of (x, y) pairs into a list of new coordinates that
+        have been scaled to lie centered in the unit square. The `scale_factor`
+        parameter determines what proportion of the unit square is used (0.45
+        means 45% of the width and 45% of the height is used).
+        '''
+
+        # Need this check to avoid out-of-bounds errors if coordinates is empty
+        if not coordinates:
+            return []
+
+        coordinate_min = coordinates[0][0]
+        coordinate_max = coordinates[0][0]
+
+        # Find scaling factors so that the x range and y range are both [0, 1].
+        # If no such scaling factor exists (i.e., the x-coordinate or
+        # y-coordinate is constant), set it to some arbitrary value (in this
+        # case, just set it to 1.)
+        for x, y in coordinates:
+            coordinate_min = min(coordinate_min, x, y)
+            coordinate_max = max(coordinate_max, x, y)
+        divisor = coordinate_max - coordinate_min
+        divisor = 1. if divisor == 0. else divisor
+
+        return [np.array([
+            ((x - coordinate_min) / divisor - 0.5) * scale_factor,
+            ((y - coordinate_min) / divisor - 0.5) * scale_factor,
+        ]) for x, y in coordinates]
+
+    @staticmethod
+    def _is_in_face(point, edge, vertices, nxt):
+        u = vertices[edge[0]]
+        v = vertices[edge[1]]
+        w = vertices[nxt[edge]]
+        rot90 = np.array([[0., -1.], [1., 0.]])
+        vu = rot90 @ (v - u)
+        wv = rot90 @ (w - v)
+        uw = rot90 @ (u - w)
+        # Take advantage of the fact that a triangle is the intersection of
+        # three half-planes
+        return (vu @ (w - u)) * (vu @ (point - u)) >= 0 \
+            and (wv @ (u - v)) * (wv @ (point - v)) >= 0 \
+            and (uw @ (v - w)) * (uw @ (point - w)) >= 0
+
+    @staticmethod
+    def _get_face_id(edge, vertices, nxt):
+        '''
+        Return the longest edge of the face that the input edge is incident to.
         '''
 
         i, j = edge
         k = nxt[i,j]
         u = vertices[i]
         v = vertices[j]
-        x = (u + v) / 2
+        w = vertices[k]
+        a2 = (w - v) @ (w - v)
+        b2 = (u - w) @ (u - w)
+        c2 = (v - u) @ (v - u)
 
-        if (j, i) in nxt:
-            # In this case, the triangle we want to split is adjacent to
-            # another triangle
-            c2 = (v - u) @ (v - u)
+        if c2 >= a2 and c2 >= b2:
+            return (i, j)
+        elif a2 >= b2:
+            return (j, k)
+        else:
+            return (k, i)
 
-            # First, split the adjacent triangle if necessary
-            while True:
-                k_prime = nxt[j,i]
-                w_prime = vertices[k_prime]
+    def _split_face_naive(edge, l, vertices, nxt, faces_to_points):
+        '''
+        Just insert l on the edge without considering upkeep, except for the
+        faces_to_points structure.
+        '''
 
-                a2 = (w_prime - v) @ (w_prime - v)
-                b2 = (u - w_prime) @ (u - w_prime)
+        i, j = edge
+        k = nxt[i,j]
 
-                if c2 >= a2 and c2 >= b2:
-                    break
+        print(f'splitting {vertices[i]}, {vertices[j]}, {vertices[k]}')
 
-                if a2 >= b2:
-                    Mesh._split_face((k_prime, j), vertices, nxt)
-                else:
-                    Mesh._split_face((i, k_prime), vertices, nxt)
-
-            # Now split the adjacent triangle
-            l = len(vertices)
-            del nxt[j,i]
-            nxt[j,l] = k_prime
-            nxt[l,k_prime] = j
-            nxt[k_prime,j] = l
-            nxt[i,k_prime] = l
-            nxt[k_prime,l] = i
-            nxt[l,i] = k_prime
-
-        # Split the original triangle
-        l = len(vertices)
+        # Update nxt
         del nxt[i,j]
         nxt[i,l] = k
         nxt[l,k] = i
         nxt[k,i] = l
+        nxt[l,j] = k
         nxt[j,k] = l
         nxt[k,l] = j
-        nxt[l,j] = k
 
-        # Keep track of the added vertex
-        vertices.append(x)
+        # Update faces_to_points
+        contained_points = []
+        if (i, j) in faces_to_points:
+            contained_points = faces_to_points[i,j]
+            del faces_to_points[i,j]
+        left = Mesh._get_face_id((i, l), vertices, nxt)
+        right = Mesh._get_face_id((l, j), vertices, nxt)
+        contained_points_left = []
+        contained_points_right = []
+        for point in contained_points:
+            vk = vertices[k]
+            vl = vertices[l]
+            if (point - vl) @ np.array([[0., -1.], [1., 0.]]) @ (vk - vl) >= 0:
+                contained_points_left.append(point)
+            else:
+                contained_points_right.append(point)
+        faces_to_points[left] = contained_points_left
+        faces_to_points[right] = contained_points_right
 
-    def _get_initial_mesh(self, points, epsilon):
+
+    @staticmethod
+    def _split_face(edge, vertices, nxt, faces_to_points):
+        '''
+        Given an oriented edge, repeatedly split the triangle containing that
+        edge until the edge has been bisected. The splits are done by finding
+        the largest angle in the triangle and bisecting the opposing edge.
+
+        The faces_to_points parameter is maintained, in that it is a dictionary
+        mapping "faces" (stored as the length of the longest edge on the face)
+        to lists of points that the corresponding face contains.
+        '''
+
+        i, j = Mesh._get_face_id(edge, vertices, nxt)
+        k = nxt[i,j]
+        l = len(vertices)
+
+        # Add the new vertex in
+        vertices.append((vertices[i] + vertices[j]) / 2)
+
+        if (j, i) in nxt:
+            # In this case, the triangle we want to split is adjacent to
+            # another triangle
+
+            # First, split the adjacent triangle if necessary (that is, if the
+            # shared edge is not the longest one)
+            while True:
+                k_prime = nxt[j,i]
+                adjacent_face_id = Mesh._get_face_id((j, i), vertices, nxt)
+
+                if (j, i) == adjacent_face_id:
+                    break
+
+                Mesh._split_face(adjacent_face_id, vertices, nxt, faces_to_points)
+
+            # Now split the adjacent triangle
+            Mesh._split_face_naive((j, i), l, vertices, nxt, faces_to_points)
+
+        # Split the original triangle
+        Mesh._split_face_naive((i, j), l, vertices, nxt, faces_to_points)
+
+    @staticmethod
+    def _get_initial_mesh(points, epsilon):
         vertices = [
-            np.array([0., 0.]),
-            np.array([1., 1.]),
-            np.array([1., 0.]),
-            np.array([0., 1.]),
+            np.array([-0.5, -0.5]),
+            np.array([0.5, 0.5]),
+            np.array([0.5, -0.5]),
+            np.array([-0.5, 0.5]),
         ]
         nxt = {
             (0, 1): 3, (1, 3): 0, (3, 0): 1,
-            (0, 2): 1, (2, 1): 0, (1, 0): 2,
+            (1, 0): 2, (0, 2): 1, (2, 1): 0,
         }
+
+        faces_to_points = {
+            (0, 1): [point for point in points if point[1] >= point[0]],
+            (1, 0): [point for point in points if point[1] < point[0]],
+        }
+        while faces_to_points:
+            print(faces_to_points)
+            edge, contained_points = next(iter(faces_to_points.items()))
+
+            if len(contained_points) <= 1:
+                del faces_to_points[edge]
+                continue
+
+            Mesh._split_face(edge, vertices, nxt, faces_to_points)
 
         edges = [[] for _ in vertices]
         faces = []
@@ -142,33 +253,3 @@ class Mesh(mesh.Mesh):
 
     def get_support_area(self):
         return 1.
-
-    def map_coordinates_to_support(self, coordinates, scale_factor=0.45):
-        '''
-        Convert a list of (x, y, z) triples into a list of new coordinates that
-        have been scaled to lie centered in the unit square. The `scale_factor`
-        parameter determines what proportion of the unit square is used (0.45
-        means 45% of the width and 45% of the height is used).
-        '''
-
-        # Need this check to avoid out-of-bounds errors if coordinates is empty
-        if not coordinates:
-            return []
-
-        coordinate_min = coordinates[0][0]
-        coordinate_max = coordinates[0][0]
-
-        # Find scaling factors so that the x range and y range are both [0, 1].
-        # If no such scaling factor exists (i.e., the x-coordinate or
-        # y-coordinate is constant), set it to some arbitrary value (in this
-        # case, just set it to 1.)
-        for x, y in coordinates:
-            coordinate_min = min(coordinate_min, x, y)
-            coordinate_max = max(coordinate_max, x, y)
-        divisor = coordinate_max - coordinate_min
-        divisor = 1. if divisor == 0. else divisor
-
-        return [np.array([((x - coordinate_min) / divisor - 0.5) * scale_factor,
-                          ((y - coordinate_min) / divisor - 0.5) * scale_factor,
-                          0])
-                for x, y in coordinates]
