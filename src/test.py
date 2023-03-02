@@ -39,13 +39,13 @@ with open(os.path.join(data_directory, 'curvature.json')) as f:
 
         network_curvatures.append(((u, v), curvature))
 
-vertices = mesh.get_vertices()
-x = list(sorted(set(vertices[:,0])))
-y = list(sorted(set(vertices[:,1])))
-z = vertices[:,2].reshape(len(x), len(y), order='F')
+# vertices = mesh.get_vertices()
+# x = list(sorted(set(vertices[:,0])))
+# y = list(sorted(set(vertices[:,1])))
+# z = vertices[:,2].reshape(len(x), len(y), order='F')
 
-width = len(x)
-height = len(y)
+# width = len(x)
+# height = len(y)
 
 # x = x[1:width - 1]
 # y = y[1:height - 1]
@@ -53,5 +53,5 @@ height = len(y)
 # z = z - np.amin(z)
 
 # get_heat_map(x, y, None, network_name, network_vertices, network_curvatures)
-get_mesh_plot(mesh, 'Adaptive Mesh Test')
+get_mesh_plot(mesh, 'Adaptive Mesh Test', False)
 plt.show()

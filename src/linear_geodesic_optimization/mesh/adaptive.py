@@ -28,38 +28,67 @@ class Mesh(mesh.Mesh):
         the largest angle in the triangle and bisecting the opposing edge.
         '''
 
-        # TODO: Passed in edge should not be required to be the longest edge
-
         i, j = edge
+        k = nxt[i,j]
         u = vertices[i]
         v = vertices[j]
-        c = np.linalg.norm(v - u)
-        while True:
-            k = nxt[i,j]
-            w = vertices[k]
-            a = np.linalg.norm(w - v)
-            b = np.linalg.norm(u - w)
+        x = (u + v) / 2
 
-            if c >= a and c >= b:
-                break
+        if (j, i) in nxt:
+            # In this case, the triangle we want to split is adjacent to
+            # another triangle
+            c2 = (v - u) @ (v - u)
 
-            if a >= b:
-                Mesh._split_face((v, w), vertices, c)
-            else:
-                Mesh._split_face((w, u), vertices, c)
+            # First, split the adjacent triangle if necessary
+            while True:
+                k_prime = nxt[j,i]
+                w_prime = vertices[k_prime]
 
-        # At this point, the input edge is the longest in the triangle
+                a2 = (w_prime - v) @ (w_prime - v)
+                b2 = (u - w_prime) @ (u - w_prime)
 
+                if c2 >= a2 and c2 >= b2:
+                    break
 
+                if a2 >= b2:
+                    Mesh._split_face((k_prime, j), vertices, nxt)
+                else:
+                    Mesh._split_face((i, k_prime), vertices, nxt)
+
+            # Now split the adjacent triangle
+            l = len(vertices)
+            del nxt[j,i]
+            nxt[j,l] = k_prime
+            nxt[l,k_prime] = j
+            nxt[k_prime,j] = l
+            nxt[i,k_prime] = l
+            nxt[k_prime,l] = i
+            nxt[l,i] = k_prime
+
+        # Split the original triangle
+        l = len(vertices)
+        del nxt[i,j]
+        nxt[i,l] = k
+        nxt[l,k] = i
+        nxt[k,i] = l
+        nxt[j,k] = l
+        nxt[k,l] = j
+        nxt[l,j] = k
+
+        # Keep track of the added vertex
+        vertices.append(x)
 
     def _get_initial_mesh(self, points, epsilon):
         vertices = [
-            np.array([0, 0]),
-            np.array([1, 0]),
-            np.array([0, 1]),
-            np.array([1, 1])
+            np.array([0., 0.]),
+            np.array([1., 1.]),
+            np.array([1., 0.]),
+            np.array([0., 1.]),
         ]
-        nxt = {(0, 1): 3, (0, 3): 2, (1, 3): 0, (2, 0): 3, (3, 0): 1, (3, 2): 0}
+        nxt = {
+            (0, 1): 3, (1, 3): 0, (3, 0): 1,
+            (0, 2): 1, (2, 1): 0, (1, 0): 2,
+        }
 
         edges = [[] for _ in vertices]
         faces = []

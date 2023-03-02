@@ -97,16 +97,17 @@ def get_heat_map(x=None, y=None, z=None, title='',
 
     return fig
 
-def get_mesh_plot(mesh, title):
+def get_mesh_plot(mesh, title, remove_boundary=True):
     vertices = mesh.get_vertices()
     x, y, z = vertices[:,0], vertices[:,1], vertices[:,2]
 
     boundary_vertices = mesh.get_boundary_vertices()
     faces = [
         face for face in mesh.get_faces()
-        if face[0] not in boundary_vertices and
-           face[1] not in boundary_vertices and
-           face[2] not in boundary_vertices
+        if not remove_boundary or
+           (face[0] not in boundary_vertices and
+            face[1] not in boundary_vertices and
+            face[2] not in boundary_vertices)
     ]
 
     interior_vertices = [v for v in range(len(z)) if v not in boundary_vertices]
@@ -114,7 +115,8 @@ def get_mesh_plot(mesh, title):
     if len(z_interior) != 0:
         z_min = np.amin(z_interior)
         z_max = np.amax(z_interior)
-        z = (z - z_min) / (z_max - z_min) / 4.
+        if z_min != z_max:
+            z = (z - z_min) / (z_max - z_min) / 4.
 
 
     fig = plt.figure()
