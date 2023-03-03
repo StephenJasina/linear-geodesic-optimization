@@ -118,7 +118,6 @@ def get_mesh_plot(mesh, title, remove_boundary=True):
         if z_min != z_max:
             z = (z - z_min) / (z_max - z_min) / 4.
 
-
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
     ax.plot_trisurf(x, y, z, triangles=faces)

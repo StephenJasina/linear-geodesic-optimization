@@ -12,7 +12,7 @@ from linear_geodesic_optimization.optimization import curvature, linear_regressi
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
-maxiters = 100
+maxiters = 1000
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -133,5 +133,6 @@ if __name__ == '__main__':
 
     figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
-    for filename, figure in figures.items():
-        figure.savefig(os.path.join(directory, filename + '.png'), dpi=300)
+    # for filename, figure in figures.items():
+    #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=300)
+    plt.show()

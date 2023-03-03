@@ -105,6 +105,6 @@ if __name__ == '__main__':
     for smoothness_strategy in ['mean']:
         for initial_radius in [16.]:
             for lambda_smooth in [0.001]:
-                arguments.append(('elbow', 0., 1., lambda_smooth, initial_radius, smoothness_strategy, 0.1, 100))
+                arguments.append(('elbow', 0., 1., lambda_smooth, initial_radius, smoothness_strategy, 0.1, 1000))
     with multiprocessing.Pool(1) as p:
         p.starmap(main, arguments)

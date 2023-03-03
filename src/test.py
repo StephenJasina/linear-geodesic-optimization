@@ -7,7 +7,6 @@ import numpy as np
 from linear_geodesic_optimization.mesh.adaptive import Mesh as AdaptiveMesh
 from linear_geodesic_optimization.plot import get_heat_map, get_mesh_plot
 
-network_name = 'Elbow'
 data_directory = os.path.join('..', 'data', 'elbow')
 
 coordinates = None
@@ -43,7 +42,7 @@ for i, j in network_edges:
 points = list(points)
 mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(points), 0.1)
 
-fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
+# fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
 
 z = np.array([
     (4**2 - x**2 - y**2)**0.5
@@ -57,6 +56,6 @@ mesh_edges = [(i, j) for i, js in enumerate(mesh.get_edges()) for j in js]
 get_heat_map(network_vertices=list(mesh.get_vertices()),
              network_edges=mesh_edges,
              network_curvatures=[1.] * len(mesh_edges),
-             extra_points=[mesh_vertices[i] for i in fat_edges[10]])
+             extra_points=points)
 # get_mesh_plot(mesh, 'Adaptive Mesh Test', remove_boundary=False)
 plt.show()

@@ -23,6 +23,10 @@ class Forward:
         self._network_curvatures = network_curvatures
         self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
                                              epsilon)
+        self._edge_lengths = [
+            np.linalg.norm(self._network_vertices[j] - self._network_vertices[i])
+            for i, j in self._network_edges
+        ]
 
         self._curvature_forward = curvature_forward
         if self._curvature_forward is None:
@@ -38,16 +42,14 @@ class Forward:
 
         if self._updates != self._mesh.updates():
             self._updates = self._mesh.updates()
-            self.L_curvature = (
-                sum((self.kappa_G[i] - network_curvature)**2
-                    for network_curvature, fat_edge in zip(
-                        self._network_curvatures,
-                        self._fat_edges
-                    )
-                    for i in fat_edge) / sum(len(fat_edge)
-                                             for fat_edge in self._fat_edges)
-                if self._network_curvatures else 0
-            )
+            self.L_curvature = sum(
+                sum(
+                    (self.kappa_G[i] - network_curvature)**2
+                    for i in fat_edge
+                ) * edge_length / len(fat_edge)
+                for network_curvature, fat_edge, edge_length in
+                    zip(self._network_curvatures, self._fat_edges, self._edge_lengths)
+            ) / sum(self._edge_lengths)
 
 class Reverse:
     '''
@@ -70,6 +72,10 @@ class Reverse:
         self._network_curvatures = network_curvatures
         self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
                                              epsilon)
+        self._edge_lengths = [
+            np.linalg.norm(self._network_vertices[j] - self._network_vertices[i])
+            for i, j in self._network_edges
+        ]
 
         self._dif_v = None
         self._l = None
@@ -99,11 +105,11 @@ class Reverse:
             self._updates = self._mesh.updates()
             self._dif_v = dif_v
             self._l = l
-            self.dif_L_curvature = (
-                sum(2 * (self.kappa_G[i] - network_curvature) * self.dif_kappa_G[i]
-                    for network_curvature, fat_edge in zip(self._network_curvatures,
-                                                         self._fat_edges)
-                    for i in fat_edge) / sum(len(fat_edge)
-                                             for fat_edge in self._fat_edges)
-                if self._network_curvatures else 0
-            )
+            self.dif_L_curvature = sum(
+                sum(
+                    2 * (self.kappa_G[i] - network_curvature) * self.dif_kappa_G[i]
+                    for i in fat_edge
+                ) * edge_length / len(fat_edge)
+                for network_curvature, fat_edge, edge_length in
+                    zip(self._network_curvatures, self._fat_edges, self._edge_lengths)
+            ) / sum(self._edge_lengths)
