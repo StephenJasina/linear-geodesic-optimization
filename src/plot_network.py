@@ -11,8 +11,8 @@ width = 20
 height = 20
 mesh = RectangleMesh(width, height)
 
-network_name = 'Four Islands'
-data_directory = os.path.join('..', 'data', 'four_islands')
+network_name = 'Elbow'
+data_directory = os.path.join('..', 'data', 'elbow_stretch')
 
 coordinates = None
 label_to_index = {}
@@ -28,6 +28,7 @@ with open(os.path.join(data_directory, 'position.json')) as f:
 
 network_vertices = mesh.map_coordinates_to_support(coordinates)
 
+network_edges = []
 network_curvatures = []
 with open(os.path.join(data_directory, 'curvature.json')) as f:
     curvature_json = json.load(f)
@@ -36,7 +37,8 @@ with open(os.path.join(data_directory, 'curvature.json')) as f:
         u = label_to_index[edge[0]]
         v = label_to_index[edge[1]]
 
-        network_curvatures.append(((u, v), curvature))
+        network_edges.append((u, v))
+        network_curvatures.append(curvature)
 
 mesh.set_parameters(np.random.random(mesh.get_parameters().shape))
 vertices = mesh.get_vertices()
@@ -52,5 +54,9 @@ y = y[1:height - 1]
 z = z[1:width - 1,1:height - 1]
 z = z - np.amin(z)
 
-get_heat_map(x, y, None, network_name, network_vertices, network_curvatures)
+print(network_vertices)
+print(network_curvatures)
+
+get_heat_map(x, y, z, network_name,
+             network_vertices, network_edges, network_curvatures)
 plt.show()
