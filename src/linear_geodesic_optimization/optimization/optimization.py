@@ -18,7 +18,7 @@ class DifferentiationHierarchy:
     def __init__(self, mesh, latencies, network_vertices, network_edges,
                  network_curvatures,
                  lambda_geodesic=1., lambda_curvature=1., lambda_smooth=0.01,
-                 smooth_strategy='mvs_cross', directory=None, cores=None):
+                 smooth_strategy='mvs_cross', directory=None, cores=1):
         '''
         Parameters:
         * `mesh`: The mesh to optimize over
@@ -50,6 +50,9 @@ class DifferentiationHierarchy:
         self.lambda_geodesic = lambda_geodesic
         self.lambda_smooth = lambda_smooth
         self.lambda_curvature = lambda_curvature
+
+        self.directory = directory
+        self.cores = cores
 
         # For caching purposes, it's a good idea to keep one copy of the
         # geodesic computation classes for each city.
@@ -95,11 +98,6 @@ class DifferentiationHierarchy:
 
         # Count of iterations for diagnostic purposes
         self.iterations = 0
-
-        # Location where to save iterations of the hierarchy
-        self.directory = directory
-
-        self.cores = cores if cores is not None else 1
 
     @staticmethod
     def _forwards_call(mesh_index, t, geodesic_forward):

@@ -7,12 +7,12 @@ import numpy as np
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.plot import get_heat_map
 
-width = 20
-height = 20
+width = 40
+height = 40
 mesh = RectangleMesh(width, height)
 
 network_name = 'Elbow'
-data_directory = os.path.join('..', 'data', 'elbow_stretch')
+data_directory = os.path.join('..', 'data', 'elbow')
 
 coordinates = None
 label_to_index = {}
@@ -54,9 +54,6 @@ y = y[1:height - 1]
 z = z[1:width - 1,1:height - 1]
 z = z - np.amin(z)
 
-print(network_vertices)
-print(network_curvatures)
-
-get_heat_map(x, y, z, network_name,
+get_heat_map(x, y, None, network_name,
              network_vertices, network_edges, network_curvatures)
 plt.show()
