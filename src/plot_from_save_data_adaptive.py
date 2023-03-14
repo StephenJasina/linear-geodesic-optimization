@@ -36,7 +36,8 @@ if __name__ == '__main__':
         lambda_geodesic = parameters['lambda_geodesic']
         lambda_smooth = parameters['lambda_smooth']
         lambda_curvature = parameters['lambda_curvature']
-        epsilon = parameters['epsilon']
+        width = parameters['width']
+        height = parameters['height']
 
     data_directory = os.path.join('..', 'data', data_name)
 
@@ -68,12 +69,18 @@ if __name__ == '__main__':
             network_curvatures.append(network_curvature)
 
     # Create the mesh
-    points = set(tuple(network_vertex) for network_vertex in network_vertices)
+    density = np.amin([
+        np.linalg.norm(network_vertices[i] - network_vertices[j])
+        for i, j in network_edges
+    ]) / 10
+    points = list(np.array(network_vertices))
     for i, j in network_edges:
-        for p in np.linspace(network_vertices[i], network_vertices[j], 10):
-            points.add(tuple(p))
-    points = list(points)
-    mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(points), epsilon)
+        count = int(np.ceil(np.linalg.norm(network_vertices[i] - network_vertices[j]) / density))
+        for p in np.linspace(network_vertices[i], network_vertices[j], count)[1:-1]:
+            # Guard for floating point error
+            if np.amin([np.linalg.norm(p - point) for point in points]) > 1e-10:
+                points.append(p)
+    mesh = AdaptiveMesh(width, height, points)
 
     L_geodesics = []
     L_smooths = []
