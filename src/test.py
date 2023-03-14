@@ -66,5 +66,3 @@ get_heat_map(network_vertices=list(mesh.get_vertices()),
              extra_points=points)
 # get_mesh_plot(mesh, 'Adaptive Mesh Test', remove_boundary=False)
 plt.show()
-
-print(len(mesh_vertices))

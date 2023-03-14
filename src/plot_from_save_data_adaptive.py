@@ -141,5 +141,5 @@ if __name__ == '__main__':
     figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
     for filename, figure in figures.items():
-        figure.savefig(os.path.join(directory, filename + '.png'), dpi=300)
+        figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
     # plt.show()
