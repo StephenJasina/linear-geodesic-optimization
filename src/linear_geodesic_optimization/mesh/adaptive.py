@@ -11,19 +11,18 @@ class Mesh(mesh.Mesh):
     initialization is only run once.
     '''
 
-    def __init__(self, points, epsilon):
+    def __init__(self, width, height, points = []):
         '''
-        Initialize an adaptive mesh to a set of points. This function assumes
-        the points all lie in [-0.5, 0.5] x [-0.5, 0.5]. This can be done by
-        calling Mesh.map_coordinates_to_support.
+        Initialize an adaptive rectangular mesh to a set of points. This
+        function assumes the points all lie in [-0.5, 0.5]^2. This can be done
+        by calling Mesh.map_coordinates_to_support.
         '''
 
         self._points = points
-        self._epsilon = epsilon
 
         # Internally store vertices in 2 dimensions
         self._vertices, self._edges, self._faces, self._nxt \
-            = Mesh._get_initial_mesh(points, epsilon)
+            = Mesh._get_initial_mesh(width, height, points)
         self._parameters = np.zeros(self._vertices.shape[0])
         self._partials = np.zeros((self._vertices.shape[0], 3))
         self._partials[:,2] = 1.
@@ -42,8 +41,8 @@ class Mesh(mesh.Mesh):
         if not coordinates:
             return []
 
-        coordinate_min = coordinates[0][0]
-        coordinate_max = coordinates[0][0]
+        coordinate_min = np.inf
+        coordinate_max = -np.inf
 
         # Find scaling factors so that the x range and y range are both [0, 1].
         # If no such scaling factor exists (i.e., the x-coordinate or
@@ -59,6 +58,39 @@ class Mesh(mesh.Mesh):
             ((x - coordinate_min) / divisor - 0.5) * scale_factor,
             ((y - coordinate_min) / divisor - 0.5) * scale_factor,
         ]) for x, y in coordinates]
+
+    @staticmethod
+    def _get_grid(width, height):
+        # The vertices are ordered lexicographically as (x, y) and are
+        # supported in [-0.5, 0.5]^2
+        vertices = []
+        for i in range(width):
+            for j in range(height):
+                vertices.append(np.array([
+                    i / (width - 1) - 0.5,
+                    j / (height - 1) - 0.5
+                ]))
+
+        # Add edges and faces cell-by-cell
+        nxt = {}
+        for i in range(width - 1):
+            for j in range(height - 1):
+                v00 = i * height + j           # Bottom-left
+                v01 = i * height + j + 1       # Top-left
+                v10 = (i + 1) * height + j     # Bottom-right
+                v11 = (i + 1) * height + j + 1 # Top-right
+
+                # Add the top-left triangle
+                nxt[v00,v11] = v01
+                nxt[v11,v01] = v00
+                nxt[v01,v00] = v11
+
+                # Add the bottom-right triangle
+                nxt[v00,v10] = v11
+                nxt[v10,v11] = v00
+                nxt[v11,v00] = v10
+
+        return vertices, nxt
 
     @staticmethod
     def _get_face_id(edge, vertices, nxt):
@@ -161,27 +193,26 @@ class Mesh(mesh.Mesh):
         Mesh._split_face_naive((i, j), l, vertices, nxt, faces_to_points)
 
     @staticmethod
-    def _get_initial_mesh(points, epsilon):
-        vertices = [
-            np.array([-0.5, -0.5]),
-            np.array([0.5, 0.5]),
-            np.array([0.5, -0.5]),
-            np.array([-0.5, 0.5]),
-        ]
-        nxt = {
-            (0, 1): 3, (1, 3): 0, (3, 0): 1,
-            (1, 0): 2, (0, 2): 1, (2, 1): 0,
-        }
+    def _get_initial_mesh(width, height, points):
+        vertices, nxt = Mesh._get_grid(width, height)
 
-        faces_to_points = {
-            (0, 1): [point for point in points if point[1] >= point[0]],
-            (1, 0): [point for point in points if point[1] < point[0]],
-        }
+        faces_to_points = {Mesh._get_face_id(edge, vertices, nxt): [] for edge in nxt}
+        for point in points:
+            x, y = point
+            scaled_x = (x + 0.5) * (width - 1)
+            scaled_y = (y + 0.5) * (height - 1)
+            first = height * min(int(scaled_x), width - 2) \
+                 + min(int(scaled_y), height - 2)
+            second = first + height + 1
+            if scaled_x % 1 > scaled_y % 1:
+                first, second = second, first
+            faces_to_points[first,second].append(point)
+
         while faces_to_points:
             edge, contained_points = next(iter(faces_to_points.items()))
             edge_vector = vertices[edge[1]] - vertices[edge[0]]
 
-            if edge_vector @ edge_vector < epsilon**2 and len(contained_points) <= 1:
+            if len(contained_points) <= 1:
                 del faces_to_points[edge]
                 continue
 
