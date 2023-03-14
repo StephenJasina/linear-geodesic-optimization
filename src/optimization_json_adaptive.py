@@ -11,7 +11,7 @@ from linear_geodesic_optimization.mesh.adaptive import Mesh as AdaptiveMesh
 from linear_geodesic_optimization.optimization import optimization
 
 def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
-         smoothness_strategy='mean', epsilon=0.1, maxiter=1000):
+         smoothness_strategy='mean', width=8, height=8, maxiter=1000):
     data_directory = os.path.join('..', 'data', data_name)
 
     # Get the network vertices
@@ -42,12 +42,18 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
             network_curvatures.append(network_curvature)
 
     # Create the mesh
-    points = set(tuple(network_vertex) for network_vertex in network_vertices)
+    density = np.amin([
+        np.linalg.norm(network_vertices[i] - network_vertices[j])
+        for i, j in network_edges
+    ]) / 10
+    points = list(np.array(network_vertices))
     for i, j in network_edges:
-        for p in np.linspace(network_vertices[i], network_vertices[j], 10):
-            points.add(tuple(p))
-    points = list(points)
-    mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(points), epsilon)
+        count = int(np.ceil(np.linalg.norm(network_vertices[i] - network_vertices[j]) / density))
+        for p in np.linspace(network_vertices[i], network_vertices[j], count)[1:-1]:
+            # Guard for floating point error
+            if np.amin([np.linalg.norm(p - point) for point in points]) > 1e-10:
+                points.append(p)
+    mesh = AdaptiveMesh(width, height, points)
 
     latencies = {mesh.nearest_vertex_index(network_vertices[i]): [] for i in range(len(network_vertices))}
     with open(os.path.join(data_directory, 'latency.json')) as f:
@@ -63,7 +69,7 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
 
     # Setup snapshots
     directory = os.path.join(
-        '..', 'out', f'{data_name}', f'{smoothness_strategy}',
+        '..', 'out_adaptive', f'{data_name}', f'{smoothness_strategy}',
         f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}'
     )
     os.makedirs(directory)
@@ -76,7 +82,8 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
             'lambda_smooth': lambda_smooth,
             'initial_radius': initial_radius,
             'smoothness_strategy': smoothness_strategy,
-            'epsilon': epsilon,
+            'width': width,
+            'height': height
         }, f)
 
     # Initialize mesh
@@ -90,7 +97,7 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, network_curvatures,
         lambda_geodesic, lambda_curvature, lambda_smooth, smoothness_strategy,
-        directory=directory, cores=None)
+        directory=directory)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()
@@ -105,6 +112,7 @@ if __name__ == '__main__':
     for smoothness_strategy in ['mean']:
         for initial_radius in [16.]:
             for lambda_smooth in [0.001]:
-                arguments.append(('elbow', 0., 1., lambda_smooth, initial_radius, smoothness_strategy, 0.1, 1000))
-    with multiprocessing.Pool(1) as p:
-        p.starmap(main, arguments)
+                arguments.append(('elbow', 0., 1., lambda_smooth, initial_radius, smoothness_strategy, 8, 8, 10))
+    # with multiprocessing.Pool(1) as p:
+    #     p.starmap(main, arguments)
+    main(*arguments[0])

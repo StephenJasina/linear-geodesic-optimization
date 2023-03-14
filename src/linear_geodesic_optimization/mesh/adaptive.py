@@ -322,7 +322,8 @@ class Mesh(mesh.Mesh):
         return fat_edges
 
     def get_epsilon(self):
-        return self._epsilon
+        return max(np.linalg.norm(self._vertices[u,:] - self._vertices[v,:])
+                   for u, vs in enumerate(self._edges) for v in vs)
 
     def get_support_area(self):
         return 1.

@@ -35,12 +35,19 @@ with open(os.path.join(data_directory, 'curvature.json')) as f:
         network_edges.append((i, j))
         network_curvatures.append(curvature)
 
-points = set(tuple(network_vertex) for network_vertex in network_vertices)
+density = np.amin([
+    np.linalg.norm(network_vertices[i] - network_vertices[j])
+    for i, j in network_edges
+]) / 10
+
+points = list(np.array(network_vertices))
 for i, j in network_edges:
-    for p in np.linspace(network_vertices[i], network_vertices[j], 10):
-        points.add(tuple(p))
-points = list(points)
-mesh = AdaptiveMesh(AdaptiveMesh.map_coordinates_to_support(points), 0.1)
+    count = int(np.ceil(np.linalg.norm(network_vertices[i] - network_vertices[j]) / density))
+    for p in np.linspace(network_vertices[i], network_vertices[j], count)[1:-1]:
+        # Guard for floating point error
+        if np.amin([np.linalg.norm(p - point) for point in points]) > 1e-10:
+            points.append(p)
+mesh = AdaptiveMesh(8, 8, points)
 
 # fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
 
@@ -59,3 +66,5 @@ get_heat_map(network_vertices=list(mesh.get_vertices()),
              extra_points=points)
 # get_mesh_plot(mesh, 'Adaptive Mesh Test', remove_boundary=False)
 plt.show()
+
+print(len(mesh_vertices))
