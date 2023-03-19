@@ -54,6 +54,8 @@ let contcolor = 0xff0000
 
 let T = THREE
 
+let useSplits = false
+
 let vertexCount = 0
 let edgeCount = 0
 
@@ -65,7 +67,7 @@ let planeXMin = -10, planeXMax = 10
 let planeYMin = -10, planeYMax = 10
 let planeW = planeXMax - planeXMin
 let planeH = planeYMax - planeYMin
-let divisions = 20 // Was 150
+let divisions = 40 // Was 150
 let heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 let opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 let curvMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
@@ -2731,20 +2733,40 @@ function removeVertex() {
 }
 
 function generateGraph() {
-  addVertex(null, -4.5, 4.5, true, name="A");
-  addVertex(null, -2.4590163934426226, 0.0, true, name="B");
-  addVertex(null, -4.5, -4.5, true, name="C");
-  addVertex(null, 4.5, -4.5, true, name="D");
-  addVertex(null, 2.4590163934426226, 0.0, true, name="E");
-  addVertex(null, 4.5, 4.5, true, name="F");
+  // Replace this with the default graph we want
+  addVertex(null, -2.7, 3.6000000000000005, true, name="A");
+  addVertex(null, -3.6000000000000005, 2.7, true, name="B");
+  addVertex(null, -4.5, 3.6000000000000005, true, name="C");
+  addVertex(null, -3.6000000000000005, 4.5, true, name="D");
+  addVertex(null, 0.8999999999999998, 3.6000000000000005, true, name="E");
+  addVertex(null, 0.0, 2.7, true, name="F");
+  addVertex(null, -0.8999999999999998, 3.6000000000000005, true, name="G");
+  addVertex(null, 0.0, 4.5, true, name="H");
+  addVertex(null, 4.5, -3.6000000000000005, true, name="I");
+  addVertex(null, 3.6000000000000005, -4.5, true, name="J");
+  addVertex(null, 2.7000000000000006, -3.6000000000000005, true, name="K");
+  addVertex(null, 3.6000000000000005, -2.7000000000000006, true, name="L");
 
   addEdge(null, 0, 1, 1.0);
+  addEdge(null, 0, 2, 1.0);
+  addEdge(null, 0, 3, 1.0);
   addEdge(null, 1, 2, 1.0);
-  addEdge(null, 2, 0, 1.0);
-  addEdge(null, 3, 4, 1.0);
+  addEdge(null, 1, 3, 1.0);
+  addEdge(null, 2, 3, 1.0);
   addEdge(null, 4, 5, 1.0);
-  addEdge(null, 5, 3, 1.0);
-  addEdge(null, 1, 4, -2.0);
+  addEdge(null, 4, 6, 1.0);
+  addEdge(null, 4, 7, 1.0);
+  addEdge(null, 5, 6, 1.0);
+  addEdge(null, 5, 7, 1.0);
+  addEdge(null, 6, 7, 1.0);
+  addEdge(null, 8, 9, 1.0);
+  addEdge(null, 8, 10, 1.0);
+  addEdge(null, 8, 11, 1.0);
+  addEdge(null, 9, 10, 1.0);
+  addEdge(null, 9, 11, 1.0);
+  addEdge(null, 10, 11, 1.0);
+  addEdge(null, 0, 6, -2.0);
+  addEdge(null, 5, 11, -2.0);
 }
 
 function generateGraphNoWeights() {
@@ -3038,7 +3060,7 @@ let EdgeObj = class {
     this.mesh = null
     // console.log(`${start.long}, ${end.long}, ${this.bearing}`)
     if (start.long > end.long && this.bearing <= 180) {
-      this.split = true
+      this.split = useSplits
       let p1 = [start.mesh.position.x, start.mesh.position.z]
       // console.log(`${end.mesh.position.x}, ${end.mesh.position.z}`)
       this.startSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z)+20], [10, 10], [-10, 10])
@@ -3050,7 +3072,7 @@ let EdgeObj = class {
       console.log(this.startSplit)
       console.log(this.endSplit)
     } else if (start.long < end.long && this.bearing >= 180) {
-      this.split = true
+      this.split = useSplits
       let p1 = [start.mesh.position.x, start.mesh.position.z]
       // console.log(`${start.mesh.position.x}, ${start.mesh.position.z}`)
       this.startSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z)-20], [10, -10], [-10, -10])
@@ -3071,7 +3093,7 @@ let EdgeObj = class {
     console.log('checkSplit')
     if (start.long > end.long && this.bearing <= 180) {
       console.log('split exists')
-      this.split = true
+      this.split = useSplits
       console.log(start.mesh.position.x)
       this.startSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z+20)], [7, 10], [-7, 10])
       this.endSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z-20)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z)], [7, -10], [-7, -10])

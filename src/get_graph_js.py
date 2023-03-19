@@ -6,8 +6,8 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 if __name__ == '__main__':
     toy_directory = os.path.join('..', 'data', 'elbow')
 
-    width = 20
-    height = 20
+    width = 40
+    height = 40
 
     mesh = RectangleMesh(width, height)
 
