@@ -21,7 +21,9 @@ from python.geodesic import GeodesicDistanceComputation
 sys.path.append('..')
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-mesh_path = '/home/jasina/Desktop/1203'
+mesh_path = '/home/jasina/linear-geodesic-optimization/out_rectangular/elbow_initialization_test/mean/0.0_1.0_0.001_256.0_40_40/233'
+width = 40
+height = 40
 
 sys.path.append(r'python/surface/src')
 
@@ -111,14 +113,10 @@ def refine():
 
 def get_z_from_path(path):
     with open(path, 'rb') as f:
-        data = pickle.load(f)
-        mesh = data['mesh']
-        vertices = mesh.get_vertices()
-        x = list(sorted(set(vertices[:,0])))
-        y = list(sorted(set(vertices[:,1])))
-        z = vertices[:,2]
-        z = z - np.amax(z)
-        z = z / -np.amin(z)
+        z = pickle.load(f)['mesh_parameters']
+        z = z - np.amin(z)
+        z = z / np.amax(z)
+        z = np.flip(z.reshape((width, height))).reshape((-1,))
         return z.tolist()
 
 @app.route('/calc-surface', methods=['POST'])
