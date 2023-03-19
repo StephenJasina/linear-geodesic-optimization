@@ -193,8 +193,8 @@ newPt.position.z = p6.z
 var clipPlane2 = new T.Plane().setFromCoplanarPoints(p6, p5, p4)
 
 var clipPlane = new T.Plane(new T.Vector3(0, 2, 0), 2)
-var clipPlane2 = new T.Plane(new T.Vector3(1, 0, 0), 7) // 5.5
-var clipPlane3 = new T.Plane(new T.Vector3(-1, 0, 0), 7) // 6 // 7
+var clipPlane2 = new T.Plane(new T.Vector3(1, 0, 0), 10) // 5.5
+var clipPlane3 = new T.Plane(new T.Vector3(-1, 0, 0), 10) // 6 // 7
 var clipPlane4 = new T.Plane(new T.Vector3(0, 0, 1), 10) // 3.3
 var clipPlane5 = new T.Plane(new T.Vector3(0, 0, -1), 10) // 3.3
 

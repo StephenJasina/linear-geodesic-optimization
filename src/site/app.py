@@ -8,6 +8,7 @@ from flask import Response
 import networkx as nx
 from networkx.readwrite import json_graph
 from OllivierRicci import ricciCurvature
+import potpourri3d as pp3d
 from python.surface import BasicDemo as bd
 from python.surface.src.generating_tessalation import generating_tessalation_2
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -49,7 +50,6 @@ def calc_curvature():
 
 @app.route('/calc-distance', methods=['POST'])
 def calc_distance():
-    import potpourri3d as pp3d
     data = request.json
     # print(data)
     verts = np.array(data['verts'])
