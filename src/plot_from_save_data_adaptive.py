@@ -38,6 +38,7 @@ if __name__ == '__main__':
         lambda_curvature = parameters['lambda_curvature']
         width = parameters['width']
         height = parameters['height']
+        fat_edges_only = parameters['fat_edges_only']
 
     data_directory = os.path.join('..', 'data', data_name)
 
@@ -81,6 +82,10 @@ if __name__ == '__main__':
             if np.amin([np.linalg.norm(p - point) for point in points]) > 1e-10:
                 points.append(p)
     mesh = AdaptiveMesh(width, height, points)
+
+    if fat_edges_only:
+        fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
+        mesh.restrict_to_fat_edges(fat_edges)
 
     L_geodesics = []
     L_smooths = []

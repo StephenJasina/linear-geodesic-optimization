@@ -122,5 +122,7 @@ def get_mesh_plot(mesh, title, remove_boundary=True):
     ax = fig.add_subplot(projection='3d')
     ax.plot_trisurf(x, y, z, triangles=faces)
     ax.set_title(title)
+    ax.set_xlim([-0.5, 0.5])
+    ax.set_ylim([-0.5, 0.5])
     ax.set_aspect('equal')
     return fig
