@@ -3,6 +3,7 @@ import json
 import multiprocessing
 import os
 import pickle
+import shutil
 
 import numpy as np
 import scipy
@@ -11,7 +12,8 @@ from linear_geodesic_optimization.mesh.adaptive import Mesh as AdaptiveMesh
 from linear_geodesic_optimization.optimization import optimization
 
 def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
-         smoothness_strategy='mean', width=8, height=8, maxiter=1000):
+         smoothness_strategy='mean', width=8, height=8, fat_edges_only=False,
+         maxiter=1000, output_dir_name=os.path.join('..', 'out')):
     data_directory = os.path.join('..', 'data', data_name)
 
     # Get the network vertices
@@ -55,6 +57,10 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
                 points.append(p)
     mesh = AdaptiveMesh(width, height, points)
 
+    if fat_edges_only:
+        fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
+        mesh.restrict_to_fat_edges(fat_edges)
+
     latencies = {mesh.nearest_vertex_index(network_vertices[i]): [] for i in range(len(network_vertices))}
     with open(os.path.join(data_directory, 'latency.json')) as f:
         latency_json = json.load(f)
@@ -69,9 +75,11 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
 
     # Setup snapshots
     directory = os.path.join(
-        '..', 'out_adaptive', f'{data_name}', f'{smoothness_strategy}',
+        output_dir_name, f'{data_name}', f'{smoothness_strategy}',
         f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}'
     )
+    if os.path.isdir(directory):
+        shutil.rmtree(directory)
     os.makedirs(directory)
 
     with open(os.path.join(directory, 'parameters'), 'wb') as f:
@@ -83,7 +91,8 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
             'initial_radius': initial_radius,
             'smoothness_strategy': smoothness_strategy,
             'width': width,
-            'height': height
+            'height': height,
+            'fat_edges_only': fat_edges_only
         }, f)
 
     # Initialize mesh
@@ -112,7 +121,12 @@ if __name__ == '__main__':
     for smoothness_strategy in ['mean']:
         for initial_radius in [16.]:
             for lambda_smooth in [0.001]:
-                arguments.append(('elbow', 0., 1., lambda_smooth, initial_radius, smoothness_strategy, 8, 8, 10))
-    # with multiprocessing.Pool(1) as p:
-    #     p.starmap(main, arguments)
-    main(*arguments[0])
+                arguments.append((
+                    'elbow', 0., 1., lambda_smooth, initial_radius,
+                    smoothness_strategy,
+                    20, 20, True,
+                    1000,
+                    os.path.join('..', 'out_fat_edges_only')
+                ))
+    with multiprocessing.Pool(1) as p:
+        p.starmap(main, arguments)

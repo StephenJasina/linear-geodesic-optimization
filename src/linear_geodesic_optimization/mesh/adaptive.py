@@ -193,6 +193,17 @@ class Mesh(mesh.Mesh):
         Mesh._split_face_naive((i, j), l, vertices, nxt, faces_to_points)
 
     @staticmethod
+    def _get_edges_and_faces(vertices, nxt):
+        edges = [[] for _ in vertices]
+        faces = []
+        for (i, j), k in nxt.items():
+            edges[i].append(j)
+            if i < j and i < k:
+                faces.append((i, j, k))
+
+        return edges, faces
+
+    @staticmethod
     def _get_initial_mesh(width, height, points):
         vertices, nxt = Mesh._get_grid(width, height)
 
@@ -218,12 +229,7 @@ class Mesh(mesh.Mesh):
 
             Mesh._split_face(edge, vertices, nxt, faces_to_points)
 
-        edges = [[] for _ in vertices]
-        faces = []
-        for (i, j), k in nxt.items():
-            edges[i].append(j)
-            if i < j and i < k:
-                faces.append((i, j, k))
+        edges, faces = Mesh._get_edges_and_faces(vertices, nxt)
 
         return np.array(vertices), edges, faces, nxt
 
@@ -320,6 +326,25 @@ class Mesh(mesh.Mesh):
 
             fat_edges.append(list(fat_edge))
         return fat_edges
+
+    def restrict_to_fat_edges(self, fat_edges):
+        fat_vertices = set.union(*(set(fat_edge) for fat_edge in fat_edges))
+        included_vertices = set.union(*(
+            {i, j, k}
+            for (i, j), k in self._nxt.items()
+            if i in fat_vertices or j in fat_vertices or k in fat_vertices
+        ))
+        sorted_included_vertices = sorted(included_vertices)
+        vertex_map = {old_i: new_i for new_i, old_i in enumerate(sorted_included_vertices)}
+        self._vertices = self._vertices[sorted_included_vertices,:]
+        self._parameters = self._parameters[sorted_included_vertices]
+        self._partials = self._partials[sorted_included_vertices,:]
+        self._nxt = {
+            (vertex_map[i], vertex_map[j]): vertex_map[k]
+            for (i, j), k in self._nxt.items()
+            if i in fat_vertices or j in fat_vertices or k in fat_vertices
+        }
+        self._edges, self._faces = Mesh._get_edges_and_faces(self._vertices, self._nxt)
 
     def get_epsilon(self):
         return max(np.linalg.norm(self._vertices[u,:] - self._vertices[v,:])

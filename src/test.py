@@ -49,7 +49,8 @@ for i, j in network_edges:
             points.append(p)
 mesh = AdaptiveMesh(8, 8, points)
 
-# fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
+fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
+mesh.restrict_to_fat_edges(fat_edges)
 
 z = np.array([
     (4**2 - x**2 - y**2)**0.5
@@ -64,5 +65,5 @@ get_heat_map(network_vertices=list(mesh.get_vertices()),
              network_edges=mesh_edges,
              network_curvatures=[1.] * len(mesh_edges),
              extra_points=points)
-# get_mesh_plot(mesh, 'Adaptive Mesh Test', remove_boundary=False)
+get_mesh_plot(mesh, 'Adaptive Mesh Test', remove_boundary=False)
 plt.show()
