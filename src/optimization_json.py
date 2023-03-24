@@ -23,7 +23,10 @@ def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initi
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
 
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    if data_type == '.json':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    elif data_type == '.graphml':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
     network_vertices = mesh.map_coordinates_to_support(coordinates)
     latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
@@ -78,7 +81,7 @@ if __name__ == '__main__':
         for initial_radius in [16.]:
             for lambda_smooth in [0.001]:
                 arguments.append((
-                    'elbow.json', 0., 1., lambda_smooth, initial_radius,
+                    'graph_US_16.graphml', 0., 1., lambda_smooth, initial_radius,
                     smoothness_strategy,
                     20, 20,
                     1000,

@@ -49,7 +49,10 @@ if __name__ == '__main__':
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    if data_type == '.json':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    elif data_type == '.graphml':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
     network_vertices = AdaptiveMesh.map_coordinates_to_support(coordinates)
 
     # Create the mesh

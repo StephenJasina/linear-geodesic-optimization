@@ -50,7 +50,10 @@ if __name__ == '__main__':
 
     mesh = RectangleMesh(width, height)
 
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    if data_type == '.json':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    elif data_type == '.graphml':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
     network_vertices = mesh.map_coordinates_to_support(coordinates)
     latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 

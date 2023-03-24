@@ -1,14 +1,16 @@
 import json
 import os
 
-def read_json(data_file):
+import networkx as nx
+
+def read_json(data_file_path):
     coordinates = []
     label_to_index = {}
     network_edges = []
     network_curvatures = []
     network_latencies = []
 
-    with open(data_file) as f:
+    with open(data_file_path) as f:
         full_json = json.load(f)
         position_json = full_json['position']
         curvature_json = full_json['curvature']
@@ -31,8 +33,15 @@ def read_json(data_file):
 
     return coordinates, network_edges, network_curvatures, network_latencies
 
-def read_graphml(data_directory):
-    pass
+def read_graphml(data_file_path):
+    network = nx.read_graphml(data_file_path)
+    coordinates = [(node['lat'], node['long']) for node in network.nodes.values()]
+    label_to_index = {label: index for index, label in enumerate(network.nodes)}
+    network_edges = [(label_to_index[u], label_to_index[v]) for u, v in network.edges]
+    network_curvatures = [edge['ricciCurvature'] for edge in network.edges.values()]
+    network_latencies = [[] for _ in coordinates]
+
+    return coordinates, network_edges, network_curvatures, network_latencies
 
 def map_latencies_to_mesh(mesh, network_vertices, network_latencies):
     latencies = {

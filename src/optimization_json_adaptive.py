@@ -18,7 +18,10 @@ def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initi
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    if data_type == '.json':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
+    elif data_type == '.graphml':
+        coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
     network_vertices = AdaptiveMesh.map_coordinates_to_support(coordinates)
 
     # Create the mesh
@@ -88,13 +91,13 @@ if __name__ == '__main__':
     arguments = []
     for smoothness_strategy in ['mean']:
         for initial_radius in [16.]:
-            for lambda_smooth in [0.001]:
+            for lambda_smooth in [0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04]:
                 arguments.append((
                     'elbow.json', 0., 1., lambda_smooth, initial_radius,
                     smoothness_strategy,
-                    20, 20, True,
+                    40, 40, True,
                     1000,
-                    os.path.join('..', 'out_test')
+                    os.path.join('..', 'out_US')
                 ))
     with multiprocessing.Pool(1) as p:
         p.starmap(main, arguments)

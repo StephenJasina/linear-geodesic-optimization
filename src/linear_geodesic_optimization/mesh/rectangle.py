@@ -174,23 +174,13 @@ class Mesh(mesh.Mesh):
         if not coordinates:
             return []
 
-        coordinate_min = coordinates[0][0]
-        coordinate_max = coordinates[0][0]
+        coordinates = np.array(coordinates)[:,:2]
 
-        # Find scaling factors so that the x range and y range are both [0, 1].
-        # If no such scaling factor exists (i.e., the x-coordinate or
-        # y-coordinate is constant), set it to some arbitrary value (in this
-        # case, just set it to 1.)
-        for x, y in coordinates:
-            coordinate_min = min(coordinate_min, x, y)
-            coordinate_max = max(coordinate_max, x, y)
-        divisor = coordinate_max - coordinate_min
-        divisor = 1. if divisor == 0. else divisor
-
-        return [np.array([((x - coordinate_min) / divisor - 0.5) * scale_factor,
-                          ((y - coordinate_min) / divisor - 0.5) * scale_factor,
-                          0])
-                for x, y in coordinates]
+        coordinates_min = np.amin(coordinates, axis=0)
+        coordinates_max = np.amax(coordinates, axis=0)
+        divisor = coordinates_max - coordinates_min
+        divisor[np.where(divisor == 0.)] = 1.
+        return list(scale_factor * ((coordinates - coordinates_min) / divisor - 0.5))
 
     def get_support_area(self):
         return 1.

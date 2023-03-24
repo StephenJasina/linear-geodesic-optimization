@@ -14,6 +14,16 @@ class Forward:
     def calc(self, phi, t):
         E = phi.shape[0]
 
+        if E == 0:
+            self._phi = np.copy(phi)
+            self._t = np.copy(t)
+
+            self.d_tilde = np.array([])
+            self.d = np.array([])
+            self.residuals = np.array([])
+            self.lse = 0
+            return
+
         self._phi = np.copy(phi)
         self._t = np.copy(t)
 
@@ -28,6 +38,10 @@ class Forward:
         # In particular, beta here is the coefficients when relating phi to t
         # (as opposed to relating d to t).
         E = phi.shape[0]
+
+        if E == 0:
+            return (1, 0)
+
         denominator = E * (phi @ phi) - np.sum(phi)**2
         return (
             (phi @ phi * np.sum(t) - np.sum(phi) * (phi @ t)) / denominator,
@@ -68,6 +82,13 @@ class Reverse:
         self._d = self._linear_regression_forward.d
         self._residuals = self._linear_regression_forward.residuals
         self._lse = self._linear_regression_forward.lse
+
+        if E == 0:
+            self.dif_d_tilde = np.array([])
+            self.dif_d = np.array([])
+            self.dif_residuals = np.array([])
+            self.dif_lse = np.array([])
+            return
 
         self.dif_d_tilde = self._dif_phi - np.sum(self._dif_phi) / E
         self.dif_d = (self.dif_d_tilde
