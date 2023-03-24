@@ -11,6 +11,7 @@ from linear_geodesic_optimization.mesh.adaptive import Mesh as AdaptiveMesh
 from linear_geodesic_optimization.optimization import curvature, linear_regression
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
+from linear_geodesic_optimization import data
 
 maxiters = 1000
 
@@ -32,7 +33,12 @@ if __name__ == '__main__':
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        data_name = parameters['data_name']
+        # TODO: Simplify this logic
+        if 'data_file_name' in parameters:
+            data_file_name = parameters['data_file_name']
+        else:
+            data_name = parameters['data_name']
+            data_file_name = data_name + '.json'
         lambda_geodesic = parameters['lambda_geodesic']
         lambda_smooth = parameters['lambda_smooth']
         lambda_curvature = parameters['lambda_curvature']
@@ -40,34 +46,11 @@ if __name__ == '__main__':
         height = parameters['height']
         fat_edges_only = parameters['fat_edges_only']
 
-    data_directory = os.path.join('..', 'data', data_name)
+    data_file_path = os.path.join('..', 'data', data_file_name)
+    data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
-    # Get the network vertices
-    coordinates = None
-    label_to_index = {}
-    with open(os.path.join(data_directory, 'position.json')) as f:
-        position_json = json.load(f)
-
-        label_to_index = {label: index for index, label in enumerate(position_json)}
-
-        coordinates = [None for _ in range(len(position_json))]
-        for vertex, position in position_json.items():
-            coordinates[label_to_index[vertex]] = position
-
+    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
     network_vertices = AdaptiveMesh.map_coordinates_to_support(coordinates)
-
-    # Get the network edges and curvatures
-    network_edges = []
-    network_curvatures = []
-    with open(os.path.join(data_directory, 'curvature.json')) as f:
-        curvature_json = json.load(f)
-
-        for edge, network_curvature in curvature_json.items():
-            u = label_to_index[edge[0]]
-            v = label_to_index[edge[1]]
-
-            network_edges.append((u, v))
-            network_curvatures.append(network_curvature)
 
     # Create the mesh
     density = np.amin([
@@ -86,6 +69,8 @@ if __name__ == '__main__':
     if fat_edges_only:
         fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
         mesh.restrict_to_fat_edges(fat_edges)
+
+    latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     L_geodesics = []
     L_smooths = []

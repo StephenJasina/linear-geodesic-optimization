@@ -3,63 +3,42 @@ import json
 import multiprocessing
 import os
 import pickle
+import shutil
 
 import numpy as np
 import scipy
 
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
+from linear_geodesic_optimization import data
 
-def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
-         smoothness_strategy='mean', width=20, height=20, maxiter=1000):
-    data_directory = os.path.join('..', 'data', data_name)
+def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
+         smoothness_strategy='mean', width=20, height=20,
+         maxiter=1000, output_dir_name=os.path.join('..', 'out')):
+    data_file_path = os.path.join('..', 'data', data_file_name)
+    data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
     # Construct a mesh
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
 
-    coordinates = None
-    label_to_index = {}
-    with open(os.path.join(data_directory, 'position.json')) as f:
-        position_json = json.load(f)
-
-        label_to_index = {label: index for index, label in enumerate(position_json)}
-
-        coordinates = [None for _ in range(len(position_json))]
-        for vertex, position in position_json.items():
-            coordinates[label_to_index[vertex]] = position
-
+    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
     network_vertices = mesh.map_coordinates_to_support(coordinates)
-
-    network_edges = []
-    latencies = {mesh.nearest_vertex_index(network_vertices[i]): [] for i in range(len(network_vertices))}
-    with open(os.path.join(data_directory, 'latency.json')) as f:
-        latency_json = json.load(f)
-
-        for edge, latency in latency_json.items():
-            u = label_to_index[edge[0]]
-            v = label_to_index[edge[1]]
-
-            network_edges.append((u, v))
-            latencies[mesh.nearest_vertex_index(network_vertices[u])].append(
-                (mesh.nearest_vertex_index(network_vertices[v]), latency)
-            )
-
-    network_curvatures = []
-    with open(os.path.join(data_directory, 'curvature.json')) as f:
-        network_curvatures = list(json.load(f).values())
+    latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     # Setup snapshots
     directory = os.path.join(
-        '..', 'out', f'{data_name}', f'{smoothness_strategy}',
+        output_dir_name, f'{data_name}', f'{smoothness_strategy}',
         f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}'
     )
+    if os.path.isdir(directory):
+        shutil.rmtree(directory)
     os.makedirs(directory)
 
     with open(os.path.join(directory, 'parameters'), 'wb') as f:
         pickle.dump({
-            'data_name': data_name,
+            'data_file_name': data_file_name,
             'lambda_geodesic': lambda_geodesic,
             'lambda_curvature': lambda_curvature,
             'lambda_smooth': lambda_smooth,
@@ -83,7 +62,7 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
     hierarchy = optimization.DifferentiationHierarchy(
         mesh, latencies, network_vertices, network_edges, network_curvatures,
         lambda_geodesic, lambda_curvature, lambda_smooth, smoothness_strategy,
-        directory=directory, cores=None)
+        directory=directory)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()
@@ -95,9 +74,15 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
 
 if __name__ == '__main__':
     arguments = []
-    for smoothness_strategy in ['gaussian', 'mean', 'mvs_cross']:
-        for initial_radius in [1., 2., 4., 8., 16.]:
-            for lambda_smooth in [0., 0.001, 0.002, 0.004, 0.01, 0.02]:
-                arguments.append(('elbow', 0., 1., lambda_smooth, initial_radius, smoothness_strategy))
-    with multiprocessing.Pool(45) as p:
+    for smoothness_strategy in ['mean']:
+        for initial_radius in [16.]:
+            for lambda_smooth in [0.001]:
+                arguments.append((
+                    'elbow.json', 0., 1., lambda_smooth, initial_radius,
+                    smoothness_strategy,
+                    20, 20,
+                    1000,
+                    os.path.join('..', 'out_test')
+                ))
+    with multiprocessing.Pool(1) as p:
         p.starmap(main, arguments)

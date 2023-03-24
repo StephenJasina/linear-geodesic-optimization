@@ -10,38 +10,16 @@ import scipy
 
 from linear_geodesic_optimization.mesh.adaptive import Mesh as AdaptiveMesh
 from linear_geodesic_optimization.optimization import optimization
+from linear_geodesic_optimization import data
 
-def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
+def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
          smoothness_strategy='mean', width=8, height=8, fat_edges_only=False,
          maxiter=1000, output_dir_name=os.path.join('..', 'out')):
-    data_directory = os.path.join('..', 'data', data_name)
+    data_file_path = os.path.join('..', 'data', data_file_name)
+    data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
-    # Get the network vertices
-    coordinates = None
-    label_to_index = {}
-    with open(os.path.join(data_directory, 'position.json')) as f:
-        position_json = json.load(f)
-
-        label_to_index = {label: index for index, label in enumerate(position_json)}
-
-        coordinates = [None for _ in range(len(position_json))]
-        for vertex, position in position_json.items():
-            coordinates[label_to_index[vertex]] = position
-
+    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
     network_vertices = AdaptiveMesh.map_coordinates_to_support(coordinates)
-
-    # Get the network edges and curvatures
-    network_edges = []
-    network_curvatures = []
-    with open(os.path.join(data_directory, 'curvature.json')) as f:
-        curvature_json = json.load(f)
-
-        for edge, network_curvature in curvature_json.items():
-            u = label_to_index[edge[0]]
-            v = label_to_index[edge[1]]
-
-            network_edges.append((u, v))
-            network_curvatures.append(network_curvature)
 
     # Create the mesh
     density = np.amin([
@@ -61,17 +39,7 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
         fat_edges = mesh.get_fat_edges(network_vertices, network_edges, mesh.get_epsilon() / 2.)
         mesh.restrict_to_fat_edges(fat_edges)
 
-    latencies = {mesh.nearest_vertex_index(network_vertices[i]): [] for i in range(len(network_vertices))}
-    with open(os.path.join(data_directory, 'latency.json')) as f:
-        latency_json = json.load(f)
-
-        for edge, latency in latency_json.items():
-            u = label_to_index[edge[0]]
-            v = label_to_index[edge[1]]
-
-            latencies[mesh.nearest_vertex_index(network_vertices[u])].append(
-                (mesh.nearest_vertex_index(network_vertices[v]), latency)
-            )
+    latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     # Setup snapshots
     directory = os.path.join(
@@ -84,7 +52,7 @@ def main(data_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_ra
 
     with open(os.path.join(directory, 'parameters'), 'wb') as f:
         pickle.dump({
-            'data_name': data_name,
+            'data_file_name': data_file_name,
             'lambda_geodesic': lambda_geodesic,
             'lambda_curvature': lambda_curvature,
             'lambda_smooth': lambda_smooth,
@@ -122,11 +90,11 @@ if __name__ == '__main__':
         for initial_radius in [16.]:
             for lambda_smooth in [0.001]:
                 arguments.append((
-                    'elbow', 0., 1., lambda_smooth, initial_radius,
+                    'elbow.json', 0., 1., lambda_smooth, initial_radius,
                     smoothness_strategy,
                     20, 20, True,
                     1000,
-                    os.path.join('..', 'out_fat_edges_only')
+                    os.path.join('..', 'out_test')
                 ))
     with multiprocessing.Pool(1) as p:
         p.starmap(main, arguments)
