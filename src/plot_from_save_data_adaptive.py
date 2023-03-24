@@ -7,11 +7,11 @@ import sys
 from matplotlib import pyplot as plt
 import numpy as np
 
+from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.adaptive import Mesh as AdaptiveMesh
 from linear_geodesic_optimization.optimization import curvature, linear_regression
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
-from linear_geodesic_optimization import data
 
 maxiters = 1000
 

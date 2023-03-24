@@ -8,9 +8,9 @@ import shutil
 import numpy as np
 import scipy
 
+from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
-from linear_geodesic_optimization import data
 
 def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
          smoothness_strategy='mean', width=20, height=20,
