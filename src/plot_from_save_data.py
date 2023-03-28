@@ -42,6 +42,7 @@ if __name__ == '__main__':
         lambda_geodesic = parameters['lambda_geodesic']
         lambda_smooth = parameters['lambda_smooth']
         lambda_curvature = parameters['lambda_curvature']
+        initial_radius = parameters['initial_radius']
         width = parameters['width']
         height = parameters['height']
 
@@ -111,10 +112,14 @@ if __name__ == '__main__':
     vertices = mesh.get_vertices()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
-    z = vertices[:,2].reshape(len(x), len(y), order='F')
-
-    width = len(x)
-    height = len(y)
+    # z = mesh.set_parameters(vertices[:,2] - np.array([
+    #     (initial_radius**2
+    #         - (i / (width - 1) - 0.5)**2
+    #         - (j / (height - 1) - 0.5)**2)**0.5
+    #     for i in range(width)
+    #     for j in range(height)
+    # ])).reshape((width, height), order='F')
+    z = mesh.set_parameters(vertices[:,2]).reshape((width, height), order='F')
 
     x = x[1:width - 1]
     y = y[1:height - 1]
@@ -130,8 +135,9 @@ if __name__ == '__main__':
     figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
                                         network_vertices, network_edges, network_curvatures, v_range=(-2., 5.))
 
-    figures['scatter'] = get_scatter_plot(before_data, after_data,
-                                          'Latency Prediction' + lambda_string)
+    if sum(len(arr) for arr in before_data) > 0:
+        figures['scatter'] = get_scatter_plot(before_data, after_data,
+                                              'Latency Prediction' + lambda_string)
 
     figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 

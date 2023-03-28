@@ -39,5 +39,5 @@ z = z - np.amin(z)
 
 heat_map = get_heat_map(x, y, None, network_name,
                         network_vertices, network_edges, network_curvatures, network_vertices)
-# heat_map.savefig('network.png', dpi=300)
+heat_map.savefig('network.png', dpi=300)
 plt.show()
