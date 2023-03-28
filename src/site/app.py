@@ -22,7 +22,7 @@ from python.geodesic import GeodesicDistanceComputation
 sys.path.append('..')
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-mesh_path = '/home/jasina/linear-geodesic-optimization/out_rectangular/elbow_initialization_test/mean/0.0_1.0_0.001_256.0_40_40/233'
+mesh_path = '../../out_US/graph_US_16/mean/0.0_1.0_0.001_16.0_40_40/500'
 width = 40
 height = 40
 
@@ -114,8 +114,8 @@ def refine():
 def get_z_from_path(path):
     with open(path, 'rb') as f:
         z = pickle.load(f)['mesh_parameters']
-        z = z - np.amin(z)
-        z = z / np.amax(z)
+        z = z - np.amax(z)
+        z = -z / np.amin(z) * 3
         z = np.flip(z.reshape((width, height))).reshape((-1,))
         return z.tolist()
 
@@ -131,7 +131,6 @@ def calc_surface():
     niter = int(data['niter'])
     hmap = data['map']
     print(hmap)
-    ### @Stephen: this is here where we have to update the hmap! ###
     G = json_graph.node_link_graph(data['graph'])
     H = nx.Graph(G)
     # print(type(H))
@@ -142,7 +141,8 @@ def calc_surface():
     ### takes a graph as input and generates a tessellation on a 2D plane.
     if (retval == None):
         # TODO: This should be changed to a different initialization strategy
-        ret = generating_tessalation_2(H)
+        # ret = generating_tessalation_2(H)
+        ret = None
         retval = ret
     else:
         ret = retval
