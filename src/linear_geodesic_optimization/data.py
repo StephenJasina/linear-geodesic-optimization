@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 
@@ -33,13 +34,22 @@ def read_json(data_file_path):
 
     return coordinates, network_edges, network_curvatures, network_latencies
 
-def read_graphml(data_file_path):
+def read_graphml(data_file_path, latencies_file_path=None):
     network = nx.read_graphml(data_file_path)
     coordinates = [(node['lat'], node['long']) for node in network.nodes.values()]
     label_to_index = {label: index for index, label in enumerate(network.nodes)}
     network_edges = [(label_to_index[u], label_to_index[v]) for u, v in network.edges]
     network_curvatures = [edge['ricciCurvature'] for edge in network.edges.values()]
     network_latencies = [[] for _ in coordinates]
+    if latencies_file_path is not None:
+        with open(latencies_file_path) as latencies_file:
+            latencies_reader = csv.reader(latencies_file)
+            for row in latencies_reader:
+                latency = float(row[2])
+                if latency != 0.:
+                    network_latencies[label_to_index[row[0]]].append(
+                        (label_to_index[row[1]], latency)
+                    )
 
     return coordinates, network_edges, network_curvatures, network_latencies
 

@@ -158,8 +158,8 @@ class Mesh(mesh.Mesh):
         [-0.5, 0.5] x [-0.5, 0.5].
         '''
 
-        i = round(v[0] * (self._width - 1))
-        j = round(v[1] * (self._height - 1))
+        i = round((v[0] + 0.5) * (self._width - 1))
+        j = round((v[1] + 0.5) * (self._height - 1))
         return i * self._height + j
 
     def map_coordinates_to_support(self, coordinates, scale_factor=0.45):
