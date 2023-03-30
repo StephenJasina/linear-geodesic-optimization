@@ -56,17 +56,48 @@ def is_in_convex_hull(point, points, convex_hull=None):
     '''
 
     point = np.array(point)
+    points = np.array(points)
 
     if convex_hull is None:
         convex_hull = compute_convex_hull(points)
 
-    left = points[convex_hull[-1]]
-    right = points[convex_hull[0]]
-    side = np.cross(point - left, right - left)
+    crosses = np.array([
+        np.cross(point - points[left_index], points[right_index] - points[left_index])
+        for left_index, right_index in zip(convex_hull, [*convex_hull[1:], convex_hull[0]])
+    ])
 
-    for left_index, right_index in zip(convex_hull, convex_hull[1:]):
-        left = points[left_index]
-        right = points[right_index]
-        if np.cross(point - left, right - left) * side < 0:
-            return False
-    return True
+    return np.all(crosses >= 0) or np.all(crosses <= 0)
+
+def project_to_line(point, left, right):
+    '''
+    Project a point onto the line passing through left and right
+    '''
+
+    direction = right - left
+    return left + (point - left) @ direction / (direction @ direction) * direction
+
+def project_to_convex_hull(point, points, convex_hull=None):
+    '''
+    Return the distance to the convex hull as computed by compute_convex_hull.
+    '''
+
+    point = np.array(point)
+    points = np.array(points)
+
+    if convex_hull is None:
+        convex_hull = compute_convex_hull(points)
+
+    if is_in_convex_hull(point, points, convex_hull):
+        return np.copy(point)
+
+    projections = [
+        project_to_line(point, points[left_index], points[right_index])
+        for left_index, right_index in zip(convex_hull, [*convex_hull[1:], convex_hull[0]])
+    ]
+    projections = [
+        projection
+        for projection in projections
+        if is_in_convex_hull(projection, points, convex_hull)
+    ] + [points[index] for index in convex_hull]
+    distances = [np.linalg.norm(point - projection) for projection in projections]
+    return projections[np.argmin(distances)]
