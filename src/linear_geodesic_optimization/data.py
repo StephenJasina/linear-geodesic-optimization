@@ -38,7 +38,7 @@ def read_json(data_file_path):
 
 def read_graphml(data_file_path, latencies_file_path=None):
     network = nx.read_graphml(data_file_path)
-    coordinates = [(node['lat'], node['long']) for node in network.nodes.values()]
+    coordinates = [(node['long'], node['lat']) for node in network.nodes.values()]
     label_to_index = {label: index for index, label in enumerate(network.nodes)}
     network_edges = [(label_to_index[u], label_to_index[v]) for u, v in network.edges]
     network_curvatures = [edge['ricciCurvature'] for edge in network.edges.values()]
