@@ -7,8 +7,9 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 from linear_geodesic_optimization.optimization import geodesic, linear_regression
+from linear_geodesic_optimization import plot
 
-mesh_path = '../out_US/graph_US_16/mean/0.0_1.0_0.002_16.0_40_40/500'
+mesh_path = '../out_US/graph_US_16/mean/0.0_1.0_0.002_16.0_40_40/0'
 data_file_path = '../data/graph_US_16.graphml'
 latencies_file_path = '../data/latencies_US.csv'
 
@@ -50,36 +51,69 @@ mesh.set_parameters(z)
 geodesic_forward = geodesic.Forward(mesh)
 geodesics = {}
 phi = []
-t = []
+t_geodesic = []
 for i, j_latency_pairs in latencies.items():
     geodesic_forward.calc(i)
     for j, latency in j_latency_pairs:
         phi.append(geodesic_forward.phi[j])
-        t.append(latency)
+        t_geodesic.append(latency)
 
 phi = np.array(phi)
-t = np.array(t)
+t_geodesic = np.array(t_geodesic)
 
 linear_regression_forward = linear_regression.Forward()
 
-print("Using geodesics")
-linear_regression_forward.calc(phi, t)
+print('Using geodesics')
+linear_regression_forward.calc(phi, t_geodesic)
+beta_geodesic = linear_regression_forward.get_beta(phi, t_geodesic)
 print(linear_regression_forward.lse)
-print(linear_regression_forward.get_beta(phi, t))
+print(beta_geodesic)
 
-t = []
-d = []
+d_euclidean = []
+t_euclidean = []
 for i, j_latency_pairs in enumerate(network_latencies):
-    u = SphereMesh.latitude_longitude_to_direction(*coordinates[i])
+    u = np.array(coordinates[i])
     for j, latency in j_latency_pairs:
-        v = SphereMesh.latitude_longitude_to_direction(*coordinates[j])
-        t.append(latency)
-        d.append(np.arccos(max(min(u @ v, 1.), -1.)))
+        v = np.array(coordinates[j])
+        t_euclidean.append(latency)
+        d_euclidean.append(np.linalg.norm(u - v))
+d_euclidean = np.array(d_euclidean)
+t_euclidean = np.array(t_euclidean)
 
-d = np.array(d)
-t = np.array(t)
-
-print("Using great circle")
-linear_regression_forward.calc(d, t)
+print('Using Euclidean')
+linear_regression_forward.calc(d_euclidean, t_euclidean)
+beta_euclidean = linear_regression_forward.get_beta(d_euclidean, t_euclidean)
 print(linear_regression_forward.lse)
-print(linear_regression_forward.get_beta(d, t))
+print(beta_euclidean)
+
+d_great_circle = []
+t_great_circle = []
+for i, j_latency_pairs in enumerate(network_latencies):
+    u = SphereMesh.longitude_latitude_to_direction(*coordinates[i])
+    for j, latency in j_latency_pairs:
+        v = SphereMesh.longitude_latitude_to_direction(*coordinates[j])
+        t_great_circle.append(latency)
+        d_great_circle.append(np.arccos(max(min(u @ v, 1.), -1.)))
+d_great_circle = np.array(d_great_circle)
+t_great_circle = np.array(t_great_circle)
+
+print('Using great circle')
+linear_regression_forward.calc(d_great_circle, t_great_circle)
+beta_great_circle = linear_regression_forward.get_beta(d_great_circle, t_great_circle)
+print(linear_regression_forward.lse)
+print(beta_great_circle)
+
+from matplotlib import pyplot as plt
+x = beta_geodesic[0] + beta_geodesic[1] * phi
+# x = beta_great_circle[0] + beta_great_circle[1] * d_great_circle
+# x = beta_euclidean[0] + beta_euclidean[1] * d_euclidean
+y = t_geodesic
+lim_min = min(min(x), min(y))
+lim_max = max(max(x), max(y))
+
+fig, ax = plt.subplots(1, 1)
+ax.set_aspect('equal')
+ax.plot(x, y, 'b.')
+ax.set_xlim(lim_min, lim_max)
+ax.set_ylim(lim_min, lim_max)
+plt.show()
