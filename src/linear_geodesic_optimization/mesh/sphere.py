@@ -262,15 +262,15 @@ class Mesh(mesh.Mesh):
         return np.argmax(self.directions @ direction / linalg.norm(direction))
 
     @staticmethod
-    def latitude_longitude_to_direction(latitude, longitude):
+    def longitude_latitude_to_direction(longitude, latitude):
         '''
-        Takes in latitude (in [-90, 90]) and longitude (in (-180, 180]) and
+        Takes in longitude (in (-180, 180]) and latitude (in [-90, 90]) and
         returns the corresponding direction on the unit sphere in R^3. For
         efficiency, the ranges of the inputs are not checked.
         '''
 
-        latitude = np.radians(latitude)
         longitude = np.radians(longitude)
+        latitude = np.radians(latitude)
 
         return np.array([
             np.cos(longitude) * np.cos(latitude),

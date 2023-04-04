@@ -11,7 +11,7 @@ laplacian_forward = laplacian.Forward(M)
 geodesic_forward = geodesic.Forward(M, laplacian_forward)
 
 geodesic_forward.calc(M.nearest_vertex_index(
-    SphereMesh.latitude_longitude_to_direction(0, 0)))
+    SphereMesh.longitude_latitude_to_direction(0, 0)))
 phi = geodesic_forward.phi
 
 rng = np.random.default_rng()
