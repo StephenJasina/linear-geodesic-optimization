@@ -7,6 +7,7 @@ import sys
 from matplotlib import pyplot as plt
 import numpy as np
 
+from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import curvature, linear_regression
@@ -56,6 +57,7 @@ if __name__ == '__main__':
     elif data_type == '.graphml':
         coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
     network_vertices = mesh.map_coordinates_to_support(coordinates)
+    network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
     latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     L_geodesics = []
@@ -89,6 +91,7 @@ if __name__ == '__main__':
             true_latencies = np.array(data['true_latencies'])
             estimated_latencies = np.array(data['estimated_latencies'])
             if i == 0:
+                z_0 = data['mesh_parameters']
                 beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
                 before_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
 
@@ -112,22 +115,29 @@ if __name__ == '__main__':
     vertices = mesh.get_vertices()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
-    # z = mesh.set_parameters(vertices[:,2] - np.array([
-    #     (initial_radius**2
-    #         - (i / (width - 1) - 0.5)**2
-    #         - (j / (height - 1) - 0.5)**2)**0.5
-    #     for i in range(width)
-    #     for j in range(height)
-    # ])).reshape((width, height), order='F')
-    z = mesh.set_parameters(vertices[:,2]).reshape((width, height), order='F')
+    z = vertices[:,2] - z_0
+
+    # Smooth using convex hull
+    distances = np.array([
+        np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
+        for py in y
+        for px in x
+    ])
+    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+    z = z - np.amin(z)
+
+    # TODO: Remove this
+    # z = mesh.set_parameters((z.T).reshape((-1,))).reshape((width, height))
+
+    mesh.set_parameters(z)
 
     x = x[1:width - 1]
     y = y[1:height - 1]
-    z = z[1:width - 1,1:height - 1]
-    z = z - np.amin(z)
+    z = z.reshape((width, height))[1:width - 1,1:height - 1]
 
     figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
-                                       network_vertices, network_edges, network_curvatures)
+                                       network_vertices, network_edges, network_curvatures,
+                                       [network_vertices[i] for i in network_convex_hull])
 
     curvature_forward = curvature.Forward(mesh)
     curvature_forward.calc()
@@ -143,3 +153,4 @@ if __name__ == '__main__':
 
     for filename, figure in figures.items():
         figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
+    # plt.show()

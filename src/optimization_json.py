@@ -56,8 +56,8 @@ def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initi
         (initial_radius**2
             - (i / (width - 1) - 0.5)**2
             - (j / (height - 1) - 0.5)**2)**0.5
-        for i in range(width)
         for j in range(height)
+        for i in range(width)
     ]).reshape((width * height,))
     z = z - np.amin(z)
     z = mesh.set_parameters(z)
