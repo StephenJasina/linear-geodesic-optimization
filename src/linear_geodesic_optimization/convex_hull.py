@@ -76,6 +76,14 @@ def project_to_line(point, left, right):
     direction = right - left
     return left + (point - left) @ direction / (direction @ direction) * direction
 
+def is_in_segment(projection, left, right):
+    '''
+    Determine if a point lying on a line spanned by left and right is between
+    left and right
+    '''
+
+    return (projection - left) @ (right - left) >= 0 and (projection - right) @ (left - right) >= 0
+
 def project_to_convex_hull(point, points, convex_hull=None):
     '''
     Return the distance to the convex hull as computed by compute_convex_hull.
@@ -90,14 +98,17 @@ def project_to_convex_hull(point, points, convex_hull=None):
     if is_in_convex_hull(point, points, convex_hull):
         return np.copy(point)
 
+    # Project the point onto each of the line segments on the boundary of the
+    # convex hull. Also project it to each of the vertices (i.e., just take the
+    # vertices). The projection will be the nearest of these.
     projections = [
         project_to_line(point, points[left_index], points[right_index])
         for left_index, right_index in zip(convex_hull, [*convex_hull[1:], convex_hull[0]])
     ]
     projections = [
         projection
-        for projection in projections
-        if is_in_convex_hull(projection, points, convex_hull)
+        for left_index, right_index, projection in zip(convex_hull, [*convex_hull[1:], convex_hull[0]], projections)
+        if is_in_segment(projection, points[left_index], points[right_index])
     ] + [points[index] for index in convex_hull]
     distances = [np.linalg.norm(point - projection) for projection in projections]
     return projections[np.argmin(distances)]
