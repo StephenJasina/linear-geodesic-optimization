@@ -115,7 +115,7 @@ if __name__ == '__main__':
     vertices = mesh.get_vertices()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
-    z = vertices[:,2] - z_0
+    z = vertices[:,2] - 1. * np.array(z_0)
 
     # Smooth using convex hull
     distances = np.array([
@@ -126,8 +126,9 @@ if __name__ == '__main__':
     z = (z - np.amin(z)) * np.exp(-100 * distances**2)
     z = z - np.amin(z)
 
-    # TODO: Remove this
-    # z = mesh.set_parameters((z.T).reshape((-1,))).reshape((width, height))
+    # TODO: Remove this. This is here since the US data was initially
+    # transposed on accident.
+    z = mesh.set_parameters((z.reshape((width, height)).T).reshape((-1,)))
 
     mesh.set_parameters(z)
 
@@ -141,7 +142,7 @@ if __name__ == '__main__':
 
     curvature_forward = curvature.Forward(mesh)
     curvature_forward.calc()
-    kappa = curvature_forward.kappa_G.reshape(width, height, order='F')[1:width - 1,1:height - 1]
+    kappa = curvature_forward.kappa_G.reshape(width, height)[1:width - 1,1:height - 1]
     figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
                                         network_vertices, network_edges, network_curvatures, v_range=(-2., 5.))
 
