@@ -56,12 +56,18 @@ def read_graphml(data_file_path, latencies_file_path=None):
     return coordinates, network_edges, network_curvatures, network_latencies
 
 def map_latencies_to_mesh(mesh, network_vertices, network_latencies):
-    latencies = {
-        mesh.nearest_vertex_index(network_vertices[i]): [
+    latencies = {}
+
+    # Can't do a dict comprehension since multiple vertices could map to the
+    # same mesh point
+    for i, j_latency_pairs in enumerate(network_latencies):
+        key = mesh.nearest_vertex_index(network_vertices[i])
+        if key not in latencies:
+            latencies[key] = []
+
+        latencies[key] += [
             (mesh.nearest_vertex_index(network_vertices[j]), latency)
             for j, latency in j_latency_pairs
         ]
-        for i, j_latency_pairs in enumerate(network_latencies)
-    }
 
     return latencies
