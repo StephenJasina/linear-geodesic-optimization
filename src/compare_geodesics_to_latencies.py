@@ -1,5 +1,6 @@
 import pickle
 
+from matplotlib import pyplot as plt
 import numpy as np
 
 from linear_geodesic_optimization import convex_hull
@@ -9,17 +10,15 @@ from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
 from linear_geodesic_optimization.optimization import geodesic, linear_regression
 from linear_geodesic_optimization import plot
 
-mesh_path = '../out_US/graph_US_16/mean/0.0_1.0_0.002_16.0_40_40/0'
+mesh_directory = '../out_US/graph_US_16/mean/0.0_1.0_0.002_16.0_40_40/'
 data_file_path = '../data/graph_US_16.graphml'
 latencies_file_path = '../data/latencies_US.csv'
+
+max_iters = 1000
 
 width = 40
 height = 40
 initial_radius = 16.
-
-with open(mesh_path, 'rb') as f:
-    z = pickle.load(f)['mesh_parameters']
-
 z_0 = np.array([
     (initial_radius**2
         - (i / (width - 1) - 0.5)**2
@@ -35,39 +34,50 @@ network_vertices = mesh.map_coordinates_to_support(coordinates)
 network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
 latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
-vertices = mesh.get_vertices()
-x = list(sorted(set(vertices[:,0])))
-y = list(sorted(set(vertices[:,1])))
-z = z - z_0
-distances = np.array([
-    np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-    for py in y
-    for px in x
-])
-z = (z - np.amin(z)) * np.exp(-100 * distances**2)
-z = z - np.amin(z)
-mesh.set_parameters(z)
+lses = []
+for iteration in range(0, max_iters + 1, 50):
+    with open(mesh_directory + str(iteration), 'rb') as f:
+        z = pickle.load(f)['mesh_parameters']
 
-geodesic_forward = geodesic.Forward(mesh)
-geodesics = {}
-phi = []
-t_geodesic = []
-for i, j_latency_pairs in latencies.items():
-    geodesic_forward.calc(i)
-    for j, latency in j_latency_pairs:
-        phi.append(geodesic_forward.phi[j])
-        t_geodesic.append(latency)
+    vertices = mesh.get_vertices()
+    x = list(sorted(set(vertices[:,0])))
+    y = list(sorted(set(vertices[:,1])))
+    z = z - z_0
+    distances = np.array([
+        np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
+        for py in y
+        for px in x
+    ])
+    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+    z = z - np.amin(z)
+    mesh.set_parameters(z)
 
-phi = np.array(phi)
-t_geodesic = np.array(t_geodesic)
+    geodesic_forward = geodesic.Forward(mesh)
+    geodesics = {}
+    phi = []
+    t_geodesic = []
+    for i, j_latency_pairs in latencies.items():
+        geodesic_forward.calc(i)
+        for j, latency in j_latency_pairs:
+            phi.append(geodesic_forward.phi[j])
+            t_geodesic.append(latency)
 
-linear_regression_forward = linear_regression.Forward()
+    phi = np.array(phi)
+    t_geodesic = np.array(t_geodesic)
 
-print('Using geodesics')
-linear_regression_forward.calc(phi, t_geodesic)
-beta_geodesic = linear_regression_forward.get_beta(phi, t_geodesic)
-print(linear_regression_forward.lse)
-print(beta_geodesic)
+    linear_regression_forward = linear_regression.Forward()
+
+    linear_regression_forward.calc(phi, t_geodesic)
+    beta_geodesic = linear_regression_forward.get_beta(phi, t_geodesic)
+    lses.append(linear_regression_forward.lse)
+    print(f'Using geodesics (iteration {iteration})')
+    print(f'\t{linear_regression_forward.lse}')
+    print(f'\t{beta_geodesic}')
+
+fig, ax = plt.subplots(1, 1)
+ax.plot(range(0, max_iters + 1, 50), lses, 'b-')
+ax.set_ylim(ymin = 0., ymax = 0.3)
+plt.show()
 
 d_euclidean = []
 t_euclidean = []
@@ -80,11 +90,11 @@ for i, j_latency_pairs in enumerate(network_latencies):
 d_euclidean = np.array(d_euclidean)
 t_euclidean = np.array(t_euclidean)
 
-print('Using Euclidean')
 linear_regression_forward.calc(d_euclidean, t_euclidean)
 beta_euclidean = linear_regression_forward.get_beta(d_euclidean, t_euclidean)
-print(linear_regression_forward.lse)
-print(beta_euclidean)
+print('Using Euclidean')
+print(f'\t{linear_regression_forward.lse}')
+print(f'\t{beta_euclidean}')
 
 d_great_circle = []
 t_great_circle = []
@@ -97,13 +107,12 @@ for i, j_latency_pairs in enumerate(network_latencies):
 d_great_circle = np.array(d_great_circle)
 t_great_circle = np.array(t_great_circle)
 
-print('Using great circle')
 linear_regression_forward.calc(d_great_circle, t_great_circle)
 beta_great_circle = linear_regression_forward.get_beta(d_great_circle, t_great_circle)
-print(linear_regression_forward.lse)
-print(beta_great_circle)
+print('Using great circle')
+print(f'\t{linear_regression_forward.lse}')
+print(f'\t{beta_great_circle}')
 
-from matplotlib import pyplot as plt
 x = beta_geodesic[0] + beta_geodesic[1] * phi
 # x = beta_great_circle[0] + beta_great_circle[1] * d_great_circle
 # x = beta_euclidean[0] + beta_euclidean[1] * d_euclidean
