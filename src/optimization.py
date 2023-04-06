@@ -86,7 +86,7 @@ if __name__ == '__main__':
             for initial_radius in initial_radii:
                 for lambda_smooth in lambda_smooths:
                     arguments.append((
-                        'graph_US_16.graphml', 0., 1., lambda_smooth, initial_radius,
+                        data_file_name, 0., 1., lambda_smooth, initial_radius,
                         smoothness_strategy,
                         40, 40,
                         1000,
