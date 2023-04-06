@@ -27,7 +27,7 @@ mesh.set_parameters(np.random.random(mesh.get_parameters().shape))
 vertices = mesh.get_vertices()
 x = list(sorted(set(vertices[:,0])))
 y = list(sorted(set(vertices[:,1])))
-z = vertices[:,2].reshape(len(x), len(y), order='F')
+z = vertices[:,2].reshape(len(x), len(y))
 
 width = len(x)
 height = len(y)
