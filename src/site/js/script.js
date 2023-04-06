@@ -3680,40 +3680,24 @@ function createMap() {
   var mapdiv = document.createElement('div')
   mapdiv.id = 'map'
   mapdiv.class = 'map-div'
-  // mapdiv.style.width = '400px'
-  // mapdiv.style.height = '400px'
-  let p1 = ol.proj.fromLonLat([0, 0])
-  let p2 = ol.proj.fromLonLat([90, 90])
-  let extents = [p1[0], p1[1], p2[0], p2[1]]
+  mapdiv.style.width = '1000px'
+  mapdiv.style.height = '1000px'
   document.body.appendChild(mapdiv)
   var map = new ol.Map({
         target: 'map',
         renderer:'canvas',
         layers: [
-          // new ol.layer.Tile({
-          //   source: new ol.source.OSM(),
-          //   // resolution: 152.87405654296876,
-          //   // tileSize: [1024,1024]
-          // }),
           new ol.layer.Tile({
-            // extent: extents,
-            // minResolution: 1,
             source: new ol.source.Stamen({
               layer: 'terrain'
             }),
-            // maxResolution: 2000,
           })
         ],
         view: new ol.View({
-          // center: ol.proj.fromLonLat([67.41, 8.82]),
-          // projection: 'EPSG:9823',
           center: ol.proj.fromLonLat([-96.73, 38.06380941315575]),
-          // zoom: 0,
-          // zoomFactor: 2,
-          resolution: 40075016.68557849 / 995 / 3.155618754504548
+          resolution: 40075016.68557849 / 1000 / 3.155618754504548
         })
   });
-  // console.log(map.getView().getResolution())
   return map
 }
 
