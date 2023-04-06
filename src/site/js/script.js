@@ -1530,6 +1530,9 @@ function pointerUp(event) {
 }
 
 function wheelEvent(event) {
+  olMap.updateSize()
+  return
+
   if (document.elementFromPoint(event.clientX, event.clientY).tagName != 'CANVAS')
     return
   var mapdiv = document.getElementById("map")
@@ -2733,84 +2736,84 @@ function removeVertex() {
 
 function generateGraph() {
   // Replace this with the default graph we want
-  addVertex(null, -4.5, -2.8927381810390154, true, name="0");
-  addVertex(null, 1.2932169182169173, -1.590168884040751, true, name="1");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="2");
-  addVertex(null, 1.392725517725518, -3.9830044607203385, true, name="3");
-  addVertex(null, 4.12091962091962, 4.493688762490991, true, name="4");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="5");
-  addVertex(null, 2.1820814320814335, -2.1145275337475895, true, name="6");
-  addVertex(null, 1.0953843453843461, -3.702680328028517, true, name="7");
-  addVertex(null, -0.7320989820989815, -2.60487562576699, true, name="8");
-  addVertex(null, 0.7557915057915068, -0.3770087850867798, true, name="9");
-  addVertex(null, -4.5, -2.8927381810390154, true, name="10");
-  addVertex(null, -0.7320989820989815, -2.60487562576699, true, name="11");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="12");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="13");
-  addVertex(null, -1.7323183573183574, 0.015690437696010306, true, name="14");
-  addVertex(null, -1.48591611091611, 2.6792079786508767, true, name="15");
-  addVertex(null, -1.34455071955072, -2.1580049476985397, true, name="16");
-  addVertex(null, 4.5, -0.03707852036542725, true, name="17");
-  addVertex(null, 2.03913653913654, -4.5, true, name="18");
-  addVertex(null, -4.5, -2.8927381810390154, true, name="19");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="20");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="21");
-  addVertex(null, 1.2932169182169173, -1.590168884040751, true, name="22");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="23");
-  addVertex(null, -0.040672165672166256, 2.9614605450260054, true, name="24");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="25");
-  addVertex(null, -4.5, -2.8927381810390154, true, name="26");
-  addVertex(null, 1.24938574938575, -3.87062937062937, true, name="27");
-  addVertex(null, 1.24938574938575, -3.87062937062937, true, name="28");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="29");
-  addVertex(null, -1.7323183573183574, 0.015690437696010306, true, name="30");
-  addVertex(null, -1.34455071955072, -2.1580049476985397, true, name="31");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="32");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="33");
-  addVertex(null, 1.24938574938575, -3.87062937062937, true, name="34");
-  addVertex(null, 4.12091962091962, 4.493688762490991, true, name="35");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="36");
-  addVertex(null, 1.392725517725518, -3.9830044607203385, true, name="37");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="38");
-  addVertex(null, -1.7323183573183574, 0.015690437696010306, true, name="39");
-  addVertex(null, 4.12091962091962, 4.493688762490991, true, name="40");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="41");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="42");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="43");
-  addVertex(null, 1.392725517725518, -3.9830044607203385, true, name="44");
-  addVertex(null, -0.7320989820989815, -2.60487562576699, true, name="45");
-  addVertex(null, 1.2932169182169173, -1.590168884040751, true, name="46");
-  addVertex(null, 1.0953843453843461, -3.702680328028517, true, name="47");
-  addVertex(null, 1.0953843453843461, -3.702680328028517, true, name="48");
-  addVertex(null, 1.6087223587223578, -0.1520832927518163, true, name="49");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="50");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="51");
-  addVertex(null, 0.6973499473499468, -0.2572705845686333, true, name="52");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="53");
-  addVertex(null, 1.0085117585117596, 1.4478154157819902, true, name="54");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="55");
-  addVertex(null, 0.6973499473499468, -0.2572705845686333, true, name="56");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="57");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="58");
-  addVertex(null, 1.2932169182169173, -1.590168884040751, true, name="59");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="60");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="61");
-  addVertex(null, -1.7323183573183574, 0.015690437696010306, true, name="62");
-  addVertex(null, -1.7323183573183574, 0.015690437696010306, true, name="63");
-  addVertex(null, 4.12091962091962, 4.493688762490991, true, name="64");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="65");
-  addVertex(null, 1.0965689715689724, -1.8543642986539908, true, name="66");
-  addVertex(null, 0.677211302211304, -3.455314880105966, true, name="67");
-  addVertex(null, -1.7323183573183574, 0.015690437696010306, true, name="68");
-  addVertex(null, 4.12091962091962, 4.493688762490991, true, name="69");
-  addVertex(null, 2.1820814320814335, -2.1145275337475895, true, name="70");
-  addVertex(null, 1.0085117585117596, 1.4478154157819902, true, name="71");
-  addVertex(null, -1.34455071955072, -2.1580049476985397, true, name="72");
-  addVertex(null, -1.48591611091611, 2.6792079786508767, true, name="73");
-  addVertex(null, -4.5, -2.8927381810390154, true, name="74");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="75");
-  addVertex(null, 0.6961653211653207, -3.393780314393128, true, name="76");
-  addVertex(null, 0.21125833625833468, 4.5, true, name="77");
+  addVertex(null, -2.5442341603608427, 2.892738181039017, true, name="0");
+  addVertex(null, 0.542534862319518, 1.590168884040752, true, name="1");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="2");
+  addVertex(null, 0.6007079694930787, 3.983004460720339, true, name="3");
+  addVertex(null, 2.292212657987467, -4.49368876249099, true, name="4");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="5");
+  addVertex(null, 1.070219172335635, 2.114527533747591, true, name="6");
+  addVertex(null, 0.4275254530153885, 3.702680328028518, true, name="7");
+  addVertex(null, -0.5977489787930892, 2.604875625766992, true, name="8");
+  addVertex(null, 0.23205000517417554, 0.3770087850867794, true, name="9");
+  addVertex(null, -2.5442341603608427, 2.892738181039017, true, name="10");
+  addVertex(null, -0.5977489787930892, 2.604875625766992, true, name="11");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="12");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="13");
+  addVertex(null, -1.1338767746392435, -0.015690437696009918, true, name="14");
+  addVertex(null, -1.00327492828886, -2.679207978650875, true, name="15");
+  addVertex(null, -0.9279228975721645, 2.15800494769854, true, name="16");
+  addVertex(null, 2.5442341603608414, 0.03707852036542961, true, name="17");
+  addVertex(null, 0.98410063386813, 4.500000000000003, true, name="18");
+  addVertex(null, -2.5442341603608427, 2.892738181039017, true, name="19");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="20");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="21");
+  addVertex(null, 0.542534862319518, 1.590168884040752, true, name="22");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="23");
+  addVertex(null, -0.2172843376578082, -2.9614605450260036, true, name="24");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="25");
+  addVertex(null, -2.5442341603608427, 2.892738181039017, true, name="26");
+  addVertex(null, 0.5169802545330417, 3.870629370629371, true, name="27");
+  addVertex(null, 0.5169802545330417, 3.870629370629371, true, name="28");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="29");
+  addVertex(null, -1.1338767746392435, -0.015690437696009918, true, name="30");
+  addVertex(null, -0.9279228975721645, 2.15800494769854, true, name="31");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="32");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="33");
+  addVertex(null, 0.5169802545330417, 3.870629370629371, true, name="34");
+  addVertex(null, 2.292212657987467, -4.49368876249099, true, name="35");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="36");
+  addVertex(null, 0.6007079694930787, 3.983004460720339, true, name="37");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="38");
+  addVertex(null, -1.1338767746392435, -0.015690437696009918, true, name="39");
+  addVertex(null, 2.292212657987467, -4.49368876249099, true, name="40");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="41");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="42");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="43");
+  addVertex(null, 0.6007079694930787, 3.983004460720339, true, name="44");
+  addVertex(null, -0.5977489787930892, 2.604875625766992, true, name="45");
+  addVertex(null, 0.542534862319518, 1.590168884040752, true, name="46");
+  addVertex(null, 0.4275254530153885, 3.702680328028518, true, name="47");
+  addVertex(null, 0.4275254530153885, 3.702680328028518, true, name="48");
+  addVertex(null, 0.7277433860800343, 0.15208329275181776, true, name="49");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="50");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="51");
+  addVertex(null, 0.19865189663127913, 0.25727058456863494, true, name="52");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="53");
+  addVertex(null, 0.3772888367557087, -1.4478154157819905, true, name="54");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="55");
+  addVertex(null, 0.19865189663127913, 0.25727058456863494, true, name="56");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="57");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="58");
+  addVertex(null, 0.542534862319518, 1.590168884040752, true, name="59");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="60");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="61");
+  addVertex(null, -1.1338767746392435, -0.015690437696009918, true, name="62");
+  addVertex(null, -1.1338767746392435, -0.015690437696009918, true, name="63");
+  addVertex(null, 2.292212657987467, -4.49368876249099, true, name="64");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="65");
+  addVertex(null, 0.4282116125165888, 1.854364298653992, true, name="66");
+  addVertex(null, 0.1871592540766452, 3.4553148801059668, true, name="67");
+  addVertex(null, -1.1338767746392435, -0.015690437696009918, true, name="68");
+  addVertex(null, 2.292212657987467, -4.49368876249099, true, name="69");
+  addVertex(null, 1.070219172335635, 2.114527533747591, true, name="70");
+  addVertex(null, 0.3772888367557087, -1.4478154157819905, true, name="71");
+  addVertex(null, -0.9279228975721645, 2.15800494769854, true, name="72");
+  addVertex(null, -1.00327492828886, -2.679207978650875, true, name="73");
+  addVertex(null, -2.5442341603608427, 2.892738181039017, true, name="74");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="75");
+  addVertex(null, 0.19797563004851937, 3.393780314393128, true, name="76");
+  addVertex(null, -0.076487390460246, -4.499999999999998, true, name="77");
 
   addEdge(null, 0, 19, 0.5714285712456094);
   addEdge(null, 0, 10, 0.7499999999521263);
@@ -3694,7 +3697,7 @@ function createMap() {
           // }),
           new ol.layer.Tile({
             // extent: extents,
-            minResolution: 1,
+            // minResolution: 1,
             source: new ol.source.Stamen({
               layer: 'terrain'
             }),
@@ -3704,11 +3707,10 @@ function createMap() {
         view: new ol.View({
           // center: ol.proj.fromLonLat([67.41, 8.82]),
           // projection: 'EPSG:9823',
-          center: ol.proj.fromLonLat([0, 0]),
-          zoom: 0,
-          zoomFactor: 2,
-          // resolution: 2,
-          // maxResolution: 2
+          center: ol.proj.fromLonLat([-96.73, 38.06380941315575]),
+          // zoom: 0,
+          // zoomFactor: 2,
+          resolution: 40075016.68557849 / 995 / 3.155618754504548
         })
   });
   // console.log(map.getView().getResolution())

@@ -47,7 +47,12 @@ class Mesh(mesh.Mesh):
         coordinates_max = np.amax(coordinates, axis=0)
         divisor = coordinates_max - coordinates_min
         divisor[np.where(divisor == 0.)] = 1.
-        return list(scale_factor * ((coordinates - coordinates_min) / divisor - 0.5))
+        divisor = np.amax(divisor)
+
+        coordinates = coordinates - (coordinates_min + coordinates_max) / 2
+        coordinates = coordinates / divisor
+
+        return list(scale_factor * coordinates)
 
     @staticmethod
     def _get_grid(width, height):

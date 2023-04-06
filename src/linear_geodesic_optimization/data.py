@@ -35,9 +35,26 @@ def read_json(data_file_path):
 
     return coordinates, network_edges, network_curvatures, network_latencies
 
+def mercator(longitude, latitude):
+    '''
+    Given a longitude in [-180, 180] and a latitude in [-90, 90], return an
+    (x, y) pair representing the location on a Mercator projection. Assuming
+    the latitude is no larger/smaller than +/- 85 (approximately), the pair
+    will lie in [-0.5, 0.5]^2.
+    '''
+
+    x = longitude / 360.
+    y = np.log(np.tan(np.pi / 4. + latitude * np.pi / 360.)) / (2. * np.pi)
+    return (x, y)
+
+def inverse_mercator(x, y):
+    longitude = x * 360.
+    latitude = np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90.
+    return (longitude, latitude)
+
 def read_graphml(data_file_path, latencies_file_path=None):
     network = nx.read_graphml(data_file_path)
-    coordinates = [(node['long'], node['lat']) for node in network.nodes.values()]
+    coordinates = [mercator(node['long'], node['lat']) for node in network.nodes.values()]
     label_to_index = {label: index for index, label in enumerate(network.nodes)}
     network_edges = [(label_to_index[u], label_to_index[v]) for u, v in network.edges]
     network_curvatures = [edge['ricciCurvature'] for edge in network.edges.values()]

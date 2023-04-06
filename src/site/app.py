@@ -22,7 +22,7 @@ from python.geodesic import GeodesicDistanceComputation
 sys.path.append('..')
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-mesh_path = '../../out_US/graph_US_16/mean/0.0_1.0_0.001_16.0_40_40/500'
+mesh_path = '../../out_US/graph_US_16/mean/0.0_1.0_0.002_16.0_40_40/500'
 width = 40
 height = 40
 

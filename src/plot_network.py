@@ -13,7 +13,7 @@ height = 40
 mesh = RectangleMesh(width, height)
 
 network_name = 'Graph U.S. (16)'
-data_file_name = 'graph_US_16.graphml'
+data_file_name = os.path.join('graph_US', 'graph16.graphml')
 data_file_path = os.path.join('..', 'data', data_file_name)
 data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
