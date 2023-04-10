@@ -1,4 +1,6 @@
+import os
 import pickle
+import sys
 
 from matplotlib import pyplot as plt
 import numpy as np
@@ -14,7 +16,24 @@ mesh_directory = '../out_US/graph_US_16/mean/0.0_1.0_0.002_16.0_40_40/'
 data_file_path = '../data/graph_US_16.graphml'
 latencies_file_path = '../data/latencies_US.csv'
 
-max_iters = 1000
+max_iterations = 250
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print('Usage: python3 <directory name>')
+        sys.exit(0)
+
+    directory = sys.argv[1]
+
+    if not os.path.exists(os.path.join(directory, '0')):
+        print('Error: supplied directory must contain file named "0"')
+        sys.exit(0)
+
+    if not os.path.exists(os.path.join(directory, 'parameters')):
+        print('Error: supplied directory must contain file named "parameters"')
+        sys.exit(0)
+
+    # TODO: Read in parameters. Use os.listdir and str.isdigit to help
 
 width = 40
 height = 40
@@ -29,53 +48,52 @@ z_0 = np.array([
 
 mesh = RectangleMesh(width, height)
 
-coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path, latencies_file_path)
+coordinates, network_edges, network_curvatures, network_latencies, labels = data.read_graphml(data_file_path, latencies_file_path, True)
 network_vertices = mesh.map_coordinates_to_support(coordinates)
 network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
 latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
 lses = []
-for iteration in range(0, max_iters + 1, 50):
-    with open(mesh_directory + str(iteration), 'rb') as f:
-        z = pickle.load(f)['mesh_parameters']
+with open(mesh_directory + str(iteration), 'rb') as f:
+    z = pickle.load(f)['mesh_parameters']
 
-    vertices = mesh.get_vertices()
-    x = list(sorted(set(vertices[:,0])))
-    y = list(sorted(set(vertices[:,1])))
-    z = z - z_0
-    distances = np.array([
-        np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-        for py in y
-        for px in x
-    ])
-    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
-    z = z - np.amin(z)
-    mesh.set_parameters(z)
+vertices = mesh.get_vertices()
+x = list(sorted(set(vertices[:,0])))
+y = list(sorted(set(vertices[:,1])))
+z = z - z_0
+distances = np.array([
+    np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
+    for py in y
+    for px in x
+])
+z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+z = z - np.amin(z)
+mesh.set_parameters(z)
 
-    geodesic_forward = geodesic.Forward(mesh)
-    geodesics = {}
-    phi = []
-    t_geodesic = []
-    for i, j_latency_pairs in latencies.items():
-        geodesic_forward.calc(i)
-        for j, latency in j_latency_pairs:
-            phi.append(geodesic_forward.phi[j])
-            t_geodesic.append(latency)
+geodesic_forward = geodesic.Forward(mesh)
+geodesics = {}
+phi = []
+t_geodesic = []
+for i, j_latency_pairs in latencies.items():
+    geodesic_forward.calc(i)
+    for j, latency in j_latency_pairs:
+        phi.append(geodesic_forward.phi[j])
+        t_geodesic.append(latency)
 
-    phi = np.array(phi)
-    t_geodesic = np.array(t_geodesic)
+phi = np.array(phi)
+t_geodesic = np.array(t_geodesic)
 
-    linear_regression_forward = linear_regression.Forward()
+linear_regression_forward = linear_regression.Forward()
 
-    linear_regression_forward.calc(phi, t_geodesic)
-    beta_geodesic = linear_regression_forward.get_beta(phi, t_geodesic)
-    lses.append(linear_regression_forward.lse)
-    print(f'Using geodesics (iteration {iteration})')
-    print(f'\t{linear_regression_forward.lse}')
-    print(f'\t{beta_geodesic}')
+linear_regression_forward.calc(phi, t_geodesic)
+beta_geodesic = linear_regression_forward.get_beta(phi, t_geodesic)
+lses.append(linear_regression_forward.lse)
+print(f'Using geodesics (iteration {iteration})')
+print(f'\t{linear_regression_forward.lse}')
+print(f'\t{beta_geodesic}')
 
 fig, ax = plt.subplots(1, 1)
-ax.plot(range(0, max_iters + 1, 50), lses, 'b-')
+ax.plot(range(0, iteration + 1, 50), lses, 'b-')
 ax.set_ylim(ymin = 0., ymax = 0.3)
 plt.show()
 

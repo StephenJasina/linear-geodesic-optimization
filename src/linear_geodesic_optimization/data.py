@@ -52,7 +52,7 @@ def inverse_mercator(x, y):
     latitude = np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90.
     return (longitude, latitude)
 
-def read_graphml(data_file_path, latencies_file_path=None):
+def read_graphml(data_file_path, latencies_file_path=None, with_labels=False):
     network = nx.read_graphml(data_file_path)
     coordinates = [mercator(node['long'], node['lat']) for node in network.nodes.values()]
     label_to_index = {label: index for index, label in enumerate(network.nodes)}
@@ -69,7 +69,10 @@ def read_graphml(data_file_path, latencies_file_path=None):
                         (label_to_index[row[1]], latency)
                     )
 
-    return coordinates, network_edges, network_curvatures, network_latencies
+    if with_labels:
+        return coordinates, network_edges, network_curvatures, network_latencies, list(network.nodes)
+    else:
+        return coordinates, network_edges, network_curvatures, network_latencies
 
 def map_latencies_to_mesh(mesh, network_vertices, network_latencies):
     latencies = {}
