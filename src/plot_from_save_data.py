@@ -126,10 +126,6 @@ if __name__ == '__main__':
     z = (z - np.amin(z)) * np.exp(-100 * distances**2)
     z = z - np.amin(z)
 
-    # TODO: Remove this. This is here since the US data was initially
-    # transposed on accident.
-    z = mesh.set_parameters((z.reshape((width, height)).T).reshape((-1,)))
-
     mesh.set_parameters(z)
 
     z = z.reshape((width, height))

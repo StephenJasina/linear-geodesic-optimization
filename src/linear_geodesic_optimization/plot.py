@@ -75,10 +75,6 @@ def get_heat_map(x=None, y=None, z=None, title='',
 
     # Plot the heat map
     if x is not None and y is not None and z is not None:
-        # imshow does the transpose of what we expect
-        x, y = y, x
-        z = z.T
-
         im = ax.imshow(z, origin='lower',
                        extent=(np.amin(x), np.amax(x), np.amin(y), np.amax(y)),
                        vmin=v_range[0], vmax=v_range[1],
