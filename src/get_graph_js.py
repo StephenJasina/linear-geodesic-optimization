@@ -11,10 +11,10 @@ if __name__ == '__main__':
     height = 40
     mesh = RectangleMesh(width, height)
 
+    cutoff = 16
     scale_factor = 0.45
 
-    network_name = 'Graph U.S. (16)'
-    data_file_name = os.path.join('graph_US', 'graph16.graphml')
+    data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
@@ -45,8 +45,6 @@ if __name__ == '__main__':
     left, _ = data.inverse_mercator(np.amin(coordinates[:,0]), 0)
     right, _ = data.inverse_mercator(np.amax(coordinates[:,0]), 0)
     zoom_factor = scale_factor * 360. / (right - left)
-
-    print(np.amax(coordinates[:,0]) - np.amin(coordinates[:,0]))
 
     print(f'Center is {center}')
     print(f'Zoom factor is {zoom_factor}')

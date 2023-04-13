@@ -77,4 +77,3 @@ if __name__ == '__main__':
         writer.writerow(['source', 'destination', 'geodesic_distance'])
         for (a, b), geodesic in geodesics.items():
             writer.writerow([a, b, geodesic])
-
