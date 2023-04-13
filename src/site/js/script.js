@@ -55,6 +55,7 @@ let contcolor = 0xff0000
 let T = THREE
 
 let useSplits = false
+let showHoverGraph = false
 
 let vertexCount = 0
 let edgeCount = 0
@@ -652,7 +653,7 @@ window.onload = function() {
         // Add split edge to current edges
         // Skip split edges in setHeights
       }
-      if (showGraph.checked && (edge.mesh == null || linesCleared))
+      if (showHoverGraph && showGraph.checked && (edge.mesh == null || linesCleared))
         edge.mesh = drawEdge(edge, lineMat)
 
       let startPt = [parseFloat(edge.start.mesh.position.x), parseFloat(edge.start.mesh.position.z)]
@@ -741,128 +742,125 @@ window.onload = function() {
     // Set plane vertices' height
     heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.))
 
+    if (!chkCalcSurface.checked) {
+      // Set height map for +ve edges
+      for (let id in current_edges) {
+        let edge = current_edges[id]
+        if (edge.weight < 0 || edge.split)
+          continue
 
-    // Set height map for +ve edges
-    for (let id in current_edges) {
-      let edge = current_edges[id]
-      if (edge.weight < 0 || edge.split)
-        continue
+        let startPt = [parseFloat(edge.start.mesh.position.x), parseFloat(edge.start.mesh.position.z)]
+        let endPt = [parseFloat(edge.end.mesh.position.x), parseFloat(edge.end.mesh.position.z)]
 
-      let startPt = [parseFloat(edge.start.mesh.position.x), parseFloat(edge.start.mesh.position.z)]
-      let endPt = [parseFloat(edge.end.mesh.position.x), parseFloat(edge.end.mesh.position.z)]
+        let midPt = [(startPt[0] + endPt[0]) / 2, (startPt[1] + endPt[1]) / 2]
+        midPt[0] = (midPt[0] - planeXMin)// Change from (min,max) to (0, newmax)
+        midPt[1] = (midPt[1] - planeYMin)// Change from (min,max) to (0, newmax)
 
-      let midPt = [(startPt[0] + endPt[0]) / 2, (startPt[1] + endPt[1]) / 2]
-      midPt[0] = (midPt[0] - planeXMin)// Change from (min,max) to (0, newmax)
-      midPt[1] = (midPt[1] - planeYMin)// Change from (min,max) to (0, newmax)
+        midPt[0] = Math.round((midPt[0] / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
+        midPt[1] = Math.round((midPt[1] / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
 
-      midPt[0] = Math.round((midPt[0] / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
-      midPt[1] = Math.round((midPt[1] / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
+        let newMidPt = {x: 0, y: 0}
+        newMidPt.x = midPt[0]
+        newMidPt.y = midPt[1]
 
-      let newMidPt = {x: 0, y: 0}
-      newMidPt.x = midPt[0]
-      newMidPt.y = midPt[1]
+        let newEndPt = {x: 0, y: 0}
+        newEndPt.x = endPt[0]
+        newEndPt.y = endPt[1]
+        newEndPt.x = (newEndPt.x - planeXMin)// Change from (min,max) to (0, newmax)
+        newEndPt.y = (newEndPt.y - planeYMin)// Change from (min,max) to (0, newmax)
 
-      let newEndPt = {x: 0, y: 0}
-      newEndPt.x = endPt[0]
-      newEndPt.y = endPt[1]
-      newEndPt.x = (newEndPt.x - planeXMin)// Change from (min,max) to (0, newmax)
-      newEndPt.y = (newEndPt.y - planeYMin)// Change from (min,max) to (0, newmax)
+        newEndPt.x = Math.round((newEndPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
+        newEndPt.y = Math.round((newEndPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
 
-      newEndPt.x = Math.round((newEndPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
-      newEndPt.y = Math.round((newEndPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
+        let newStartPt = {x: 0, y: 0}
+        newStartPt.x = startPt[0]
+        newStartPt.y = startPt[1]
+        newStartPt.x = (newStartPt.x - planeXMin)// Change from (min,max) to (0, newmax)
+        newStartPt.y = (newStartPt.y - planeYMin)// Change from (min,max) to (0, newmax)
 
-      let newStartPt = {x: 0, y: 0}
-      newStartPt.x = startPt[0]
-      newStartPt.y = startPt[1]
-      newStartPt.x = (newStartPt.x - planeXMin)// Change from (min,max) to (0, newmax)
-      newStartPt.y = (newStartPt.y - planeYMin)// Change from (min,max) to (0, newmax)
-
-      newStartPt.x = Math.round((newStartPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
-      newStartPt.y = Math.round((newStartPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
+        newStartPt.x = Math.round((newStartPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
+        newStartPt.y = Math.round((newStartPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
 
 
-      // Set heightmap
-      if (!chkCalcSurface.checked) {
+        // Set heightmap
         setHeights(newStartPt, newMidPt, newEndPt, edge.weight, heightMap)
       }
-    }
 
 
     //TODO: change two back
     // console.log(negative_edges)
 
     // Set height map for -ve edges
-    for (let id in current_edges) {
-      let edge = current_edges[id]
-      if (edge.weight >= 0 || edge.split)
-        continue
+      for (let id in current_edges) {
+        let edge = current_edges[id]
+        if (edge.weight >= 0 || edge.split)
+          continue
 
-      let startname = Math.min(edge.start.name, edge.end.name)
-      let endname = Math.max(edge.start.name, edge.end.name)
-      if (isNaN(startname)) {
-        if (edge.start.name.localeCompare(edge.end.name) < 0) {
-          startname = edge.start.name
-          endname = edge.end.name
-        } else {
-          startname = edge.end.name
-          endname = edge.start.name
+        let startname = Math.min(edge.start.name, edge.end.name)
+        let endname = Math.max(edge.start.name, edge.end.name)
+        if (isNaN(startname)) {
+          if (edge.start.name.localeCompare(edge.end.name) < 0) {
+            startname = edge.start.name
+            endname = edge.end.name
+          } else {
+            startname = edge.end.name
+            endname = edge.start.name
+          }
         }
-      }
 
-      // console.log(startname, endname)
-      let neg_mod = edge.neg_mod
-      let nrw_mod = edge.nrw_mod
-      let nheight_mod = edge.nheigt_mod
-      if (!ref_used && refine_data[startname] && refine_data[startname][endname]) {
-        ref_used_cur = true
-        let ref = refine_data[startname][endname]
-        if (ref > 0) {
-          neg_mod = 1.2*neg_mod
-          nrw_mod = 1.2*nrw_mod
-          nheight_mod = 1.2*nheight_mod
-          console.log("refine")
-        } else if (ref < -1) {
-          neg_mod = 0.8*neg_mod
-          nrw_mod = 0.8*nrw_mod
-          console.log("refine")
+        // console.log(startname, endname)
+        let neg_mod = edge.neg_mod
+        let nrw_mod = edge.nrw_mod
+        let nheight_mod = edge.nheigt_mod
+        if (!ref_used && refine_data[startname] && refine_data[startname][endname]) {
+          ref_used_cur = true
+          let ref = refine_data[startname][endname]
+          if (ref > 0) {
+            neg_mod = 1.2*neg_mod
+            nrw_mod = 1.2*nrw_mod
+            nheight_mod = 1.2*nheight_mod
+            console.log("refine")
+          } else if (ref < -1) {
+            neg_mod = 0.8*neg_mod
+            nrw_mod = 0.8*nrw_mod
+            console.log("refine")
+          }
+          edge.neg_mod = neg_mod
+          edge.nrw_mod = nrw_mod
+          edge.nheight_mod = nheight_mod
         }
-        edge.neg_mod = neg_mod
-        edge.nrw_mod = nrw_mod
-        edge.nheight_mod = nheight_mod
-      }
-      let startPt = [parseFloat(edge.start.mesh.position.x), parseFloat(edge.start.mesh.position.z)]
-      let endPt = [parseFloat(edge.end.mesh.position.x), parseFloat(edge.end.mesh.position.z)]
+        let startPt = [parseFloat(edge.start.mesh.position.x), parseFloat(edge.start.mesh.position.z)]
+        let endPt = [parseFloat(edge.end.mesh.position.x), parseFloat(edge.end.mesh.position.z)]
 
-      let midPt = [(startPt[0] + endPt[0]) / 2, (startPt[1] + endPt[1]) / 2]
-      midPt[0] = (midPt[0] - planeXMin)// Change from (min,max) to (0, newmax)
-      midPt[1] = (midPt[1] - planeYMin)// Change from (min,max) to (0, newmax)
+        let midPt = [(startPt[0] + endPt[0]) / 2, (startPt[1] + endPt[1]) / 2]
+        midPt[0] = (midPt[0] - planeXMin)// Change from (min,max) to (0, newmax)
+        midPt[1] = (midPt[1] - planeYMin)// Change from (min,max) to (0, newmax)
 
-      midPt[0] = Math.round((midPt[0] / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
-      midPt[1] = Math.round((midPt[1] / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
+        midPt[0] = Math.round((midPt[0] / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
+        midPt[1] = Math.round((midPt[1] / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
 
-      let newMidPt = {x: 0, y: 0}
-      newMidPt.x = midPt[0]
-      newMidPt.y = midPt[1]
+        let newMidPt = {x: 0, y: 0}
+        newMidPt.x = midPt[0]
+        newMidPt.y = midPt[1]
 
-      let newEndPt = {x: 0, y: 0}
-      newEndPt.x = endPt[0]
-      newEndPt.y = endPt[1]
-      newEndPt.x = (newEndPt.x - planeXMin)// Change from (min,max) to (0, newmax)
-      newEndPt.y = (newEndPt.y - planeYMin)// Change from (min,max) to (0, newmax)
+        let newEndPt = {x: 0, y: 0}
+        newEndPt.x = endPt[0]
+        newEndPt.y = endPt[1]
+        newEndPt.x = (newEndPt.x - planeXMin)// Change from (min,max) to (0, newmax)
+        newEndPt.y = (newEndPt.y - planeYMin)// Change from (min,max) to (0, newmax)
 
-      newEndPt.x = Math.round((newEndPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
-      newEndPt.y = Math.round((newEndPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
+        newEndPt.x = Math.round((newEndPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
+        newEndPt.y = Math.round((newEndPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
 
-      let newStartPt = {x: 0, y: 0}
-      newStartPt.x = startPt[0]
-      newStartPt.y = startPt[1]
-      newStartPt.x = (newStartPt.x - planeXMin)// Change from (min,max) to (0, newmax)
-      newStartPt.y = (newStartPt.y - planeYMin)// Change from (min,max) to (0, newmax)
+        let newStartPt = {x: 0, y: 0}
+        newStartPt.x = startPt[0]
+        newStartPt.y = startPt[1]
+        newStartPt.x = (newStartPt.x - planeXMin)// Change from (min,max) to (0, newmax)
+        newStartPt.y = (newStartPt.y - planeYMin)// Change from (min,max) to (0, newmax)
 
-      newStartPt.x = Math.round((newStartPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
-      newStartPt.y = Math.round((newStartPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
+        newStartPt.x = Math.round((newStartPt.x / planeW) * divisions) // Change from (0, planeWidth) to (0, divisions)
+        newStartPt.y = Math.round((newStartPt.y / planeH) * divisions) // Change from (0, planeHeight) to (0, divisions)
 
-      if (!chkCalcSurface.checked) {
         setHeights(newStartPt, newMidPt, newEndPt, edge.weight, heightMap, 1, neg_mod, nrw_mod, nheight_mod)
       }
     }
@@ -874,8 +872,8 @@ window.onload = function() {
 
     // smoothHeightMap(heightMap)
     // smoothHeightMap(heightMap)
-    smoothHeightMap(heightMap)
-    smoothHeightMap(heightMap)
+    // smoothHeightMap(heightMap)
+    // smoothHeightMap(heightMap)
 
     // TODO: doesn't work / use BufferGeom?
 
@@ -1273,28 +1271,12 @@ function updatePlaneHeights(map) {
   let direction = new T.Vector3(0, 1, 0)
   for (let i=0; i<divisions ; i++) {
     for (let j=0; j < divisions ; j++) {
-      if (i < 2) {
-        // plane.geometry.vertices[i*divisions+j].z =  map[3][j]
-        gsap.to(plane.geometry.vertices[i*divisions+j],
-          { duration: 0.25,
-            z: map[3][j],
-          }
-        )
-      } else if (i >= divisions-2) {
-        // plane.geometry.vertices[i*divisions+j].z =  map[divisions-3][j]
-        gsap.to(plane.geometry.vertices[i*divisions+j],
-          { duration: 0.25,
-            z: map[divisions-3][j],
-          }
-        )
-      } else {
-        // plane.geometry.vertices[i*divisions+j].z =  0
-        gsap.to(plane.geometry.vertices[i*divisions+j],
-          { duration: 0.25,
-            z: map[i][j],
-          }
-        )
-      }
+      // plane.geometry.vertices[i*divisions+j].z =  0
+      gsap.to(plane.geometry.vertices[i*divisions+j],
+        { duration: 0.25,
+          z: map[i][j],
+        }
+      )
     }
   }
 
@@ -1303,16 +1285,8 @@ function updatePlaneHeights(map) {
 
   for (let i=0; i<divisions ; i++) {
     for (let j=0; j < divisions ; j++) {
-      if (i < 2) {
-        ePlane.geometry.vertices[(i+divisions)*divisions+j].z = map[3][j]
-        ePlane.geometry.vertices[i*divisions+j*divisions].z = map[3][j]
-      } else if (i >= divisions-2) {
-        ePlane.geometry.vertices[(i+divisions)*divisions+j].z = map[divisions-3][j]
-        ePlane.geometry.vertices[i*divisions+j].z = map[divisions-3][j]
-      } else {
-        ePlane.geometry.vertices[(i+divisions)*divisions+j].z = map[i][j]
-        ePlane.geometry.vertices[i*divisions+j].z =  map[i][j]
-      }
+      ePlane.geometry.vertices[(i+divisions)*divisions+j].z = map[i][j]
+      ePlane.geometry.vertices[i*divisions+j].z =  map[i][j] 
     }
   }
 
@@ -1382,10 +1356,10 @@ function updatePlaneHeights(map) {
     let i = Math.floor(v/divisions)
     let j = v%divisions
 
-    if (Math.random() > 0.99999) {
-      // if (plane.geometry.vertices[face.a].curvature != 0)
-        // console.log(plane.geometry.vertices[face.a].curvature)
-    }
+    // if (Math.random() > 0.99999) {
+    //   if (plane.geometry.vertices[face.a].curvature != 0)
+    //     console.log(plane.geometry.vertices[face.a].curvature)
+    // }
     // if (z1 > 1)
     //   face.vertexColors[0].setHSL( 1, 0, 0.5);
     // if (z2 > 1)
@@ -2680,7 +2654,7 @@ function addVertex(obj, x, y, drawPoint, name, lat=null, long=null) {
   let sprite = getNameSprite(name)
   sprite.position.set(xPos.value, vertexHeight + 0.1, yPos.value)  //  + 0.2 + Math.random()*0.2
 
-  if (drawPoint) {
+  if (showHoverGraph && drawPoint) {
     scene.add(sprite)
     newPt.scale.set(0.1, 0.1, 0.1)
     scene.add(newPt)
@@ -3680,8 +3654,8 @@ function createMap() {
   var mapdiv = document.createElement('div')
   mapdiv.id = 'map'
   mapdiv.class = 'map-div'
-  mapdiv.style.width = '1000px'
-  mapdiv.style.height = '1000px'
+  mapdiv.style.width = '2000px'
+  mapdiv.style.height = '2000px'
   document.body.appendChild(mapdiv)
   var map = new ol.Map({
         target: 'map',
@@ -3695,7 +3669,7 @@ function createMap() {
         ],
         view: new ol.View({
           center: ol.proj.fromLonLat([-96.73, 38.06380941315575]),
-          resolution: 40075016.68557849 / 1000 / 3.155618754504548
+          resolution: 40075016.68557849 / 2000 / 3.155618754504548
         })
   });
   return map
@@ -3817,7 +3791,7 @@ function calcSurface() {
 
       {
           // document.getElementById("heatmap-img").setAttribute('src', 'data:image/png;base64,' + btoa(String.fromCharCode.apply(null, new Uint8Array(xmlHttp.response))))
-          let scale = 2
+          let scale = 20.
           dataSent = false
           document.body.style.cursor = "auto"
           // data = JSON.parse(xmlHttp.responseText)

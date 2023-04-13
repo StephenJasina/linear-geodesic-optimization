@@ -14,7 +14,7 @@ from linear_geodesic_optimization.optimization import curvature, linear_regressi
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
-maxiters = 1000
+maxiters = 250
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -132,9 +132,7 @@ if __name__ == '__main__':
 
     mesh.set_parameters(z)
 
-    x = x[1:width - 1]
-    y = y[1:height - 1]
-    z = z.reshape((width, height))[1:width - 1,1:height - 1]
+    z = z.reshape((width, height))
 
     figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
                                        network_vertices, network_edges, network_curvatures,

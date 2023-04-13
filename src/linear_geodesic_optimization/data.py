@@ -1,9 +1,13 @@
 import csv
 import json
 import os
+import pickle
 
 import networkx as nx
 import numpy as np
+
+from linear_geodesic_optimization import convex_hull
+from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 def read_json(data_file_path):
     coordinates = []
@@ -90,3 +94,52 @@ def map_latencies_to_mesh(mesh, network_vertices, network_latencies):
         ]
 
     return latencies
+
+def get_postprocessed_output(directory, max_iterations=np.inf):
+    '''
+    This function can be used to get the height map from precomputed output.
+    Some extra postprocessing is done to make the output a bit more
+    aesthetically pleasing.
+    '''
+
+    with open(os.path.join(directory, 'parameters'), 'rb') as f:
+        parameters = pickle.load(f)
+
+        data_file_name = os.path.join('..', 'data', parameters['data_file_name'])
+        width = parameters['width']
+        height = parameters['height']
+
+    with open(os.path.join(directory, '0'), 'rb') as f:
+        iteration_data = pickle.load(f)
+        z_0 = np.array(iteration_data['mesh_parameters'])
+
+    iteration = min(
+        max_iterations,
+        max(int(name) for name in os.listdir(directory) if name.isdigit())
+    )
+    with open(os.path.join(directory, str(iteration)), 'rb') as f:
+        iteration_data = pickle.load(f)
+        z = np.array(iteration_data['mesh_parameters'])
+
+    mesh = RectangleMesh(width, height)
+
+    coordinates, _, _, _, labels = read_graphml(data_file_name, with_labels=True)
+    network_vertices = mesh.map_coordinates_to_support(coordinates)
+    nearest_vertex_indices = [mesh.nearest_vertex_index(network_vertex) for network_vertex in network_vertices]
+    network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
+
+    vertices = mesh.get_vertices()
+    x = list(sorted(set(vertices[:,0])))
+    y = list(sorted(set(vertices[:,1])))
+    z = z - z_0
+    distances = np.array([
+        np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
+        for py in y
+        for px in x
+    ])
+    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+    z = z - np.amin(z)
+    z = z / np.amax(z)
+
+    mesh.set_parameters(z)
+    return mesh

@@ -19,24 +19,19 @@ import time
 import pickle
 from python.geodesic import GeodesicDistanceComputation
 
-sys.path.append('..')
+# Assume we're running from src/
+sys.path.append('.')
+from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-mesh_path = '../../out_US/graph_US_16/mean/0.0_1.0_0.002_16.0_40_40/500'
-width = 40
-height = 40
+directory = '../out_US/graph16/mvs_cross/0.0_1.0_0.0002_16.0_40_40/'
+max_iterations = 1000
+scale = 0.5
 
 sys.path.append(r'python/surface/src')
 
 app = flask.Flask(__name__, static_folder='')
 retval = None
-
-@app.route('/dummy', methods=['POST'])
-def dummy():
-    data = request.json
-    # print(data)
-
-    return data
 
 @app.route('/calc-curvature', methods=['POST'])
 def calc_curvature():
@@ -111,33 +106,22 @@ def refine():
     print(send_data.keys())
     return json.dumps(send_data)
 
-def get_z_from_path(path):
-    with open(path, 'rb') as f:
-        z = pickle.load(f)['mesh_parameters']
-        z = z - np.amax(z)
-        z = -z / np.amin(z) * 3
-        z = np.flip(z.reshape((width, height))).reshape((-1,))
-        return z.tolist()
-
 @app.route('/calc-surface', methods=['POST'])
 def calc_surface():
     global retval
-    print('start')
-    data = request.json
+    json_data = request.json
     # print(data)
     # print("\n\n")
 
-    smooth_pen = int(data['smooth_pen'])
-    niter = int(data['niter'])
-    hmap = data['map']
-    print(hmap)
-    G = json_graph.node_link_graph(data['graph'])
+    smooth_pen = int(json_data['smooth_pen'])
+    niter = int(json_data['niter'])
+    hmap = json_data['map']
+    G = json_graph.node_link_graph(json_data['graph'])
     H = nx.Graph(G)
     # print(type(H))
     # print(G.edges(data=True))
     # print("\n\n")
-    print("Output graph")
-    nx.write_graphml(H, "newgraph.graphml")
+    # nx.write_graphml(H, "newgraph.graphml")
     ### takes a graph as input and generates a tessellation on a 2D plane.
     if (retval == None):
         # TODO: This should be changed to a different initialization strategy
@@ -165,12 +149,17 @@ def calc_surface():
     #         yield json.dumps(i+10)
     #         import time
     #         time.sleep(5)
-    return Response(json.dumps(get_z_from_path(mesh_path)), mimetype='text/plain')
+    mesh = data.get_postprocessed_output(directory, max_iterations)
+    z = mesh.get_parameters()
+    z = z - np.amin(z)
+    z = z * scale / np.amax(z)
+    z = z - np.amax(z)
+    z = z.tolist()
+    return Response(json.dumps(z), mimetype='text/plain')
 
     # Generator test
     # for val in bd.main(ret):
     #     print(val)
-
 
     # plot = bd.get_heatmap(ret)
     # output = io.BytesIO()
@@ -183,9 +172,7 @@ def calc_surface():
 
 @app.route('/')
 def static_proxy():
-
     return app.send_static_file('index.html')
-
 
 if __name__=='__main__':
     app.run()
