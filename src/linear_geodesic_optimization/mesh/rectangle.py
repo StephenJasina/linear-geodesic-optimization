@@ -115,6 +115,12 @@ class Mesh(mesh.Mesh):
     def get_parameters(self):
         return np.copy(self._z)
 
+    def get_width(self):
+        return self._width
+
+    def get_height(self):
+        return self._height
+
     def set_parameters(self, z):
         if not np.array_equal(self._z, z):
             self._z = np.copy(z)

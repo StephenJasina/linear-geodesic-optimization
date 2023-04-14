@@ -134,12 +134,11 @@ def get_postprocessed_output(directory, max_iterations=np.inf):
     z = z - z_0
     distances = np.array([
         np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-        for py in y
         for px in x
+        for py in y
     ])
     z = (z - np.amin(z)) * np.exp(-100 * distances**2)
     z = z - np.amin(z)
-    z = z / np.amax(z)
 
     mesh.set_parameters(z)
     return mesh

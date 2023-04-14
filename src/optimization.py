@@ -78,11 +78,11 @@ def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initi
 if __name__ == '__main__':
     data_file_names = [os.path.join('graph_US', f'graph{i}.graphml') for i in [4, 10, 12, 14, 16, 18, 22]]
     initial_radii = [16.]
-    lambda_smooths = [0.0002, 0.00025, 0.0003, 0.0004]
+    lambda_smooths = [0.0002]
 
     arguments = []
     for data_file_name in data_file_names:
-        for smoothness_strategy in ['mean', 'mvs_cross']:
+        for smoothness_strategy in ['mvs_cross']:
             for initial_radius in initial_radii:
                 for lambda_smooth in lambda_smooths:
                     arguments.append((
@@ -92,5 +92,5 @@ if __name__ == '__main__':
                         1000,
                         os.path.join('..', 'out_US')
                     ))
-    with multiprocessing.Pool(60) as p:
+    with multiprocessing.Pool(10) as p:
         p.starmap(main, arguments)

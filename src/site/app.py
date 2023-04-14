@@ -24,9 +24,9 @@ sys.path.append('.')
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = '../out_US/graph16/mvs_cross/0.0_1.0_0.0002_16.0_40_40/'
-max_iterations = 1000
-scale = 0.3
+directory = '../out_test/graph16/mvs_cross/0.0_1.0_0.0002_16.0_40_40/'
+max_iterations = 500
+scale = 0.15
 
 sys.path.append(r'python/surface/src')
 
@@ -151,6 +151,10 @@ def calc_surface():
     #         time.sleep(5)
     mesh = data.get_postprocessed_output(directory, max_iterations)
     z = mesh.get_parameters()
+    width = mesh.get_width()
+    height = mesh.get_height()
+
+    z = np.flip(z.reshape((width, height)), axis=1).T.reshape((-1))
     z = z - np.amin(z)
     z = z * scale / np.amax(z)
     z = z - np.amax(z)

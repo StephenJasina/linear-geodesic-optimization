@@ -14,7 +14,7 @@ from linear_geodesic_optimization.optimization import curvature, linear_regressi
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
-maxiters = 250
+maxiters = 1000
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -120,15 +120,15 @@ if __name__ == '__main__':
     # Smooth using convex hull
     distances = np.array([
         np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-        for py in y
         for px in x
+        for py in y
     ])
     z = (z - np.amin(z)) * np.exp(-100 * distances**2)
     z = z - np.amin(z)
 
     mesh.set_parameters(z)
 
-    z = z.reshape((width, height))
+    z = z.reshape((width, height)).T
 
     figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
                                        network_vertices, network_edges, network_curvatures,
@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
     curvature_forward = curvature.Forward(mesh)
     curvature_forward.calc()
-    kappa = curvature_forward.kappa_G.reshape(width, height)[1:width - 1,1:height - 1]
+    kappa = curvature_forward.kappa_G.reshape(width, height).T
     figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
                                         network_vertices, network_edges, network_curvatures, v_range=(-2., 5.))
 
