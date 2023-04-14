@@ -26,7 +26,7 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 directory = '../out_US/graph16/mvs_cross/0.0_1.0_0.0002_16.0_40_40/'
 max_iterations = 1000
-scale = 0.5
+scale = 0.3
 
 sys.path.append(r'python/surface/src')
 

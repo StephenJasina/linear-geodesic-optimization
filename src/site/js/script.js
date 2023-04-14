@@ -787,10 +787,10 @@ window.onload = function() {
       }
 
 
-    //TODO: change two back
-    // console.log(negative_edges)
+      //TODO: change two back
+      // console.log(negative_edges)
 
-    // Set height map for -ve edges
+      // Set height map for -ve edges
       for (let id in current_edges) {
         let edge = current_edges[id]
         if (edge.weight >= 0 || edge.split)
@@ -868,15 +868,12 @@ window.onload = function() {
       ref_used = true
     // refine_data = []
 
-
-
     // smoothHeightMap(heightMap)
     // smoothHeightMap(heightMap)
     // smoothHeightMap(heightMap)
     // smoothHeightMap(heightMap)
 
     // TODO: doesn't work / use BufferGeom?
-
 
     // Draw point on surface texture
     for (let id in vertices) {
@@ -912,7 +909,7 @@ window.onload = function() {
 
     if (showMap.checked) {
 
-      opacityMap = Array(100).fill().map(() => Array(100).fill(0.0));
+      opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 
       calcOpacityMap(opacityMap, vertices, current_edges, map)
       aMap = createAndUpdateAlphaMapD3(opacityMap)
