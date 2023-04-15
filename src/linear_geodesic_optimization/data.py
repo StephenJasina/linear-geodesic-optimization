@@ -58,7 +58,7 @@ def inverse_mercator(x, y):
 
 def read_graphml(data_file_path, latencies_file_path=None, with_labels=False):
     network = nx.read_graphml(data_file_path)
-    coordinates = [mercator(node['long'], node['lat']) for node in network.nodes.values()]
+    coordinates = [mercator(node['lon'], node['lat']) for node in network.nodes.values()]
     label_to_index = {label: index for index, label in enumerate(network.nodes)}
     network_edges = [(label_to_index[u], label_to_index[v]) for u, v in network.edges]
     network_curvatures = [edge['ricciCurvature'] for edge in network.edges.values()]
