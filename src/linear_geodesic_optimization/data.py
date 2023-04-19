@@ -95,7 +95,7 @@ def map_latencies_to_mesh(mesh, network_vertices, network_latencies):
 
     return latencies
 
-def get_postprocessed_output(directory, max_iterations=np.inf):
+def get_mesh_output(directory, max_iterations=np.inf, postprocessed=False):
     '''
     This function can be used to get the height map from precomputed output.
     Some extra postprocessing is done to make the output a bit more
@@ -128,17 +128,18 @@ def get_postprocessed_output(directory, max_iterations=np.inf):
     nearest_vertex_indices = [mesh.nearest_vertex_index(network_vertex) for network_vertex in network_vertices]
     network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
 
-    vertices = mesh.get_vertices()
-    x = list(sorted(set(vertices[:,0])))
-    y = list(sorted(set(vertices[:,1])))
-    z = z - z_0
-    distances = np.array([
-        np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-        for px in x
-        for py in y
-    ])
-    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
-    z = z - np.amin(z)
+    if postprocessed:
+        vertices = mesh.get_vertices()
+        x = list(sorted(set(vertices[:,0])))
+        y = list(sorted(set(vertices[:,1])))
+        z = z - z_0
+        distances = np.array([
+            np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
+            for px in x
+            for py in y
+        ])
+        z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+        z = z - np.amin(z)
 
     mesh.set_parameters(z)
     return mesh
