@@ -10,15 +10,16 @@ class Mesh(mesh.Mesh):
     cell has been cut by its major diagonal.
     '''
 
-    def __init__(self, width, height, scale=1.):
+    def __init__(self, width, height, scale=1., extent=np.inf):
         self._width = width
         self._height = height
         self._scale = scale
+        self._extent = np.inf
         self._grid, self._edges, self._faces, self._nxt \
             = self._initial_mesh(width, height)
         self._partials = np.zeros((self._grid.shape[0], 3))
         self._partials[:,2] = 1.
-        self._z = np.zeros(self._grid.shape[0])
+        self._parameters = np.zeros(self._grid.shape[0])
         self._updates = 0
 
     def _initial_mesh(self, width, height):
@@ -68,11 +69,17 @@ class Mesh(mesh.Mesh):
         return grid, edges, faces, nxt
 
     def get_partials(self):
+        if self._extent != np.inf:
+            self._partials = self._extent * np.exp(self._parameters) / (1 + np.exp(-self._parameters))**2
         return self._partials
 
     def get_vertices(self):
+        if self._extent == np.inf:
+            z = self._parameters
+        else:
+            z = self._extent / (1 + np.exp(-self._parameters))
         return np.concatenate((self._grid,
-                               np.reshape(self._z, (-1, 1))), axis=1)
+                               np.reshape(z, (-1, 1))), axis=1)
 
     def get_edges(self):
         return self._edges
@@ -115,7 +122,7 @@ class Mesh(mesh.Mesh):
         return self._nxt
 
     def get_parameters(self):
-        return np.copy(self._z)
+        return np.copy(self._parameters)
 
     def get_width(self):
         return self._width
@@ -124,8 +131,8 @@ class Mesh(mesh.Mesh):
         return self._height
 
     def set_parameters(self, z):
-        if not np.array_equal(self._z, z):
-            self._z = np.copy(z)
+        if not np.array_equal(self._parameters, z):
+            self._parameters = np.copy(z)
             self._updates += 1
         return np.copy(z)
 
@@ -174,8 +181,8 @@ class Mesh(mesh.Mesh):
     def map_coordinates_to_support(coordinates, scale_factor=0.45):
         '''
         Convert a list of (x, y, z) triples into a list of new coordinates that
-        have been scaled to lie centered in the unit square. The `scale_factor`
-        parameter determines what proportion of the unit square is used (0.45
+        have been scaled to lie centered in the support. The `scale_factor`
+        parameter determines what proportion of the support is used (0.45
         means 45% of the width and 45% of the height is used).
         '''
 
