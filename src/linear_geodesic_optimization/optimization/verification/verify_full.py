@@ -5,58 +5,33 @@ import os
 import numpy as np
 import scipy
 
+from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
 if __name__ == '__main__':
-    toy_directory = os.path.join('..', 'data', 'toy')
+    toy_file_path = os.path.join('..', 'data', 'toy.json')
 
-    smooth_strategy = 'gaussian'
+    smooth_strategy = 'mvs-cross'
 
     # Construct a mesh
-    width = 4
-    height = 4
+    width = 8
+    height = 8
     mesh = RectangleMesh(width, height)
     vertices = mesh.get_vertices()
     V = vertices.shape[0]
 
-    coordinates = None
-    label_to_index = {}
-    with open(os.path.join(toy_directory, 'position.json')) as f:
-        position_json = json.load(f)
-
-        label_to_index = {label: index for index, label in enumerate(position_json)}
-
-        coordinates = [None for _ in range(len(position_json))]
-        for vertex, position in position_json.items():
-            coordinates[label_to_index[vertex]] = position
-
+    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(toy_file_path)
     network_vertices = mesh.map_coordinates_to_support(coordinates)
-
-    network_edges = []
-    ts = {i: [] for i in range(len(network_vertices))}
-    with open(os.path.join(toy_directory, 'latency.json')) as f:
-        latency_json = json.load(f)
-
-        for edge, latency in latency_json.items():
-            u = label_to_index[edge[0]]
-            v = label_to_index[edge[1]]
-
-            network_edges.append((u, v))
-
-            ts[u].append((v, latency))
-
-    network_curvatures = []
-    with open(os.path.join(toy_directory, 'curvature.json')) as f:
-        network_curvatures = list(json.load(f).values())
+    latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     rng = np.random.default_rng(0)
     z_0 = rng.random(V)
 
     hierarchy = optimization.DifferentiationHierarchy(
-        mesh, ts, network_vertices, network_edges, network_curvatures,
+        mesh, latencies, network_vertices, network_edges, network_curvatures,
         lambda_geodesic=1., lambda_curvature=1., lambda_smooth=1.,
-        smooth_strategy=smooth_strategy, cores=None)
+        smooth_strategy=smooth_strategy)
 
     f = hierarchy.get_loss_callback()
     g = hierarchy.get_dif_loss_callback()
