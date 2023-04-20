@@ -6,6 +6,7 @@ import sys
 
 from matplotlib import pyplot as plt
 import numpy as np
+import potpourri3d as pp3d
 
 from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization import data
@@ -115,37 +116,52 @@ if __name__ == '__main__':
     vertices = mesh.get_vertices()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
-    z = vertices[:,2] - 1. * np.array(z_0)
+    z = vertices[:,2]
 
-    # Smooth using convex hull
-    distances = np.array([
-        np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-        for px in x
-        for py in y
-    ])
-    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
-    z = z - np.amin(z)
+    # # Smooth using convex hull
+    # distances = np.array([
+    #     np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
+    #     for px in x
+    #     for py in y
+    # ])
+    # z = z - np.array(z_0)
+    # z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+    # z = z - np.amin(z)
 
     mesh.set_parameters(z)
 
+    # Compute the geodesic paths
+    path_solver = pp3d.EdgeFlipGeodesicSolver(mesh.get_vertices(), np.array(mesh.get_faces()))
+    mesh_network_edges = [
+        (
+            mesh.nearest_vertex_index(network_vertices[u]),
+            mesh.nearest_vertex_index(network_vertices[v])
+        )
+        for u, v in network_edges
+    ]
+    paths = [
+        path_solver.find_geodesic_path(i, j)[:,:2] if i != j else []
+        for i, j in mesh_network_edges
+    ]
+
+    # Transpose z so that the heatmap is correct.
     z = z.reshape((width, height)).T
 
     figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
-                                       network_vertices, network_edges, network_curvatures,
-                                       [network_vertices[i] for i in network_convex_hull])
+                                       network_vertices, paths, network_curvatures)
 
     curvature_forward = curvature.Forward(mesh)
     curvature_forward.calc()
     kappa = curvature_forward.kappa_G.reshape(width, height).T
     figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
-                                        network_vertices, network_edges, network_curvatures, v_range=(-2., 5.))
+                                        network_vertices, paths, network_curvatures, v_range=(-2., 5.))
 
     if sum(len(arr) for arr in before_data) > 0:
         figures['scatter'] = get_scatter_plot(before_data, after_data,
                                               'Latency Prediction' + lambda_string)
 
-    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
+    # figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
-    for filename, figure in figures.items():
-        figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
-    # plt.show()
+    # for filename, figure in figures.items():
+    #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
+    plt.show()
