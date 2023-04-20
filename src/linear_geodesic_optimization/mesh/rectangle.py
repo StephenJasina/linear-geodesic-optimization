@@ -10,9 +10,10 @@ class Mesh(mesh.Mesh):
     cell has been cut by its major diagonal.
     '''
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, scale=1.):
         self._width = width
         self._height = height
+        self._scale = scale
         self._grid, self._edges, self._faces, self._nxt \
             = self._initial_mesh(width, height)
         self._partials = np.zeros((self._grid.shape[0], 3))
@@ -28,10 +29,11 @@ class Mesh(mesh.Mesh):
             for j in range(height):
                 grid[i*height+j:] = np.array([i, j])
 
-        # Normalize the vertices so that the mesh is supported on [-0.5, 0.5]^2
+        # Normalize the vertices so that the mesh is centered at (0, 0)
         grid[:,0] /= (width - 1)
         grid[:,1] /= (height - 1)
         grid -= 0.5
+        grid *= self._scale
 
         edges = [[] for _ in range(width * height)]
         faces = []
@@ -161,11 +163,11 @@ class Mesh(mesh.Mesh):
         '''
         Find the index of the vertex whose (x, y) coordinate pair is closest to
         the input coordinate pair. We assume the input lies in
-        [-0.5, 0.5] x [-0.5, 0.5].
+        [-scale/2, scale/2]^2.
         '''
 
-        i = round((v[0] + 0.5) * (self._width - 1))
-        j = round((v[1] + 0.5) * (self._height - 1))
+        i = round((v[0] / self._scale + 0.5) * (self._width - 1))
+        j = round((v[1] / self._scale + 0.5) * (self._height - 1))
         return i * self._height + j
 
     @staticmethod
@@ -195,7 +197,7 @@ class Mesh(mesh.Mesh):
         return list(scale_factor * coordinates)
 
     def get_support_area(self):
-        return 1.
+        return self._scale**2
 
     # Legacy functions
     def triangles_of_vertex(self):
