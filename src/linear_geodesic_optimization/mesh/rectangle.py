@@ -177,8 +177,7 @@ class Mesh(mesh.Mesh):
         j = round((v[1] / self._scale + 0.5) * (self._height - 1))
         return i * self._height + j
 
-    @staticmethod
-    def map_coordinates_to_support(coordinates, scale_factor=0.45):
+    def map_coordinates_to_support(self, coordinates, scale_factor=0.45):
         '''
         Convert a list of (x, y, z) triples into a list of new coordinates that
         have been scaled to lie centered in the support. The `scale_factor`
@@ -201,7 +200,7 @@ class Mesh(mesh.Mesh):
         coordinates = coordinates - (coordinates_min + coordinates_max) / 2
         coordinates = coordinates / divisor
 
-        return list(scale_factor * coordinates)
+        return list(self._scale * scale_factor * coordinates)
 
     def get_support_area(self):
         return self._scale**2
