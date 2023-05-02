@@ -29,7 +29,7 @@ class Forward:
         self.kappa_G = None
 
         # A |V| x 3 matrix
-        self.vertex_normal = None
+        self.vertex_N = None
 
         # A |V| x 3 matrix
         self.mean_curvature_normal = None
@@ -51,20 +51,22 @@ class Forward:
             Dkappa_G[self._nxt[i, j]] -= np.arccos(cot_ij / (1 + cot_ij**2)**0.5)
         return self.D_inv @ Dkappa_G
 
-    def _calc_vertex_normal(self):
-        vertex_normal = np.zeros((self._V, 3))
+    def _calc_vertex_N(self):
+        vertex_N = np.zeros((self._V, 3))
         for i in range(self._V):
             for j in self._e[i]:
-                vertex_normal[i,:] += self.N[i,j] / (1 + self.cot[i,j]**2)**0.5
-        return vertex_normal
+                vertex_N[i,:] += self.N[i,j]
+        return vertex_N
 
     def _calc_mean_curvature_normal(self):
         return -self.D_inv @ (self.LC @ self._v) / 2
 
     def _calc_kappa_H(self):
-        left = self.vertex_normal / np.linalg.norm(self.vertex_normal, axis=1).reshape((-1, 1))
-        right = self.mean_curvature_normal
-        return np.array([left[i,:] @ right[i,:] for i in range(self._V)])
+        return np.array(
+            [np.sign(self.vertex_N[i] @ self.mean_curvature_normal[i])
+             * np.linalg.norm(self.mean_curvature_normal[i])
+             for i in range(self._V)]
+        )
 
     def _calc_kappa_1(self):
         return self.kappa_H + np.sqrt(np.maximum(0., self.kappa_H**2 - self.kappa_G))
@@ -84,7 +86,7 @@ class Forward:
             self._v = self._mesh.get_vertices()
 
             self.kappa_G = self._calc_kappa_G()
-            self.vertex_normal = self._calc_vertex_normal()
+            self.vertex_N = self._calc_vertex_N()
             self.mean_curvature_normal = self._calc_mean_curvature_normal()
             self.kappa_H = self._calc_kappa_H()
             self.kappa_1 = self._calc_kappa_1()
@@ -127,7 +129,7 @@ class Reverse:
         self._LC = None
 
         self._kappa_G = None
-        self._vertex_normal = None
+        self._vertex_N = None
         self._mean_curvature_normal = None
 
         self._dif_N = None
@@ -137,7 +139,7 @@ class Reverse:
 
         # Derivatives match the types of what are being differentiated.
         self.dif_kappa_G = None
-        self.dif_vertex_normal = None
+        self.dif_vertex_N = None
         self.dif_mean_curvature_normal = None
         self.dif_kappa_H = None
         self.dif_kappa_1 = None
@@ -150,15 +152,12 @@ class Reverse:
                 dif_Dkappa_G[self._nxt[i,j]] += self._dif_cot[i,j] / (1 + cot_ij**2)
         return self._D_inv @ (dif_Dkappa_G - self._dif_D @ self._kappa_G)
 
-    def _calc_dif_vertex_normal(self):
+    def _calc_dif_vertex_N(self):
         dif_vertex_normal = np.zeros((self._V, 3))
         for i in range(self._V):
             for j in self._e[i]:
-                cot = self._cot[i,j]
-                N = self._N[i,j]
-                dif_cot = self._dif_cot[i,j] if (i, j) in self._dif_cot else 0.
                 dif_N = self._dif_N[i, j] if (i, j) in self._dif_N else 0.
-                dif_vertex_normal[i,:] += (dif_N - cot * dif_cot / (1 + cot**2) * N) / (1 + cot**2)**0.5
+                dif_vertex_normal[i,:] += dif_N
         return dif_vertex_normal
 
     def _calc_dif_mean_curvature_normal(self):
@@ -172,11 +171,10 @@ class Reverse:
     def _calc_dif_kappa_H(self):
         dif_kappa_H = np.zeros(self._V)
         for i in range(self._V):
-            vn = self._vertex_normal[i,:]
+            vn = self._vertex_N[i,:]
             mcn = self._mean_curvature_normal[i,:]
-            dif_vn = self.dif_vertex_normal[i,:]
             dif_mcn = self.dif_mean_curvature_normal[i,:]
-            dif_kappa_H[i] = (dif_vn.T @ ((np.eye(3) - np.outer(vn, vn) / (vn @ vn)) @ mcn) + vn.T @ dif_mcn) / np.linalg.norm(vn)
+            dif_kappa_H[i] = np.sign(vn @ mcn) * (mcn @ dif_mcn) / np.linalg.norm(mcn)
         return dif_kappa_H
 
     def _calc_dif_kappa_1(self):
@@ -204,7 +202,7 @@ class Reverse:
 
         self._curvature_forward.calc()
         self._kappa_G = self._curvature_forward.kappa_G
-        self._vertex_normal = self._curvature_forward.vertex_normal
+        self._vertex_N = self._curvature_forward.vertex_N
         self._mean_curvature_normal = self._curvature_forward.mean_curvature_normal
         self._kappa_H = self._curvature_forward.kappa_H
         self._kappa_1 = self._curvature_forward.kappa_1
@@ -223,7 +221,7 @@ class Reverse:
             self._l = l
 
             self.dif_kappa_G = self._calc_dif_kappa_G()
-            self.dif_vertex_normal = self._calc_dif_vertex_normal()
+            self.dif_vertex_N = self._calc_dif_vertex_N()
             self.dif_mean_curvature_normal = self._calc_dif_mean_curvature_normal()
             self.dif_kappa_H = self._calc_dif_kappa_H()
             self.dif_kappa_1 = self._calc_dif_kappa_1()
