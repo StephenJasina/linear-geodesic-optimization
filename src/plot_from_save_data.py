@@ -108,10 +108,10 @@ if __name__ == '__main__':
         + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
         + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
-    figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
-    figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
-    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters, 2.25)
-    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters, 2.25)
+    # figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
+    # figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
+    # figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters, 2.25)
+    # figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters, 2.25)
 
     vertices = mesh.get_vertices()
     x = list(sorted(set(vertices[:,0])))
@@ -127,18 +127,25 @@ if __name__ == '__main__':
     # z = z - np.array(z_0)
     # z = (z - np.amin(z)) * np.exp(-100 * distances**2)
     # z = z - np.amin(z)
+    # z = 0.10 * z / np.amax(z)
 
     mesh.set_parameters(z)
 
     # Compute the geodesic paths
+    # mesh_network_edges = [
+    #     (
+    #         mesh.nearest_vertex_index(network_vertices[u]),
+    #         mesh.nearest_vertex_index(network_vertices[v])
+    #     )
+    #     for u, v in network_edges
+    # ]
+    # mesh_network_edges.append((498, 1061))
+    # network_curvatures.append(-2.)
+
+    mesh_network_edges = [(498, 1061)]
+    network_curvatures = [-2.]
+
     path_solver = pp3d.EdgeFlipGeodesicSolver(mesh.get_vertices(), np.array(mesh.get_faces()))
-    mesh_network_edges = [
-        (
-            mesh.nearest_vertex_index(network_vertices[u]),
-            mesh.nearest_vertex_index(network_vertices[v])
-        )
-        for u, v in network_edges
-    ]
     paths = [
         path_solver.find_geodesic_path(i, j)[:,:2] if i != j else []
         for i, j in mesh_network_edges
@@ -153,15 +160,19 @@ if __name__ == '__main__':
     curvature_forward = curvature.Forward(mesh)
     curvature_forward.calc()
     kappa = curvature_forward.kappa_G.reshape(width, height).T
+    kappa[0,:] = 0.
+    kappa[-1,:] = 0.
+    kappa[:,0] = 0.
+    kappa[:,-1] = 0.
     figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
-                                        network_vertices, paths, network_curvatures, v_range=(-2., 5.))
+                                        network_vertices, paths, network_curvatures)
 
-    if sum(len(arr) for arr in before_data) > 0:
-        figures['scatter'] = get_scatter_plot(before_data, after_data,
-                                              'Latency Prediction' + lambda_string)
+    # if sum(len(arr) for arr in before_data) > 0:
+    #     figures['scatter'] = get_scatter_plot(before_data, after_data,
+    #                                           'Latency Prediction' + lambda_string)
 
     # figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
-    # for filename, figure in figures.items():
-    #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
-    plt.show()
+    for filename, figure in figures.items():
+        figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
+    # plt.show()
