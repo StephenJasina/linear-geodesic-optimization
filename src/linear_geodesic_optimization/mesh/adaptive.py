@@ -1,3 +1,5 @@
+### TODO: Align this with mesh.py
+
 import numpy as np
 
 from linear_geodesic_optimization.mesh import mesh
