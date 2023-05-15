@@ -68,7 +68,7 @@ class Computer:
         self._coordinates = self._mesh.get_coordinates()
 
         self.D = np.zeros(self._topology.n_vertices())
-        for face in enumerate(self._topology.faces()):
+        for face in self._topology.faces():
             u, v, w = face.vertices()
             pu = self._coordinates[u.index()]
             pv = self._coordinates[v.index()]
@@ -108,8 +108,9 @@ class Computer:
 
             # Set LC_neumann
             self.LC_neumann_halfedges[halfedge.index()] += half_cotangent
-            self.LC_neumann_halfedges[halfedge.twin().index()] \
-                += half_cotangent
+            if not halfedge.is_on_boundary():
+                self.LC_neumann_halfedges[halfedge.twin().index()] \
+                    += half_cotangent
             self.LC_neumann_vertices[halfedge.origin().index()] \
                 -= half_cotangent
             self.LC_neumann_vertices[halfedge.destination().index()] \
@@ -117,7 +118,7 @@ class Computer:
 
             # Set LC_dirichlet
             if not (halfedge.origin().is_on_boundary()
-                    or halfedge.destination().is_on_boundary):
+                    or halfedge.destination().is_on_boundary()):
                 self.LC_dirichlet_halfedges[halfedge.index()] += half_cotangent
                 self.LC_dirichlet_halfedges[halfedge.twin().index()] \
                     += half_cotangent
