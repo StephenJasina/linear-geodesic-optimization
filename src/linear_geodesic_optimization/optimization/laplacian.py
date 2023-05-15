@@ -1,264 +1,127 @@
+"""Module containing utilities to compute the Laplace-Beltrami operator."""
+
+import typing
+
+import dcelmesh
 import numpy as np
-from scipy import linalg
-from scipy import sparse
+import numpy.typing as npt
 
-class Forward:
-    '''
+from linear_geodesic_optimization.mesh.mesh import Mesh
+
+
+class Computer:
+    """
     Implementation of the Laplace-Beltrami operator on a mesh.
-    '''
+    """
 
-    def __init__(self, mesh):
-        self._mesh = mesh
-        self._updates = self._mesh.updates() - 1
-        self._v = None
-        self._e = self._mesh.get_edges()
-        self._nxt = self._mesh.get_nxt()
+    def __init__(self, mesh: Mesh):
+        """Initialize the computer."""
+        self._mesh: Mesh = mesh
+        self._topology: dcelmesh.Mesh = mesh.get_topology()
+        self._coordinates: typing.Optional[npt.NDArray[np.float64]] = None
 
-        self._V = len(self._e)
+        self._updates: int = mesh.get_updates() - 1
 
-        # A map (i, j) -> N_ij
-        self.N = None
+        # An array of normals of faces
+        self.N: npt.NDArray[np.float64] \
+            = np.zeros((self._topology.n_faces(), 3))
 
-        # A map (i, j) -> A_ij
-        self.A = None
+        # An array of areas of faces
+        self.A: npt.NDArray[np.float64] = np.zeros(self._topology.n_faces())
 
-        # A sparse matrix D
-        self.D = None
+        # An array of vertex areas
+        self.D: npt.NDArray[np.float64] = np.zeros(self._topology.n_vertices())
 
-        # A map (i, j) -> cot(theta_ij)
-        self.cot = None
+        # An array of cotangents of the opposing angles to halfedges
+        self.cot: npt.NDArray[np.float64] \
+            = np.zeros(3 * self._topology.n_faces())
 
-        # A sparse matrix L_C
-        self.LC_neumann = None
+        # Lists of (non-zero) entries of the Laplace-Beltrami operator
+        # with Neumann boundary conditions.
+        self.LC_neumann_halfedges: npt.NDArray[np.float64] \
+            = np.zeros(self._topology.n_halfedges())
+        self.LC_neumann_vertices: npt.NDArray[np.float64] \
+            = np.zeros(self._topology.n_vertices())
 
-        # A sparse matrix L_C, which has different boundary conditions from the
-        # one above
-        self.LC_dirichlet = None
+        # Lists of (non-zero) entries of the Laplace-Beltrami operator
+        # with Dirichlet boundary conditions.
+        self.LC_dirichlet_halfedges: npt.NDArray[np.float64] \
+            = np.zeros(self._topology.n_halfedges())
+        self.LC_dirichlet_vertices: npt.NDArray[np.float64] \
+            = np.zeros(self._topology.n_vertices())
 
-    def _calc_N(self):
-        v = self._v
-        e = self._e
-        nxt = self._nxt
-        return {(i, j): np.cross(v[i] - v[nxt[i,j]], v[j] - v[nxt[i,j]])
-                for i, es in enumerate(e)
-                for j in es}
+    def forward(self) -> typing.NoReturn:
+        """
+        Compute the forward direction.
 
-    def _calc_A(self):
-        return {(i, j): linalg.norm(N) / 2.
-                for (i, j), N in self.N.items()}
+        The computed values will be stored in the variables:
+        * Computer.N
+        * Computer.A
+        * Computer.D
+        * Computer.cot
+        * Computer.LC_neumann
+        * Computer.LC_dirichlet
+        """
+        if self._updates == self._mesh.get_updates():
+            return
 
-    def _calc_D(self):
-        e = self._e
-        A = self.A
-        return sparse.diags([sum(A[i,j] for j in e) / 3.
-                             for i, e in enumerate(e)])
+        self._coordinates = self._mesh.get_coordinates()
 
-    def _calc_cot(self):
-        v = self._v
-        e = self._e
-        nxt = self._nxt
-        A = self.A
-        return {(i, j): (v[i] - v[nxt[i,j]]) @ (v[j] - v[nxt[i,j]]) / (2. * A[i,j])
-                for i, es in enumerate(e)
-                for j in es}
+        self.D = np.zeros(self._topology.n_vertices())
+        for face in enumerate(self._topology.faces()):
+            u, v, w = face.vertices()
+            pu = self._coordinates[u.index()]
+            pv = self._coordinates[v.index()]
+            pw = self._coordinates[w.index()]
 
-    def _calc_LC(self, neumann=True):
-        boundary_vertices = self._mesh.get_boundary_vertices()
-        row = []
-        col = []
-        data = []
-        for (i, j), cot_ij in self.cot.items():
-            # Ignore the boundary in the Dirichlet boundary case
-            if not neumann and (i in boundary_vertices
-                                or j in boundary_vertices):
-                continue
+            # Set N
+            normal = np.cross(pu - pw, pv - pw)
+            self.N[face.index(), :] = normal
 
-            half_cot_ij = cot_ij / 2.
+            # Set A
+            area = np.linalg.norm(normal) / 2.
+            self.A[face.index()] = area
 
-            row.append(i)
-            col.append(j)
-            data.append(half_cot_ij)
+            # Set D
+            third_area = area / 3.
+            self.D[u.index()] += third_area
+            self.D[v.index()] += third_area
+            self.D[w.index()] += third_area
 
-            row.append(j)
-            col.append(i)
-            data.append(half_cot_ij)
+        self.LC_neumann_halfedges = np.zeros(self._topology.n_halfedges())
+        self.LC_neumann_vertices = np.zeros(self._topology.n_vertices())
+        self.LC_dirichlet_halfedges = np.zeros(self._topology.n_halfedges())
+        self.LC_dirichlet_vertices = np.zeros(self._topology.n_vertices())
+        for halfedge in self._topology.halfedges():
+            u = halfedge.origin()
+            v = halfedge.destination()
+            w = halfedge.previous().origin()
+            pu = self._coordinates[u.index()]
+            pv = self._coordinates[v.index()]
+            pw = self._coordinates[w.index()]
 
-            row.append(i)
-            col.append(i)
-            data.append(-half_cot_ij)
+            # Set cot
+            cotangent = (pu - pw) @ (pv - pw) / (2. * area)
+            self.cot[halfedge.index()] = cotangent
 
-            row.append(j)
-            col.append(j)
-            data.append(-half_cot_ij)
-        return sparse.coo_array((data, (row, col)),
-                                 shape=(self._V, self._V)).tocsr()
+            half_cotangent = cotangent / 2.
 
-    def calc(self):
-        if self._updates != self._mesh.updates():
-            self._updates = self._mesh.updates()
-            self._v = self._mesh.get_vertices()
+            # Set LC_neumann
+            self.LC_neumann_halfedges[halfedge.index()] += half_cotangent
+            self.LC_neumann_halfedges[halfedge.twin().index()] \
+                += half_cotangent
+            self.LC_neumann_vertices[halfedge.origin().index()] \
+                -= half_cotangent
+            self.LC_neumann_vertices[halfedge.destination().index()] \
+                -= half_cotangent
 
-            self.N = self._calc_N()
-            self.A = self._calc_A()
-            self.D = self._calc_D()
-            self.D_inv = sparse.diags(1. / self.D.data.flatten())
-            self.cot = self._calc_cot()
-            self.LC_neumann = self._calc_LC(True)
-            self.LC_dirichlet = self._calc_LC(False)
-
-class Reverse:
-    '''
-    Implementation of the gradient of the Laplace-Beltrami operator on a mesh.
-    This implementation assumes the l-th partial affects only the l-th vertex.
-    '''
-
-    def __init__(self, mesh, laplacian_forward=None):
-        self._mesh = mesh
-        self._updates = self._mesh.updates() - 1
-        self._v = None
-        self._e = self._mesh.get_edges()
-        self._nxt = self._mesh.get_nxt()
-
-        self._V = len(self._e)
-
-        self._dif_v = None
-        self._l = None
-
-        self._laplacian_forward = laplacian_forward
-        if self._laplacian_forward is None:
-            self._laplacian_forward = Forward(mesh)
-
-        self._N = None
-        self._A = None
-        self._D = None
-        self._cot = None
-        self._LC_neumann = None
-        self._LC_dirichlet = None
-
-        # Derivatives match the types of what are being differentiated.
-        self.dif_N = None
-        self.dif_A = None
-        self.dif_D = None
-        self.dif_cot = None
-        self.dif_LC_neumann = None
-        self.dif_LC_dirichlet = None
-        self.dif_L = None
-
-    def _calc_dif_N(self):
-        dif_N = {}
-        v = self._v
-        e = self._e
-        nxt = self._nxt
-        l = self._l
-        dif_v = self._dif_v
-        for i, es in enumerate(e):
-            vi = v[i]
-            for j in es:
-                k = nxt[i,j]
-                vj = v[j]
-                vk = v[k]
-                if l == i:
-                    dif_N[i,j] = np.cross(vk - vj, dif_v)
-                elif l == j:
-                    dif_N[i,j] = np.cross(vi - vk, dif_v)
-                elif l == k:
-                    dif_N[i,j] = np.cross(vj - vi, dif_v)
-
-                # For efficiency, only store the nonzero values
-        return dif_N
-
-    def _calc_dif_A(self):
-        e = self._e
-        N = self._N
-        A = self._A
-        dif_N = self.dif_N
-        return {(i, j): (N[i,j] @ dif_N[i,j]) / (4. * A[i,j])
-                for i, es in enumerate(e)
-                for j in es
-                if (i, j) in dif_N}
-
-    def _calc_dif_D(self):
-        e = self._e
-        dif_A = self.dif_A
-        return sparse.diags([sum(dif_A[i,j]
-                                 for j in es if (i, j) in dif_A) / 3.
-                             for i, es in enumerate(e)])
-
-    def _calc_dif_cot(self):
-        dif_cot = {}
-        v = self._v
-        e = self._e
-        nxt = self._nxt
-        l = self._l
-        dif_v = self._dif_v
-        dif_A = self.dif_A
-        vl = v[l]
-        for j in e[l]:
-            k = nxt[l,j]
-            vj = v[j]
-            vk = v[k]
-            dif_cot[l,j] = (((vj - vk) @ dif_v
-                             - 2. * self._cot[l,j] * dif_A[l,j])
-                            / (2. * self._A[l,j]))
-            dif_cot[k,l] = (((vk - vj) @ dif_v
-                             - 2. * self._cot[k,l] * dif_A[k,l])
-                            / (2. * self._A[k,l]))
-            dif_cot[j,k] = (((2 * vl - vj - vk) @ dif_v
-                             - 2. * self._cot[j,k] * dif_A[j,k])
-                            / (2. * self._A[j,k]))
-        return dif_cot
-
-    def _calc_dif_LC(self, neumann=True):
-        boundary_vertices = self._mesh.get_boundary_vertices()
-        dif_cot = self.dif_cot
-        row = []
-        col = []
-        data = []
-        for (i, j), dif_cot_ij in dif_cot.items():
-            # Ignore the boundary in the Dirichlet boundary case
-            if not neumann and (i in boundary_vertices
-                                or j in boundary_vertices):
-                continue
-
-            half_dif_cot_ij = dif_cot_ij / 2.
-
-            row.append(i)
-            col.append(j)
-            data.append(half_dif_cot_ij)
-
-            row.append(j)
-            col.append(i)
-            data.append(half_dif_cot_ij)
-
-            row.append(i)
-            col.append(i)
-            data.append(-half_dif_cot_ij)
-
-            row.append(j)
-            col.append(j)
-            data.append(-half_dif_cot_ij)
-        return sparse.coo_array((data, (row, col)),
-                                 shape=(self._V, self._V)).tocsc()
-
-    def calc(self, dif_v, l):
-        self._laplacian_forward.calc()
-        self._N = self._laplacian_forward.N
-        self._A = self._laplacian_forward.A
-        self._D = self._laplacian_forward.D
-        self._D_inv = self._laplacian_forward.D_inv
-        self._cot = self._laplacian_forward.cot
-        self._LC_neumann = self._laplacian_forward.LC_neumann
-        self._LC_dirichlet = self._laplacian_forward.LC_dirichlet
-
-        if self._updates != self._mesh.updates() or self._l != l:
-            self._updates = self._mesh.updates()
-            self._v = self._mesh.get_vertices()
-            self._dif_v = dif_v
-            self._l = l
-
-            self.dif_N = self._calc_dif_N()
-            self.dif_A = self._calc_dif_A()
-            self.dif_D = self._calc_dif_D()
-            self.dif_cot = self._calc_dif_cot()
-            self.dif_LC_neumann = self._calc_dif_LC(True)
-            self.dif_LC_dirichlet = self._calc_dif_LC(False)
+            # Set LC_dirichlet
+            if not (halfedge.origin().is_on_boundary()
+                    or halfedge.destination().is_on_boundary):
+                self.LC_dirichlet_halfedges[halfedge.index()] += half_cotangent
+                self.LC_dirichlet_halfedges[halfedge.twin().index()] \
+                    += half_cotangent
+                self.LC_dirichlet_vertices[halfedge.origin().index()] \
+                    -= half_cotangent
+                self.LC_dirichlet_vertices[halfedge.destination().index()] \
+                    -= half_cotangent
