@@ -4,6 +4,7 @@ import typing
 
 import dcelmesh
 import numpy as np
+import numpy.typing as npt
 
 
 class Mesh:
@@ -17,9 +18,9 @@ class Mesh:
 
     def get_topology(self) -> dcelmesh.Mesh:
         """Return the topology of the mesh."""
-        pass
+        raise NotImplementedError
 
-    def get_coordinates(self) -> np.ndarray:
+    def get_coordinates(self) -> npt.NDArray[np.float64]:
         """
         Return the coordinates of the vertices of the mesh.
 
@@ -27,7 +28,7 @@ class Mesh:
         """
         raise NotImplementedError
 
-    def get_parameters(self) -> np.ndarray:
+    def get_parameters(self) -> npt.NDArray[np.float64]:
         """
         Return the parameters of the vertices of this mesh.
 
@@ -36,7 +37,8 @@ class Mesh:
         """
         raise NotImplementedError
 
-    def set_parameters(self, parameters: np.ndarray) -> np.ndarray:
+    def set_parameters(self, parameters: npt.NDArray[np.float64]) \
+            -> npt.NDArray[np.float64]:
         """
         Set the parameters of the vertices of this mesh.
 
@@ -46,7 +48,7 @@ class Mesh:
         """
         raise NotImplementedError
 
-    def updates(self) -> int:
+    def get_updates(self) -> int:
         """
         Return the number of calls to `Mesh.set_parameters`.
 
@@ -55,7 +57,7 @@ class Mesh:
         """
         raise NotImplementedError
 
-    def get_partials(self) -> np.ndarray:
+    def get_partials(self) -> npt.NDArray[np.float64]:
         """
         Return the partials of each of the vertices' parameters.
 
@@ -68,7 +70,7 @@ class Mesh:
 
     def get_fat_edges(
         self,
-        vertices: typing.List[typing.List[float]],
+        vertices: npt.NDArray[np.float64],
         edges: typing.List[typing.Tuple[int, int]],
         epsilon: float
     ) -> typing.List[typing.List[dcelmesh.Mesh.Vertex]]:
