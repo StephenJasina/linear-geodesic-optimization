@@ -4,6 +4,7 @@ import typing
 
 import dcelmesh
 import numpy as np
+import numpy.typing as npt
 
 import linear_geodesic_optimization.mesh.mesh
 
@@ -36,15 +37,15 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         self._scale: float = scale
 
         self._topology: dcelmesh.Mesh = self._get_topology()
-        self._coordinates: np.ndarray = self._get_coordinates()
+        self._coordinates: npt.NDArray[np.float64] = self._get_coordinates()
 
         self._extent: float = np.inf
 
-        self._parameters: np.ndarray = np.zeros(width * height)
+        self._parameters: npt.NDArray[np.float64] = np.zeros(width * height)
 
         self._updates: int = 0
 
-        self._partials: np.ndarray = np.zeros((width * height, 3))
+        self._partials: npt.NDArray[np.float64] = np.zeros((width * height, 3))
         self._partials[:, 2] = 1.
 
     def _get_topology(self) -> dcelmesh.Mesh:
@@ -66,7 +67,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
         return topology
 
-    def _get_coordinates(self) -> np.ndarray:
+    def _get_coordinates(self) -> npt.NDArray[np.float64]:
         coordinates = np.zeros((self._width * self._height, 2))
 
         # The vertices are ordered lexicographically as (x, y)
@@ -83,7 +84,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         """Return the topology of the mesh."""
         return self._topology
 
-    def get_coordinates(self) -> np.ndarray:
+    def get_coordinates(self) -> npt.NDArray[np.float64]:
         """
         Return the coordinates of the vertices of the mesh.
 
@@ -96,7 +97,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         return np.concatenate((self._coordinates,
                                np.reshape(z, (-1, 1))), axis=1)
 
-    def get_parameters(self) -> np.ndarray:
+    def get_parameters(self) -> npt.NDArray[np.float64]:
         """
         Return the z-coordinates of the vertices of this mesh.
 
@@ -105,7 +106,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         """
         return self._parameters
 
-    def set_parameters(self, z: np.ndarray) -> np.ndarray:
+    def set_parameters(self, z: npt.NDArray[np.float64]) \
+            -> npt.NDArray[np.float64]:
         """
         Set the z-coordinates of the vertices of this mesh.
 
@@ -116,9 +118,9 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         if not np.array_equal(self._parameters, z):
             self._parameters = np.copy(z)
             self._updates += 1
-        self._parameters
+        return self._parameters
 
-    def updates(self) -> int:
+    def get_updates(self) -> int:
         """
         Return the number of calls to `Mesh.set_parameters`.
 
@@ -127,7 +129,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         """
         return self._updates
 
-    def get_partials(self) -> np.ndarray:
+    def get_partials(self) -> npt.NDArray[np.float64]:
         """
         Return the partials of each of the vertices' parameters.
 
@@ -145,7 +147,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
     def get_fat_edges(
         self,
-        vertices: typing.List[typing.List[float]],
+        vertices: npt.NDArray[np.float64],
         edges: typing.List[typing.Tuple[int, int]],
         epsilon: float
     ) -> typing.List[typing.List[dcelmesh.Mesh.Vertex]]:
@@ -160,7 +162,10 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         everything is projected to the x-y plane.
         """
         def is_on_fat_edge(
-            u: np.ndarray, v: np.ndarray, r: np.ndarray, epsilon: float
+            u: npt.NDArray[np.float64],
+            v: npt.NDArray[np.float64],
+            r: npt.NDArray[np.float64],
+            epsilon: float
         ) -> bool:
             """
             Find whether a point is close to a line segment.
@@ -190,7 +195,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
                                    self._coordinates[index, :], epsilon)]
                 for (e1, e2) in edges]
 
-    def nearest_vertex(self, coordinate: typing.Tuple[float, float]) \
+    def nearest_vertex(self, coordinate: npt.NDArray[np.float64]) \
             -> dcelmesh.Mesh.Vertex:
         """
         Find the closest mesh vertex to the input coordinate pair.
@@ -204,24 +209,24 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
     def map_coordinates_to_support(
             self,
-            coordinates: typing.List[typing.Tuple[float, float]],
+            coordinates: npt.NDArray[np.float64],
             scale_factor: float = 1.
-    ) -> typing.List[typing.Tuple[float, float]]:
+    ) -> npt.NDArray[np.float64]:
         """
         Rescale coordinates so that they lie within the mesh support.
 
-        In more detail, convert a list of (x, y) pairs into a list of
-        new coordinates that have been scaled to lie centered in the
+        In more detail, convert an array of (x, y) pairs into an array
+        of new coordinates that have been scaled to lie centered in the
         support. The `scale_factor` parameter determines what proportion
         of the support is used (0.45 means at most 45% of the width and
         45% of the height is used).
         """
         # Need this check to avoid out-of-bounds errors if coordinates
         # is empty
-        if not coordinates:
-            return []
+        if coordinates.size == 0:
+            return np.array([])
 
-        coordinates = np.array(coordinates)[:, :2]
+        coordinates = coordinates[:, :2]
 
         coordinates_min = np.amin(coordinates, axis=0)
         coordinates_max = np.amax(coordinates, axis=0)
@@ -232,10 +237,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         coordinates = coordinates - (coordinates_min + coordinates_max) / 2
         coordinates = coordinates / divisor
 
-        return list(
-            tuple(xy)
-            for xy in self._scale * scale_factor * coordinates
-        )
+        return self._scale * scale_factor * coordinates
 
     def get_support_area(self) -> float:
         """
