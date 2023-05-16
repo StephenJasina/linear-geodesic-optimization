@@ -1,476 +1,118 @@
+"""Module containing utilities to compute geodesic paths."""
+
+import collections
+import itertools
+import typing
+
+import dcelmesh
+import meshutility
 import numpy as np
-from scipy import linalg
-from scipy import sparse
-from scipy.sparse.linalg import eigsh
+import numpy.typing as npt
 
-from linear_geodesic_optimization.optimization import laplacian, standard
+from linear_geodesic_optimization.mesh.mesh import Mesh
+from linear_geodesic_optimization.optimization.laplacian \
+    import Computer as Laplacian
 
-class Forward:
-    '''
-    Implementation of the heat method for geodesic distance computation.
-    '''
 
-    def __init__(self, mesh, laplacian_forward=None):
-        '''
-        Quantities that can be naturally realized as matrices are stored as
-        such (sometimes sparsely if reasonable). All other quantities have a
-        one to one correspondence to pairs (v, f), where f is a face containing
-        the vertex v. In other words, they are in correspondence to
-        `mesh.get_all_faces()`, and are thus stored in the same format. If we
-        think of the former of a map from vertices to lists of faces, then the
-        latter is a map from vertices to lists of quantities. For efficiency
-        reasons, these maps are stored as `list`s.
-        '''
+class Computer:
+    """
+    Implementation of the fast marching on a mesh.
 
-        self._mesh = mesh
-        self._updates = self._mesh.updates() - 1
-        self._v = None
-        self._e = self._mesh.get_edges()
-        self._nxt = self._mesh.get_nxt()
+    This is essentially a wrapper around `meshutility`'s fast marching
+    implementation with a reverse direction.
+    """
 
-        self._V = len(self._e)
+    def __init__(self, mesh: Mesh, u: int, v: int, laplacian: Laplacian):
+        """
+        Initialize the computer.
 
-        self._laplacian_forward = laplacian_forward
-        if self._laplacian_forward is None:
-            self._laplacian_forward = laplacian.Forward(mesh)
+        As input, the computer accepts a mesh and the indices of two
+        special vertices for which the geodesic path will be computed. A
+        `laplacian.Computer` also must be passed in for the reverse
+        computations.
+        """
+        self._mesh: Mesh = mesh
+        self._topology: dcelmesh.Mesh = mesh.get_topology()
+        self._faces: typing.List[typing.Tuple[int, int, int]] = [
+            tuple(vertex.index() for vertex in face.vertices())
+            for face in self._topology.faces()
+        ]
 
-        self.N = None
-        self.A = None
-        self.D = None
-        self.cot = None
-        self.LC_neumann = None
-        self.LC_dirichlet = None
+        self._u: int = u
+        self._v: int = v
 
-        # A float
-        self.h = None
+        # Forward variables
+        self._forward_updates: int = self._mesh.get_updates() - 1
+        self._coordinates: npt.NDArray[np.float64] \
+            = np.zeros((self._topology.n_vertices(), 3))
+        self.path_edges: typing.List[typing.Tuple[int, int]] = []
+        self.path_ratios: typing.List[float] = []
+        self.distance: float = 0.
 
-        # Objects with a `.solve` method that take a vector as input and
-        # return a vector
-        self.D_h2LC_neumann_inv = None
-        self.D_h2LC_dirichlet_inv = None
+        # Reverse variables
+        self._reverse_updates: int = self._mesh.get_updates() - 1
+        self._partials: npt.NDArray[np.float64] \
+            = np.zeros((self._topology.n_vertices(), 3))
+        self._laplacian: Laplacian = laplacian
+        self.dif_distance: typing.Dict[int, float] = {}
 
-        # An object with a `.solve` method that takes a vector as input and
-        # returns a vector
-        self.LC_neumann_inv = None
+    def forward(self):
+        if self._forward_updates == self._mesh.get_updates():
+            return
+        self._forward_updates = self._mesh.get_updates()
+        self._coordinates = self._mesh.get_coordinates()
 
-        # An iterable containing indices
-        self._gamma = None
-
-        # Vectors
-        self.u_neumann = None
-        self.u_dirichlet = None
-        self.u = None
-
-        # A map (i, j) -> q_ij
-        self.q = None
-
-        # A map (i, j) -> m_ij
-        self.m = None
-
-        # A map (i, j) -> u_ij
-        self.grad_u = None
-
-        # A map (i, j) -> X_ij
-        self.X = None
-
-        # A map (i, j) -> p_ij
-        self.p = None
-
-        # A matrix
-        self.div_X = None
-
-        # A matrix
-        self.phi_offset = None
-
-        # A matrix
-        self.phi = None
-
-    def _calc_h(self):
-        v = self._v
-        e = self._e
-        return np.mean([linalg.norm(v[i] - v[j])
-                        for i, es in enumerate(e)
-                        for j in es])
-
-    def _calc_D_h2LC_neumann_inv(self):
-        return standard.SparseLUDecomposition(self.D.tocsr()
-                                              - self.h**2 * self.LC_neumann)
-
-    def _calc_D_h2LC_dirichlet_inv(self):
-        return standard.SparseLUDecomposition(self.D.tocsr()
-                                              - self.h**2 * self.LC_dirichlet)
-
-    def _calc_LC_neumann_inv(self):
-        # Need to add a small offset to guarantee that the inverse exists.
-        # Since L_C is negative semidefinite, subtracting off a small positive
-        # multiple of the identity guarantees that the resulting matrix is
-        # invertible. For generality's sake, we pick the magnitude relative to
-        # the largest eigenvalue of L_C.
-        offset_magnitude = eigsh(self.LC_neumann, k=1,
-                                 return_eigenvectors=False)[0] * 1.e-10
-        return standard.SparseLUDecomposition(self.LC_neumann
-                                              - sparse.eye(self._V)
-                                              * offset_magnitude)
-
-    def _calc_u_neumann(self):
-        delta = np.zeros((self._V, 1))
-        delta[self._gamma] = 1.
-        return self.D_h2LC_neumann_inv.solve(delta)
-
-    def _calc_u_dirichlet(self):
-        delta = np.zeros((self._V, 1))
-        delta[self._gamma] = 1.
-        return self.D_h2LC_dirichlet_inv.solve(delta)
-
-    def _calc_u(self):
-        return (self.u_neumann + self.u_dirichlet) / 2.
-
-    def _calc_q(self):
-        v = self._v
-        e = self._e
-        nxt = self._nxt
-        u = self.u
-        return {(i, j): u[i] * (v[nxt[i,j]] - v[j])
-                for i, es in enumerate(e)
-                for j in es}
-
-    def _calc_m(self):
-        e = self._e
-        nxt = self._nxt
-        q = self.q
-        return {(i, j): q[i,j] + q[j,nxt[i,j]] + q[nxt[i,j],i]
-                for i, es in enumerate(e)
-                for j in es}
-
-    def _calc_grad_u(self):
-        e = self._e
-        N = self.N
-        m = self.m
-        return {(i, j): np.cross(N[i,j], m[i,j])
-                for i, es in enumerate(e)
-                for j in es}
-
-    def _calc_X(self):
-        return {(i, j): -grad_u / linalg.norm(grad_u)
-                for (i, j), grad_u in self.grad_u.items()}
-
-    def _calc_p(self):
-        v = self._v
-        e = self._e
-        cot = self.cot
-        return {(i, j): cot[i,j] * (v[j] -v[i])
-                for i, es in enumerate(e)
-                for j in es}
-
-    def _calc_div_X(self):
-        e = self._e
-        nxt = self._nxt
-        X = self.X
-        p = self.p
-        return np.array([sum([(p[i,j] - p[nxt[i,j],i]) @ X[i,j]
-                              for j in es]) / 2.
-                         for i, es in enumerate(e)])
-
-    def _calc_phi_offset(self):
-        return self.LC_neumann_inv.solve(self.div_X)
-
-    def _calc_phi(self):
-        phi_offset = self.phi_offset
-        # We subtract off the minimum here so that we satisfy the obvious
-        # initial conidition (namely, the distance from gamma to itself
-        # should be 0)
-        return phi_offset - min(phi_offset)
-
-    def calc(self, gamma):
-        self._laplacian_forward.calc()
-        self.N = self._laplacian_forward.N
-        self.A = self._laplacian_forward.A
-        self.D = self._laplacian_forward.D
-        self.cot = self._laplacian_forward.cot
-        self.LC_neumann = self._laplacian_forward.LC_neumann
-        self.LC_dirichlet = self._laplacian_forward.LC_dirichlet
-
-        updated = False
-        if self._updates != self._mesh.updates():
-            updated = True
-            self._updates = self._mesh.updates()
-            self._v = self._mesh.get_vertices()
-
-            self.h = self._calc_h()
-            self.D_h2LC_neumann_inv = self._calc_D_h2LC_neumann_inv()
-            self.D_h2LC_dirichlet_inv = self._calc_D_h2LC_dirichlet_inv()
-            self.LC_neumann_inv = self._calc_LC_neumann_inv()
-
-        if (updated or self._updates != self._mesh.updates()
-            or self._gamma != gamma):
-            if not updated:
-                self._updates = self._mesh.updates()
-                self._v = self._mesh.get_vertices()
-            self._gamma = gamma
-
-            self.u_neumann = self._calc_u_neumann()
-            self.u_dirichlet = self._calc_u_dirichlet()
-            self.u = self._calc_u()
-            self.q = self._calc_q()
-            self.m = self._calc_m()
-            self.grad_u = self._calc_grad_u()
-            self.X = self._calc_X()
-            self.p = self._calc_p()
-            self.div_X = self._calc_div_X()
-            self.phi_offset = self._calc_phi_offset()
-            self.phi = self._calc_phi()
-
-class Reverse:
-    '''
-    Implementation of the gradient of the heat method for geodesic distance
-    computation. Objects of this class must be initialized with the indices of
-    the vertics with respect to which we are differentiating (`l`) as well as
-    the partial derivatives of v with repect to rho_l (stored in the same shape
-    as `mesh.get_vertices()`).
-    '''
-
-    def __init__(self, mesh, geodesic_forward=None, laplacian_reverse=None):
-        self._mesh = mesh
-        self._updates = self._mesh.updates() - 1
-        self._v = None
-        self._e = self._mesh.get_edges()
-        self._nxt = self._mesh.get_nxt()
-
-        self._V = len(self._e)
-
-        self._dif_v = None
-        self._l = None
-
-        self._geodesic_forward = geodesic_forward
-        if self._geodesic_forward is None:
-            self._geodesic_forward = Forward(mesh)
-
-        self._laplacian_reverse = laplacian_reverse
-        if self._laplacian_reverse is None:
-            self._laplacian_reverse = laplacian.Reverse(mesh)
-
-        self._N = None
-        self._A = None
-        self._D = None
-        self._cot = None
-        self._LC_neumann = None
-        self._LC_dirichlet = None
-        self._h = None
-        self._D_h2LC_neumann_inv = None
-        self._D_h2LC_dirichlet_inv = None
-        self._LC_neumann_inv = None
-
-        self._dif_v = None
-
-        self._dif_N = None
-        self._dif_A = None
-        self._dif_D = None
-        self._dif_cot = None
-        self._dif_LC_neumann = None
-        self._dif_LC_dirichlet = None
-
-        self._gamma = None
-        self._u_neumann = None
-        self._u_dirichlet = None
-        self._u = None
-        self._q = None
-        self._m = None
-        self._grad_u = None
-        self._X = None
-        self._p = None
-        self._div_X = None
-        self._phi_offset = None
-        self._phi = None
-
-        # Derivatives match the types of what are being differentiated.
-        self.dif_h = None
-        self.dif_u_neumann = None
-        self.dif_u_dirichlet = None
-        self.dif_u = None
-        self.dif_grad_u = None
-        self.dif_X = None
-        self.dif_p = None
-        self.dif_div_X = None
-        self.dif_phi_offset = None
-        self.dif_phi = None
-
-    def _calc_dif_h(self):
-        v = self._v
-        e = self._e
-        l = self._l
-        dif_v = self._dif_v
-        return (
-            sum((v[l] - v[k]) @ dif_v / linalg.norm(v[l] - v[k])
-                for k, es in enumerate(e)
-                for j in es
-                if j == l)
-            + sum((v[l] - v[k]) @ dif_v / linalg.norm(v[l] - v[k])
-                for k in e[l])
-        ) / (3 * len(self._mesh.get_faces()))
-
-    def _calc_dif_u_neumann(self):
-        h = self._h
-        return -self._D_h2LC_neumann_inv.solve(
-            (self._dif_D.tocsc() - 2 * h * self.dif_h * self._LC_neumann
-             - h**2 * self._dif_LC_neumann)
-            @ self._u_neumann
+        self.path_edges, self.path_ratios = meshutility.pygeodesic.find_path(
+            self._coordinates, self._faces, self._u, self._v
         )
 
-    def _calc_dif_u_dirichlet(self):
-        h = self._h
-        return -self._D_h2LC_dirichlet_inv.solve(
-            (self._dif_D.tocsc() - 2 * h * self.dif_h * self._LC_dirichlet
-             - h**2 * self._dif_LC_dirichlet)
-            @ self._u_dirichlet
-        )
+        points0 = self._coordinates[self.path_edges[:,0]]
+        points1 = self._coordinates[self.path_edges[:,1]]
+        points = np.multiply(points0, 1. - self.path_ratios[:, np.newaxis]) \
+            + np.multiply(points1, self.path_ratios[:, np.newaxis])
 
-    def _calc_dif_u(self):
-        return (self.dif_u_neumann + self.dif_u_dirichlet) / 2.
+        self.distance = sum([
+            np.linalg.norm(a - b)
+            for a, b in itertools.pairwise(points)
+        ])
 
-    def _calc_dif_q(self):
-        dif_q = {}
-        v = self._v
-        e = self._e
-        nxt = self._nxt
-        l = self._l
-        dif_v = self._dif_v
-        u = self._u
-        dif_u = self.dif_u
-        for i, es in enumerate(e):
-            for j in es:
-                k = nxt[i,j]
-                dif_q[i,j] = dif_u[i] * (v[k] - v[j])
-                if l == j:
-                    dif_q[i,j] -= u[i] * dif_v
-                elif l == k:
-                    dif_q[i,j] += u[i] * dif_v
-        return dif_q
+    # @staticmethod
+    # def next_():
+    #     pass
 
-    def _calc_dif_m(self):
-        e = self._e
-        nxt = self._nxt
-        dif_q = self.dif_q
-        return {(i, j): dif_q[i,j] + dif_q[j,nxt[i,j]] + dif_q[nxt[i,j],i]
-                for i, es in enumerate(e)
-                for j in es}
+    # def _calc_single_edge(self, a, b):
+    #     return 0.
 
-    def _calc_dif_grad_u(self):
-        dif_grad_u = {}
-        e = self._e
-        N = self._N
-        m = self._m
-        dif_N = self._dif_N
-        dif_m = self.dif_m
-        for i, es in enumerate(e):
-            for j in es:
-                dif_grad_u[i,j] = np.cross(N[i,j], dif_m[i,j])
-        for i, j in dif_N:
-            dif_grad_u[i,j] += np.cross(dif_N[i,j], m[i,j])
-        return dif_grad_u
+    # def _calc_convex(self, path_edges, path_ratios):
+    #     point_locations = {}
+    #     point_locations[path_edges[0][0]] = self._vertices[path_edges[0][0]]
+    #     point_locations[path_edges[1][0]] = self._vertices[path_edges[1][0]]
+    #     point_locations[path_edges[1][1]] = self._vertices[path_edges[1][1]]
+    #     for i, (u, v) in enumerate(path_edges[2:], start=2):
+    #         if self._nxt[u,v] in path_edges[i-1]:
+    #             u, v = v, u
+    #         t = self._nxt[v,u]
+    #         w = self._nxt[u,v]
 
-    def _calc_dif_X(self):
-        grad_u = self._grad_u
-        X = self._X
-        dif_grad_u = self.dif_grad_u
-        return {(i, j): (np.outer(X[i,j], X[i,j]) - np.eye(3)) @ dif_grad_u[i,j]
-                        / linalg.norm(grad_u[i,j])
-                for i, j in X}
+    #         # Want w to be coplanar to t, u, and v
+    #         point_locations[w] = 0. # TODO
 
-    def _calc_dif_p(self):
-        dif_p = {}
-        v = self._v
-        nxt = self._nxt
-        l = self._l
-        dif_v = self._dif_v
-        cot = self._cot
-        dif_cot = self._dif_cot
-        for i, es in enumerate(self._e):
-            for j in es:
-                if l == i:
-                    dif_p[i,j] = dif_cot[i,j] * (v[j] - v[i]) \
-                        - cot[i,j] * dif_v
-                elif l == j:
-                    dif_p[i,j] = dif_cot[i,j] * (v[j] - v[i]) \
-                        + cot[i,j] * dif_v
-                elif l == nxt[i,j]:
-                    dif_p[i,j] = dif_cot[i,j] * (v[j] - v[i])
-        return dif_p
+    #     partials = collections.defaultdict(float)
+    #     mesh_partials = self._mesh.get_partials()
 
-    def _calc_dif_div_X(self):
-        dif_div_X = np.zeros(self._V)
-        e = self._e
-        nxt = self._nxt
-        X = self._X
-        p = self._p
-        dif_X = self.dif_X
-        dif_p = self.dif_p
-        for i, es in enumerate(e):
-            for j in es:
-                k = nxt[i,j]
-                dpij = dif_p[i,j] if (i, j) in dif_p else np.zeros(3)
-                dpki = dif_p[k,i] if (k, i) in dif_p else np.zeros(3)
-                dif_div_X[i] += ((dpij - dpki) @ X[i,j]
-                                 + (p[i,j] - p[k,i]) @ dif_X[i,j]) / 2.
-        return dif_div_X
+    #     return partials
 
-    def _calc_dif_phi_offset(self):
-        return self._LC_neumann_inv.solve(
-            self.dif_div_X - self._dif_LC_neumann @ self._phi_offset)
+    def reverse(self):
+        self.forward()
+        self._laplacian.reverse()
+        if self._reverse_updates == self._mesh.get_updates():
+            return
+        self._reverse_updates = self._mesh.get_updates()
 
-    def _calc_dif_phi(self):
-        dif_phi_offset = self.dif_phi_offset
-        return dif_phi_offset - dif_phi_offset[self._gamma[0]]
+        saddle_indices = [i for i, (a, b) in enumerate(self.path_edges) if a == b]
+        print(saddle_indices)
 
-    def calc(self, gamma, dif_v, l):
-        self._geodesic_forward.calc(gamma)
-        self._N = self._geodesic_forward.N
-        self._A = self._geodesic_forward.A
-        self._D = self._geodesic_forward.D
-        self._cot = self._geodesic_forward.cot
-        self._LC_neumann = self._geodesic_forward.LC_neumann
-        self._LC_dirichlet = self._geodesic_forward.LC_dirichlet
-        self._h = self._geodesic_forward.h
-        self._D_h2LC_neumann_inv = self._geodesic_forward.D_h2LC_neumann_inv
-        self._D_h2LC_dirichlet_inv \
-            = self._geodesic_forward.D_h2LC_dirichlet_inv
-        self._LC_neumann_inv = self._geodesic_forward.LC_neumann_inv
-        self._u_neumann = self._geodesic_forward.u_neumann
-        self._u_dirichlet = self._geodesic_forward.u_dirichlet
-        self._u = self._geodesic_forward.u
-        self._q = self._geodesic_forward.q
-        self._m = self._geodesic_forward.m
-        self._grad_u = self._geodesic_forward.grad_u
-        self._X = self._geodesic_forward.X
-        self._p = self._geodesic_forward.p
-        self._div_X = self._geodesic_forward.div_X
-        self._phi_offset = self._geodesic_forward.phi_offset
-        self._phi = self._geodesic_forward.phi
-
-        self._laplacian_reverse.calc(dif_v, l)
-        self._dif_N = self._laplacian_reverse.dif_N
-        self._dif_A = self._laplacian_reverse.dif_A
-        self._dif_D = self._laplacian_reverse.dif_D
-        self._dif_cot = self._laplacian_reverse.dif_cot
-        self._dif_LC_neumann = self._laplacian_reverse.dif_LC_neumann
-        self._dif_LC_dirichlet = self._laplacian_reverse.dif_LC_dirichlet
-
-        if (self._updates != self._mesh.updates() or self._gamma != gamma
-            or self._l != l):
-            self._updates = self._mesh.updates()
-            self._v = self._mesh.get_vertices()
-            self._gamma = gamma
-            self._dif_v = dif_v
-            self._l = l
-
-            self.dif_h = self._calc_dif_h()
-            self.dif_u_neumann = self._calc_dif_u_neumann()
-            self.dif_u_dirichlet = self._calc_dif_u_dirichlet()
-            self.dif_u = self._calc_dif_u()
-            self.dif_q = self._calc_dif_q()
-            self.dif_m = self._calc_dif_m()
-            self.dif_grad_u = self._calc_dif_grad_u()
-            self.dif_X = self._calc_dif_X()
-            self.dif_p = self._calc_dif_p()
-            self.dif_div_X = self._calc_dif_div_X()
-            self.dif_phi_offset = self._calc_dif_phi_offset()
-            self.dif_phi = self._calc_dif_phi()
+        self.partials = collections.defaultdict(float)
+        for i, j in itertools.pairwise(saddle_indices):
+            for key, value in self._calc_convex(self._path_edges[i:j+1], self._path_ratios[i:j+1]):
+                self.partials[key] += value
