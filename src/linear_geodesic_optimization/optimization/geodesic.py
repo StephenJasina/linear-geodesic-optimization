@@ -46,8 +46,22 @@ class Computer:
         self._coordinates: npt.NDArray[np.float64] \
             = np.zeros((self._topology.n_vertices(), 3))
         self.path_edges: typing.List[typing.Tuple[int, int]] = []
+        """
+        A list of edges that the geodesic path passes through.
+
+        For endpoints and saddle points through which path passes, the
+        pairs consist of two copies of the same point.
+        """
         self.path_ratios: typing.List[float] = []
+        """
+        Where along each edge the geodesic path passes through.
+
+        Along with `path_edges`, this gives an easy way to reconstruct
+        the actual path: simply linearly interpolate between the two
+        endpoints of each edge using the corresponding ratio.
+        """
         self.distance: float = 0.
+        """The geodesic distance itself."""
 
         # Reverse variables
         self._reverse_updates: int = self._mesh.get_updates() - 1
@@ -55,22 +69,40 @@ class Computer:
             = np.zeros((self._topology.n_vertices(), 3))
         self._laplacian: Laplacian = laplacian
         self.dif_distance: typing.Dict[int, float] = {}
+        """
+        The partials of the geodesic distance, indexed by vertex.
+
+        Note that the only vertices for which this dictionary is
+        populated are those that are incident to the faces through which
+        the geodesic path passes.
+        """
 
     def forward(self):
+        """
+        Compute the forward direction.
+
+        The computed values will be stored in the variables:
+        * `Computer.path_edges`
+        * `Computer.path_ratios`
+        * `Computer.distance`
+        """
         if self._forward_updates == self._mesh.get_updates():
             return
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = self._mesh.get_coordinates()
 
+        # Call the meshutility solver
         self.path_edges, self.path_ratios = meshutility.pygeodesic.find_path(
             self._coordinates, self._faces, self._u, self._v
         )
 
+        # Reconstruct the path
         points0 = self._coordinates[self.path_edges[:,0]]
         points1 = self._coordinates[self.path_edges[:,1]]
         points = np.multiply(points0, 1. - self.path_ratios[:, np.newaxis]) \
             + np.multiply(points1, self.path_ratios[:, np.newaxis])
 
+        # The total distance is the sum of the length of each segment
         self.distance = sum([
             np.linalg.norm(a - b)
             for a, b in itertools.pairwise(points)
