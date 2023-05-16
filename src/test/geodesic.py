@@ -11,20 +11,24 @@ from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 
 
-width = 15
-height = 15
+width = 30
+height = 30
+
 mesh = RectangleMesh(width, height)
+laplacian = Laplacian(mesh)
+geodesic = Geodesic(mesh, 0, width * height - 1, laplacian)
+
 np.random.seed(0)
 z = np.random.random(width * height)
 z = mesh.set_parameters(z)
 
-laplacian = Laplacian(mesh)
-geodesic = Geodesic(mesh, 0, width * height - 1, laplacian)
-
 geodesic.forward()
-print(geodesic.distance)
+print(f'Total distance: {geodesic.distance}')
+print('Path:')
 for element in geodesic.path:
     if isinstance(element, dcelmesh.Mesh.Vertex):
-        print(f'{element.index()}')
+        print(f'\t{element.index()}')
     else:
-        print(f'({element.origin().index()}, {element.destination().index()})')
+        print(f'\t({element.origin().index()}, {element.destination().index()})')
+
+geodesic.reverse()

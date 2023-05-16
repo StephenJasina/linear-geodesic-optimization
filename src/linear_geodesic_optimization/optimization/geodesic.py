@@ -148,11 +148,12 @@ class Computer:
         distance from `u` to `w` is `d_v`. Furthermore, ensure that the
         resulting triangle (`u`, `v`, `w`) is oriented counterclockwise.
         """
-        d_w = np.linalg.norm(u - v)
-        h = (d_w + (d_v**2 - d_u**2) / d_w) / 2.
+        d_w = np.linalg.norm(v - u)
+        h = (d_w**2 + d_v**2 - d_u**2) / (2. * d_w)
         k = np.sqrt(d_v**2 - h**2)
         rotate = np.array([[0., -1.], [1., 0.]])
-        return u + h * (v - u) + k * (rotate @ (v - u))
+        direction = (v - u) / d_w
+        return u + h * direction + k * (rotate @ direction)
 
     def _calc_point_locations(self,
                               start: dcelmesh.Mesh.Vertex,
@@ -231,6 +232,8 @@ class Computer:
             np.linalg.norm(self._coordinates[k] - self._coordinates[i])
         )
 
+        return point_locations
+
     def _calc_convex(self,
                      start: dcelmesh.Mesh.Vertex,
                      middle: typing.List[dcelmesh.Mesh.Halfedge],
@@ -242,8 +245,8 @@ class Computer:
         In other words, the only mesh points the geodesic path should
         coincide with are the endpoints.
         """
-        partials = {}
-        mesh_partials = self._mesh.get_partials()
+        partials: typing.Dict[int, np.float64] = {}
+        point_locations = self._calc_point_locations(start, middle, end)
 
         return partials
 
