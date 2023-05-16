@@ -18,7 +18,7 @@ class Computer:
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
 
-        # Forwards variables
+        # Forward variables
         self._forward_updates: int = mesh.get_updates() - 1
         self._coordinates: npt.NDArray[np.float64] \
             = np.zeros((self._topology.n_vertices(), 3))

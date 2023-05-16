@@ -1,22 +1,23 @@
+import sys
 import time
 
 import numpy as np
 
+sys.path.append('.')
 import linear_geodesic_optimization.mesh.rectangle
 from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 
 
-width = 40
-height = 40
-np.random.seed(0)
+width = 6
+height = 5
 
 mesh = linear_geodesic_optimization.mesh.rectangle.Mesh(width, height)
+laplacian = Laplacian(mesh)
+
 z = mesh.set_parameters(np.random.random(width * height))
 dz = np.random.random(width * height)
 dz = 1e-7 * dz / np.linalg.norm(dz)
-
-laplacian = Laplacian(mesh)
 
 laplacian.forward()
 LC_dirichlet_vertices_z = np.array(laplacian.LC_dirichlet_vertices)
