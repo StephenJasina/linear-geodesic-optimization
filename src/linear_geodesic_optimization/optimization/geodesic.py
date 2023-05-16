@@ -48,6 +48,9 @@ class Computer:
         self._forward_updates: int = self._mesh.get_updates() - 1
         self._coordinates: npt.NDArray[np.float64] \
             = np.zeros((self._topology.n_vertices(), 3))
+        self.edge_lengths: typing.List[np.float64] \
+            = [np.float64(0.) for _ in self._topology.edges()]
+        """A list of the mesh's edge lengths, indexed by edges."""
         self.path: typing.List[typing.Union[dcelmesh.Mesh.Vertex,
                                             dcelmesh.Mesh.Halfedge]] = []
         """
@@ -75,6 +78,12 @@ class Computer:
         self._partials: npt.NDArray[np.float64] \
             = np.zeros((self._topology.n_vertices(), 3))
         self._laplacian: Laplacian = laplacian
+        self.dif_edge_lengths: typing.List[typing.Dict[int, np.float64]] \
+            = [{} for _ in self._topology.edges()]
+        """
+        A list of the partials of the mesh's edge lengths, indexed by
+        edges, and then by vertices.
+        """
         self.dif_distance: typing.Dict[int, float] = {}
         """
         The partials of the geodesic distance, indexed by vertex.
@@ -97,6 +106,13 @@ class Computer:
             return
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = self._mesh.get_coordinates()
+
+        # Compute edge lengths
+        for edge in self._topology.edges():
+            u, v = edge.vertices()
+            self.edge_lengths[edge.index()] \
+                = np.linalg.norm(self._coordinates[u.index()]
+                                 - self._coordinates[v.index()])
 
         # Call the meshutility solver
         path, path_ratios = meshutility.pygeodesic.find_path(
@@ -245,8 +261,61 @@ class Computer:
         In other words, the only mesh points the geodesic path should
         coincide with are the endpoints.
         """
+        partials_edges: typing.Dict[int, np.float64] = {}
+        """Partials with respect to edge lengths."""
         partials: typing.Dict[int, np.float64] = {}
+        """Partials with respect to vertices."""
         point_locations = self._calc_point_locations(start, middle, end)
+        """Unfolded mesh."""
+
+        # First, compute partials_edges. Simultaneously, prep partials
+        # by setting values to zero to allow for accumulation.
+        for middle_halfedge in middle:
+            for halfedge in middle_halfedge.face().halfedges():
+                # Avoid duplicate work
+                if halfedge.edge().index() in partials_edges:
+                    continue
+
+                u = halfedge.origin()
+                v = halfedge.destination()
+                w = halfedge.previous().origin()
+
+                L = point_locations[start.index()] - point_locations[w.index()]
+                R = point_locations[end.index()] - point_locations[w.index()]
+                l = point_locations[u.index()] - point_locations[w.index()]
+                r = point_locations[v.index()] - point_locations[w.index()]
+                d_L = np.linalg.norm(L)
+                d_M = self.distance
+                d_R = np.linalg.norm(R)
+                d_l = np.linalg.norm(l)
+                d_m = np.linalg.norm(point_locations[v.index()]
+                                     - point_locations[u.index()])
+                d_r = np.linalg.norm(r)
+
+                cosine_l = L @ l / (d_L * d_l)
+                sine_l = (1 - cosine_l**2)**0.5
+                cosine_m = l @ r / (d_l * d_r)
+                sine_m = (1 - cosine_m**2)**0.5
+                cosine_r = R @ r / (d_R * d_r)
+                sine_r = (1 - cosine_r**2)**0.5
+
+                sine_lr = sine_l * cosine_r + cosine_l * sine_r
+                cosine_lr = cosine_l * cosine_r - sine_l * sine_r
+
+                partial_edge = -2. * d_L * d_R * d_m * (
+                    sine_lr * cosine_m + cosine_lr * sine_m
+                ) / (d_l * d_r * sine_m)
+                partials_edges[halfedge.edge().index()] = partial_edge
+
+                if u.index() not in partials:
+                    partials[u.index()] = 0.
+                partials[u.index()] += partial_edge \
+                    * self.dif_edge_lengths[halfedge.edge().index()][u.index()]
+
+                if v.index() not in partials:
+                    partials[v.index()] = 0.
+                partials[v.index()] += partial_edge \
+                    * self.dif_edge_lengths[halfedge.edge().index()][v.index()]
 
         return partials
 
@@ -257,6 +326,17 @@ class Computer:
             return
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
+
+        # Compute the partials of edge lengths first
+        for edge in self._topology.edges():
+            u, v = edge.vertices()
+            pu = self._coordinates[u.index()]
+            pv = self._coordinates[v.index()]
+            edge_length = self.edge_lengths[edge.index()]
+            self.dif_edge_lengths[edge.index()][u.index()] \
+                = (pu - pv) @ self._partials[u.index()] / edge_length
+            self.dif_edge_lengths[edge.index()][v.index()] \
+                = (pv - pu) @ self._partials[v.index()] / edge_length
 
         # Split the path up piecewise, where boundaries are marked by
         # vertices.
@@ -276,7 +356,8 @@ class Computer:
                 self.dif_distance[element.destination().index()] \
                     = np.float64(0.)
 
+        # Finally, we actually do the accumulation
         for (start, end), middle in zip(itertools.pairwise(path_vertices),
                                         path_edges):
-            for key, value in self._calc_convex(start, middle, end):
+            for key, value in self._calc_convex(start, middle, end).items():
                 self.dif_distance[key] += value
