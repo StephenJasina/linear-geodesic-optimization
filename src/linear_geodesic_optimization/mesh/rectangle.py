@@ -139,6 +139,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         Otherwise, the partials are determined according to the logistic
         (sigmoid) function of the corresponding parameter, scaled so
         that the output lies between 0 and `extent`.
+
+        The returned value should be treated as read only.
         """
         if self._extent != np.inf:
             self._partials = self._extent * np.exp(self._parameters) \
