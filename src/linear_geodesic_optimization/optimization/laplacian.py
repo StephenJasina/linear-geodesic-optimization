@@ -300,6 +300,7 @@ class Computer:
             pw = self._coordinates[w.index()]
 
             # Set dif_cot
+            area = self.A[halfedge.face().index()]
             cotangent = self.cot[halfedge.index()]
             dif_A = self.dif_A[halfedge.face().index()]
             dif_cot_u = ((pv - pw) @ self._partials[u.index()]
@@ -330,6 +331,12 @@ class Computer:
                 -= half_dif_cot_v
             self.dif_LC_neumann_vertices[u.index()][w.index()] \
                 -= half_dif_cot_w
+            self.dif_LC_neumann_vertices[v.index()][u.index()] \
+                -= half_dif_cot_u
+            self.dif_LC_neumann_vertices[v.index()][v.index()] \
+                -= half_dif_cot_v
+            self.dif_LC_neumann_vertices[v.index()][w.index()] \
+                -= half_dif_cot_w
 
             # Set dif_LC_dirichlet
             if not u.is_on_boundary() and not v.is_on_boundary():
@@ -344,4 +351,10 @@ class Computer:
                 self.dif_LC_dirichlet_vertices[u.index()][v.index()] \
                     -= half_dif_cot_v
                 self.dif_LC_dirichlet_vertices[u.index()][w.index()] \
+                    -= half_dif_cot_w
+                self.dif_LC_dirichlet_vertices[v.index()][u.index()] \
+                    -= half_dif_cot_u
+                self.dif_LC_dirichlet_vertices[v.index()][v.index()] \
+                    -= half_dif_cot_v
+                self.dif_LC_dirichlet_vertices[v.index()][w.index()] \
                     -= half_dif_cot_w
