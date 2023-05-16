@@ -1,10 +1,9 @@
 import sys
-import time
 
 import numpy as np
 
 sys.path.append('.')
-import linear_geodesic_optimization.mesh.rectangle
+from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 
@@ -12,7 +11,7 @@ from linear_geodesic_optimization.optimization.laplacian \
 width = 6
 height = 5
 
-mesh = linear_geodesic_optimization.mesh.rectangle.Mesh(width, height)
+mesh = RectangleMesh(width, height)
 laplacian = Laplacian(mesh)
 
 z = mesh.set_parameters(np.random.random(width * height))
