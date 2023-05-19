@@ -21,7 +21,7 @@ np.random.seed(0)
 z = mesh.set_parameters(np.random.random(width * height))
 # dz = np.random.random(width * height)
 dz = np.zeros(width * height)
-dz[30] = 1.
+dz[0] = 1.
 dz = dz / np.linalg.norm(dz)
 h = 1e-7
 
