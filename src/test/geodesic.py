@@ -27,13 +27,14 @@ h = 1e-7
 
 geodesic.forward()
 distance_z = geodesic.distance
-# print(f'Total distance: {distance_z}')
-# print('Path:')
-# for element in geodesic.path:
-#     if isinstance(element, dcelmesh.Mesh.Vertex):
-#         print(f'\t{element.index()}')
-#     else:
-#         print(f'\t({element.origin().index()}, {element.destination().index()})')
+print(f'Total distance: {distance_z}')
+print('Path:')
+print(f'\t{geodesic.path_vertices[0].index()}')
+for vertex, halfedges in zip(geodesic.path_vertices[1:],
+                             geodesic.path_halfedges):
+    for halfedge in halfedges:
+        print(f'\t({halfedge.origin().index()}, {halfedge.destination().index()})')
+    print(f'\t{vertex.index()}')
 
 # Compute the partial derivative in the direction of offset
 geodesic.reverse()

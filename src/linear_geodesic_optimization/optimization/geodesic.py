@@ -47,24 +47,31 @@ class Computer:
         self.edge_lengths: typing.List[np.float64] \
             = [np.float64(0.) for _ in self._topology.edges()]
         """A list of the mesh's edge lengths, indexed by edges."""
-        self.path: typing.List[typing.Union[dcelmesh.Mesh.Vertex,
-                                            dcelmesh.Mesh.Halfedge]] = []
+        self.path_vertices: typing.List[dcelmesh.Mesh.Vertex] = []
+        """Vertices through which the path passes."""
+        self.path_halfedges: typing.List[typing.List[dcelmesh.Mesh.Halfedge]] \
+            = []
         """
-        A list of vertices and edges incident to the geodesic path.
+        A list of lists of halfedges through which the path passes.
 
-        For endpoints and saddle points through which path passes, the
-        corresponding element is just a vertex. For other edges, the
-        elements are halfedges oriented such that the face the halfedge
-        points towards contains the next vertex or halfedge (i.e., its
-        the next face the path passes through).
+        These halfedges are partitioned by `path_vertices`.
         """
-        self.path_ratios: typing.List[np.float64] = []
+        self.path_ratios: typing.List[typing.List[np.float64]] = []
         """
-        Where along each edge the geodesic path passes through.
+        Where along each halfedge the geodesic path passes through.
 
-        Along with `path_edges`, this gives an easy way to reconstruct
-        the actual path: simply linearly interpolate between the two
-        endpoints of each edge using the corresponding ratio.
+        Along with `path_halfedges` and `path_vertices`, this gives an
+        easy way to reconstruct the actual path: simply linearly
+        interpolate between the two endpoints of each halfedge using the
+        corresponding ratio.
+        """
+        self.point_locations: typing.Dict[int, npt.NDArray[np.float64]] = {}
+        """
+        A map from vertex indices to their locations in 2-d.
+
+        These points are found by "unfolding" the mesh along the
+        geodesic path. The points are chosen so that the path is
+        ultimately horizontal and starts at the origin.
         """
         self.distance: np.float64 = np.float64(0.)
         """The geodesic distance itself."""
@@ -88,68 +95,6 @@ class Computer:
         the geodesic path passes.
         """
 
-    def forward(self) -> None:
-        """
-        Compute the forward direction.
-
-        The computed values will be stored in the variables:
-        * `Computer.path`
-        * `Computer.path_ratios`
-        * `Computer.distance`
-        """
-        if self._forward_updates == self._mesh.get_updates():
-            return
-        self._forward_updates = self._mesh.get_updates()
-        self._coordinates = self._mesh.get_coordinates()
-
-        # Compute edge lengths
-        for edge in self._topology.edges():
-            u, v = edge.vertices()
-            self.edge_lengths[edge.index()] \
-                = np.linalg.norm(self._coordinates[u.index()]
-                                 - self._coordinates[v.index()])
-
-        # Call the meshutility solver
-        path, path_ratios = meshutility.pygeodesic.find_path(
-            self._coordinates, self._faces, self._u, self._v
-        )
-
-        # Orient path_edges sensibly. Each halfedge points to the next
-        # face the path passes through.
-        self.path = []
-        self.path_ratios = []
-        for index in range(len(path)):
-            i, j = path[index]
-
-            # Vertex case
-            if i == j:
-                self.path.append(self._topology.get_vertex(i))
-                self.path_ratios.append(np.float64(0.))
-                continue
-
-            # Pick the right direction for the halfedge
-            halfedge_ij = self._topology.get_halfedge(i, j)
-            if halfedge_ij.previous().origin().index() in path[index + 1]:
-                self.path.append(halfedge_ij)
-                self.path_ratios.append(path_ratios[index])
-            else:
-                self.path.append(self._topology.get_halfedge(j, i))
-                self.path_ratios.append(1 - path_ratios[index])
-
-        # Reconstruct the path. This follows the example code from
-        # https://zishun.github.io/projects/MeshUtility/
-        points_0 = self._coordinates[path[:, 0]]
-        points_1 = self._coordinates[path[:, 1]]
-        points: npt.NDArray[np.float64] \
-            = np.multiply(points_0, 1. - path_ratios[:, np.newaxis]) \
-                + np.multiply(points_1, path_ratios[:, np.newaxis])
-
-        # The total distance is the sum of the length of each segment
-        self.distance = sum([
-            np.linalg.norm(a - b)
-            for a, b in itertools.pairwise(points)
-        ])
-
     @staticmethod
     def _get_next_point(
         u: npt.NDArray,
@@ -172,34 +117,23 @@ class Computer:
         direction = (v - u) / d_w
         return u + h * direction + k * (rotate @ direction)
 
-    def _calc_point_locations(self,
-                              start: dcelmesh.Mesh.Vertex,
-                              middle: typing.List[dcelmesh.Mesh.Halfedge],
-                              end: dcelmesh.Mesh.Vertex) \
-            -> typing.Tuple[typing.Dict[int, npt.NDArray[np.float64]],
-                            typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
-                                                     dcelmesh.Mesh.Edge]]]:
+    def _get_point_locations(self,
+                             start: dcelmesh.Mesh.Vertex,
+                             middle: typing.List[dcelmesh.Mesh.Halfedge],
+                             end: dcelmesh.Mesh.Vertex,
+                             initial_point: npt.NDArray[np.float64]) \
+            -> typing.Dict[int, npt.NDArray[np.float64]]:
         """
         Unfold a sequence of faces according to the connecting edges.
 
         Return the locations of the vertices incident to the faces on
-        the geodesic path when the mesh is "unfolded," as well as a list
-        of the edges used (halfedges on the boundary).
+        the geodesic path when the mesh is "unfolded."
 
         Notably, this is a two-dimensional representation.
         """
         point_locations: typing.Dict[int, npt.NDArray[np.float64]] = {}
         """
         Map from vertex indices to point locations in two dimensions.
-        """
-        middle_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
-                                               dcelmesh.Mesh.Edge]] = []
-        """
-        List of edges from near the center of the path.
-
-        If an edge is in the "interior" (belongs to two of the faces),
-        then it is stored as a `dcelmesh.Mesh.Edge`. Otherwise, it is
-        stored as a `dcelmesh.Mesh.Halfedge`.
         """
 
         # Need to deal with the special case where the path is just a
@@ -211,8 +145,7 @@ class Computer:
                                - self._coordinates[end.index()]),
                 0.
             ])
-            return point_locations, [self._topology.get_edge(start.index(),
-                                                             end.index())]
+            return point_locations
 
         # Start by placing the first edge from the middle
         point_locations[middle[0].origin().index()] = np.zeros(2)
@@ -250,13 +183,6 @@ class Computer:
                 np.linalg.norm(self._coordinates[k] - self._coordinates[i])
             )
 
-            # Upkeep the list of edges
-            if k == current_halfedge.origin().index():
-                middle_edges.append(previous_halfedge.previous())
-            else:
-                middle_edges.append(previous_halfedge.next())
-            middle_edges.append(current_halfedge.edge())
-
         # Place the starting point
         i = middle[0].destination().index()
         j = middle[0].origin().index()
@@ -279,6 +205,56 @@ class Computer:
             np.linalg.norm(self._coordinates[k] - self._coordinates[i])
         )
 
+        # Rotate and translate the points so that the geodesic path is
+        # vertical and starts at the initial point.
+        translation = initial_point - point_locations[start.index()]
+        end_start = point_locations[end.index()] \
+            - point_locations[start.index()]
+        end_start_norm = np.linalg.norm(end_start)
+        c = end_start[0] / end_start_norm
+        s = -end_start[1] / end_start_norm
+        rotation = np.array([[c, -s], [s, c]])
+        for index, location in point_locations.items():
+            point_locations[index] = rotation @ (location + translation)
+
+        return point_locations
+
+    def _get_nearby_edges(self,
+                          start: dcelmesh.Mesh.Vertex,
+                          middle: typing.List[dcelmesh.Mesh.Halfedge],
+                          end: dcelmesh.Mesh.Vertex) \
+            -> typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
+                                        dcelmesh.Mesh.Edge]]:
+        """
+        Return a list of edges nearby the inputs.
+
+        In particular, given endpoint and a sequence of edges that a
+        path passes through intermediately, find the edges incident to
+        the faces through which the path passes. For the edges on the
+        boundary (i.e., the ones not part of `middle`), halfedges are
+        returned.
+        """
+        middle_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
+                                               dcelmesh.Mesh.Edge]] = []
+        """
+        List of edges from near the center of the path.
+
+        If an edge is in the "interior" (belongs to two of the faces),
+        then it is stored as a `dcelmesh.Mesh.Edge`. Otherwise, it is
+        stored as a `dcelmesh.Mesh.Halfedge`.
+        """
+
+        if not middle:
+            return [self._topology.get_edge(start.index(), end.index())]
+
+        for previous_halfedge, current_halfedge in itertools.pairwise(middle):
+            if previous_halfedge.previous().origin().index() \
+                    == current_halfedge.origin().index():
+                middle_edges.append(previous_halfedge.previous())
+            else:
+                middle_edges.append(previous_halfedge.next())
+            middle_edges.append(current_halfedge.edge())
+
         # Add the remaining edges
         twin = middle[0].twin()
         if twin is None:
@@ -298,7 +274,73 @@ class Computer:
             middle[-1].previous()
         ]
 
-        return point_locations, start_edges + middle_edges + end_edges
+        return start_edges + middle_edges + end_edges
+
+    def forward(self) -> None:
+        """
+        Compute the forward direction.
+
+        The computed values will be stored in the variables:
+        * `Computer.path`
+        * `Computer.path_ratios`
+        * `Computer.distance`
+        """
+        if self._forward_updates == self._mesh.get_updates():
+            return
+        self._forward_updates = self._mesh.get_updates()
+        self._coordinates = self._mesh.get_coordinates()
+
+        # Compute edge lengths
+        for edge in self._topology.edges():
+            u, v = edge.vertices()
+            self.edge_lengths[edge.index()] \
+                = np.linalg.norm(self._coordinates[u.index()]
+                                 - self._coordinates[v.index()])
+
+        # Call the meshutility solver
+        mu_path, mu_path_ratios = meshutility.pygeodesic.find_path(
+            self._coordinates, self._faces, self._u, self._v
+        )
+
+        # Split the path up piecewise, where boundaries are marked by
+        # vertices. Make sure to orient path_edges sensibly: each
+        # halfedge points to the next face the path passes through.
+        self.path_vertices = [self._topology.get_vertex(mu_path[0][0])]
+        self.path_halfedges = []
+        halfedges_to_add: typing.List[dcelmesh.Mesh.Halfedge] = []
+        ratios_to_add: typing.List[np.float64] = []
+        for index in range(1, len(mu_path)):
+            i, j = mu_path[index]
+
+            # Vertex case
+            if i == j:
+                self.path_vertices.append(self._topology.get_vertex(i))
+                self.path_halfedges.append(halfedges_to_add)
+                self.path_ratios.append(ratios_to_add)
+
+                halfedges_to_add = []
+                ratios_to_add = []
+                continue
+
+            # Pick the right direction for the halfedge
+            halfedge_ij = self._topology.get_halfedge(i, j)
+            if halfedge_ij.previous().origin().index() in mu_path[index + 1]:
+                halfedges_to_add.append(halfedge_ij)
+                ratios_to_add.append(mu_path_ratios[index])
+            else:
+                halfedges_to_add.append(self._topology.get_halfedge(j, i))
+                ratios_to_add.append(1 - mu_path_ratios[index])
+
+        # Compute point locations and the total geodesic distance
+        self.point_locations = {}
+        current_point = np.zeros(2)
+        for (start, end), middle in zip(itertools.pairwise(self.path_vertices),
+                                        self.path_halfedges):
+            point_locations \
+                = self._get_point_locations(start, middle, end, current_point)
+            for index, location in point_locations.items():
+                self.point_locations[index] = location
+        self.distance = self.point_locations[self.path_vertices[-1].index()][0]
 
     def _reverse_part(self,
                       start: dcelmesh.Mesh.Vertex,
@@ -311,19 +353,20 @@ class Computer:
         In other words, the only mesh points the geodesic path should
         coincide with are the endpoints.
         """
-        point_locations, edges = self._calc_point_locations(start, middle, end)
-        partials: typing.Dict[int, np.float64] = {
-            index: np.float64(0.)
-            for index in point_locations
-        }
+        partials: typing.Dict[int, np.float64] = {}
+        partials[start.index()] = np.float64(0.)
+        partials[end.index()] = np.float64(0.)
+        for halfedge in middle:
+            partials[halfedge.origin().index()] = np.float64(0.)
+            partials[halfedge.destination().index()] = np.float64(0.)
         """
         Partials with respect to vertices.
 
         These will be computed via accumulation.
         """
 
-        geodesic = point_locations[end.index()] \
-            - point_locations[start.index()]
+        geodesic = self.point_locations[end.index()] \
+            - self.point_locations[start.index()]
         d_geodesic = np.linalg.norm(geodesic)
 
         # Deal with the case where there are no faces
@@ -373,7 +416,7 @@ class Computer:
             = self._topology.get_halfedge(middle[-1].origin().index(),
                                           end.index())
 
-        for element in edges:
+        for element in self._get_nearby_edges(start, middle, end):
             # Set the values:
             # * `edge`: The edge we're considering
             # * `partial_edge`: The partial of the geodesic length with
@@ -390,16 +433,16 @@ class Computer:
                 w = element.previous().origin()
                 edge = element.edge()
 
-                start_w = point_locations[start.index()] \
-                    - point_locations[w.index()]
-                end_w = point_locations[end.index()] \
-                    - point_locations[w.index()]
-                u_w = point_locations[u.index()] \
-                    - point_locations[w.index()]
-                v_w = point_locations[v.index()] \
-                    - point_locations[w.index()]
-                v_u = point_locations[v.index()] \
-                    - point_locations[u.index()]
+                start_w = self.point_locations[start.index()] \
+                    - self.point_locations[w.index()]
+                end_w = self.point_locations[end.index()] \
+                    - self.point_locations[w.index()]
+                u_w = self.point_locations[u.index()] \
+                    - self.point_locations[w.index()]
+                v_w = self.point_locations[v.index()] \
+                    - self.point_locations[w.index()]
+                v_u = self.point_locations[v.index()] \
+                    - self.point_locations[u.index()]
                 d_v_u = np.linalg.norm(v_u)
 
                 partial_edge = d_v_u * abs(np.cross(start_w, end_w)) \
@@ -427,20 +470,20 @@ class Computer:
                         u = next_halfedge.origin()
                         v = next_halfedge.previous().origin()
 
-                    start_u = point_locations[start.index()] \
-                        - point_locations[u.index()]
-                    prev_u = point_locations[prev.index()] \
-                        - point_locations[u.index()]
-                    prev_v = point_locations[prev.index()] \
-                        - point_locations[v.index()]
-                    end_u = point_locations[end.index()] \
-                        - point_locations[u.index()]
-                    nxt_u = point_locations[nxt.index()] \
-                        - point_locations[u.index()]
-                    nxt_v = point_locations[nxt.index()] \
-                        - point_locations[v.index()]
-                    v_u = point_locations[v.index()] \
-                        - point_locations[u.index()]
+                    start_u = self.point_locations[start.index()] \
+                        - self.point_locations[u.index()]
+                    prev_u = self.point_locations[prev.index()] \
+                        - self.point_locations[u.index()]
+                    prev_v = self.point_locations[prev.index()] \
+                        - self.point_locations[v.index()]
+                    end_u = self.point_locations[end.index()] \
+                        - self.point_locations[u.index()]
+                    nxt_u = self.point_locations[nxt.index()] \
+                        - self.point_locations[u.index()]
+                    nxt_v = self.point_locations[nxt.index()] \
+                        - self.point_locations[v.index()]
+                    v_u = self.point_locations[v.index()] \
+                        - self.point_locations[u.index()]
                     d_v_u = np.linalg.norm(v_u)
 
                     partial_edge = -d_v_u \
@@ -485,28 +528,13 @@ class Computer:
             self.dif_edge_lengths[edge.index()][v.index()] \
                 = (pv - pu) @ self._partials[v.index()] / edge_length
 
-        # Split the path up piecewise, where boundaries are marked by
-        # vertices.
-        # At the same time, dif_distance will be computed by
-        # accumulation, so we set the relevant values to zero.
-        path_vertices: typing.List[dcelmesh.Mesh.Vertex] = []
-        path_halfedges: typing.List[typing.List[dcelmesh.Mesh.Halfedge]] = []
-        self.dif_distance = {}
-        for element in self.path:
-            if isinstance(element, dcelmesh.Mesh.Vertex):
-                path_vertices.append(element)
-                path_halfedges.append([])
-                self.dif_distance[element.index()] = np.float64(0.)
-            else:
-                path_halfedges[-1].append(element)
-                self.dif_distance[element.origin().index()] = np.float64(0.)
-                self.dif_distance[element.destination().index()] \
-                    = np.float64(0.)
-        # Remove the extraneous empty list
-        del path_halfedges[-1]
+        # Set up for accumulation
+        for index in self.point_locations:
+            self.dif_distance[index] = np.float64(0.)
 
         # Finally, we actually do the accumulation
-        for (start, end), middle in zip(itertools.pairwise(path_vertices),
-                                        path_halfedges):
-            for key, value in self._reverse_part(start, middle, end).items():
-                self.dif_distance[key] += value
+        for (start, end), middle in zip(itertools.pairwise(self.path_vertices),
+                                        self.path_halfedges):
+            for index, partial \
+                    in self._reverse_part(start, middle, end).items():
+                self.dif_distance[index] += partial
