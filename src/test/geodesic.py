@@ -27,13 +27,13 @@ h = 1e-7
 
 geodesic.forward()
 distance_z = geodesic.distance
-print(f'Total distance: {distance_z}')
-print('Path:')
-for element in geodesic.path:
-    if isinstance(element, dcelmesh.Mesh.Vertex):
-        print(f'\t{element.index()}')
-    else:
-        print(f'\t({element.origin().index()}, {element.destination().index()})')
+# print(f'Total distance: {distance_z}')
+# print('Path:')
+# for element in geodesic.path:
+#     if isinstance(element, dcelmesh.Mesh.Vertex):
+#         print(f'\t{element.index()}')
+#     else:
+#         print(f'\t({element.origin().index()}, {element.destination().index()})')
 
 # Compute the partial derivative in the direction of offset
 geodesic.reverse()
@@ -47,23 +47,5 @@ geodesic.forward()
 distance_z_dz = geodesic.distance
 estimated_dif_distance = (distance_z_dz - distance_z) / h
 
-print(dif_distance, estimated_dif_distance)
-
-# geodesic.forward()
-# edge_lengths_z = np.array(geodesic.edge_lengths)
-
-# # Compute the partial derivative in the direction of offset
-# geodesic.reverse()
-# dif_edge_lengths = np.zeros(edge_lengths_z.shape)
-# for i in range(len(dif_edge_lengths)):
-#     for j, d in geodesic.dif_edge_lengths[i].items():
-#         dif_edge_lengths[i] += d * dz[j]
-
-# # Estimate the partial derivative by adding, evaluating, and subtracting
-# mesh.set_parameters(z + h * dz)
-# geodesic.forward()
-# edge_lengths_z_dz = np.array(geodesic.edge_lengths)
-# estimated_dif_edge_lengths = (edge_lengths_z_dz - edge_lengths_z) / h
-
-# for true, estimated in zip(dif_edge_lengths, estimated_dif_edge_lengths):
-#     print(true, estimated)
+# Should print something close to 1
+print(np.exp(np.abs(np.log(dif_distance / estimated_dif_distance))))
