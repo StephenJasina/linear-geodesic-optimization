@@ -28,7 +28,7 @@ class Computer:
         """
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
-        self._faces: typing.List[typing.Tuple[int, int, int]] = [
+        self._faces: typing.List[typing.Tuple[int, ...]] = [
             tuple(vertex.index() for vertex in face.vertices())
             for face in self._topology.faces()
         ]
@@ -66,7 +66,7 @@ class Computer:
         the actual path: simply linearly interpolate between the two
         endpoints of each edge using the corresponding ratio.
         """
-        self.distance: np.float64 = 0.
+        self.distance: np.float64 = np.float64(0.)
         """The geodesic distance itself."""
 
         # Reverse variables
@@ -140,8 +140,9 @@ class Computer:
         # https://zishun.github.io/projects/MeshUtility/
         points_0 = self._coordinates[path[:, 0]]
         points_1 = self._coordinates[path[:, 1]]
-        points = np.multiply(points_0, 1. - path_ratios[:, np.newaxis]) \
-            + np.multiply(points_1, path_ratios[:, np.newaxis])
+        points: npt.NDArray[np.float64] \
+            = np.multiply(points_0, 1. - path_ratios[:, np.newaxis]) \
+                + np.multiply(points_1, path_ratios[:, np.newaxis])
 
         # The total distance is the sum of the length of each segment
         self.distance = sum([
@@ -191,15 +192,14 @@ class Computer:
         """
         Map from vertex indices to point locations in two dimensions.
         """
-        edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
-                                        dcelmesh.Mesh.Edge]] = []
+        middle_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
+                                               dcelmesh.Mesh.Edge]] = []
         """
-        Map from edge indices to the corresponding edge.
+        List of edges from near the center of the path.
 
-        This dictionary contains only the edges on the faces the path
-        passes through. If the edge is in the "interior" (belongs to
-        two of the faces), then it is stored as a `dcelmesh.Mesh.Edge`.
-        Otherwise, it is stored as a `dcelmesh.Mesh.Halfedge`.
+        If an edge is in the "interior" (belongs to two of the faces),
+        then it is stored as a `dcelmesh.Mesh.Edge`. Otherwise, it is
+        stored as a `dcelmesh.Mesh.Halfedge`.
         """
 
         # Need to deal with the special case where the path is just a
@@ -234,7 +234,14 @@ class Computer:
             if k != current_halfedge.origin().index() \
                     and k != current_halfedge.destination().index():
                 i, j = j, i
-                k = previous_halfedge.twin().previous().origin().index()
+                twin = previous_halfedge.twin()
+                if twin is None:
+                    raise dcelmesh.Mesh.IllegalMeshException(
+                        f'Halfedge ({previous_halfedge.origin().index()}, '
+                        f'{previous_halfedge.destination().index()}) '
+                        'has no twin'
+                    )
+                k = twin.previous().origin().index()
 
             point_locations[k] = Computer._get_next_point(
                 point_locations[i],
@@ -245,10 +252,10 @@ class Computer:
 
             # Upkeep the list of edges
             if k == current_halfedge.origin().index():
-                edges.append(previous_halfedge.previous())
+                middle_edges.append(previous_halfedge.previous())
             else:
-                edges.append(previous_halfedge.next())
-            edges.append(current_halfedge.edge())
+                middle_edges.append(previous_halfedge.next())
+            middle_edges.append(current_halfedge.edge())
 
         # Place the starting point
         i = middle[0].destination().index()
@@ -273,16 +280,25 @@ class Computer:
         )
 
         # Add the remaining edges
-        edges = [
-            middle[0].twin().next(),
-            middle[0].twin().previous(),
+        twin = middle[0].twin()
+        if twin is None:
+            raise dcelmesh.Mesh.IllegalMeshException(
+                f'Halfedge ({middle[0].origin().index()}, '
+                f'{middle[0].origin().index()}) has no twin'
+            )
+        start_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
+                                              dcelmesh.Mesh.Edge]] = [
+            twin.next(),
+            twin.previous(),
             middle[0].edge()
-        ] + edges + [
+        ]
+        end_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
+                                            dcelmesh.Mesh.Edge]] = [
             middle[-1].next(),
             middle[-1].previous()
         ]
 
-        return point_locations, edges
+        return point_locations, start_edges + middle_edges + end_edges
 
     def _reverse_part(self,
                       start: dcelmesh.Mesh.Vertex,
@@ -296,8 +312,6 @@ class Computer:
         coincide with are the endpoints.
         """
         point_locations, edges = self._calc_point_locations(start, middle, end)
-        partials_edges: typing.Dict[int, np.float64] = {}
-        """Partials with respect to edge lengths."""
         partials: typing.Dict[int, np.float64] = {
             index: np.float64(0.)
             for index in point_locations
@@ -307,17 +321,6 @@ class Computer:
 
         These will be computed via accumulation.
         """
-
-        # TODO: Remove this
-        # Print some debug information
-        for element in edges:
-            if isinstance(element, dcelmesh.Mesh.Edge):
-                prev, nxt = element.vertices()
-                print(f'Edge {{{prev.index()}, {nxt.index()}}}')
-            else:
-                prev = element.origin()
-                nxt = element.destination()
-                print(f'Halfedge ({prev.index()}, {nxt.index()})')
 
         geodesic = point_locations[end.index()] \
             - point_locations[start.index()]
@@ -335,25 +338,37 @@ class Computer:
         # Compute maps telling us the previous and next edges the path
         # passes through. The halfedges are oriented so that their
         # origins lie on the edge in question.
-        previous_halfedges: typing.Dict[int, dcelmesh.Mesh.Halfedge] \
-            = {current.edge().index():
-               (previous
-                if (previous.origin().index() == current.origin().index()
+        previous_halfedges: typing.Dict[int, dcelmesh.Mesh.Halfedge] = {}
+        for previous, current in itertools.pairwise(middle):
+            if (previous.origin().index() == current.origin().index()
                     or previous.origin().index()
-                    == current.destination().index())
-                else previous.twin())
-               for previous, current in itertools.pairwise(middle)}
+                    == current.destination().index()):
+                previous_halfedges[current.edge().index()] = previous
+            else:
+                twin = previous.twin()
+                if twin is None:
+                    raise dcelmesh.Mesh.IllegalMeshException(
+                        f'Halfedge ({previous.origin().index()}, '
+                        f'{previous.destination().index()}) has no twin'
+                    )
+                previous_halfedges[current.edge().index()] = twin
         previous_halfedges[middle[0].edge().index()] \
             = self._topology.get_halfedge(middle[0].origin().index(),
                                           start.index())
-        next_halfedges: typing.Dict[int, dcelmesh.Mesh.Halfedge] \
-            = {previous.edge().index():
-               (current
-                if (current.origin().index() == previous.origin().index()
+        next_halfedges: typing.Dict[int, dcelmesh.Mesh.Halfedge] = {}
+        for previous, current in itertools.pairwise(middle):
+            if (current.origin().index() == previous.origin().index()
                     or current.origin().index()
-                    == previous.destination().index())
-                else current.twin())
-               for previous, current in itertools.pairwise(middle)}
+                    == previous.destination().index()):
+                next_halfedges[previous.edge().index()] = current
+            else:
+                twin = current.twin()
+                if twin is None:
+                    raise dcelmesh.Mesh.IllegalMeshException(
+                        f'Halfedge ({current.origin().index()}, '
+                        f'{current.destination().index()}) has no twin'
+                    )
+                next_halfedges[previous.edge().index()] = twin
         next_halfedges[middle[-1].edge().index()] \
             = self._topology.get_halfedge(middle[-1].origin().index(),
                                           end.index())
@@ -396,8 +411,8 @@ class Computer:
                 previous_halfedge = previous_halfedges[element.index()]
                 next_halfedge = next_halfedges[element.index()]
 
-                # Deal with the case where the previous and next edges share
-                # and endpoint
+                # Deal with the case where the previous and next edges
+                # share and endpoint
                 if previous_halfedge.origin().index() \
                         == next_halfedge.origin().index():
                     prev = previous_halfedge.destination()
@@ -435,10 +450,10 @@ class Computer:
                         / (d_geodesic * (1 + np.cross(prev_u, nxt_u)
                                          / np.cross(prev_v, nxt_v)))
                 else:
-                    u, v = edge.vertices()
+                    u = previous_halfedge.origin()
+                    v = next_halfedge.origin()
                     partial_edge = np.float64(0.)
 
-            partials_edges[edge.index()] = partial_edge
             partials[u.index()] += partial_edge \
                 * self.dif_edge_lengths[edge.index()][u.index()]
             partials[v.index()] += partial_edge \
@@ -447,6 +462,12 @@ class Computer:
         return partials
 
     def reverse(self) -> None:
+        """
+        Compute the reverse direction (that is, partials).
+
+        The computed values will be stored in the variable
+        `Computer.dif_distance`.
+        """
         self.forward()
         if self._reverse_updates == self._mesh.get_updates():
             return
