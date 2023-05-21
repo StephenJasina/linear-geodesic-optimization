@@ -219,9 +219,9 @@ class Computer:
         * `Computer.dif_LC_dirichlet_halfedges`
         * `Computer.dif_LC_dirichlet_vertices`
         """
-        self.forward()
         if self._reverse_updates == self._mesh.get_updates():
             return
+        self.forward()
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
 
