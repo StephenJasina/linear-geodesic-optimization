@@ -18,14 +18,15 @@ mesh = RectangleMesh(width, height)
 laplacian = Laplacian(mesh)
 curvature = Curvature(mesh, laplacian)
 
-# z = mesh.set_parameters(np.random.random(width * height))
-z = mesh.set_parameters(np.array([
-    (16.**2
-     - mesh.get_coordinates()[index][0]**2
-     - mesh.get_coordinates()[index][1]**2
-    )**0.5
-    for index in range(mesh.get_topology().n_vertices())
-]))
+np.random.seed(0)
+z = mesh.set_parameters(np.random.random(width * height) / 100)
+# z = mesh.set_parameters(np.array([
+#     (16.**2
+#      - mesh.get_coordinates()[index][0]**2
+#      - mesh.get_coordinates()[index][1]**2
+#     )**0.5
+#     for index in range(mesh.get_topology().n_vertices())
+# ]))
 dz = np.random.random(width * height)
 dz = 1e-7 * dz / np.linalg.norm(dz)
 
@@ -33,6 +34,11 @@ t = time.time()
 curvature.forward()
 print(f'Time to compute forward: {time.time() - t}')
 kappa_H_z = np.array(curvature.kappa_H)
+
+np.set_printoptions(linewidth=400)
+# Should be close to 0
+print(np.amax(np.abs(np.array(curvature.kappa_H) - (np.array(curvature.kappa_1) + np.array(curvature.kappa_2)) / 2.)))
+print(np.amax(np.abs(np.array(curvature.kappa_G) - np.array(curvature.kappa_1) * np.array(curvature.kappa_2))))
 
 # # Compute the partial derivative in the direction of offset
 # t = time.time()

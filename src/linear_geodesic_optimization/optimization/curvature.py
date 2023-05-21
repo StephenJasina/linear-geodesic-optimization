@@ -106,19 +106,21 @@ class Computer:
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = self._mesh.get_coordinates()
 
-        # Start to compute Gaussian curvatures
+        # Compute Gaussian curvatures
         self.kappa_G = [
-            np.float64(2. * np.pi)
-            for _ in self._topology.vertices()
+            np.float64(0.)
+            if vertex.is_on_boundary()
+            else np.float64(2. * np.pi) / self._laplacian.D[vertex.index()]
+            for vertex in self._topology.vertices()
         ]
         for halfedge in self._topology.halfedges():
             w = halfedge.previous().origin()
-            # if w.is_on_boundary():
-            #     continue
+            if w.is_on_boundary():
+                continue
             cotangent = self._laplacian.cot[halfedge.index()]
             self.kappa_G[w.index()] -= np.arccos(
                 cotangent / (1 + cotangent**2)**0.5
-            )
+            ) / self._laplacian.D[w.index()]
 
         # Compute vertex normals
         self.vertex_N = [np.zeros(3) for _ in self._topology.vertices()]
@@ -127,7 +129,7 @@ class Computer:
             for vertex in face.vertices():
                 self.vertex_N[vertex.index()] += face_normal
 
-        # Start to compute mean curvature normals
+        # Compute mean curvature normals
         self.mean_curvature_normal \
             = [np.zeros(3) for _ in self._topology.vertices()]
         for edge in self._topology.edges():
@@ -135,35 +137,33 @@ class Computer:
             laplacian_element \
                 = self._laplacian.LC_neumann_halfedges[edge.index()]
             self.mean_curvature_normal[u.index()] \
-                += laplacian_element * self._coordinates[v.index()]
+                += laplacian_element * self._coordinates[v.index()] \
+                / (-2. * self._laplacian.D[u.index()])
             self.mean_curvature_normal[v.index()] \
-                += laplacian_element * self._coordinates[u.index()]
+                += laplacian_element * self._coordinates[u.index()] \
+                / (-2. * self._laplacian.D[v.index()])
         for vertex in self._topology.vertices():
             self.mean_curvature_normal[vertex.index()] \
                 += self._laplacian.LC_neumann_vertices[vertex.index()] \
-                * self._coordinates[vertex.index()]
+                * self._coordinates[vertex.index()] \
+                / (-2. * self._laplacian.D[vertex.index()])
 
-        # Finish computing Gaussian curvatures and mean curvature
-        # normals. Also compute mean and principal curvatures.
+        # Compute mean and principal curvatures
         for vertex in self._topology.vertices():
-            index = vertex.index()
-            vertex_area = self._laplacian.D[index]
-            self.kappa_G[index] /= vertex_area
-            self.mean_curvature_normal[index] /= -2 * vertex_area
-            mean_curvature_normal = self.mean_curvature_normal[index]
-            vertex_normal = self.vertex_N[index]
-            self.kappa_H[index] \
-                = np.linalg.norm(mean_curvature_normal) \
-                * np.sign(mean_curvature_normal @ vertex_normal)
+            mean_curvature_normal = self.mean_curvature_normal[vertex.index()]
+            vertex_normal = self.vertex_N[vertex.index()]
+            kappa_G = self.kappa_G[vertex.index()]
             if vertex.is_on_boundary():
-                self.kappa_G[index] = np.float64(0.)
-                self.kappa_H[index] = np.float64(0.)
-            kappa_G = self.kappa_G[index]
-            kappa_H = self.kappa_H[index]
-            self.kappa_1[index] \
-                = kappa_H + np.sqrt(np.maximum(0., kappa_H**2 - kappa_G))
-            self.kappa_2[index] \
-                = kappa_H - np.sqrt(np.maximum(0., kappa_H**2 - kappa_G))
+                kappa_H = np.float64(0.)
+            else:
+                kappa_H = np.linalg.norm(mean_curvature_normal) \
+                    * np.sign(mean_curvature_normal @ vertex_normal)
+            self.kappa_H[vertex.index()] = kappa_H
+            offset = np.sqrt(np.maximum(0., kappa_H**2 - kappa_G))
+            self.kappa_1[vertex.index()] \
+                = kappa_H + offset
+            self.kappa_2[vertex.index()] \
+                = kappa_H - offset
 
     def reverse(self) -> None:
         """
