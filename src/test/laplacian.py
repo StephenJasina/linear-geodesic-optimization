@@ -9,13 +9,13 @@ from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 
 
-width = 40
-height = 40
+width = 20
+height = 20
 
-mesh = RectangleMesh(width, height)
+mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)
 
-z = mesh.set_parameters(np.random.random(width * height))
+z = mesh.set_parameters(np.random.random(width * height) / 100)
 dz = np.random.random(width * height)
 dz = 1e-7 * dz / np.linalg.norm(dz)
 
@@ -39,9 +39,14 @@ laplacian.forward()
 LC_neumann_vertices_z_dz = np.array(laplacian.LC_neumann_vertices)
 estimated_dif_LC_neumann_vertices = LC_neumann_vertices_z_dz - LC_neumann_vertices_z
 
-# for true, estimated in zip(dif_LC_neumann_vertices, estimated_dif_LC_neumann_vertices):
-#     print(true, estimated)
+for true, estimated in zip(dif_LC_neumann_vertices, estimated_dif_LC_neumann_vertices):
+    print(true, estimated)
 
 # Print something close to 1., hopefully
-worst_deviation = np.exp(np.amax(np.abs(np.log(dif_LC_neumann_vertices / estimated_dif_LC_neumann_vertices))))
-print(f'Greatest deviation: {worst_deviation}')
+quotient = np.linalg.norm(dif_LC_neumann_vertices) / np.linalg.norm(estimated_dif_LC_neumann_vertices)
+print(f'Quotient of magnitudes: {quotient:.6f}')
+# Print something close to 0., hopefully
+angle = np.arccos(dif_LC_neumann_vertices @ estimated_dif_LC_neumann_vertices
+                  / (np.linalg.norm(dif_LC_neumann_vertices)
+                     * np.linalg.norm(estimated_dif_LC_neumann_vertices)))
+print(f'Angle between:          {angle:.6f}')
