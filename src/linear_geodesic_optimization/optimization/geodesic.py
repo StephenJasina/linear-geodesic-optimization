@@ -438,9 +438,16 @@ class Computer:
                 u = element.origin()
                 v = element.destination()
                 w = element.previous().origin()
+                edge_uw = self._topology.get_edge(u.index(), w.index())
+                edge_vw = self._topology.get_edge(v.index(), w.index())
+                if (u.index() != start.index()
+                    and v.index() != end.index()
+                    and (v.index() == start.index()
+                         or u.index() == end.index()
+                         or next_halfedges[edge_uw.index()].edge().index()
+                         != edge_vw.index())):
+                    u, v = v, u
                 edge = element.edge()
-
-                print(f'{u.index()}, {v.index()}, exterior ({w.index()})')
 
                 # Use bad names here and elsewhere to avoid lines
                 # becoming too long and (even more) unreadable
@@ -455,8 +462,8 @@ class Computer:
                 vu = self.point_locations[v.index()] \
                     - self.point_locations[u.index()]
                 d_vu = np.linalg.norm(vu)
-                partial_edge = d_vu * np.abs(np.cross(sw, ew)) \
-                    / (d_geodesic * np.abs(np.cross(uw, vw)))
+                partial_edge = d_vu * np.cross(sw, ew) \
+                    / (d_geodesic * np.cross(uw, vw))
 
             else:
                 # Deal with the case where the edge is in the "interior"
@@ -488,8 +495,6 @@ class Computer:
                         u = next_halfedge.origin()
                         v = next_halfedge.previous().origin()
 
-                    print(f'{u.index()}, {v.index()}, interior shared ({w.index()}, {x.index()})')
-
                     su = self.point_locations[start.index()] \
                         - self.point_locations[u.index()]
                     wu = self.point_locations[w.index()] \
@@ -506,12 +511,10 @@ class Computer:
                         - self.point_locations[u.index()]
                     d_vu = np.linalg.norm(vu)
 
-                    partial_edge = -d_vu * np.abs(np.cross(su, eu)) \
-                        * (1. / np.abs(np.cross(wu, wv))
-                           + 1. / np.abs(np.cross(xu, xv))) \
+                    partial_edge = -d_vu * np.cross(eu, su) \
+                        * (1. / np.cross(wu, wv) + 1. / np.cross(xv, xu)) \
                         / (d_geodesic
-                           * (1. + np.abs(np.cross(wu, xu))
-                              / np.abs(np.cross(wv, xv))))
+                           * (1. + np.cross(xu, wu) / np.cross(wv, xv)))
                 else:
                     # Deal with the case where the previous and next
                     # edges don't share an endpoint
@@ -521,8 +524,6 @@ class Computer:
                     v = next_halfedge.origin()
                     w = previous_halfedge.destination()
                     x = next_halfedge.destination()
-
-                    print(f'{u.index()}, {v.index()}, interior unshared ({w.index()}, {x.index()})')
 
                     wu = self.point_locations[w.index()] \
                         - self.point_locations[u.index()]
@@ -550,23 +551,23 @@ class Computer:
 
                     partial_edge = d_vu * (
                         (
-                            np.abs(np.cross(sw, wv)) / np.abs(np.cross(wu, wv))
+                            np.cross(wv, sw) / np.cross(wu, wv)
                             * (
-                                (1. - sv @ ev / (sv @ sv)) / np.abs(np.cross(sv, ev))
-                                + (1. - sv @ su / (sv @ sv)) / np.abs(np.cross(sv, su))
+                                (1. - sv @ ev / (sv @ sv)) / np.cross(sv, ev)
+                                + (1. - sv @ su / (sv @ sv)) / np.cross(su, sv)
                             )
                         ) + (
-                            np.abs(np.cross(ex, xu)) / np.abs(np.cross(xv, xu))
+                            np.cross(xu, ex) / np.cross(xv, xu)
                             * (
-                                (1. - eu @ su / (eu @ eu)) / np.abs(np.cross(eu, su))
-                                + (1. - eu @ ev / (eu @ eu)) / np.abs(np.cross(eu, ev))
+                                (1. - eu @ su / (eu @ eu)) / np.cross(eu, su)
+                                + (1. - eu @ ev / (eu @ eu)) / np.cross(ev, eu)
                             )
                         )
-                        - 1. / np.abs(np.cross(sv, su))
-                        - 1. / np.abs(np.cross(eu, ev))
+                        - 1. / np.cross(su, sv)
+                        - 1. / np.cross(ev, eu)
                     ) / (d_geodesic * (
-                        1. / np.abs(np.cross(sv, ev))
-                        + 1. / np.abs(np.cross(eu, su))
+                        1. / np.cross(sv, ev)
+                        + 1. / np.cross(eu, su)
                     ))
 
             partials[u.index()] += partial_edge \
