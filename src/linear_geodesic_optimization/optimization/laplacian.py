@@ -37,7 +37,7 @@ class Computer:
         A list of cotangents of the opposing angles to halfedges,
         indexed by halfedges.
         """
-        self.LC_neumann_halfedges: typing.List[np.float64] \
+        self.LC_neumann_edges: typing.List[np.float64] \
             = [np.float64(0.) for _ in self._topology.edges()]
         """
         A list of (non-trivial) off-diagonal entries of the
@@ -50,7 +50,7 @@ class Computer:
         A list of diagonal entries of the Laplace-Beltrami operator with
         Neumann boundary conditions, indexed by vertices.
         """
-        self.LC_dirichlet_halfedges: typing.List[np.float64] \
+        self.LC_dirichlet_edges: typing.List[np.float64] \
             = [np.float64(0.) for _ in self._topology.edges()]
         """
         A list of (non-trivial) off-diagonal entries of the
@@ -93,7 +93,7 @@ class Computer:
         halfedges, indexed by halfedges and then by vertices (of the
         same face).
         """
-        self.dif_LC_neumann_halfedges: \
+        self.dif_LC_neumann_edges: \
             typing.List[typing.Dict[int, np.float64]] \
             = [{} for _ in self._topology.edges()]
         """
@@ -108,9 +108,9 @@ class Computer:
         """
         A list of partials of diagonal entries of the Laplace-Beltrami
         operator with Neumann boundary conditions, indexed by vertices
-        and then vertices (at most distance 2 away).
+        and then vertices (at most distance 1 away).
         """
-        self.dif_LC_dirichlet_halfedges: \
+        self.dif_LC_dirichlet_edges: \
             typing.List[typing.Dict[int, np.float64]] \
             = [{} for _ in self._topology.edges()]
         """
@@ -125,7 +125,7 @@ class Computer:
         """
         A list of partials of diagonal entries of the Laplace-Beltrami
         operator with Dirichlet boundary conditions, indexed by vertices
-        and then vertices (at most distance 2 away).
+        and then vertices (at most distance 1 away).
         """
 
     def forward(self) -> None:
@@ -149,11 +149,11 @@ class Computer:
 
         # Reset quantities that will be computed via accumulation
         self.D = [np.float64(0.) for _ in self._topology.vertices()]
-        self.LC_neumann_halfedges \
+        self.LC_neumann_edges \
             = [np.float64(0.) for _ in self._topology.edges()]
         self.LC_neumann_vertices \
             = [np.float64(0.) for _ in self._topology.vertices()]
-        self.LC_dirichlet_halfedges \
+        self.LC_dirichlet_edges \
             = [np.float64(0.) for _ in self._topology.edges()]
         self.LC_dirichlet_vertices \
             = [np.float64(0.) for _ in self._topology.vertices()]
@@ -195,13 +195,13 @@ class Computer:
 
             # Set LC_neumann
             edge = halfedge.edge()
-            self.LC_neumann_halfedges[edge.index()] += half_cotangent
+            self.LC_neumann_edges[edge.index()] += half_cotangent
             self.LC_neumann_vertices[u.index()] -= half_cotangent
             self.LC_neumann_vertices[v.index()] -= half_cotangent
 
             # Set LC_dirichlet
             if not u.is_on_boundary() and not v.is_on_boundary():
-                self.LC_dirichlet_halfedges[edge.index()] += half_cotangent
+                self.LC_dirichlet_edges[edge.index()] += half_cotangent
                 self.LC_dirichlet_vertices[u.index()] -= half_cotangent
                 self.LC_dirichlet_vertices[v.index()] -= half_cotangent
 
@@ -233,7 +233,7 @@ class Computer:
             }
             for vertex in self._topology.vertices()
         ]
-        self.dif_LC_neumann_halfedges = [
+        self.dif_LC_neumann_edges = [
             {
                 vertex.index(): np.float64(0.)
                 for face in edge.faces()
@@ -243,13 +243,12 @@ class Computer:
         ]
         self.dif_LC_neumann_vertices = [
             {
-                near_near.index(): np.float64(0.)
-                for near in vertex.vertices()
-                for near_near in near.vertices()
+                near.index(): np.float64(0.)
+                for near in itertools.chain([vertex], vertex.vertices())
             }
             for vertex in self._topology.vertices()
         ]
-        self.dif_LC_dirichlet_halfedges = [
+        self.dif_LC_dirichlet_edges = [
             {
                 vertex.index(): np.float64(0.)
                 for face in edge.faces()
@@ -259,9 +258,8 @@ class Computer:
         ]
         self.dif_LC_dirichlet_vertices = [
             {
-                near_near.index(): np.float64(0.)
-                for near in vertex.vertices()
-                for near_near in near.vertices()
+                near.index(): np.float64(0.)
+                for near in itertools.chain([vertex], vertex.vertices())
             }
             for vertex in self._topology.vertices()
         ]
@@ -319,11 +317,11 @@ class Computer:
 
             # Set dif_LC_neumann
             edge = halfedge.edge()
-            self.dif_LC_neumann_halfedges[edge.index()][u.index()] \
+            self.dif_LC_neumann_edges[edge.index()][u.index()] \
                 += half_dif_cot_u
-            self.dif_LC_neumann_halfedges[edge.index()][v.index()] \
+            self.dif_LC_neumann_edges[edge.index()][v.index()] \
                 += half_dif_cot_v
-            self.dif_LC_neumann_halfedges[edge.index()][w.index()] \
+            self.dif_LC_neumann_edges[edge.index()][w.index()] \
                 += half_dif_cot_w
             self.dif_LC_neumann_vertices[u.index()][u.index()] \
                 -= half_dif_cot_u
@@ -340,11 +338,11 @@ class Computer:
 
             # Set dif_LC_dirichlet
             if not u.is_on_boundary() and not v.is_on_boundary():
-                self.dif_LC_dirichlet_halfedges[edge.index()][u.index()] \
+                self.dif_LC_dirichlet_edges[edge.index()][u.index()] \
                     += half_dif_cot_u
-                self.dif_LC_dirichlet_halfedges[edge.index()][v.index()] \
+                self.dif_LC_dirichlet_edges[edge.index()][v.index()] \
                     += half_dif_cot_v
-                self.dif_LC_dirichlet_halfedges[edge.index()][w.index()] \
+                self.dif_LC_dirichlet_edges[edge.index()][w.index()] \
                     += half_dif_cot_w
                 self.dif_LC_dirichlet_vertices[u.index()][u.index()] \
                     -= half_dif_cot_u
