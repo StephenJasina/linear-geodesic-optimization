@@ -66,7 +66,7 @@ class Computer:
         corresponding ratio.
         """
         self.point_locations: \
-            typing.List[typing.Dict[int, npt.NDArray[np.float64]]] = {}
+            typing.List[typing.Dict[int, npt.NDArray[np.float64]]] = []
         """
         A list of maps from vertex indices to their locations in 2-d.
 
