@@ -30,7 +30,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         For the coordinate computations, the support of the mesh is
         [-`scale` / 2, `scale` / 2]^2.
 
-        The partial derivatives are bounded between 0 and `extent`.
+        The z-coordinates are bounded between 0 and `extent`.
         """
         self._width: int = width
         self._height: int = height
