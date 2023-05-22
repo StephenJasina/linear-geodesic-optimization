@@ -39,7 +39,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         self._topology: dcelmesh.Mesh = self._get_topology()
         self._coordinates: npt.NDArray[np.float64] = self._get_coordinates()
 
-        self._extent: float = np.inf
+        self._extent: float = extent
 
         self._parameters: npt.NDArray[np.float64] = np.zeros(width * height)
 
@@ -143,8 +143,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         The returned value should be treated as read only.
         """
         if self._extent != np.inf:
-            self._partials = self._extent * np.exp(self._parameters) \
-                / (1 + np.exp(-self._parameters))**2
+            self._partials[:, 2] = self._extent * np.exp(self._parameters) \
+                / (1 + np.exp(self._parameters))**2
         return self._partials
 
     def get_fat_edges(
