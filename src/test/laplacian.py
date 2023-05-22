@@ -15,7 +15,7 @@ height = 20
 mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)
 
-z = mesh.set_parameters(np.random.random(width * height) / 100)
+z = mesh.set_parameters(np.random.random(width * height))
 dz = np.random.random(width * height)
 dz = 1e-7 * dz / np.linalg.norm(dz)
 
@@ -39,8 +39,8 @@ laplacian.forward()
 LC_neumann_vertices_z_dz = np.array(laplacian.LC_neumann_vertices)
 estimated_dif_LC_neumann_vertices = LC_neumann_vertices_z_dz - LC_neumann_vertices_z
 
-for true, estimated in zip(dif_LC_neumann_vertices, estimated_dif_LC_neumann_vertices):
-    print(true, estimated)
+# for true, estimated in zip(dif_LC_neumann_vertices, estimated_dif_LC_neumann_vertices):
+#     print(true, estimated)
 
 # Print something close to 1., hopefully
 quotient = np.linalg.norm(dif_LC_neumann_vertices) / np.linalg.norm(estimated_dif_LC_neumann_vertices)
