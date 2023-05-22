@@ -65,13 +65,19 @@ class Computer:
         interpolate between the two endpoints of each halfedge using the
         corresponding ratio.
         """
-        self.point_locations: typing.Dict[int, npt.NDArray[np.float64]] = {}
+        self.point_locations: \
+            typing.List[typing.Dict[int, npt.NDArray[np.float64]]] = {}
         """
-        A map from vertex indices to their locations in 2-d.
+        A list of maps from vertex indices to their locations in 2-d.
 
         These points are found by "unfolding" the mesh along the
         geodesic path. The points are chosen so that the path is
         ultimately horizontal and starts at the origin.
+
+        The locations are partitioned by `path_vertices`. As an
+        artifact, this means some vertices might be duplicated with
+        multiple (possibly different) locations. Importantly, each piece
+        of the partition is self-consistent.
         """
         self.distance: np.float64 = np.float64(0.)
         """The geodesic distance itself."""
@@ -120,8 +126,7 @@ class Computer:
     def _get_point_locations(self,
                              start: dcelmesh.Mesh.Vertex,
                              middle: typing.List[dcelmesh.Mesh.Halfedge],
-                             end: dcelmesh.Mesh.Vertex,
-                             initial_point: npt.NDArray[np.float64]) \
+                             end: dcelmesh.Mesh.Vertex) \
             -> typing.Dict[int, npt.NDArray[np.float64]]:
         """
         Unfold a sequence of faces according to the connecting edges.
@@ -139,12 +144,12 @@ class Computer:
         # Need to deal with the special case where the path is just a
         # single segment
         if not middle:
-            point_locations[start.index()] = np.copy(initial_point)
+            point_locations[start.index()] = np.copy(np.zeros(2))
             point_locations[end.index()] = np.array([
                 np.linalg.norm(self._coordinates[start.index()]
                                - self._coordinates[end.index()]),
                 0.
-            ]) + initial_point
+            ])
             return point_locations
 
         # Start by placing the first edge from the middle
@@ -204,19 +209,6 @@ class Computer:
             np.linalg.norm(self._coordinates[k] - self._coordinates[j]),
             np.linalg.norm(self._coordinates[k] - self._coordinates[i])
         )
-
-        # Rotate and translate the points so that the geodesic path is
-        # horizontal and starts at the initial point.
-        end_start = point_locations[end.index()] \
-            - point_locations[start.index()]
-        end_start_norm = np.linalg.norm(end_start)
-        c = end_start[0] / end_start_norm
-        s = -end_start[1] / end_start_norm
-        rotation = np.array([[c, -s], [s, c]])
-        translation = initial_point - rotation @ point_locations[start.index()]
-        for index in point_locations:
-            point_locations[index] = rotation @ point_locations[index] \
-                + translation
 
         return point_locations
 
@@ -333,25 +325,24 @@ class Computer:
                 ratios_to_add.append(1 - mu_path_ratios[index])
 
         # Compute point locations and the total geodesic distance
-        self.point_locations = {}
+        self.point_locations = []
         self.distance = np.float64(0.)
-        current_point = np.zeros(2)
         for (start, end), middle in zip(itertools.pairwise(self.path_vertices),
                                         self.path_halfedges):
             point_locations \
-                = self._get_point_locations(start, middle, end, current_point)
-            for index, location in point_locations.items():
-                self.point_locations[index] = location
+                = self._get_point_locations(start, middle, end)
+            self.point_locations.append(point_locations)
             self.distance += np.linalg.norm(
                 point_locations[end.index()]
                 - point_locations[start.index()]
             )
-            current_point = point_locations[end.index()]
 
     def _reverse_part(self,
                       start: dcelmesh.Mesh.Vertex,
                       middle: typing.List[dcelmesh.Mesh.Halfedge],
-                      end: dcelmesh.Mesh.Vertex) \
+                      end: dcelmesh.Mesh.Vertex,
+                      point_locations: typing.Dict[int,
+                                                   npt.NDArray[np.float64]]) \
             -> typing.Dict[int, np.float64]:
         """
         Compute the partials for a geodesic not passing through saddles.
@@ -371,8 +362,8 @@ class Computer:
         These will be computed via accumulation.
         """
 
-        geodesic = self.point_locations[end.index()] \
-            - self.point_locations[start.index()]
+        geodesic = point_locations[end.index()] \
+            - point_locations[start.index()]
         d_geodesic = np.linalg.norm(geodesic)
 
         # Deal with the case where there are no faces
@@ -451,16 +442,12 @@ class Computer:
 
                 # Use bad names here and elsewhere to avoid lines
                 # becoming too long and (even more) unreadable
-                sw = self.point_locations[start.index()] \
-                    - self.point_locations[w.index()]
-                ew = self.point_locations[end.index()] \
-                    - self.point_locations[w.index()]
-                uw = self.point_locations[u.index()] \
-                    - self.point_locations[w.index()]
-                vw = self.point_locations[v.index()] \
-                    - self.point_locations[w.index()]
-                vu = self.point_locations[v.index()] \
-                    - self.point_locations[u.index()]
+                sw = point_locations[start.index()] \
+                    - point_locations[w.index()]
+                ew = point_locations[end.index()] - point_locations[w.index()]
+                uw = point_locations[u.index()] - point_locations[w.index()]
+                vw = point_locations[v.index()] - point_locations[w.index()]
+                vu = point_locations[v.index()] - point_locations[u.index()]
                 d_vu = np.linalg.norm(vu)
                 partial_edge = d_vu * np.cross(sw, ew) \
                     / (d_geodesic * np.cross(uw, vw))
@@ -495,20 +482,20 @@ class Computer:
                         u = next_halfedge.origin()
                         v = next_halfedge.previous().origin()
 
-                    su = self.point_locations[start.index()] \
-                        - self.point_locations[u.index()]
-                    wu = self.point_locations[w.index()] \
-                        - self.point_locations[u.index()]
-                    wv = self.point_locations[w.index()] \
-                        - self.point_locations[v.index()]
-                    eu = self.point_locations[end.index()] \
-                        - self.point_locations[u.index()]
-                    xu = self.point_locations[x.index()] \
-                        - self.point_locations[u.index()]
-                    xv = self.point_locations[x.index()] \
-                        - self.point_locations[v.index()]
-                    vu = self.point_locations[v.index()] \
-                        - self.point_locations[u.index()]
+                    su = point_locations[start.index()] \
+                        - point_locations[u.index()]
+                    wu = point_locations[w.index()] \
+                        - point_locations[u.index()]
+                    wv = point_locations[w.index()] \
+                        - point_locations[v.index()]
+                    eu = point_locations[end.index()] \
+                        - point_locations[u.index()]
+                    xu = point_locations[x.index()] \
+                        - point_locations[u.index()]
+                    xv = point_locations[x.index()] \
+                        - point_locations[v.index()]
+                    vu = point_locations[v.index()] \
+                        - point_locations[u.index()]
                     d_vu = np.linalg.norm(vu)
 
                     partial_edge = -d_vu * np.cross(eu, su) \
@@ -525,28 +512,28 @@ class Computer:
                     w = previous_halfedge.destination()
                     x = next_halfedge.destination()
 
-                    wu = self.point_locations[w.index()] \
-                        - self.point_locations[u.index()]
-                    wv = self.point_locations[w.index()] \
-                        - self.point_locations[v.index()]
-                    su = self.point_locations[start.index()] \
-                        - self.point_locations[u.index()]
-                    sv = self.point_locations[start.index()] \
-                        - self.point_locations[v.index()]
-                    sw = self.point_locations[start.index()] \
-                        - self.point_locations[w.index()]
-                    xu = self.point_locations[x.index()] \
-                        - self.point_locations[u.index()]
-                    xv = self.point_locations[x.index()] \
-                        - self.point_locations[v.index()]
-                    eu = self.point_locations[end.index()] \
-                        - self.point_locations[u.index()]
-                    ev = self.point_locations[end.index()] \
-                        - self.point_locations[v.index()]
-                    ex = self.point_locations[end.index()] \
-                        - self.point_locations[x.index()]
-                    vu = self.point_locations[v.index()] \
-                        - self.point_locations[u.index()]
+                    wu = point_locations[w.index()] \
+                        - point_locations[u.index()]
+                    wv = point_locations[w.index()] \
+                        - point_locations[v.index()]
+                    su = point_locations[start.index()] \
+                        - point_locations[u.index()]
+                    sv = point_locations[start.index()] \
+                        - point_locations[v.index()]
+                    sw = point_locations[start.index()] \
+                        - point_locations[w.index()]
+                    xu = point_locations[x.index()] \
+                        - point_locations[u.index()]
+                    xv = point_locations[x.index()] \
+                        - point_locations[v.index()]
+                    eu = point_locations[end.index()] \
+                        - point_locations[u.index()]
+                    ev = point_locations[end.index()] \
+                        - point_locations[v.index()]
+                    ex = point_locations[end.index()] \
+                        - point_locations[x.index()]
+                    vu = point_locations[v.index()] \
+                        - point_locations[u.index()]
                     d_vu = np.linalg.norm(vu)
 
                     partial_edge = d_vu * (
@@ -604,12 +591,15 @@ class Computer:
         # Set up for accumulation
         self.dif_distance = {
             index: np.float64(0.)
-            for index in self.point_locations
+            for point_locations in self.point_locations
+            for index in point_locations
         }
 
         # Finally, we actually do the accumulation
-        for (start, end), middle in zip(itertools.pairwise(self.path_vertices),
-                                        self.path_halfedges):
-            for index, partial \
-                    in self._reverse_part(start, middle, end).items():
+        for (start, end), middle, point_locations \
+                in zip(itertools.pairwise(self.path_vertices),
+                       self.path_halfedges,
+                       self.point_locations):
+            for index, partial in self._reverse_part(start, middle, end,
+                                                     point_locations).items():
                 self.dif_distance[index] += partial

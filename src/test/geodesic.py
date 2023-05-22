@@ -1,6 +1,7 @@
 import sys
 
 import dcelmesh
+from matplotlib import pyplot as plt
 import numpy as np
 
 sys.path.append('.')
@@ -11,31 +12,28 @@ from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 
 
-width = 4
-height = 4
+width = 30
+height = 30
 
 mesh = RectangleMesh(width, height, extent=1.)
-geodesic = Geodesic(mesh, 3, 12)
+geodesic = Geodesic(mesh, 0, 899)
 
 np.random.seed(0)
 z = mesh.set_parameters(np.random.random(width * height))
-# z = mesh.set_parameters(np.ones(width * height))
 dz = np.random.random(width * height)
-dz = np.zeros(width * height)
-dz[2] = 1.
 dz = dz / np.linalg.norm(dz)
 h = 1e-7
 
 geodesic.forward()
 distance_z = geodesic.distance
-print(f'Total distance: {distance_z}')
-print('Path:')
-print(f'\t{geodesic.path_vertices[0].index()}')
-for vertex, halfedges in zip(geodesic.path_vertices[1:],
-                             geodesic.path_halfedges):
-    for halfedge in halfedges:
-        print(f'\t({halfedge.origin().index()}, {halfedge.destination().index()})')
-    print(f'\t{vertex.index()}')
+# print(f'Total distance: {distance_z}')
+# print('Path:')
+# print(f'\t{geodesic.path_vertices[0].index()}')
+# for vertex, halfedges in zip(geodesic.path_vertices[1:],
+#                              geodesic.path_halfedges):
+#     for halfedge in halfedges:
+#         print(f'\t({halfedge.origin().index()}, {halfedge.destination().index()}, {halfedge.previous().origin().index()})')
+#     print(f'\t{vertex.index()}')
 
 # Compute the partial derivative in the direction of offset
 geodesic.reverse()
@@ -54,5 +52,3 @@ estimated_dif_distance = (distance_z_plus_dz - distance_z_minus_dz) / (2. * h)
 
 # Should print something close to 1
 print(f'Quotient: {dif_distance / estimated_dif_distance:.6f}')
-print(f'{dif_distance}')
-print(f'{estimated_dif_distance}')
