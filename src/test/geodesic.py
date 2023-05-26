@@ -1,4 +1,5 @@
 import sys
+import time
 
 import dcelmesh
 from matplotlib import pyplot as plt
@@ -18,7 +19,10 @@ height = 30
 mesh = RectangleMesh(width, height, extent=1.)
 geodesic = Geodesic(mesh, 0, 899)
 
-np.random.seed(0)
+seed = time.time_ns()
+seed = seed % (2**32 - 1)
+np.random.seed(seed)
+print(f'Seed: {seed}')
 z = mesh.set_parameters(np.random.random(width * height))
 dz = np.random.random(width * height)
 dz = dz / np.linalg.norm(dz)

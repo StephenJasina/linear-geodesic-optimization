@@ -65,19 +65,68 @@ class Computer:
         interpolate between the two endpoints of each halfedge using the
         corresponding ratio.
         """
-        self.point_locations: \
-            typing.List[typing.Dict[int, npt.NDArray[np.float64]]] = []
+        self._start_points: typing.List[npt.NDArray[np.float64]] = []
+        """List of the start locations for each path component."""
+        self._end_points: typing.List[npt.NDArray[np.float64]] = []
+        """List of the end locations for each path component."""
+        self._double_boundary: typing.List[typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]]] = []
         """
-        A list of maps from vertex indices to their locations in 2-d.
-
-        These points are found by "unfolding" the mesh along the
-        geodesic path. The points are chosen so that the path is
-        ultimately horizontal and starts at the origin.
-
-        The locations are partitioned by `path_vertices`. As an
-        artifact, this means some vertices might be duplicated with
-        multiple (possibly different) locations. Importantly, each piece
-        of the partition is self-consistent.
+        A list of lists of halfedges that appear on between two saddle
+        vertices. Alternatively, one can think of this as halfedges on
+        the boundary whose twins are also on the boundary. Additionally
+        stored are the positions of the halfedges' origins and
+        destinations.
+        """
+        self._boundary: typing.List[typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]]] = []
+        """
+        A list of lists of halfedges that appear on the boundary of the
+        sequence of faces, as well as the positions of the vertices of
+        the adjacent face. If a halfedge is (u, v) and the next halfedge
+        is (v, w), then the positions are returned in the order
+        (u, v, w).
+        """
+        self._interior_shared: typing.List[typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]]] = []
+        """
+        A list of lists of halfedges that appear between faces such that
+        the previous and next connections are on adjacent sides of the
+        quadrilateral formed by the two faces. Also included are
+        positions of the four vertices making up the two faces in the
+        order (u, v, w, x), where u is the vertex on the halfedge shared
+        by the two connections, v is the vertex on the halfedge unshared
+        by the two connections, w is the other vertex closer to the
+        start, and x is other vertex closer to the end.
+        """
+        self._interior_unshared: typing.List[typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]]] = []
+        """
+        A list of lists of halfedges that appear between faces such that
+        the previous and next connections are on opposing sides of the
+        quadrilateral formed by the two faces. Also included are
+        positions of the four vertices making up the two faces in the
+        order (u, v, w, x), where u is the vertex on the halfedge closer
+        to the start, v is the vertex on the halfedge closer to the end,
+        w is the other vertex closer to the start, and x is the other
+        vertex closer to the end.
         """
         self.distance: np.float64 = np.float64(0.)
         """The geodesic distance itself."""
@@ -103,11 +152,11 @@ class Computer:
 
     @staticmethod
     def _get_next_point(
-        u: npt.NDArray,
-        v: npt.NDArray,
+        u: npt.NDArray[np.float64],
+        v: npt.NDArray[np.float64],
         d_u: np.float64,
         d_v: np.float64
-    ) -> npt.NDArray:
+    ) -> npt.NDArray[np.float64]:
         """
         Find a point at a certain distance from two other points.
 
@@ -119,7 +168,7 @@ class Computer:
         d_w = np.linalg.norm(v - u)
         h = (d_w**2 + d_v**2 - d_u**2) / (2. * d_w)
         k = np.sqrt(d_v**2 - h**2)
-        rotate = np.array([[0., -1.], [1., 0.]])
+        rotate = np.array([[0., -1.], [1., 0.]], dtype=np.float64)
         direction = (v - u) / d_w
         return u + h * direction + k * (rotate @ direction)
 
@@ -127,147 +176,180 @@ class Computer:
                              start: dcelmesh.Mesh.Vertex,
                              middle: typing.List[dcelmesh.Mesh.Halfedge],
                              end: dcelmesh.Mesh.Vertex) \
-            -> typing.Dict[int, npt.NDArray[np.float64]]:
+            -> typing.Tuple[
+                npt.NDArray[np.float64],
+                typing.List[typing.Tuple[
+                    dcelmesh.Mesh.Halfedge,
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64]
+                ]],
+                typing.List[typing.Tuple[
+                    dcelmesh.Mesh.Halfedge,
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64]
+                ]],
+                typing.List[typing.Tuple[
+                    dcelmesh.Mesh.Halfedge,
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64]
+                ]],
+                typing.List[typing.Tuple[
+                    dcelmesh.Mesh.Halfedge,
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64],
+                    npt.NDArray[np.float64]
+                ]],
+                npt.NDArray[np.float64]
+            ]:
         """
         Unfold a sequence of faces according to the connecting edges.
 
-        Return the locations of the vertices incident to the faces on
-        the geodesic path when the mesh is "unfolded."
+        Return six things:
+        * The index and location of the starting vertex.
+        * An appropriate value for an element of `self._boundary`
+        * An appropriate value for an element of `self._double_boundary`
+        * An appropriate value for an element of `self._interior_shared`
+        * An appropriate value for an element of
+          `self._interior_unshared`
+        * The index and location of the ending vertex.
 
         Notably, this is a two-dimensional representation.
         """
-        point_locations: typing.Dict[int, npt.NDArray[np.float64]] = {}
-        """
-        Map from vertex indices to point locations in two dimensions.
-        """
+        coordinates = self._coordinates
+
+        double_boundary: typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]] = []
+        boundary: typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]] = []
+        interior_shared: typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]] = []
+        interior_unshared: typing.List[typing.Tuple[
+            dcelmesh.Mesh.Halfedge,
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64],
+            npt.NDArray[np.float64]
+        ]] = []
+
+        ps = np.zeros(2)
 
         # Need to deal with the special case where the path is just a
         # single segment
         if not middle:
-            point_locations[start.index()] = np.copy(np.zeros(2))
-            point_locations[end.index()] = np.array([
+            pe = np.array([
                 np.linalg.norm(self._coordinates[start.index()]
                                - self._coordinates[end.index()]),
                 0.
-            ])
-            return point_locations
-
-        # Start by placing the first edge from the middle
-        point_locations[middle[0].origin().index()] = np.zeros(2)
-        point_locations[middle[0].destination().index()] = np.array([
-            np.linalg.norm(
-                self._coordinates[middle[0].origin().index()]
-                - self._coordinates[middle[0].destination().index()]),
-            0.
-        ])
-
-        # Place the remaining edges from the middle
-        for previous_halfedge, current_halfedge in itertools.pairwise(middle):
-            i = previous_halfedge.origin().index()
-            j = previous_halfedge.destination().index()
-            k = previous_halfedge.previous().origin().index()
-
-            # v_i and v_j have already had their locations computed. We
-            # need to make sure v_k is the right point to add.
-            if k != current_halfedge.origin().index() \
-                    and k != current_halfedge.destination().index():
-                i, j = j, i
-                twin = previous_halfedge.twin()
-                if twin is None:
-                    raise dcelmesh.Mesh.IllegalMeshException(
-                        f'Halfedge ({previous_halfedge.origin().index()}, '
-                        f'{previous_halfedge.destination().index()}) '
-                        'has no twin'
-                    )
-                k = twin.previous().origin().index()
-
-            point_locations[k] = Computer._get_next_point(
-                point_locations[i],
-                point_locations[j],
-                np.linalg.norm(self._coordinates[k] - self._coordinates[j]),
-                np.linalg.norm(self._coordinates[k] - self._coordinates[i])
-            )
-
-        # Place the starting point
-        i = middle[0].destination().index()
-        j = middle[0].origin().index()
-        k = start.index()
-        point_locations[k] = Computer._get_next_point(
-            point_locations[i],
-            point_locations[j],
-            np.linalg.norm(self._coordinates[k] - self._coordinates[j]),
-            np.linalg.norm(self._coordinates[k] - self._coordinates[i])
-        )
-
-        # Place the ending point
-        i = middle[-1].origin().index()
-        j = middle[-1].destination().index()
-        k = end.index()
-        point_locations[k] = Computer._get_next_point(
-            point_locations[i],
-            point_locations[j],
-            np.linalg.norm(self._coordinates[k] - self._coordinates[j]),
-            np.linalg.norm(self._coordinates[k] - self._coordinates[i])
-        )
-
-        return point_locations
-
-    def _get_nearby_edges(self,
-                          start: dcelmesh.Mesh.Vertex,
-                          middle: typing.List[dcelmesh.Mesh.Halfedge],
-                          end: dcelmesh.Mesh.Vertex) \
-            -> typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
-                                        dcelmesh.Mesh.Edge]]:
-        """
-        Return a list of edges nearby the inputs.
-
-        In particular, given endpoint and a sequence of edges that a
-        path passes through intermediately, find the edges incident to
-        the faces through which the path passes. For the edges on the
-        boundary (i.e., the ones not part of `middle`), halfedges are
-        returned.
-        """
-        middle_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
-                                               dcelmesh.Mesh.Edge]] = []
-        """
-        List of edges from near the center of the path.
-
-        If an edge is in the "interior" (belongs to two of the faces),
-        then it is stored as a `dcelmesh.Mesh.Edge`. Otherwise, it is
-        stored as a `dcelmesh.Mesh.Halfedge`.
-        """
-
-        if not middle:
-            return [self._topology.get_edge(start.index(), end.index())]
-
-        for previous_halfedge, current_halfedge in itertools.pairwise(middle):
-            if previous_halfedge.previous().origin().index() \
-                    == current_halfedge.origin().index():
-                middle_edges.append(previous_halfedge.previous())
+            ], dtype=np.float64)
+            halfedge = next(self._topology.get_edge(start.index(),
+                                                    end.index()).halfedges())
+            if halfedge.origin().index() == start.index():
+                return ps, [(halfedge, ps, pe)], [], [], [], pe
             else:
-                middle_edges.append(previous_halfedge.next())
-            middle_edges.append(current_halfedge.edge())
+                return ps, [(halfedge, pe, ps)], [], [], [], pe
 
-        # Add the remaining edges
+        previous_was_u_side = True
+        u = middle[0].origin()
+        v = middle[0].destination()
+        w = start
+        x = middle[0].previous().origin()
+        pw = ps
+        pu = np.array([
+            np.linalg.norm(coordinates[u.index()]
+                           - coordinates[start.index()]),
+            np.float64(0.)
+        ], dtype=np.float64)
+        pv = self._get_next_point(
+            pu,
+            pw,
+            np.linalg.norm(coordinates[v.index()] - coordinates[w.index()]),
+            np.linalg.norm(coordinates[v.index()] - coordinates[u.index()])
+        )
+        px = self._get_next_point(
+            pu,
+            pv,
+            np.linalg.norm(coordinates[x.index()] - coordinates[v.index()]),
+            np.linalg.norm(coordinates[x.index()] - coordinates[u.index()])
+        )
+
+        # Place the first two boundary edges
         twin = middle[0].twin()
         if twin is None:
             raise dcelmesh.Mesh.IllegalMeshException(
                 f'Halfedge ({middle[0].origin().index()}, '
-                f'{middle[0].origin().index()}) has no twin'
+                f'{middle[0].destination().index()}) '
+                'has no twin'
             )
-        start_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
-                                              dcelmesh.Mesh.Edge]] = [
-            twin.next(),
-            twin.previous(),
-            middle[0].edge()
-        ]
-        end_edges: typing.List[typing.Union[dcelmesh.Mesh.Halfedge,
-                                            dcelmesh.Mesh.Edge]] = [
-            middle[-1].next(),
-            middle[-1].previous()
-        ]
+        boundary.append((twin.next(), pu, pw, pv))
+        boundary.append((twin.previous(), pw, pv, pu))
 
-        return start_edges + middle_edges + end_edges
+        # Place the other boundary edges (except one) and the interior
+        # edges
+        for index in range(len(middle)):
+            halfedge = middle[index]
+            is_u_side = index == len(middle) - 1 \
+                or u.index() == middle[index + 1].origin().index()
+
+            if is_u_side:
+                boundary.append((halfedge.next(), pv, px, pu))
+                if previous_was_u_side:
+                    interior_shared.append((halfedge, pu, pv, pw, px))
+                else:
+                    interior_unshared.append((halfedge, pv, pu, pw, px))
+
+                w = v
+                pw = pv
+                v = x
+                pv = px
+            else:
+                boundary.append((halfedge.previous(), px, pu, pv))
+                if previous_was_u_side:
+                    interior_unshared.append((halfedge, pu, pv, pw, px))
+                else:
+                    interior_shared.append((halfedge, pv, pu, pw, px))
+
+                w = u
+                pw = pu
+                u = x
+                pu = px
+
+            if index == len(middle) - 1:
+                break
+
+            x = middle[index + 1].previous().origin()
+            px = self._get_next_point(
+                pu,
+                pv,
+                np.linalg.norm(coordinates[x.index()]
+                               - coordinates[v.index()]),
+                np.linalg.norm(coordinates[x.index()] - coordinates[u.index()])
+            )
+
+            previous_was_u_side = is_u_side
+
+        # Place the last boundary edge
+        boundary.append((middle[-1].previous(), pv, pu, pw))
+
+        pe = px
+
+        return ps, double_boundary, boundary, \
+            interior_shared, interior_unshared, pe
 
     def forward(self) -> None:
         """
@@ -325,244 +407,179 @@ class Computer:
                 ratios_to_add.append(1 - mu_path_ratios[index])
 
         # Compute point locations and the total geodesic distance
-        self.point_locations = []
+        self._start_points = []
+        self._boundary = []
+        self._interior_shared = []
+        self._interior_unshared = []
+        self._end_points = []
         self.distance = np.float64(0.)
         for (start, end), middle in zip(itertools.pairwise(self.path_vertices),
                                         self.path_halfedges):
-            point_locations \
+            start_point, double_boundary, boundary, \
+                interior_shared, interior_unshared, end_point \
                 = self._get_point_locations(start, middle, end)
-            self.point_locations.append(point_locations)
-            self.distance += np.linalg.norm(
-                point_locations[end.index()]
-                - point_locations[start.index()]
-            )
+            self._start_points.append(start_point)
+            self._double_boundary.append(double_boundary)
+            self._boundary.append(boundary)
+            self._interior_shared.append(interior_shared)
+            self._interior_unshared.append(interior_unshared)
+            self._end_points.append(end_point)
+            self.distance += np.linalg.norm(start_point - end_point)
 
     def _reverse_part(self,
-                      start: dcelmesh.Mesh.Vertex,
-                      middle: typing.List[dcelmesh.Mesh.Halfedge],
-                      end: dcelmesh.Mesh.Vertex,
-                      point_locations: typing.Dict[int,
-                                                   npt.NDArray[np.float64]]) \
-            -> typing.Dict[int, np.float64]:
+                      start_point: npt.NDArray[np.float64],
+                      double_boundary: typing.List[typing.Tuple[
+                          dcelmesh.Mesh.Halfedge,
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64]
+                      ]],
+                      boundary: typing.List[typing.Tuple[
+                          dcelmesh.Mesh.Halfedge,
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64]
+                      ]],
+                      interior_shared: typing.List[typing.Tuple[
+                          dcelmesh.Mesh.Halfedge,
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64]
+                      ]],
+                      interior_unshared: typing.List[typing.Tuple[
+                          dcelmesh.Mesh.Halfedge,
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64],
+                          npt.NDArray[np.float64]
+                      ]],
+                      end_point: npt.NDArray[np.float64]) \
+            -> None:
         """
         Compute the partials for a geodesic not passing through saddles.
 
         In other words, the only mesh points the geodesic path should
         coincide with are the endpoints.
         """
-        partials: typing.Dict[int, np.float64] = {}
-        partials[start.index()] = np.float64(0.)
-        partials[end.index()] = np.float64(0.)
-        for halfedge in middle:
-            partials[halfedge.origin().index()] = np.float64(0.)
-            partials[halfedge.destination().index()] = np.float64(0.)
-        """
-        Partials with respect to vertices.
+        d_geodesic = np.linalg.norm(end_point - start_point)
 
-        These will be computed via accumulation.
-        """
+        for halfedge, pu, pv in double_boundary:
+            u = halfedge.origin()
+            v = halfedge.destination()
+            edge = halfedge.edge()
+            partial_edge = 1.
 
-        geodesic = point_locations[end.index()] \
-            - point_locations[start.index()]
-        d_geodesic = np.linalg.norm(geodesic)
-
-        # Deal with the case where there are no faces
-        if not middle:
-            edge = self._topology.get_edge(start.index(), end.index())
-            partials[start.index()] \
-                = self.dif_edge_lengths[edge.index()][start.index()]
-            partials[end.index()] \
-                = self.dif_edge_lengths[edge.index()][end.index()]
-            return partials
-
-        # Compute maps telling us the previous and next edges the path
-        # passes through. The halfedges are oriented so that their
-        # origins lie on the edge in question.
-        previous_halfedges: typing.Dict[int, dcelmesh.Mesh.Halfedge] = {}
-        for previous, current in itertools.pairwise(middle):
-            if (previous.origin().index() == current.origin().index()
-                    or previous.origin().index()
-                    == current.destination().index()):
-                previous_halfedges[current.edge().index()] = previous
-            else:
-                twin = previous.twin()
-                if twin is None:
-                    raise dcelmesh.Mesh.IllegalMeshException(
-                        f'Halfedge ({previous.origin().index()}, '
-                        f'{previous.destination().index()}) has no twin'
-                    )
-                previous_halfedges[current.edge().index()] = twin
-        previous_halfedges[middle[0].edge().index()] \
-            = self._topology.get_halfedge(middle[0].origin().index(),
-                                          start.index())
-        next_halfedges: typing.Dict[int, dcelmesh.Mesh.Halfedge] = {}
-        for previous, current in itertools.pairwise(middle):
-            if (current.origin().index() == previous.origin().index()
-                    or current.origin().index()
-                    == previous.destination().index()):
-                next_halfedges[previous.edge().index()] = current
-            else:
-                twin = current.twin()
-                if twin is None:
-                    raise dcelmesh.Mesh.IllegalMeshException(
-                        f'Halfedge ({current.origin().index()}, '
-                        f'{current.destination().index()}) has no twin'
-                    )
-                next_halfedges[previous.edge().index()] = twin
-        next_halfedges[middle[-1].edge().index()] \
-            = self._topology.get_halfedge(middle[-1].destination().index(),
-                                          end.index())
-
-        for element in self._get_nearby_edges(start, middle, end):
-            # Set the values:
-            # * `edge`: The edge we're considering
-            # * `partial_edge`: The partial of the geodesic length with
-            #   respect to the length of the current edge
-            # * `u`: One endpoint of the edge
-            # * `v`: The other endpoint of the edge
-
-            if isinstance(element, dcelmesh.Mesh.Halfedge):
-                # Deal with the case where the edge is on the "boundary"
-
-                # u and v are the endpoints of the halfedge. w is the
-                # opposing vertex.
-                u = element.origin()
-                v = element.destination()
-                w = element.previous().origin()
-                edge_uw = self._topology.get_edge(u.index(), w.index())
-                edge_vw = self._topology.get_edge(v.index(), w.index())
-                if (u.index() != start.index()
-                    and v.index() != end.index()
-                    and (v.index() == start.index()
-                         or u.index() == end.index()
-                         or next_halfedges[edge_uw.index()].edge().index()
-                         != edge_vw.index())):
-                    u, v = v, u
-                edge = element.edge()
-
-                # Use bad names here and elsewhere to avoid lines
-                # becoming too long and (even more) unreadable
-                sw = point_locations[start.index()] \
-                    - point_locations[w.index()]
-                ew = point_locations[end.index()] - point_locations[w.index()]
-                uw = point_locations[u.index()] - point_locations[w.index()]
-                vw = point_locations[v.index()] - point_locations[w.index()]
-                vu = point_locations[v.index()] - point_locations[u.index()]
-                d_vu = np.linalg.norm(vu)
-                partial_edge = d_vu * np.cross(sw, ew) \
-                    / (d_geodesic * np.cross(uw, vw))
-
-            else:
-                # Deal with the case where the edge is in the "interior"
-
-                # u and v will be the endpoints of the edge. w will be
-                # the "previous" vertex (one step closer to the start),
-                # and x will be the "next" vertex (one step closer to
-                # the end).
-                edge = element
-
-                previous_halfedge = previous_halfedges[element.index()]
-                next_halfedge = next_halfedges[element.index()]
-
-                if previous_halfedge.origin().index() \
-                        == next_halfedge.origin().index():
-                    # Deal with the case where the previous and next
-                    # edges share an endpoint
-                    w = previous_halfedge.destination()
-                    x = next_halfedge.destination()
-
-                    # Set u to be the shared endpoint
-                    potential = previous_halfedge.previous().origin()
-                    edge_u, edge_v = edge.vertices()
-                    if potential.index() == edge_u.index() \
-                            or potential.index() == edge_v.index():
-                        u = previous_halfedge.origin()
-                        v = previous_halfedge.previous().origin()
-                    else:
-                        u = next_halfedge.origin()
-                        v = next_halfedge.previous().origin()
-
-                    su = point_locations[start.index()] \
-                        - point_locations[u.index()]
-                    wu = point_locations[w.index()] \
-                        - point_locations[u.index()]
-                    wv = point_locations[w.index()] \
-                        - point_locations[v.index()]
-                    eu = point_locations[end.index()] \
-                        - point_locations[u.index()]
-                    xu = point_locations[x.index()] \
-                        - point_locations[u.index()]
-                    xv = point_locations[x.index()] \
-                        - point_locations[v.index()]
-                    vu = point_locations[v.index()] \
-                        - point_locations[u.index()]
-                    d_vu = np.linalg.norm(vu)
-
-                    partial_edge = -d_vu * np.cross(eu, su) \
-                        * (1. / np.cross(wu, wv) + 1. / np.cross(xv, xu)) \
-                        / (d_geodesic
-                           * (1. + np.cross(xu, wu) / np.cross(wv, xv)))
-                else:
-                    # Deal with the case where the previous and next
-                    # edges don't share an endpoint
-
-                    # Set u to be closer to the start than v
-                    u = previous_halfedge.origin()
-                    v = next_halfedge.origin()
-                    w = previous_halfedge.destination()
-                    x = next_halfedge.destination()
-
-                    wu = point_locations[w.index()] \
-                        - point_locations[u.index()]
-                    wv = point_locations[w.index()] \
-                        - point_locations[v.index()]
-                    su = point_locations[start.index()] \
-                        - point_locations[u.index()]
-                    sv = point_locations[start.index()] \
-                        - point_locations[v.index()]
-                    sw = point_locations[start.index()] \
-                        - point_locations[w.index()]
-                    xu = point_locations[x.index()] \
-                        - point_locations[u.index()]
-                    xv = point_locations[x.index()] \
-                        - point_locations[v.index()]
-                    eu = point_locations[end.index()] \
-                        - point_locations[u.index()]
-                    ev = point_locations[end.index()] \
-                        - point_locations[v.index()]
-                    ex = point_locations[end.index()] \
-                        - point_locations[x.index()]
-                    vu = point_locations[v.index()] \
-                        - point_locations[u.index()]
-                    d_vu = np.linalg.norm(vu)
-
-                    partial_edge = d_vu * (
-                        (
-                            np.cross(wv, sw) / np.cross(wu, wv)
-                            * (
-                                (1. - sv @ ev / (sv @ sv)) / np.cross(sv, ev)
-                                + (1. - sv @ su / (sv @ sv)) / np.cross(su, sv)
-                            )
-                        ) + (
-                            np.cross(xu, ex) / np.cross(xv, xu)
-                            * (
-                                (1. - eu @ su / (eu @ eu)) / np.cross(eu, su)
-                                + (1. - eu @ ev / (eu @ eu)) / np.cross(ev, eu)
-                            )
-                        )
-                        - 1. / np.cross(su, sv)
-                        - 1. / np.cross(ev, eu)
-                    ) / (d_geodesic * (
-                        1. / np.cross(sv, ev)
-                        + 1. / np.cross(eu, su)
-                    ))
-
-            partials[u.index()] += partial_edge \
+            self.dif_distance[u.index()] += partial_edge \
                 * self.dif_edge_lengths[edge.index()][u.index()]
-            partials[v.index()] += partial_edge \
+            self.dif_distance[v.index()] += partial_edge \
                 * self.dif_edge_lengths[edge.index()][v.index()]
 
-        return partials
+            # print('Double boundary')
+            # print(f'\t{u.index()}: {pu}')
+            # print(f'\t{v.index()}: {pv}')
+
+        for halfedge, pu, pv, pw in boundary:
+            u = halfedge.origin()
+            v = halfedge.destination()
+            edge = halfedge.edge()
+
+            # Use bad names here and elsewhere to avoid lines becoming
+            # too long and (even more) unreadable
+            sw = start_point - pw
+            ew = end_point - pw
+            uw = pu - pw
+            vw = pv - pw
+            vu = pv - pu
+
+            partial_edge = np.abs(np.linalg.norm(vu) * np.cross(sw, ew)
+                                  / (d_geodesic * np.cross(uw, vw)))
+
+            self.dif_distance[u.index()] += partial_edge \
+                * self.dif_edge_lengths[edge.index()][u.index()]
+            self.dif_distance[v.index()] += partial_edge \
+                * self.dif_edge_lengths[edge.index()][v.index()]
+
+            # print('Boundary')
+            # print(f'\t{u.index()}: {pu}')
+            # print(f'\t{v.index()}: {pv}')
+            # print(f'\t{halfedge.previous().origin().index()}: {pw}')
+
+        for halfedge, pu, pv, pw, px in interior_shared:
+            u = halfedge.origin()
+            v = halfedge.destination()
+            edge = halfedge.edge()
+
+            su = start_point - pu
+            wu = pw - pu
+            wv = pw - pv
+            eu = end_point - pu
+            xu = px - pu
+            xv = px - pv
+            vu = pv - pu
+
+            partial_edge = -np.linalg.norm(vu) * np.cross(eu, su) \
+                * (1. / np.cross(wu, wv) + 1. / np.cross(xv, xu)) \
+                / (d_geodesic * (1. + np.cross(xu, wu) / np.cross(wv, xv)))
+
+            self.dif_distance[u.index()] += partial_edge \
+                * self.dif_edge_lengths[edge.index()][u.index()]
+            self.dif_distance[v.index()] += partial_edge \
+                * self.dif_edge_lengths[edge.index()][v.index()]
+
+            # print('Interior shared')
+            # print(f'\t{u.index()}: {pu}')
+            # print(f'\t{v.index()}: {pv}')
+            # print(f'\t{halfedge.twin().previous().origin().index()}: {pw}')
+            # print(f'\t{halfedge.previous().origin().index()}: {px}')
+
+        for halfedge, pu, pv, pw, px in interior_unshared:
+            u = halfedge.origin()
+            v = halfedge.destination()
+            edge = halfedge.edge()
+
+            wu = pw - pu
+            wv = pw - pv
+            su = start_point - pu
+            sv = start_point - pv
+            sw = start_point - pw
+            xu = px - pu
+            xv = px - pv
+            eu = end_point - pu
+            ev = end_point - pv
+            ex = end_point - px
+            vu = pv - pu
+
+            partial_edge = np.linalg.norm(vu) * (
+                (
+                    np.cross(wv, sw) / np.cross(wu, wv)
+                    * (
+                        (1. - sv @ ev / (sv @ sv)) / np.cross(sv, ev)
+                        + (1. - sv @ su / (sv @ sv)) / np.cross(su, sv)
+                    )
+                ) + (
+                    np.cross(xu, ex) / np.cross(xv, xu)
+                    * (
+                        (1. - eu @ su / (eu @ eu)) / np.cross(eu, su)
+                        + (1. - eu @ ev / (eu @ eu)) / np.cross(ev, eu)
+                    )
+                )
+                - 1. / np.cross(su, sv)
+                - 1. / np.cross(ev, eu)
+            ) / (d_geodesic * (
+                1. / np.cross(sv, ev)
+                + 1. / np.cross(eu, su)
+            ))
+
+            self.dif_distance[u.index()] += partial_edge \
+                * self.dif_edge_lengths[edge.index()][u.index()]
+            self.dif_distance[v.index()] += partial_edge \
+                * self.dif_edge_lengths[edge.index()][v.index()]
+
+            # print('Interior Unshared')
+            # print(f'\t{u.index()}: {pu}')
+            # print(f'\t{v.index()}: {pv}')
+            # print(f'\t{halfedge.twin().previous().origin().index()}: {pw}')
+            # print(f'\t{halfedge.previous().origin().index()}: {px}')
 
     def reverse(self) -> None:
         """
@@ -577,8 +594,18 @@ class Computer:
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
 
+        self.dif_distance = {}
+
         # Compute the partials of edge lengths first
-        for edge in self._topology.edges():
+        for element in itertools.chain(
+            itertools.chain(*self._double_boundary),
+            itertools.chain(*self._boundary),
+            itertools.chain(*self._interior_shared),
+            itertools.chain(*self._interior_unshared)
+        ):
+            edge = element[0].edge()
+            if edge.index() in self.dif_edge_lengths:
+                continue
             u, v = edge.vertices()
             pu = self._coordinates[u.index()]
             pv = self._coordinates[v.index()]
@@ -588,18 +615,18 @@ class Computer:
             self.dif_edge_lengths[edge.index()][v.index()] \
                 = (pv - pu) @ self._partials[v.index()] / edge_length
 
-        # Set up for accumulation
-        self.dif_distance = {
-            index: np.float64(0.)
-            for point_locations in self.point_locations
-            for index in point_locations
-        }
+            # Set up for accumulation
+            self.dif_distance[u.index()] = np.float64(0.)
+            self.dif_distance[v.index()] = np.float64(0.)
 
         # Finally, we actually do the accumulation
-        for (start, end), middle, point_locations \
-                in zip(itertools.pairwise(self.path_vertices),
-                       self.path_halfedges,
-                       self.point_locations):
-            for index, partial in self._reverse_part(start, middle, end,
-                                                     point_locations).items():
-                self.dif_distance[index] += partial
+        for start_point, double_boundary, boundary, \
+                interior_shared, interior_unshared, end_point \
+                in zip(self._start_points,
+                       self._double_boundary,
+                       self._boundary,
+                       self._interior_shared,
+                       self._interior_unshared,
+                       self._end_points):
+            self._reverse_part(start_point, double_boundary, boundary,
+                               interior_shared, interior_unshared, end_point)
