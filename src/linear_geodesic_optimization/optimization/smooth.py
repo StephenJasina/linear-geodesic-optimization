@@ -1,146 +1,167 @@
-from linear_geodesic_optimization.optimization import laplacian, curvature
+"""Module containing utilities to compute smoothness loss."""
 
-class Forward:
-    def __init__(self, mesh, laplacian_forward=None, curvature_forward=None,
-                 strategy='mvs_cross'):
+import dcelmesh
+import numpy as np
+import numpy.typing as npt
+
+from linear_geodesic_optimization.mesh.mesh import Mesh
+from linear_geodesic_optimization.optimization.curvature \
+    import Computer as Curvature
+from linear_geodesic_optimization.optimization.laplacian \
+    import Computer as Laplacian
+
+
+class Computer:
+    """Implementation of curvature loss."""
+
+    def __init__(self, mesh: Mesh, laplacian: Laplacian, curvature: Curvature):
+        """Initialize the computer."""
         self._mesh = mesh
+        self._topology = mesh.get_topology()
+        self._laplacian: Laplacian = laplacian
+        self._curvature: Curvature = curvature
 
-        self._updates = self._mesh.updates() - 1
+        # Forward variables
+        self._forward_updates: int = mesh.get_updates() - 1
+        self._coordinates: npt.NDArray[np.float64] \
+            = np.zeros((self._topology.n_vertices(), 3))
+        self.loss: np.float64 = np.float64(0.)
+        """
+        The smoothness loss computed using the MVS-cross strategy.
 
-        self._laplacian_forward = laplacian_forward
-        if self._laplacian_forward is None:
-            self._laplacian_forward = laplacian.Forward(mesh)
+        See
+        http://graphics.berkeley.edu/papers/Joshi-EMC-2007-06/Joshi-EMC-2007-06.pdf
+        for more information.
+        """
 
-        self._curvature_forward = curvature_forward
-        if self._curvature_forward is None:
-            self._curvature_forward = curvature.Forward(
-                mesh, laplacian_forward
-            )
+        # Reverse variables
+        self._reverse_updates: int = mesh.get_updates() - 1
+        self._partials: npt.NDArray[np.float64] \
+            = np.zeros((self._topology.n_vertices(), 3))
+        self.dif_loss: npt.NDArray[np.float64] \
+            = np.zeros(self._topology.n_vertices())
+        """The partials of the smoothness loss, indexed by vertices."""
 
-        self.strategy = strategy
+    def forward(self) -> None:
+        """
+        Compute the forward direction.
 
-        self.LC = None
-        self.kappa_G = None
-        self.kappa_H = None
-        self.kappa_1 = None
-        self.kappa_2 = None
-        self.L_smooth = None
+        The computed values will be stored in the variables:
+        * `Computer.loss`
+        """
+        if self._forward_updates == self._mesh.get_updates():
+            return
+        self._curvature.forward()
+        self._forward_updates = self._mesh.get_updates()
+        self._coordinates = self._mesh.get_coordinates()
 
-    def calc(self):
-        self._laplacian_forward.calc()
-        self.LC = self._laplacian_forward.LC_dirichlet
+        self.loss = np.float64(0.)
 
-        self._curvature_forward.calc()
-        self.kappa_G = self._curvature_forward.kappa_G
-        self.kappa_H = self._curvature_forward.kappa_H
-        self.kappa_1 = self._curvature_forward.kappa_1
-        self.kappa_2 = self._curvature_forward.kappa_2
+        for edge, laplacian_element in zip(self._topology.edges(),
+                                           self._laplacian.LC_dirichlet_edges):
+            u, v = edge.vertices()
+            self.loss -= 2 * laplacian_element \
+                * self._curvature.kappa_1[u.index()] \
+                * self._curvature.kappa_1[v.index()] \
+                / self._mesh.get_support_area()
+            self.loss -= 2 * laplacian_element \
+                * self._curvature.kappa_2[u.index()] \
+                * self._curvature.kappa_2[v.index()] \
+                / self._mesh.get_support_area()
 
-        if self._updates != self._mesh.updates():
-            self._updates = self._mesh.updates()
+        for vertex, laplacian_element \
+                in zip(self._topology.vertices(),
+                       self._laplacian.LC_dirichlet_vertices):
+            self.loss -= laplacian_element \
+                * self._curvature.kappa_1[vertex.index()]**2 \
+                / self._mesh.get_support_area()
+            self.loss -= laplacian_element \
+                * self._curvature.kappa_2[vertex.index()]**2 \
+                / self._mesh.get_support_area()
 
-            if self.strategy == 'gaussian':
-                self.L_smooth = -self.kappa_G.T @ (self.LC @ self.kappa_G) \
+    def reverse(self) -> None:
+        """
+        Compute the reverse direction (that is, partials).
+
+        The computed values will be stored in the variables:
+        * `Computer.dif_loss`
+        """
+        if self._reverse_updates == self._mesh.get_updates():
+            return
+        self.forward()
+        self._curvature.reverse()
+        self._reverse_updates = self._mesh.get_updates()
+        self._partials = self._mesh.get_partials()
+
+        self.dif_loss = np.zeros(self._topology.n_vertices())
+        for edge, laplacian_element, dif_laplacian_elements \
+                in zip(self._topology.edges(),
+                       self._laplacian.LC_dirichlet_edges,
+                       self._laplacian.dif_LC_dirichlet_edges):
+            u, v = edge.vertices()
+
+            for index, dif_laplacian_element in dif_laplacian_elements.items():
+                self.dif_loss[index] -= 2 * dif_laplacian_element \
+                    * self._curvature.kappa_1[u.index()] \
+                    * self._curvature.kappa_1[v.index()] \
                     / self._mesh.get_support_area()
-            elif self.strategy == 'mean':
-                self.L_smooth = -self.kappa_H.T @ (self.LC @ self.kappa_H) \
+                self.dif_loss[index] -= 2 * dif_laplacian_element \
+                    * self._curvature.kappa_2[u.index()] \
+                    * self._curvature.kappa_2[v.index()] \
                     / self._mesh.get_support_area()
-            else:
-                self.L_smooth = (
-                    -(self.kappa_1.T @ (self.LC @ self.kappa_1)
-                        + self.kappa_2.T @ (self.LC @ self.kappa_2))
+
+            dif_kappa_1_elements_u = self._curvature.dif_kappa_1[u.index()]
+            dif_kappa_2_elements_u = self._curvature.dif_kappa_2[u.index()]
+            for index in dif_kappa_1_elements_u:
+                dif_kappa_1_element_u = dif_kappa_1_elements_u[index]
+                dif_kappa_2_element_u = dif_kappa_2_elements_u[index]
+                self.dif_loss[index] -= 2 * laplacian_element \
+                    * dif_kappa_1_element_u \
+                    * self._curvature.kappa_1[v.index()] \
                     / self._mesh.get_support_area()
-                )
+                self.dif_loss[index] -= 2 * laplacian_element \
+                    * dif_kappa_2_element_u \
+                    * self._curvature.kappa_2[v.index()] \
+                    / self._mesh.get_support_area()
 
-class Reverse:
-    def __init__(self, mesh, laplacian_forward=None, curvature_forward=None,
-                 laplacian_reverse=None, curvature_reverse=None,
-                 strategy='mvs_cross'):
-        self._mesh = mesh
-        self._updates = self._mesh.updates() - 1
+            dif_kappa_1_elements_v = self._curvature.dif_kappa_1[v.index()]
+            dif_kappa_2_elements_v = self._curvature.dif_kappa_2[v.index()]
+            for index in dif_kappa_1_elements_v:
+                dif_kappa_1_element_v = dif_kappa_1_elements_v[index]
+                dif_kappa_2_element_v = dif_kappa_2_elements_v[index]
+                self.dif_loss[index] -= 2 * laplacian_element \
+                    * self._curvature.kappa_1[u.index()] \
+                    * dif_kappa_1_element_v \
+                    / self._mesh.get_support_area()
+                self.dif_loss[index] -= 2 * laplacian_element \
+                    * self._curvature.kappa_2[u.index()] \
+                    * dif_kappa_2_element_v \
+                    / self._mesh.get_support_area()
 
-        self._dif_v = None
-        self._l = None
+        for vertex, laplacian_element, kappa_1, kappa_2, \
+                dif_laplacian_elements, \
+                dif_kappa_1_elements, dif_kappa_2_elements \
+                in zip(self._topology.vertices(),
+                       self._laplacian.LC_dirichlet_vertices,
+                       self._curvature.kappa_1,
+                       self._curvature.kappa_2,
+                       self._laplacian.dif_LC_dirichlet_vertices,
+                       self._curvature.dif_kappa_1,
+                       self._curvature.dif_kappa_2):
+            for index, dif_laplacian_element in dif_laplacian_elements.items():
+                self.dif_loss[index] -= dif_laplacian_element \
+                    * self._curvature.kappa_1[vertex.index()]**2 \
+                    / self._mesh.get_support_area()
+                self.dif_loss[index] -= dif_laplacian_element \
+                    * self._curvature.kappa_2[vertex.index()]**2 \
+                    / self._mesh.get_support_area()
 
-        self._laplacian_forward = laplacian_forward
-        if self._laplacian_forward is None:
-            self._laplacian_forward = laplacian.Forward(mesh)
-
-        self._laplacian_reverse = laplacian_reverse
-        if self._laplacian_reverse is None:
-            self._laplacian_reverse = laplacian.Reverse(mesh,
-                                                        laplacian_forward)
-
-        self._curvature_forward = curvature_forward
-        if self._curvature_forward is None:
-            self._curvature_forward = curvature.Forward(
-                mesh, laplacian_forward
-            )
-
-        self._curvature_reverse = curvature_reverse
-        if self._curvature_reverse is None:
-            self._curvature_reverse = curvature.Reverse(
-                mesh, laplacian_forward, curvature_forward, laplacian_reverse
-            )
-
-        self.strategy = strategy
-
-        self._LC = None
-        self._kappa_G = None
-        self._kappa_H = None
-        self._kappa_1 = None
-        self._kappa_2 = None
-
-        self.dif_LC = None
-        self.dif_kappa_G = None
-        self.dif_kappa_H = None
-        self.dif_kappa_1 = None
-        self.dif_kappa_2 = None
-
-        self.dif_L_smooth = None
-
-    def calc(self, dif_v, l):
-        self._laplacian_forward.calc()
-        self._LC = self._laplacian_forward.LC_dirichlet
-
-        self._curvature_forward.calc()
-        self._kappa_G = self._curvature_forward.kappa_G
-        self._kappa_H = self._curvature_forward.kappa_H
-        self._kappa_1 = self._curvature_forward.kappa_1
-        self._kappa_2 = self._curvature_forward.kappa_2
-
-        self._laplacian_reverse.calc(dif_v, l)
-        self.dif_LC = self._laplacian_reverse.dif_LC_dirichlet
-
-        self._curvature_reverse.calc(dif_v, l)
-        self.dif_kappa_G = self._curvature_reverse.dif_kappa_G
-        self.dif_kappa_H = self._curvature_reverse.dif_kappa_H
-        self.dif_kappa_1 = self._curvature_reverse.dif_kappa_1
-        self.dif_kappa_2 = self._curvature_reverse.dif_kappa_2
-
-        if self._updates != self._mesh.updates() or self._l != l:
-            self._updates = self._mesh.updates()
-            self._dif_v = dif_v
-            self._l = l
-
-            if self.strategy == 'gaussian':
-                self.dif_L_smooth = -(
-                    self.dif_kappa_G.T @ (self._LC @ self._kappa_G)
-                    + self._kappa_G.T @ (self.dif_LC @ self._kappa_G)
-                    + self._kappa_G.T @ (self._LC @ self.dif_kappa_G)
-                ) / self._mesh.get_support_area()
-            elif self.strategy == 'mean':
-                self.dif_L_smooth = -(
-                    self.dif_kappa_H.T @ (self._LC @ self._kappa_H)
-                    + self._kappa_H.T @ (self.dif_LC @ self._kappa_H)
-                    + self._kappa_H.T @ (self._LC @ self.dif_kappa_H)
-                ) / self._mesh.get_support_area()
-            else:
-                self.dif_L_smooth = -(
-                    self.dif_kappa_1.T @ (self._LC @ self._kappa_1)
-                    + self._kappa_1.T @ (self.dif_LC @ self._kappa_1)
-                    + self._kappa_1.T @ (self._LC @ self.dif_kappa_1)
-                    + self.dif_kappa_2.T @ (self._LC @ self._kappa_2)
-                    + self._kappa_2.T @ (self.dif_LC @ self._kappa_2)
-                    + self._kappa_2.T @ (self._LC @ self.dif_kappa_2)
-                ) / self._mesh.get_support_area()
+            for index in dif_kappa_1_elements:
+                dif_kappa_1_element = dif_kappa_1_elements[index]
+                dif_kappa_2_element = dif_kappa_2_elements[index]
+                self.dif_loss[index] -= 2. * laplacian_element \
+                    * dif_kappa_1_element * kappa_1 \
+                    / self._mesh.get_support_area()
+                self.dif_loss[index] -= 2. * laplacian_element \
+                    * dif_kappa_2_element * kappa_2 \
+                    / self._mesh.get_support_area()
