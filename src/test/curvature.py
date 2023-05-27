@@ -11,8 +11,8 @@ from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
 
 
-width = 20
-height = 20
+width = 30
+height = 30
 
 mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)

@@ -265,9 +265,15 @@ class Computer:
                 dif_kappa_G = self.dif_kappa_G[vertex.index()][near.index()]
                 dif_mean_curvature_normal \
                     = self.dif_mean_curvature_normal[vertex.index()][near.index()]
-                dif_kappa_H = np.sign(vertex_normal @ mean_curvature_normal) \
-                    * (mean_curvature_normal @ dif_mean_curvature_normal) \
-                    / np.linalg.norm(mean_curvature_normal)
+                absolute_mean_curvature = np.linalg.norm(mean_curvature_normal)
+                if absolute_mean_curvature == np.float64(0.):
+                    dif_kappa_H = np.float64(0.)
+                else:
+                    dif_kappa_H = np.sign(vertex_normal
+                                          @ mean_curvature_normal) \
+                        * (mean_curvature_normal
+                           @ dif_mean_curvature_normal) \
+                        / absolute_mean_curvature
                 self.dif_kappa_H[vertex.index()][near.index()] = dif_kappa_H
                 if curvature_difference == np.float64(0.):
                     self.dif_kappa_1[vertex.index()][near.index()] \
