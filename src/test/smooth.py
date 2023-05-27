@@ -26,7 +26,7 @@ seed = time.time_ns()
 seed = seed % (2**32 - 1)
 np.random.seed(seed)
 print(f'Seed: {seed}')
-z = mesh.set_parameters(np.random.random(width * height) / 100)
+z = mesh.set_parameters(np.random.random(width * height))
 # z = mesh.set_parameters(np.array([
 #     (16.**2
 #      - mesh.get_coordinates()[index][0]**2

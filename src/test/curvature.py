@@ -18,7 +18,9 @@ mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)
 curvature = Curvature(mesh, laplacian)
 
-np.random.seed(0)
+seed = time.time_ns()
+seed = seed % (2**32 - 1)
+np.random.seed(seed)
 z = mesh.set_parameters(np.random.random(width * height))
 # z = mesh.set_parameters(np.array([
 #     (16.**2
@@ -33,28 +35,28 @@ dz = 1e-7 * dz / np.linalg.norm(dz)
 t = time.time()
 curvature.forward()
 print(f'Time to compute forward: {time.time() - t}')
-kappa_H_z = np.array(curvature.kappa_H)
+kappa_1_z = np.array(curvature.kappa_1)
 
 # Compute the partial derivative in the direction of offset
 t = time.time()
 curvature.reverse()
 print(f'Time to compute reverse: {time.time() - t}')
-dif_kappa_H = np.zeros(kappa_H_z.shape)
-for i in range(len(dif_kappa_H)):
-    for j, d in curvature.dif_kappa_H[i].items():
-        dif_kappa_H[i] += d * dz[j]
+dif_kappa_1 = np.zeros(kappa_1_z.shape)
+for i in range(len(dif_kappa_1)):
+    for j, d in curvature.dif_kappa_1[i].items():
+        dif_kappa_1[i] += d * dz[j]
 
 # Estimate the partial derivative by adding, evaluating, and subtracting
 mesh.set_parameters(z + dz)
 curvature.forward()
-kappa_H_z_dz = np.array(curvature.kappa_H)
-estimated_dif_kappa_H = kappa_H_z_dz - kappa_H_z
+kappa_1_z_dz = np.array(curvature.kappa_1)
+estimated_dif_kappa_1 = kappa_1_z_dz - kappa_1_z
 
 # Print something close to 1., hopefully
-quotient = np.linalg.norm(dif_kappa_H) / np.linalg.norm(estimated_dif_kappa_H)
+quotient = np.linalg.norm(dif_kappa_1) / np.linalg.norm(estimated_dif_kappa_1)
 print(f'Quotient of magnitudes: {quotient:.6f}')
 # Print something close to 0., hopefully
-angle = np.arccos(dif_kappa_H @ estimated_dif_kappa_H
-                  / (np.linalg.norm(dif_kappa_H)
-                     * np.linalg.norm(estimated_dif_kappa_H)))
+angle = np.arccos(dif_kappa_1 @ estimated_dif_kappa_1
+                  / (np.linalg.norm(dif_kappa_1)
+                     * np.linalg.norm(estimated_dif_kappa_1)))
 print(f'Angle between:          {angle:.6f}')

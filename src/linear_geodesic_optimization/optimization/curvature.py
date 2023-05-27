@@ -277,9 +277,9 @@ class Computer:
                 self.dif_kappa_H[vertex.index()][near.index()] = dif_kappa_H
                 if curvature_difference == np.float64(0.):
                     self.dif_kappa_1[vertex.index()][near.index()] \
-                        = np.float64(0.)
+                        = dif_kappa_H
                     self.dif_kappa_2[vertex.index()][near.index()] \
-                        = np.float64(0.)
+                        = dif_kappa_H
                 else:
                     self.dif_kappa_1[vertex.index()][near.index()] \
                         = (2. * kappa_1 * dif_kappa_H - dif_kappa_G) \
