@@ -14,7 +14,9 @@ width = 30
 height = 30
 
 mesh = RectangleMesh(width, height, extent=1.)
-geodesic = Geodesic(mesh, 0, 899)
+geodesic = Geodesic(mesh,
+                    np.random.randint(width * height),
+                    np.random.randint(width * height))
 
 seed = time.time_ns()
 seed = seed % (2**32 - 1)
@@ -25,7 +27,9 @@ dz = np.random.random(width * height)
 dz = dz / np.linalg.norm(dz)
 h = 1e-7
 
+t = time.time()
 geodesic.forward()
+print(f'Time to compute forward: {time.time() - t}')
 distance_z = geodesic.distance
 # print(f'Total distance: {distance_z}')
 # print('Path:')
@@ -37,7 +41,9 @@ distance_z = geodesic.distance
 #     print(f'\t{vertex.index()}')
 
 # Compute the partial derivative in the direction of offset
+t = time.time()
 geodesic.reverse()
+print(f'Time to compute reverse: {time.time() - t}')
 dif_distance = np.float64(0.)
 for j, d in geodesic.dif_distance.items():
     dif_distance += d * dz[j]
