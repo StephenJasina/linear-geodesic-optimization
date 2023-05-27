@@ -2,15 +2,12 @@ import sys
 import time
 
 import dcelmesh
-from matplotlib import pyplot as plt
 import numpy as np
 
 sys.path.append('.')
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic \
     import Computer as Geodesic
-from linear_geodesic_optimization.optimization.laplacian \
-    import Computer as Laplacian
 
 
 width = 30
