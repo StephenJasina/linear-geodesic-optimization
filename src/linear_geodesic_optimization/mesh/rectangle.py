@@ -18,8 +18,9 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
     like a grid where each cell has been cut by its major diagonal.
     """
 
-    def __init__(self, width: int, height: int, scale: float = 1.,
-                 extent: float = np.inf):
+    def __init__(self, width: int, height: int,
+                 scale: np.float64 = np.float64(1.),
+                 extent: np.float64 = np.float64(np.inf)):
         """
         Create a rectangular mesh.
 
@@ -34,12 +35,12 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         """
         self._width: int = width
         self._height: int = height
-        self._scale: float = scale
+        self._scale: np.float64 = scale
 
         self._topology: dcelmesh.Mesh = self._get_topology()
         self._coordinates: npt.NDArray[np.float64] = self._get_coordinates()
 
-        self._extent: float = extent
+        self._extent: np.float64 = extent
 
         self._parameters: npt.NDArray[np.float64] = np.zeros(width * height)
 
@@ -151,7 +152,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         self,
         vertices: npt.NDArray[np.float64],
         edges: typing.List[typing.Tuple[int, int]],
-        epsilon: float
+        epsilon: np.float64
     ) -> typing.List[typing.List[dcelmesh.Mesh.Vertex]]:
         """
         Find fattened versions of edges when mapped onto this mesh.
@@ -167,7 +168,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
             u: npt.NDArray[np.float64],
             v: npt.NDArray[np.float64],
             r: npt.NDArray[np.float64],
-            epsilon: float
+            epsilon: np.float64
         ) -> bool:
             """
             Find whether a point is close to a line segment.
@@ -212,7 +213,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
     def map_coordinates_to_support(
             self,
             coordinates: npt.NDArray[np.float64],
-            scale_factor: float = 1.
+            scale_factor: np.float64 = np.float64(1.)
     ) -> npt.NDArray[np.float64]:
         """
         Rescale coordinates so that they lie within the mesh support.
@@ -241,7 +242,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
         return self._scale * scale_factor * coordinates
 
-    def get_support_area(self) -> float:
+    def get_support_area(self) -> np.float64:
         """
         Return the support area of this mesh.
 

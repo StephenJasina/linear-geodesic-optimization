@@ -72,7 +72,7 @@ class Mesh:
         self,
         vertices: npt.NDArray[np.float64],
         edges: typing.List[typing.Tuple[int, int]],
-        epsilon: float
+        epsilon: np.float64
     ) -> typing.List[typing.List[dcelmesh.Mesh.Vertex]]:
         """
         Find fattened versions of edges when mapped onto this mesh.
@@ -84,7 +84,7 @@ class Mesh:
         """
         raise NotImplementedError
 
-    def get_support_area(self) -> float:
+    def get_support_area(self) -> np.float64:
         """
         Return the area of the support of the mesh.
 
