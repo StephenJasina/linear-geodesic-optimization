@@ -1,52 +1,104 @@
+"""Module containing utilities for linear regression."""
+
+import typing
+
 import numpy as np
+import numpy.typing as npt
 from scipy import linalg
 
-class Forward:
-    def __init__(self):
-        self._phi = None
-        self._t = None
 
-        self.d_tilde = None
-        self.d = None
-        self.residuals = None
-        self.lse = None
+class Computer:
+    """Implementation of linear regression."""
 
-    def calc(self, phi, t):
-        E = phi.shape[0]
+    def __init__(
+        self,
+        phi: npt.NDArray[np.float64],
+        t: npt.NDArray[np.float64],
+        dif_phi: typing.List[typing.Dict[int, np.float64]]
+    ):
+        """Initialize the computer."""
+        # Forward variables
+        self._d: npt.NDArray[np.float64] = np.zeros(phi.shape)
+        self._d_tilde: npt.NDArray[np.float64] = np.zeros(phi.shape)
+        self.phi: npt.NDArray[np.float64] = phi
+        self.t: npt.NDArray[np.float64] = t
+        self.beta: typing.Tuple[np.float64, np.float64] \
+            = (np.float64(0.), np.float64(1.))
+        self.residuals: npt.NDArray[np.float64] = np.zeros(phi.shape)
+        self.loss: np.float64
 
-        if E == 0:
-            self._phi = np.copy(phi)
-            self._t = np.copy(t)
+        # Reverse variables
+        self._dif_d_tilde: typing.List[typing.Dict[int, np.float64]] = []
+        self._dif_d: typing.List[typing.Dict[int, np.float64]] = []
+        self.dif_phi: typing.List[typing.Dict[int, np.float64]] = dif_phi
+        self.dif_loss: typing.Dict[int, np.float64] = {}
 
-            self.d_tilde = np.array([])
-            self.d = np.array([])
+    def forward(self) -> None:
+        """
+        Compute the forward direction.
+
+        The computed values will be stored in the variables:
+        * `Computer.beta`
+        * `Computer.residuals`
+        * `Computer.loss`
+        """
+        e = self.phi.shape[0]
+        if e == 0:
+            self.beta = (np.float64(0.), np.float64(1.))
             self.residuals = np.array([])
-            self.lse = 0
+            self.loss = np.float64(0.)
             return
 
-        self._phi = np.copy(phi)
-        self._t = np.copy(t)
-
-        self.d_tilde = phi - np.sum(phi) / E
-        self.d = self.d_tilde / (self.d_tilde @ self.d_tilde / E)**0.5
-        self.residuals = t - np.sum(t) / E - (self.d @ t / E) * self.d
-        self.lse = self.residuals @ self.residuals \
-            / (t.shape[0] * np.var(t, ddof=1))
-
-    def get_beta(self, phi, t):
-        # Note that the following disagrees with the notation in the writeup
-        # In particular, beta here is the coefficients when relating phi to t
-        # (as opposed to relating d to t).
-        E = phi.shape[0]
-
-        if E == 0:
-            return (1, 0)
-
-        denominator = E * (phi @ phi) - np.sum(phi)**2
-        return (
-            (phi @ phi * np.sum(t) - np.sum(phi) * (phi @ t)) / denominator,
-            (E * (phi @ t) - np.sum(phi) * np.sum(t)) / denominator,
+        beta_denominator = e * (self.phi @ self.phi) - np.sum(self.phi)**2
+        self.beta = (
+            (self.phi @ self.phi * np.sum(self.t)
+             - np.sum(self.phi) * (self.phi @ self.t)) / beta_denominator,
+            (e * (self.phi @ self.t)
+             - np.sum(self.phi) * np.sum(self.t)) / beta_denominator
         )
+        self._d_tilde = self.phi - np.sum(self.phi) / e
+        self._d = self._d_tilde / (self._d_tilde @ self._d_tilde / e)**0.5
+        self.residuals = self.t - np.sum(self.t) / e \
+            - (self._d @ self.t / e) * self._d
+        self.loss = self.residuals @ self.residuals \
+            / (e * np.var(self.t, ddof=1))
+
+    def reverse(self) -> None:
+        """
+        Compute the reverse direction (that is, partials).
+
+        The computed values will be stored in the variables:
+        * `Computer.dif_loss`
+        """
+        self.forward()
+
+        e = self.phi.shape[0]
+        if e == 0:
+            self.dif_loss = {}
+            return
+
+        # TODO: Finish this
+        indices = set()
+        indices.union(*[element.keys() for element in self.dif_phi])
+
+        self._dif_d_tilde = []
+        self._dif_d = []
+        for phi, element in self.phi, self.dif_phi:
+            dif_d_tilde = {}
+            dif_d = {}
+            for index, partial in element.items():
+                dif_d_tilde[index]
+
+
+        for index, partial in self.dif_phi:
+            self._dif_d_tilde[index] = self._dif_phi - np.sum(self._dif_phi) / e
+            self._dif_d[index] = (dif_d_tilde
+                        - (self._d @ dif_d_tilde)
+                            * self._d / e) / (linalg.norm(self._d_tilde) / e**0.5)
+            self.dif_residuals = -(self._d @ self._t * self.dif_d
+                                + self.dif_d @ self._t * self._d) / e
+            self.dif_lse = 2 * self.residuals @ self.dif_residuals \
+                / (e * np.var(self.t, ddof=1))
 
 class Reverse:
     def __init__(self, linear_regression_forward=None):
