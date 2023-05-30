@@ -73,7 +73,7 @@ class Computer:
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = self._mesh.get_coordinates()
 
-        self.loss: np.float64 = np.float64(0.)
+        self.loss = np.float64(0.)
         for fat_edge, network_curvature, edge_length \
                 in zip(self._fat_edges,
                        self._network_curvatures,
