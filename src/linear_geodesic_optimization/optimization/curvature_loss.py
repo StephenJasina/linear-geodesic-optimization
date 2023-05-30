@@ -1,115 +1,114 @@
+"""Module containing utilities to compute curvature loss."""
+
+import typing
+
+import dcelmesh
 import numpy as np
+import numpy.typing as npt
 
-from linear_geodesic_optimization.optimization import curvature
+from linear_geodesic_optimization.mesh.mesh import Mesh
+from linear_geodesic_optimization.optimization.curvature \
+    import Computer as Curvature
 
-class Forward:
-    '''
-    Implementation of the scalar approximation loss function. This, in
-    particular, is used for curvature loss.
-    '''
 
-    def __init__(self, mesh, network_vertices, network_edges, network_curvatures,
-                 epsilon, curvature_forward=None):
+class Computer:
+    """Implementation of curvature loss."""
+
+    def __init__(self,
+                 mesh: Mesh,
+                 network_vertices: npt.NDArray[np.float64],
+                 network_edges: typing.List[typing.Tuple[int, int]],
+                 network_curvatures: typing.List[np.float64],
+                 epsilon: np.float64,
+                 curvature: Curvature):
+        """Initialize the computer."""
         self._mesh = mesh
-        self._updates = self._mesh.updates() - 1
-        self._v = None
-        self._e = self._mesh.get_edges()
-        self._nxt = self._mesh.get_nxt()
+        self._topology = mesh.get_topology()
+        self._curvature: Curvature = curvature
 
-        self._V = len(self._e)
-
-        self._network_vertices = network_vertices
-        self._network_edges = network_edges
-        self._network_curvatures = network_curvatures
-        self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
-                                             epsilon)
-        self._edge_lengths = [
-            np.linalg.norm(self._network_vertices[j] - self._network_vertices[i])
-            for i, j in self._network_edges
+        self._fat_edges = mesh.get_fat_edges(
+            network_vertices,
+            network_edges,
+            epsilon
+        )
+        self._network_edge_lengths = [
+            np.linalg.norm(network_vertices[i] - network_vertices[j])
+            for i, j in network_edges
         ]
-
-        self._curvature_forward = curvature_forward
-        if self._curvature_forward is None:
-            self._curvature_forward = curvature.Forward(mesh)
-
-        self.kappa_G = None
-
-        self.L_curvature = None
-
-    def calc(self):
-        self._curvature_forward.calc()
-        self.kappa_G = self._curvature_forward.kappa_G
-
-        if self._updates != self._mesh.updates():
-            self._updates = self._mesh.updates()
-            self.L_curvature = sum(
-                sum(
-                    (self.kappa_G[i] - network_curvature)**2
-                    for i in fat_edge
-                ) * edge_length / len(fat_edge)
-                for network_curvature, fat_edge, edge_length in
-                    zip(self._network_curvatures, self._fat_edges, self._edge_lengths)
-            ) / sum(self._edge_lengths)
-
-class Reverse:
-    '''
-    Implementation of the gradient of the curvature loss function on a mesh.
-    This implementation assumes the l-th partial affects only the l-th vertex.
-    '''
-
-    def __init__(self, mesh, network_vertices, network_edges, network_curvatures,
-                 epsilon, curvature_forward=None, curvature_reverse=None):
-        self._mesh = mesh
-        self._updates = self._mesh.updates() - 1
-        self._v = None
-        self._e = self._mesh.get_edges()
-        self._nxt = self._mesh.get_nxt()
-
-        self._V = len(self._e)
-
-        self._network_vertices = network_vertices
-        self._network_edges = network_edges
         self._network_curvatures = network_curvatures
-        self._fat_edges = mesh.get_fat_edges(network_vertices, network_edges,
-                                             epsilon)
-        self._edge_lengths = [
-            np.linalg.norm(self._network_vertices[j] - self._network_vertices[i])
-            for i, j in self._network_edges
-        ]
 
-        self._dif_v = None
-        self._l = None
+        # Forward variables
+        self._forward_updates: int = mesh.get_updates() - 1
+        self._coordinates: npt.NDArray[np.float64] \
+            = np.zeros((self._topology.n_vertices(), 3))
+        self.loss: np.float64 = np.float64(0.)
+        """
+        The curvature loss.
 
-        self._curvature_forward = curvature_forward
-        if self._curvature_forward is None:
-            self._curvature_forward = curvature.Forward(mesh)
+        For each network edge passed in, estimate the integral of
+        (kappa_G - desired_curvature)^2. Then, sum the integral
+        approximations and divide by the total length.
 
-        self._curvature_reverse = curvature_reverse
-        if self._curvature_reverse is None:
-            self._curvature_reverse = curvature.Reverse(
-                mesh,
-                self._curvature_forward._laplacian_forward,
-                self._curvature_forward,
-            )
+        TODO: Improve this estimation by doing an actual integral.
+        """
 
-        self.dif_L_curvature = None
+        # Reverse variables
+        self._reverse_updates: int = mesh.get_updates() - 1
+        self._partials: npt.NDArray[np.float64] \
+            = np.zeros((self._topology.n_vertices(), 3))
+        self.dif_loss: npt.NDArray[np.float64] \
+            = np.zeros(self._topology.n_vertices())
+        """The partials of the smoothness loss, indexed by vertices."""
 
-    def calc(self, dif_v, l):
-        self._curvature_forward.calc()
-        self.kappa_G = self._curvature_forward.kappa_G
+    def forward(self) -> None:
+        """
+        Compute the forward direction.
 
-        self._curvature_reverse.calc(dif_v, l)
-        self.dif_kappa_G = self._curvature_reverse.dif_kappa_G
+        The computed values will be stored in the variables:
+        * `Computer.loss`
+        """
+        if self._forward_updates == self._mesh.get_updates():
+            return
+        self._curvature.forward()
+        self._forward_updates = self._mesh.get_updates()
+        self._coordinates = self._mesh.get_coordinates()
 
-        if self._updates != self._mesh.updates() or self._l != l:
-            self._updates = self._mesh.updates()
-            self._dif_v = dif_v
-            self._l = l
-            self.dif_L_curvature = sum(
-                sum(
-                    2 * (self.kappa_G[i] - network_curvature) * self.dif_kappa_G[i]
-                    for i in fat_edge
-                ) * edge_length / len(fat_edge)
-                for network_curvature, fat_edge, edge_length in
-                    zip(self._network_curvatures, self._fat_edges, self._edge_lengths)
-            ) / sum(self._edge_lengths)
+        self.loss: np.float64 = np.float64(0.)
+        for fat_edge, network_curvature, edge_length \
+                in zip(self._fat_edges,
+                       self._network_curvatures,
+                       self._network_edge_lengths):
+            loss_part = np.float64(0.)
+            for vertex in fat_edge:
+                loss_part += (self._curvature.kappa_G[vertex.index()]
+                              - network_curvature)**2
+            self.loss += edge_length * loss_part / len(fat_edge)
+        self.loss /= sum(self._network_edge_lengths)
+
+    def reverse(self) -> None:
+        """
+        Compute the reverse direction (that is, partials).
+
+        The computed values will be stored in the variables:
+        * `Computer.dif_loss`
+        """
+        if self._reverse_updates == self._mesh.get_updates():
+            return
+        self.forward()
+        self._curvature.reverse()
+        self._reverse_updates = self._mesh.get_updates()
+        self._partials = self._mesh.get_partials()
+
+        self.dif_loss = np.zeros(self._topology.n_vertices())
+        for fat_edge, network_curvature, edge_length \
+                in zip(self._fat_edges,
+                       self._network_curvatures,
+                       self._network_edge_lengths):
+            for vertex in fat_edge:
+                curvature = self._curvature.kappa_G[vertex.index()]
+                for index, partial \
+                        in self._curvature.dif_kappa_G[vertex.index()].items():
+                    self.dif_loss[index] \
+                        += 2 * edge_length * (curvature - network_curvature) \
+                        * partial / len(fat_edge)
+        self.dif_loss /= sum(self._network_edge_lengths)

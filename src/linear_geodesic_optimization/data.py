@@ -2,11 +2,13 @@ import csv
 import json
 import os
 import pickle
+import typing
 
 import networkx as nx
 import numpy as np
 
 from linear_geodesic_optimization import convex_hull
+from linear_geodesic_optimization.mesh.mesh import Mesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 def read_json(data_file_path):
@@ -39,7 +41,8 @@ def read_json(data_file_path):
 
     return coordinates, network_edges, network_curvatures, network_latencies
 
-def mercator(longitude, latitude):
+def mercator(longitude: np.float64, latitude: np.float64) \
+        -> typing.Tuple[np.float64, np.float64]:
     '''
     Given a longitude in [-180, 180] and a latitude in [-90, 90], return an
     (x, y) pair representing the location on a Mercator projection. Assuming
@@ -51,17 +54,53 @@ def mercator(longitude, latitude):
     y = np.log(np.tan(np.pi / 4. + latitude * np.pi / 360.)) / (2. * np.pi)
     return (x, y)
 
-def inverse_mercator(x, y):
+def inverse_mercator(x: np.float64, y: np.float64) \
+        -> typing.Tuple[np.float64, np.float64]:
     longitude = x * 360.
     latitude = np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90.
     return (longitude, latitude)
 
-def read_graphml(data_file_path, latencies_file_path=None, with_labels=False):
+def read_graphml(data_file_path: str,
+                 latencies_file_path: typing.Optional[str] = None,
+                 with_labels: bool = False) \
+        -> typing.Union[
+            typing.Tuple[
+                typing.List[typing.Tuple[np.float64, np.float64]],
+                typing.List[typing.Tuple[int, int]],
+                typing.List[np.float64],
+                typing.List[typing.List[typing.Tuple[int, np.float64]]]
+            ],
+            typing.Tuple[
+                typing.List[typing.Tuple[np.float64, np.float64]],
+                typing.List[typing.Tuple[int, int]],
+                typing.List[np.float64],
+                typing.List[typing.List[typing.Tuple[int, np.float64]]],
+                typing.List[str]
+            ]
+        ]:
+    """
+    Parse a graphml file and return a tuple of relevant data.
+
+    Given the path of a graphml file, the optional path of a csv file,
+    and an optional boolean, return:
+    * A list of (longitude, latitude) coordinate pairs representing
+      vertices
+    * A list of pairs of indices into the vertex list representing edges
+    * A list of (Ollivier-Ricci) curvatures of each of the edges
+    * A list of list of pairs representing measured latencies. This is
+      stored in adjacency list format, so that not every edge
+      necessarily has a measured latency, and some edges may have
+      multiple measurements
+    """
     network = nx.read_graphml(data_file_path)
-    coordinates = [mercator(node['lon'], node['lat']) for node in network.nodes.values()]
-    label_to_index = {label: index for index, label in enumerate(network.nodes)}
-    network_edges = [(label_to_index[u], label_to_index[v]) for u, v in network.edges]
-    network_curvatures = [edge['ricciCurvature'] for edge in network.edges.values()]
+    coordinates = [mercator(node['lon'], node['lat'])
+                   for node in network.nodes.values()]
+    label_to_index = {label: index
+                      for index, label in enumerate(network.nodes)}
+    network_edges = [(label_to_index[u], label_to_index[v])
+                     for u, v in network.edges]
+    network_curvatures = [edge['ricciCurvature']
+                          for edge in network.edges.values()]
     network_latencies = [[] for _ in coordinates]
     if latencies_file_path is not None:
         with open(latencies_file_path) as latencies_file:
@@ -74,33 +113,57 @@ def read_graphml(data_file_path, latencies_file_path=None, with_labels=False):
                     )
 
     if with_labels:
-        return coordinates, network_edges, network_curvatures, network_latencies, list(network.nodes)
+        return coordinates, network_edges, network_curvatures, \
+            network_latencies, list(network.nodes)
     else:
-        return coordinates, network_edges, network_curvatures, network_latencies
+        return coordinates, network_edges, network_curvatures, \
+            network_latencies
 
-def map_latencies_to_mesh(mesh, network_vertices, network_latencies):
-    latencies = {}
+def map_latencies_to_mesh(
+        mesh: Mesh,
+        network_vertices: typing.List[typing.Tuple[np.float64, np.float64]],
+        network_latencies: typing.List[typing.List[typing.Tuple[int,
+                                                                np.float64]]]
+    ) -> typing.Dict[int, typing.Tuple[int, np.float64]]:
+    """
+    Convert latencies from a network to a mesh.
+
+    As input, take a mesh, a list of coordinates, and latencies (as
+    returned by `read_graphml`). Return a dictionary of latencies stored
+    in adjacency list format, similar in format to `network_latencies`,
+    but where the keys are now vertex indices of the mesh rather than
+    the network.
+
+    A dictionary is used for space efficiency (not many points on the
+    mesh are expected to have measured latencies).
+    """
+    latencies: typing.Dict[int, typing.Tuple[int, np.float64]] = {}
 
     # Can't do a dict comprehension since multiple vertices could map to the
     # same mesh point
     for i, j_latency_pairs in enumerate(network_latencies):
-        key = mesh.nearest_vertex_index(network_vertices[i])
+        key = mesh.nearest_vertex(network_vertices[i]).index()
         if key not in latencies:
             latencies[key] = []
 
         latencies[key] += [
-            (mesh.nearest_vertex_index(network_vertices[j]), latency)
+            (mesh.nearest_vertex(network_vertices[j]).index(), latency)
             for j, latency in j_latency_pairs
         ]
 
     return latencies
 
-def get_mesh_output(directory, max_iterations=np.inf, postprocessed=False):
-    '''
-    This function can be used to get the height map from precomputed output.
-    Some extra postprocessing is done to make the output a bit more
-    aesthetically pleasing.
-    '''
+def get_mesh_output(directory: str,
+                    max_iterations: typing.Optional[int] = None,
+                    postprocessed: bool = False) -> Mesh:
+    """
+    Given a directory of output, return a mesh of the final output.
+
+    This function can be used to get the height map from precomputed
+    output that has been pickled. Some extra postprocessing is
+    optionally done to make the output a bit more aesthetically
+    pleasing.
+    """
 
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
@@ -113,19 +176,23 @@ def get_mesh_output(directory, max_iterations=np.inf, postprocessed=False):
         iteration_data = pickle.load(f)
         z_0 = np.array(iteration_data['mesh_parameters'])
 
-    iteration = min(
-        max_iterations,
-        max(int(name) for name in os.listdir(directory) if name.isdigit())
-    )
+    iteration = max(int(name)
+                    for name in os.listdir(directory)
+                    if name.isdigit())
+    if max_iterations is not None:
+        iteration = min(iteration, max_iterations)
+
     with open(os.path.join(directory, str(iteration)), 'rb') as f:
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
     mesh = RectangleMesh(width, height)
 
-    coordinates, _, _, _, labels = read_graphml(data_file_name, with_labels=True)
+    coordinates, _, _, _, labels = read_graphml(data_file_name,
+                                                with_labels=True)
     network_vertices = mesh.map_coordinates_to_support(coordinates)
-    nearest_vertex_indices = [mesh.nearest_vertex_index(network_vertex) for network_vertex in network_vertices]
+    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
+                              for network_vertex in network_vertices]
     network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
 
     if postprocessed:

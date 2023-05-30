@@ -84,6 +84,16 @@ class Mesh:
         """
         raise NotImplementedError
 
+    def nearest_vertex(self, coordinate: npt.NDArray[np.float64]) \
+            -> dcelmesh.Mesh.Vertex:
+        """
+        Find the closest mesh vertex to the input coordinates.
+
+        This function discretizes the mesh by giving a direct
+        conversion from continuous coordinates to discrete vertices.
+        """
+        raise NotImplementedError
+
     def get_support_area(self) -> np.float64:
         """
         Return the area of the support of the mesh.
