@@ -6,12 +6,16 @@ import sys
 
 from matplotlib import pyplot as plt
 import numpy as np
-import potpourri3d as pp3d
 
 from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
-from linear_geodesic_optimization.optimization import curvature, linear_regression
+from linear_geodesic_optimization.optimization.curvature \
+    import Computer as Curvature
+from linear_geodesic_optimization.optimization.laplacian \
+    import Computer as Laplacian
+from linear_geodesic_optimization.optimization.linear_regression \
+    import Computer as LinearRegression
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
@@ -41,9 +45,9 @@ if __name__ == '__main__':
         else:
             data_name = parameters['data_name']
             data_file_name = data_name + '.json'
-        lambda_geodesic = parameters['lambda_geodesic']
-        lambda_smooth = parameters['lambda_smooth']
         lambda_curvature = parameters['lambda_curvature']
+        lambda_smooth = parameters['lambda_smooth']
+        lambda_geodesic = parameters['lambda_geodesic']
         initial_radius = parameters['initial_radius']
         width = parameters['width']
         height = parameters['height']
@@ -53,11 +57,8 @@ if __name__ == '__main__':
 
     mesh = RectangleMesh(width, height)
 
-    if data_type == '.json':
-        coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
-    elif data_type == '.graphml':
-        coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
-    network_vertices = mesh.map_coordinates_to_support(coordinates)
+    coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
+    network_vertices = mesh.map_coordinates_to_support(np.array(coordinates))
     network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
     latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
@@ -68,7 +69,7 @@ if __name__ == '__main__':
 
     before_data = None
     after_data = None
-    linear_regression_forward = linear_regression.Forward()
+    linear_regression = LinearRegression(np.array([]), np.array([]), [])
 
     for i in itertools.count():
         path = os.path.join(directory, str(i))
@@ -93,12 +94,18 @@ if __name__ == '__main__':
             estimated_latencies = np.array(data['estimated_latencies'])
             if i == 0:
                 z_0 = data['mesh_parameters']
-                beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
+                linear_regression.phi = estimated_latencies
+                linear_regression.t = true_latencies
+                linear_regression.forward()
+                beta_0, beta_1 = linear_regression.beta
                 before_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
 
         path_next = os.path.join(directory, str(i + 1))
         if i == maxiters or not os.path.exists(path_next):
-            beta_0, beta_1 = linear_regression_forward.get_beta(estimated_latencies, true_latencies)
+            linear_regression.phi = estimated_latencies
+            linear_regression.t = true_latencies
+            linear_regression.forward()
+            beta_0, beta_1 = linear_regression.beta
             after_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
             break
 
@@ -108,12 +115,12 @@ if __name__ == '__main__':
         + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
         + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
-    # figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
-    # figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
-    # figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters, 2.25)
-    # figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters, 2.25)
+    figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
+    figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
+    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters, 2.25)
+    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters, 2.25)
 
-    vertices = mesh.get_vertices()
+    vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
     z = vertices[:,2]
@@ -131,6 +138,7 @@ if __name__ == '__main__':
 
     mesh.set_parameters(z)
 
+    # TODO: Change this to meshutility's solver
     # Compute the geodesic paths
     # mesh_network_edges = [
     #     (
@@ -139,33 +147,29 @@ if __name__ == '__main__':
     #     )
     #     for u, v in network_edges
     # ]
-    # mesh_network_edges.append((498, 1061))
-    # network_curvatures.append(-2.)
-
-    mesh_network_edges = [(498, 1061)]
-    network_curvatures = [-2.]
-
-    path_solver = pp3d.EdgeFlipGeodesicSolver(mesh.get_vertices(), np.array(mesh.get_faces()))
-    paths = [
-        path_solver.find_geodesic_path(i, j)[:,:2] if i != j else []
-        for i, j in mesh_network_edges
-    ]
+    # path_solver = pp3d.EdgeFlipGeodesicSolver(mesh.get_vertices(), np.array(mesh.get_faces()))
+    # paths = [
+    #     path_solver.find_geodesic_path(i, j)[:,:2] if i != j else []
+    #     for i, j in mesh_network_edges
+    # ]
+    paths = []
 
     # Transpose z so that the heatmap is correct.
     z = z.reshape((width, height)).T
 
     figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
-                                       network_vertices, paths, network_curvatures)
+                                       network_vertices, network_edges, network_curvatures)
 
-    curvature_forward = curvature.Forward(mesh)
-    curvature_forward.calc()
-    kappa = curvature_forward.kappa_G.reshape(width, height).T
+    laplacian = Laplacian(mesh)
+    curvature = Curvature(mesh, laplacian)
+    curvature.forward()
+    kappa = np.array(curvature.kappa_G).reshape(width, height).T
     kappa[0,:] = 0.
     kappa[-1,:] = 0.
     kappa[:,0] = 0.
     kappa[:,-1] = 0.
     figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
-                                        network_vertices, paths, network_curvatures)
+                                        network_vertices, network_edges, network_curvatures)
 
     # if sum(len(arr) for arr in before_data) > 0:
     #     figures['scatter'] = get_scatter_plot(before_data, after_data,
@@ -173,6 +177,6 @@ if __name__ == '__main__':
 
     # figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
-    for filename, figure in figures.items():
-        figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
-    # plt.show()
+    # for filename, figure in figures.items():
+    #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
+    plt.show()

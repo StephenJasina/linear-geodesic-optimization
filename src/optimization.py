@@ -12,28 +12,23 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
-def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initial_radius,
-         smoothness_strategy='mean', width=20, height=20,
+def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
+         initial_radius, width=20, height=20,
          maxiter=1000, output_dir_name=os.path.join('..', 'out')):
     data_file_path = os.path.join('..', 'data', data_file_name)
-    data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
+    data_name, _ = os.path.splitext(os.path.basename(data_file_name))
 
     # Construct a mesh
     mesh = RectangleMesh(width, height)
-    vertices = mesh.get_vertices()
-    V = vertices.shape[0]
 
-    if data_type == '.json':
-        coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
-    elif data_type == '.graphml':
-        coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
-    network_vertices = mesh.map_coordinates_to_support(coordinates)
+    network_coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
+    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates))
     latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     # Setup snapshots
     directory = os.path.join(
-        output_dir_name, f'{data_name}', f'{smoothness_strategy}',
-        f'{lambda_geodesic}_{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}'
+        output_dir_name, f'{data_name}',
+        f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}'
     )
     if os.path.isdir(directory):
         shutil.rmtree(directory)
@@ -42,11 +37,10 @@ def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initi
     with open(os.path.join(directory, 'parameters'), 'wb') as f:
         pickle.dump({
             'data_file_name': data_file_name,
-            'lambda_geodesic': lambda_geodesic,
             'lambda_curvature': lambda_curvature,
             'lambda_smooth': lambda_smooth,
+            'lambda_geodesic': lambda_geodesic,
             'initial_radius': initial_radius,
-            'smoothness_strategy': smoothness_strategy,
             'width': width,
             'height': height
         }, f)
@@ -62,17 +56,18 @@ def main(data_file_name, lambda_geodesic, lambda_curvature, lambda_smooth, initi
     z = z - np.amin(z)
     z = mesh.set_parameters(z)
 
-    hierarchy = optimization.DifferentiationHierarchy(
-        mesh, latencies, network_vertices, network_edges, network_curvatures,
-        lambda_geodesic, lambda_curvature, lambda_smooth, smoothness_strategy,
-        directory=directory)
+    computer = optimization.Computer(
+        mesh, network_vertices, network_edges, network_curvatures,
+        network_latencies, 1.01 * 2**0.5 / width,
+        lambda_curvature, lambda_smooth, lambda_geodesic,
+        directory)
 
-    f = hierarchy.get_loss_callback()
-    g = hierarchy.get_dif_loss_callback()
+    f = computer.forward
+    g = computer.reverse
 
-    hierarchy.diagnostics(None)
+    computer.diagnostics(None)
     scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-                            callback=hierarchy.diagnostics,
+                            callback=computer.diagnostics,
                             options={'maxiter': maxiter})
 
 if __name__ == '__main__':
@@ -82,15 +77,14 @@ if __name__ == '__main__':
 
     arguments = []
     for data_file_name in data_file_names:
-        for smoothness_strategy in ['mvs_cross']:
-            for initial_radius in initial_radii:
-                for lambda_smooth in lambda_smooths:
-                    arguments.append((
-                        data_file_name, 0., 1., lambda_smooth, initial_radius,
-                        smoothness_strategy,
-                        40, 40,
-                        1000,
-                        os.path.join('..', 'out_US')
-                    ))
-    with multiprocessing.Pool(10) as p:
-        p.starmap(main, arguments)
+        for initial_radius in initial_radii:
+            for lambda_smooth in lambda_smooths:
+                arguments.append((
+                    data_file_name, 1., lambda_smooth, 0., initial_radius,
+                    40, 40,
+                    1000,
+                    os.path.join('..', 'out_test')
+                ))
+    # with multiprocessing.Pool(10) as p:
+    #     p.starmap(main, arguments)
+    main(*arguments[4])
