@@ -124,32 +124,28 @@ def map_latencies_to_mesh(
         network_vertices: typing.List[typing.Tuple[np.float64, np.float64]],
         network_latencies: typing.List[typing.List[typing.Tuple[int,
                                                                 np.float64]]]
-    ) -> typing.Dict[int, typing.Tuple[int, np.float64]]:
+    ) -> typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]]:
     """
     Convert latencies from a network to a mesh.
 
     As input, take a mesh, a list of coordinates, and latencies (as
-    returned by `read_graphml`). Return a dictionary of latencies stored
-    in adjacency list format, similar in format to `network_latencies`,
-    but where the keys are now vertex indices of the mesh rather than
-    the network.
+    returned by `read_graphml`). Return a list of latencies stored along
+    with the pair of corresponding mesh vertex indices, in the form
+    `((i, j), latency)`.
 
-    A dictionary is used for space efficiency (not many points on the
+    This format is used for space efficiency (not many points on the
     mesh are expected to have measured latencies).
     """
-    latencies: typing.Dict[int, typing.Tuple[int, np.float64]] = {}
+    latencies: typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]] \
+        = []
 
     # Can't do a dict comprehension since multiple vertices could map to the
     # same mesh point
     for i, j_latency_pairs in enumerate(network_latencies):
-        key = mesh.nearest_vertex(network_vertices[i]).index()
-        if key not in latencies:
-            latencies[key] = []
-
-        latencies[key] += [
-            (mesh.nearest_vertex(network_vertices[j]).index(), latency)
-            for j, latency in j_latency_pairs
-        ]
+        i_key = mesh.nearest_vertex(network_vertices[i]).index()
+        for j, latency in j_latency_pairs:
+            j_key = mesh.nearest_vertex(network_vertices[j]).index()
+            latencies.append(((i_key, j_key), latency))
 
     return latencies
 

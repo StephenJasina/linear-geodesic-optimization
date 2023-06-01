@@ -5,13 +5,18 @@ import typing
 import numpy as np
 import numpy.typing as npt
 
+from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.mesh import Mesh
-from linear_geodesic_optimization.optimization.laplacian \
-    import Computer as Laplacian
 from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
 from linear_geodesic_optimization.optimization.curvature_loss \
     import Computer as CurvatureLoss
+from linear_geodesic_optimization.optimization.geodesic \
+    import Computer as Geodesic
+from linear_geodesic_optimization.optimization.geodesic_loss \
+    import Computer as GeodesicLoss
+from linear_geodesic_optimization.optimization.laplacian \
+    import Computer as Laplacian
 from linear_geodesic_optimization.optimization.smooth \
     import Computer as Smooth
 
@@ -58,7 +63,8 @@ class Computer:
         """
         self.mesh = mesh
 
-        self.network_latencies = network_latencies
+        self.latencies = data.map_latencies_to_mesh(mesh, network_vertices,
+                                                    network_latencies)
 
         self.lambda_curvature = lambda_curvature
         self.lambda_smooth = lambda_smooth
@@ -72,6 +78,14 @@ class Computer:
                                             network_edges, network_curvatures,
                                             epsilon, self.curvature)
         self.smooth = Smooth(mesh, self.laplacian, self.curvature)
+        self.geodesics = [
+            Geodesic(mesh, u, v)
+            for (u, v), _ in self.latencies
+        ]
+        self.geodesic_loss = GeodesicLoss(self.geodesics, np.array([
+            latency
+            for _, latency in self.latencies
+        ]))
 
         # Count of iterations for diagnostic purposes
         self.iterations = 0
@@ -81,18 +95,23 @@ class Computer:
             self.mesh.set_parameters(z)
         self.curvature_loss.forward()
         self.smooth.forward()
+        self.geodesic_loss.forward()
         return self.lambda_curvature * self.curvature_loss.loss \
             + self.lambda_smooth * self.smooth.loss \
-            + self.lambda_geodesic * np.float64(0.)
+            + self.lambda_geodesic * self.geodesic_loss.loss
 
     def reverse(self, z: typing.Optional[npt.NDArray[np.float64]] = None):
         if z is not None:
             self.mesh.set_parameters(z)
         self.smooth.reverse()
         self.curvature_loss.reverse()
+        self.geodesic_loss.reverse()
+        dif_geodesic_loss = np.zeros(self.mesh.get_topology().n_vertices())
+        for index, loss in self.geodesic_loss.dif_loss.items():
+            dif_geodesic_loss[index] = loss
         return self.lambda_curvature * self.curvature_loss.dif_loss \
             + self.lambda_smooth * self.smooth.dif_loss \
-            + self.lambda_geodesic * np.zeros(self.mesh.get_topology().n_vertices())
+            + self.lambda_geodesic * dif_geodesic_loss
 
     def diagnostics(self, _):
         """
@@ -103,7 +122,7 @@ class Computer:
         print(f'iteration {self.iterations}:')
         print(f'\tL_curvature: {self.curvature_loss.loss:.6f}')
         print(f'\tL_smooth: {self.smooth.loss:.6f}')
-        print(f'\tL_geodesic: {0.:.6f}')
+        print(f'\tL_geodesic: {self.geodesic_loss.loss:.6f}')
         print(f'\tLoss: {loss:.6f}\n')
 
         if self.directory is not None:
@@ -113,9 +132,7 @@ class Computer:
                     'mesh_parameters': list(self.mesh.get_parameters()),
                     'L_curvature': self.curvature_loss.loss,
                     'L_smooth': self.smooth.loss,
-                    'L_geodesic': 0.,
-                    'true_latencies': [],
-                    'estimated_latencies': [],
+                    'L_geodesic': self.geodesic_loss.loss,
                 }, f)
 
         self.iterations += 1
