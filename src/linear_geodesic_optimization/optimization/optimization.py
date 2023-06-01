@@ -17,8 +17,8 @@ from linear_geodesic_optimization.optimization.geodesic_loss \
     import Computer as GeodesicLoss
 from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
-from linear_geodesic_optimization.optimization.smooth \
-    import Computer as Smooth
+from linear_geodesic_optimization.optimization.smooth_loss \
+    import Computer as SmoothLoss
 
 
 class Computer:
@@ -77,7 +77,7 @@ class Computer:
         self.curvature_loss = CurvatureLoss(mesh, network_vertices,
                                             network_edges, network_curvatures,
                                             epsilon, self.curvature)
-        self.smooth = Smooth(mesh, self.laplacian, self.curvature)
+        self.smooth = SmoothLoss(mesh, self.laplacian, self.curvature)
         self.geodesics = [
             Geodesic(mesh, u, v)
             for (u, v), _ in self.latencies

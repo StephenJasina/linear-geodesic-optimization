@@ -10,8 +10,8 @@ from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
 from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
-from linear_geodesic_optimization.optimization.smooth \
-    import Computer as Smooth
+from linear_geodesic_optimization.optimization.smooth_loss \
+    import Computer as SmoothLoss
 
 
 width = 30
@@ -20,7 +20,7 @@ height = 30
 mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)
 curvature = Curvature(mesh, laplacian)
-smooth = Smooth(mesh, laplacian, curvature)
+smooth = SmoothLoss(mesh, laplacian, curvature)
 
 seed = time.time_ns()
 seed = seed % (2**32 - 1)
