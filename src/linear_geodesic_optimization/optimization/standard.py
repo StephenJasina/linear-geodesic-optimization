@@ -131,35 +131,3 @@ def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
 
     if diagnostics is not None:
         diagnostics()
-
-class SparseLUDecomposition:
-    '''
-    A reimplementation of the scipy.sparse.linalg.SuperLU that is picklable.
-    '''
-
-    def __init__(self, A):
-        '''
-        Given a matrix A in csr format, find permutation matrices Pc and Pr and
-        triangular matrices L and U such that A = Pr.T @ L @ U @ Pc.T. In
-        other words, to solve A @ x = b, we have x = Pc @ U^-1 @ L^-1 @ Pr @ b.
-        '''
-
-        n = A.shape[0]
-        lu = splu(A.T)
-
-        self._Pr = sparse.csc_array((np.ones(n), (np.arange(n), lu.perm_c))).T
-        self._U = lu.L.T
-        self._L = lu.U.T
-        self._Pc = sparse.csc_array((np.ones(n), (lu.perm_r, np.arange(n)))).T
-
-    def solve(self, b):
-        '''
-        Find an x such that A @ x = b.
-        '''
-
-        x = self._Pr @ b
-        x = spsolve_triangular(self._L, x)
-        x = spsolve_triangular(self._U, x, False)
-        x = self._Pc @ x
-
-        return x
