@@ -397,8 +397,16 @@ class Computer:
                 ratios_to_add = []
                 continue
 
+            # Guard against some strange floating point quirks that
+            # the meshutility solver has
+            prev_i, prev_j = mu_path[index - 1]
+            if prev_i == prev_j and (prev_i == i or prev_i == j):
+                continue
+
             # Pick the right direction for the halfedge
             halfedge_ij = self._topology.get_halfedge(i, j)
+            # This check is legal because, if index == len(mu_path) - 1,
+            # then we fall into the vertex case.
             if halfedge_ij.previous().origin().index() in mu_path[index + 1]:
                 halfedges_to_add.append(halfedge_ij)
                 ratios_to_add.append(mu_path_ratios[index])
@@ -474,10 +482,6 @@ class Computer:
             self.dif_distance[v.index()] += partial_edge \
                 * self.dif_edge_lengths[edge.index()][v.index()]
 
-            # print('Double boundary')
-            # print(f'\t{u.index()}: {pu}')
-            # print(f'\t{v.index()}: {pv}')
-
         for halfedge, pu, pv, pw in boundary:
             u = halfedge.origin()
             v = halfedge.destination()
@@ -498,11 +502,6 @@ class Computer:
                 * self.dif_edge_lengths[edge.index()][u.index()]
             self.dif_distance[v.index()] += partial_edge \
                 * self.dif_edge_lengths[edge.index()][v.index()]
-
-            # print('Boundary')
-            # print(f'\t{u.index()}: {pu}')
-            # print(f'\t{v.index()}: {pv}')
-            # print(f'\t{halfedge.previous().origin().index()}: {pw}')
 
         for halfedge, pu, pv, pw, px in interior_shared:
             u = halfedge.origin()
@@ -525,12 +524,6 @@ class Computer:
                 * self.dif_edge_lengths[edge.index()][u.index()]
             self.dif_distance[v.index()] += partial_edge \
                 * self.dif_edge_lengths[edge.index()][v.index()]
-
-            # print('Interior shared')
-            # print(f'\t{u.index()}: {pu}')
-            # print(f'\t{v.index()}: {pv}')
-            # print(f'\t{halfedge.twin().previous().origin().index()}: {pw}')
-            # print(f'\t{halfedge.previous().origin().index()}: {px}')
 
         for halfedge, pu, pv, pw, px in interior_unshared:
             u = halfedge.origin()
@@ -574,12 +567,6 @@ class Computer:
                 * self.dif_edge_lengths[edge.index()][u.index()]
             self.dif_distance[v.index()] += partial_edge \
                 * self.dif_edge_lengths[edge.index()][v.index()]
-
-            # print('Interior Unshared')
-            # print(f'\t{u.index()}: {pu}')
-            # print(f'\t{v.index()}: {pv}')
-            # print(f'\t{halfedge.twin().previous().origin().index()}: {pw}')
-            # print(f'\t{halfedge.previous().origin().index()}: {px}')
 
     def reverse(self) -> None:
         """
