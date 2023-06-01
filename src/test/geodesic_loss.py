@@ -9,7 +9,7 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic \
     import Computer as Geodesic
 from linear_geodesic_optimization.optimization.geodesic_loss \
-    import Computer as LinearRegression
+    import Computer as GeodesicLoss
 
 
 width = 30
@@ -26,8 +26,8 @@ geodesics = [Geodesic(mesh,
                       np.random.randint(width * height),
                       np.random.randint(width * height))
              for _ in range(n)]
-linear_regression = LinearRegression(geodesics,
-                                     (np.random.random(n) - 0.5) * 2.)
+geodesic_loss = GeodesicLoss(geodesics,
+                             (np.random.random(n) - 0.5) * 2.)
 
 z = mesh.set_parameters(np.random.random(width * height))
 dz = np.random.random(width * height)
@@ -39,21 +39,21 @@ for geodesic in geodesics:
     geodesic.forward()
     phi.append(geodesic.distance)
 phi = np.array(phi)
-linear_regression.phi = phi
+geodesic_loss.phi = phi
 
 # Compute the partial derivative in the direction of offset
-linear_regression.reverse()
+geodesic_loss.reverse()
 dif_loss = np.float64(0.)
-for j, d in linear_regression.dif_loss.items():
+for j, d in geodesic_loss.dif_loss.items():
     dif_loss += d * dz[j]
 
 # Estimate the partial derivative by adding, evaluating, and subtracting
 mesh.set_parameters(z + h * dz)
-linear_regression.forward()
-loss_z_plus_dz = linear_regression.loss
+geodesic_loss.forward()
+loss_z_plus_dz = geodesic_loss.loss
 mesh.set_parameters(z - h * dz)
-linear_regression.forward()
-loss_z_minus_dz = linear_regression.loss
+geodesic_loss.forward()
+loss_z_minus_dz = geodesic_loss.loss
 estimated_dif_loss = (loss_z_plus_dz - loss_z_minus_dz) / (2. * h)
 
 # Should print something close to 1
