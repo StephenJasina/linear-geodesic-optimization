@@ -4,6 +4,7 @@ import multiprocessing
 import os
 import pickle
 import shutil
+import warnings
 
 import numpy as np
 import scipy
@@ -11,6 +12,9 @@ import scipy
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
+
+
+warnings.simplefilter('error')
 
 def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
          initial_radius, width=20, height=20,
@@ -21,9 +25,10 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
     # Construct a mesh
     mesh = RectangleMesh(width, height)
 
-    network_coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
+    network_coordinates, network_edges, network_curvatures, network_latencies \
+        = data.read_graphml(data_file_path,
+                            os.path.join('..', 'data', 'latencies_US.csv'))
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates))
-    latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     # Setup snapshots
     directory = os.path.join(
@@ -80,9 +85,9 @@ if __name__ == '__main__':
         for initial_radius in initial_radii:
             for lambda_smooth in lambda_smooths:
                 arguments.append((
-                    data_file_name, 1., lambda_smooth, 0., initial_radius,
+                    data_file_name, 1., lambda_smooth, 0.000001, initial_radius,
                     40, 40,
-                    1000,
+                    100000,
                     os.path.join('..', 'out_test')
                 ))
     # with multiprocessing.Pool(10) as p:
