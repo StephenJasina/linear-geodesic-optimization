@@ -113,6 +113,10 @@ class Computer:
             + self.lambda_smooth * self.smooth.dif_loss \
             + self.lambda_geodesic * dif_geodesic_loss
 
+    @staticmethod
+    def to_float_list(array: npt.NDArray[np.float64]):
+        return [float(item) for item in array]
+
     def diagnostics(self, _):
         """
         Save the hierarchy to disk and output some useful information about
@@ -129,12 +133,12 @@ class Computer:
             with open(os.path.join(self.directory,
                                    str(self.iterations)), 'wb') as f:
                 pickle.dump({
-                    'mesh_parameters': list(self.mesh.get_parameters()),
-                    'L_curvature': self.curvature_loss.loss,
-                    'L_smooth': self.smooth.loss,
-                    'L_geodesic': self.geodesic_loss.loss,
-                    'true_latencies': list(self.geodesic_loss.t),
-                    'estimated_latencies': list(self.geodesic_loss.phi),
+                    'mesh_parameters': Computer.to_float_list(self.mesh.get_parameters()),
+                    'L_curvature': float(self.curvature_loss.loss),
+                    'L_smooth': float(self.smooth.loss),
+                    'L_geodesic': float(self.geodesic_loss.loss),
+                    'true_latencies': Computer.to_float_list(self.geodesic_loss.t),
+                    'estimated_latencies': Computer.to_float_list(self.geodesic_loss.phi),
                 }, f)
 
         self.iterations += 1
