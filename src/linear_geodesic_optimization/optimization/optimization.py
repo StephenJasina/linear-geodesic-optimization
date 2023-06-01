@@ -133,6 +133,8 @@ class Computer:
                     'L_curvature': self.curvature_loss.loss,
                     'L_smooth': self.smooth.loss,
                     'L_geodesic': self.geodesic_loss.loss,
+                    'true_latencies': list(self.geodesic_loss.t),
+                    'estimated_latencies': list(self.geodesic_loss.phi),
                 }, f)
 
         self.iterations += 1

@@ -12,14 +12,26 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
+from linear_geodesic_optimization.optimization.geodesic_loss \
+    import Computer as GeodesicLoss
 from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
-from linear_geodesic_optimization.optimization.linear_regression \
-    import Computer as LinearRegression
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
+
 maxiters = 1000
+
+def get_beta(x, y):
+    n = len(x)
+    sum_x = sum(x)
+    sum_y = sum(y)
+    x_x = x @ x
+    x_y = x @ y
+    nu_0 = sum_y * x_x - x_y * sum_x
+    nu_1 = n * x_y - sum_x * sum_y
+    delta = n * x_x - sum_x * sum_x
+    return (nu_0 / delta, nu_1 / delta)
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -39,12 +51,7 @@ if __name__ == '__main__':
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        # TODO: Simplify this logic
-        if 'data_file_name' in parameters:
-            data_file_name = parameters['data_file_name']
-        else:
-            data_name = parameters['data_name']
-            data_file_name = data_name + '.json'
+        data_file_name = parameters['data_file_name']
         lambda_curvature = parameters['lambda_curvature']
         lambda_smooth = parameters['lambda_smooth']
         lambda_geodesic = parameters['lambda_geodesic']
@@ -60,7 +67,6 @@ if __name__ == '__main__':
     coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
     network_vertices = mesh.map_coordinates_to_support(np.array(coordinates))
     network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
-    latencies = data.map_latencies_to_mesh(mesh, network_vertices, network_latencies)
 
     L_geodesics = []
     L_smooths = []
@@ -69,7 +75,6 @@ if __name__ == '__main__':
 
     before_data = None
     after_data = None
-    linear_regression = LinearRegression(np.array([]), np.array([]), [])
 
     for i in itertools.count():
         path = os.path.join(directory, str(i))
@@ -94,18 +99,12 @@ if __name__ == '__main__':
             estimated_latencies = np.array(data['estimated_latencies'])
             if i == 0:
                 z_0 = data['mesh_parameters']
-                linear_regression.phi = estimated_latencies
-                linear_regression.t = true_latencies
-                linear_regression.forward()
-                beta_0, beta_1 = linear_regression.beta
+                beta_0, beta_1 = get_beta(estimated_latencies, true_latencies)
                 before_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
 
         path_next = os.path.join(directory, str(i + 1))
         if i == maxiters or not os.path.exists(path_next):
-            linear_regression.phi = estimated_latencies
-            linear_regression.t = true_latencies
-            linear_regression.forward()
-            beta_0, beta_1 = linear_regression.beta
+            beta_0, beta_1 = get_beta(estimated_latencies, true_latencies)
             after_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
             break
 
@@ -138,22 +137,6 @@ if __name__ == '__main__':
 
     mesh.set_parameters(z)
 
-    # TODO: Change this to meshutility's solver
-    # Compute the geodesic paths
-    # mesh_network_edges = [
-    #     (
-    #         mesh.nearest_vertex_index(network_vertices[u]),
-    #         mesh.nearest_vertex_index(network_vertices[v])
-    #     )
-    #     for u, v in network_edges
-    # ]
-    # path_solver = pp3d.EdgeFlipGeodesicSolver(mesh.get_vertices(), np.array(mesh.get_faces()))
-    # paths = [
-    #     path_solver.find_geodesic_path(i, j)[:,:2] if i != j else []
-    #     for i, j in mesh_network_edges
-    # ]
-    paths = []
-
     # Transpose z so that the heatmap is correct.
     z = z.reshape((width, height)).T
 
@@ -171,9 +154,9 @@ if __name__ == '__main__':
     figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
                                         network_vertices, network_edges, network_curvatures)
 
-    # if sum(len(arr) for arr in before_data) > 0:
-    #     figures['scatter'] = get_scatter_plot(before_data, after_data,
-    #                                           'Latency Prediction' + lambda_string)
+    if sum(len(arr) for arr in before_data) > 0:
+        figures['scatter'] = get_scatter_plot(before_data, after_data,
+                                              'Latency Prediction' + lambda_string)
 
     # figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 

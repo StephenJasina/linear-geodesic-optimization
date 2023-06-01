@@ -4,8 +4,6 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
-from linear_geodesic_optimization.optimization import linear_regression
-
 # Allow TeX to be used in titles, axes, etc.
 plt.rcParams.update({
     'font.family': 'serif',
@@ -27,7 +25,6 @@ def get_line_plot(data, title, x_max=None, y_max=None):
 def get_scatter_plot(before_data, after_data, title):
     fig, ax = plt.subplots(1, 1)
     ax.set_aspect('equal')
-    linear_regression_forward = linear_regression.Forward()
 
     lim_min = min(
         min(before_data[0]),
@@ -44,19 +41,14 @@ def get_scatter_plot(before_data, after_data, title):
 
     # Plot the before
     ax.plot(before_data[0], before_data[1], 'b.')
-    beta0, beta1 = linear_regression_forward.get_beta(before_data[0],
-                                                      before_data[1])
-    ax.plot([lim_min, lim_max],
-            [beta0 + beta1 * lim_min, beta0 + beta1 * lim_max],
-            'b-')
 
     # Plot the after
     ax.plot(after_data[0], after_data[1], 'r.')
-    beta0, beta1 = linear_regression_forward.get_beta(after_data[0],
-                                                      after_data[1])
+
+    # Plot the "expected" line
     ax.plot([lim_min, lim_max],
-            [beta0 + beta1 * lim_min, beta0 + beta1 * lim_max],
-            'r-')
+            [lim_min, lim_max],
+            'k-')
 
     ax.set_title(title)
     ax.set_xlabel('True Latency')
