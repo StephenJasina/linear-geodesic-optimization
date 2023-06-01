@@ -384,6 +384,7 @@ class Computer:
         self.path_halfedges = []
         halfedges_to_add: typing.List[dcelmesh.Mesh.Halfedge] = []
         ratios_to_add: typing.List[np.float64] = []
+        previous_vertex_check: typing.Optional[int] = None
         for index in range(1, len(mu_path)):
             i, j = mu_path[index]
 
@@ -395,13 +396,16 @@ class Computer:
 
                 halfedges_to_add = []
                 ratios_to_add = []
+
+                previous_vertex_check = i
                 continue
 
             # Guard against some strange floating point quirks that
             # the meshutility solver has
-            prev_i, prev_j = mu_path[index - 1]
-            if prev_i == prev_j and (prev_i == i or prev_i == j):
+            if previous_vertex_check and (previous_vertex_check == i
+                                          or previous_vertex_check == j):
                 continue
+            previous_vertex_check = None
 
             # Pick the right direction for the halfedge
             halfedge_ij = self._topology.get_halfedge(i, j)
