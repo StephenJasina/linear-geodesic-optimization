@@ -17,7 +17,7 @@ from linear_geodesic_optimization.optimization import optimization
 warnings.simplefilter('error')
 
 def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
-         initial_radius, width=20, height=20,
+         initial_radius, width, height,
          maxiter=1000, output_dir_name=os.path.join('..', 'out')):
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, _ = os.path.splitext(os.path.basename(data_file_name))
@@ -76,20 +76,25 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
                             options={'maxiter': maxiter})
 
 if __name__ == '__main__':
-    data_file_names = [os.path.join('graph_US', f'graph{i}.graphml') for i in [4, 10, 12, 14, 16, 18, 22]]
+    # data_file_names = [os.path.join('graph_US', f'graph{i}.graphml')
+    #                    for i in [4, 10, 12, 14, 16, 18, 22]]
+    data_file_names = [os.path.join('graph_US', f'graph{i}.graphml')
+                       for i in [16]]
     initial_radii = [16.]
     lambda_smooths = [0.0002]
+    lambda_geodesics = [0.00001, 0.00002, 0.00004, 0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1.]
 
     arguments = []
     for data_file_name in data_file_names:
         for initial_radius in initial_radii:
             for lambda_smooth in lambda_smooths:
-                arguments.append((
-                    data_file_name, 1., lambda_smooth, 0.000001, initial_radius,
-                    40, 40,
-                    100000,
-                    os.path.join('..', 'out_test')
-                ))
-    # with multiprocessing.Pool(10) as p:
-    #     p.starmap(main, arguments)
-    main(*arguments[4])
+                for lambda_geodesic in lambda_geodesics:
+                    arguments.append((
+                        data_file_name,
+                        1., lambda_smooth, lambda_geodesics,
+                        initial_radius, 40, 40,
+                        10000,
+                        os.path.join('..', 'out_test')
+                    ))
+    with multiprocessing.Pool(50) as p:
+        p.starmap(main, arguments)
