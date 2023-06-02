@@ -91,7 +91,7 @@ if __name__ == '__main__':
                 for lambda_geodesic in lambda_geodesics:
                     arguments.append((
                         data_file_name,
-                        1., lambda_smooth, lambda_geodesics,
+                        1., lambda_smooth, lambda_geodesic,
                         initial_radius, 40, 40,
                         10000,
                         os.path.join('..', 'out_test')
