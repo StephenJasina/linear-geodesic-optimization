@@ -12,7 +12,7 @@ if __name__ == '__main__':
     mesh = RectangleMesh(width, height)
 
     cutoff = 16
-    scale_factor = 0.45
+    scale_factor = 1.
 
     data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
     data_file_path = os.path.join('..', 'data', data_file_name)
@@ -22,6 +22,7 @@ if __name__ == '__main__':
         coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
     elif data_type == '.graphml':
         coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
+    coordinates = np.array(coordinates)
     network_vertices = mesh.map_coordinates_to_support(coordinates, scale_factor)
 
     print('Edit the generateGraph and createMap functions in script.js')
