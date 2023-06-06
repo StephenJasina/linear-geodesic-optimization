@@ -186,13 +186,14 @@ def get_mesh_output(directory: str,
 
     coordinates, _, _, _, labels = read_graphml(data_file_name,
                                                 with_labels=True)
+    coordinates = np.array(coordinates)
     network_vertices = mesh.map_coordinates_to_support(coordinates)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
                               for network_vertex in network_vertices]
     network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
 
     if postprocessed:
-        vertices = mesh.get_vertices()
+        vertices = mesh.get_coordinates()
         x = list(sorted(set(vertices[:,0])))
         y = list(sorted(set(vertices[:,1])))
         z = z - z_0
