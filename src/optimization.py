@@ -51,14 +51,16 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
         }, f)
 
     # Initialize mesh
-    z = np.array([
-        (initial_radius**2
-            - (i / (width - 1) - 0.5)**2
-            - (j / (height - 1) - 0.5)**2)**0.5
-        for i in range(width)
-        for j in range(height)
-    ]).reshape((width * height,))
-    z = z - np.amin(z)
+    # z = np.array([
+    #     (initial_radius**2
+    #         - (i / (width - 1) - 0.5)**2
+    #         - (j / (height - 1) - 0.5)**2)**0.5
+    #     for i in range(width)
+    #     for j in range(height)
+    # ]).reshape((width * height,))
+    # z = z - np.amin(z)
+    with open('initialization', 'rb') as f:
+        z = np.array(pickle.load(f)['mesh_parameters'])
     z = mesh.set_parameters(z)
 
     computer = optimization.Computer(
@@ -94,7 +96,8 @@ if __name__ == '__main__':
                         1., lambda_smooth, lambda_geodesic,
                         initial_radius, 40, 40,
                         10000,
-                        os.path.join('..', 'out_test')
+                        os.path.join('..', 'out_test_multistage')
                     ))
-    with multiprocessing.Pool(50) as p:
-        p.starmap(main, arguments)
+    # with multiprocessing.Pool(50) as p:
+    #     p.starmap(main, arguments)
+    main(*arguments[0])
