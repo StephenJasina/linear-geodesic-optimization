@@ -96,8 +96,8 @@ if __name__ == '__main__':
     initial_radii = [16.]
     lambda_smooths = [0.0002]
     # lambda_smooths = [0.]
-    # lambda_geodesics = [0.00001, 0.00002, 0.00004, 0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1.]
-    lambda_geodesics = [1.]
+    lambda_geodesics = [0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1., 2., 4.]
+    # lambda_geodesics = [1.]
 
     arguments = []
     for data_file_name in data_file_names:
@@ -107,10 +107,10 @@ if __name__ == '__main__':
                     arguments.append((
                         data_file_name,
                         0., lambda_smooth, lambda_geodesic,
-                        initial_radius, 40, 40, 0.,
+                        initial_radius, 40, 40, 0.95,
                         10000,
-                        os.path.join('..', 'out_geodesic_only')
+                        os.path.join('..', 'out_leaveout')
                     ))
-    # with multiprocessing.Pool(50) as p:
-    #     p.starmap(main, arguments)
-    main(*arguments[0])
+    with multiprocessing.Pool(50) as p:
+        p.starmap(main, arguments)
+    # main(*arguments[0])
