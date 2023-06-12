@@ -96,7 +96,7 @@ if __name__ == '__main__':
     initial_radii = [16.]
     lambda_smooths = [0.0002]
     # lambda_smooths = [0.]
-    lambda_geodesics = [0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1., 2., 4.]
+    lambda_geodesics = [0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1., 2., 4., 10., 20., 40., 100., 200., 400., 1000., 2000., 4000., 10000., 20000., 40000., 100000., 200000., 400000.]
     # lambda_geodesics = [1.]
 
     arguments = []
@@ -106,8 +106,8 @@ if __name__ == '__main__':
                 for lambda_geodesic in lambda_geodesics:
                     arguments.append((
                         data_file_name,
-                        0., lambda_smooth, lambda_geodesic,
-                        initial_radius, 40, 40, 0.95,
+                        1., lambda_smooth, lambda_geodesic,
+                        initial_radius, 40, 40, 0.05,
                         10000,
                         os.path.join('..', 'out_leaveout')
                     ))
