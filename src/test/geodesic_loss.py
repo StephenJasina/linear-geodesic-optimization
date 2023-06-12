@@ -34,13 +34,6 @@ dz = np.random.random(width * height)
 dz = dz / np.linalg.norm(dz)
 h = 1e-7
 
-phi = []
-for geodesic in geodesics:
-    geodesic.forward()
-    phi.append(geodesic.distance)
-phi = np.array(phi)
-geodesic_loss.phi = phi
-
 # Compute the partial derivative in the direction of offset
 geodesic_loss.reverse()
 dif_loss = np.float64(0.)

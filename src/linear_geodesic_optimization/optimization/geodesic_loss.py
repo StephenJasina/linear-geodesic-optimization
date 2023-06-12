@@ -72,6 +72,8 @@ class Computer:
             n * phi_t - sum_phi * sum_t
         )
         delta = n * phi_phi - sum_phi * sum_phi
+        centered_t = self.t - sum_t / n
+        n_var_t = centered_t @ centered_t
 
         if n <= 1:
             self.beta = (np.float64(0.), np.float64(1.))
@@ -84,7 +86,7 @@ class Computer:
 
         self.beta = (nu[0] / delta, nu[1] / delta)
         self.residuals = (self.beta[0] + self.beta[1] * self.phi) - self.t
-        self.loss = self.residuals @ self.residuals
+        self.loss = self.residuals @ self.residuals / n_var_t
 
     def reverse(self) -> None:
         """
@@ -115,6 +117,8 @@ class Computer:
         phi_phi = self.phi @ self.phi
         phi_t = self.phi @ self.t
         delta = n * phi_phi - sum_phi * sum_phi
+        centered_t = self.t - sum_t / n
+        n_var_t = centered_t @ centered_t
 
         # Compute some helpful vectors. We have, roughly,
         #   dif_beta = dif_beta_factor @ dif_phi
@@ -135,4 +139,4 @@ class Computer:
                     twice_residual_sum * dif_beta_0_factor[i]
                     + twice_residual_phi * dif_beta_1_factor[i]
                     + twice_residual * self.beta[1]
-                ) * dif_phi
+                ) * dif_phi / n_var_t
