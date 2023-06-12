@@ -68,13 +68,13 @@ def read_graphml(data_file_path: str,
                 typing.List[typing.Tuple[np.float64, np.float64]],
                 typing.List[typing.Tuple[int, int]],
                 typing.List[np.float64],
-                typing.List[typing.List[typing.Tuple[int, np.float64]]]
+                typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]]
             ],
             typing.Tuple[
                 typing.List[typing.Tuple[np.float64, np.float64]],
                 typing.List[typing.Tuple[int, int]],
                 typing.List[np.float64],
-                typing.List[typing.List[typing.Tuple[int, np.float64]]],
+                typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]],
                 typing.List[str]
             ]
         ]:
@@ -88,29 +88,33 @@ def read_graphml(data_file_path: str,
     * A list of pairs of indices into the vertex list representing edges
     * A list of (Ollivier-Ricci) curvatures of each of the edges
     * A list of list of pairs representing measured latencies. This is
-      stored in adjacency list format, so that not every edge
-      necessarily has a measured latency, and some edges may have
-      multiple measurements
+      stored in the format ((i_index, j_index), latency)
+    * Optionally, a list of labels for each of the vertices
     """
     network = nx.read_graphml(data_file_path)
-    coordinates = [mercator(node['lon'], node['lat'])
-                   for node in network.nodes.values()]
+    coordinates: typing.List[typing.Tuple[np.float64, np.float64]] \
+        = [mercator(node['lon'], node['lat'])
+           for node in network.nodes.values()]
     label_to_index = {label: index
                       for index, label in enumerate(network.nodes)}
-    network_edges = [(label_to_index[u], label_to_index[v])
-                     for u, v in network.edges]
-    network_curvatures = [edge['ricciCurvature']
-                          for edge in network.edges.values()]
-    network_latencies = [[] for _ in coordinates]
+    network_edges: typing.List[typing.Tuple[int, int]] \
+        = [(label_to_index[u], label_to_index[v])
+           for u, v in network.edges]
+    network_curvatures: typing.List[np.float64] \
+        = [edge['ricciCurvature']
+           for edge in network.edges.values()]
+    network_latencies: typing.List[typing.Tuple[typing.Tuple[int, int],
+                                                np.float64]] = []
     if latencies_file_path is not None:
         with open(latencies_file_path) as latencies_file:
             latencies_reader = csv.reader(latencies_file)
             for row in latencies_reader:
                 latency = float(row[2])
                 if latency != 0.:
-                    network_latencies[label_to_index[row[0]]].append(
-                        (label_to_index[row[1]], latency)
-                    )
+                    network_latencies.append((
+                        (label_to_index[row[0]], label_to_index[row[1]]),
+                        latency
+                    ))
 
     if with_labels:
         return coordinates, network_edges, network_curvatures, \
@@ -122,8 +126,8 @@ def read_graphml(data_file_path: str,
 def map_latencies_to_mesh(
         mesh: Mesh,
         network_vertices: typing.List[typing.Tuple[np.float64, np.float64]],
-        network_latencies: typing.List[typing.List[typing.Tuple[int,
-                                                                np.float64]]]
+        network_latencies: typing.List[typing.Tuple[typing.Tuple[int, int],
+                                                    np.float64]]
     ) -> typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]]:
     """
     Convert latencies from a network to a mesh.
@@ -141,11 +145,10 @@ def map_latencies_to_mesh(
 
     # Can't do a dict comprehension since multiple vertices could map to the
     # same mesh point
-    for i, j_latency_pairs in enumerate(network_latencies):
+    for (i, j), latency in network_latencies:
         i_key = mesh.nearest_vertex(network_vertices[i]).index()
-        for j, latency in j_latency_pairs:
-            j_key = mesh.nearest_vertex(network_vertices[j]).index()
-            latencies.append(((i_key, j_key), latency))
+        j_key = mesh.nearest_vertex(network_vertices[j]).index()
+        latencies.append(((i_key, j_key), latency))
 
     return latencies
 

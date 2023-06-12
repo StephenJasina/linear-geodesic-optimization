@@ -4,6 +4,7 @@ import multiprocessing
 import os
 import pickle
 import shutil
+import time
 import warnings
 
 import numpy as np
@@ -14,10 +15,12 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
 
 
+# Error on things like division by 0
 warnings.simplefilter('error')
 
 def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
          initial_radius, width, height,
+         leaveout_proportion=0.,
          maxiter=1000, output_dir_name=os.path.join('..', 'out')):
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, _ = os.path.splitext(os.path.basename(data_file_name))
@@ -29,6 +32,12 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
         = data.read_graphml(data_file_path,
                             os.path.join('..', 'data', 'latencies_US.csv'))
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates))
+    leaveout_count = int(leaveout_proportion * len(network_latencies))
+    leaveout_seed = time.monotonic_ns() % (2**31 - 1)
+    if leaveout_count > 0:
+        rng = np.random.default_rng(leaveout_seed)
+        rng.shuffle(network_latencies)
+        network_latencies = network_latencies[:-leaveout_count]
 
     # Setup snapshots
     directory = os.path.join(
@@ -47,20 +56,22 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
             'lambda_geodesic': lambda_geodesic,
             'initial_radius': initial_radius,
             'width': width,
-            'height': height
+            'height': height,
+            'leaveout_count': leaveout_count,
+            'leaveout_seed': leaveout_seed
         }, f)
 
     # Initialize mesh
-    # z = np.array([
-    #     (initial_radius**2
-    #         - (i / (width - 1) - 0.5)**2
-    #         - (j / (height - 1) - 0.5)**2)**0.5
-    #     for i in range(width)
-    #     for j in range(height)
-    # ]).reshape((width * height,))
-    # z = z - np.amin(z)
-    with open('initialization', 'rb') as f:
-        z = np.array(pickle.load(f)['mesh_parameters'])
+    z = np.array([
+        (initial_radius**2
+            - (i / (width - 1) - 0.5)**2
+            - (j / (height - 1) - 0.5)**2)**0.5
+        for i in range(width)
+        for j in range(height)
+    ]).reshape((width * height,))
+    z = z - np.amin(z)
+    # with open('initialization', 'rb') as f:
+    #     z = np.array(pickle.load(f)['mesh_parameters'])
     z = mesh.set_parameters(z)
 
     computer = optimization.Computer(
@@ -84,7 +95,9 @@ if __name__ == '__main__':
                        for i in [16]]
     initial_radii = [16.]
     lambda_smooths = [0.0002]
-    lambda_geodesics = [0.00001, 0.00002, 0.00004, 0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1.]
+    # lambda_smooths = [0.]
+    # lambda_geodesics = [0.00001, 0.00002, 0.00004, 0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1.]
+    lambda_geodesics = [1.]
 
     arguments = []
     for data_file_name in data_file_names:
@@ -93,10 +106,10 @@ if __name__ == '__main__':
                 for lambda_geodesic in lambda_geodesics:
                     arguments.append((
                         data_file_name,
-                        1., lambda_smooth, lambda_geodesic,
-                        initial_radius, 40, 40,
+                        0., lambda_smooth, lambda_geodesic,
+                        initial_radius, 40, 40, 0.,
                         10000,
-                        os.path.join('..', 'out_test_multistage')
+                        os.path.join('..', 'out_geodesic_only')
                     ))
     # with multiprocessing.Pool(50) as p:
     #     p.starmap(main, arguments)
