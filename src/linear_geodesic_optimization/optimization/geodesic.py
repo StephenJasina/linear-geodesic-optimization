@@ -380,11 +380,11 @@ class Computer:
         # Split the path up piecewise, where boundaries are marked by
         # vertices. Make sure to orient path_edges sensibly: each
         # halfedge points to the next face the path passes through.
-        self.path_vertices = [self._topology.get_vertex(mu_path[0][0])]
+        previous_vertex_index: typing.Optional[int] = mu_path[0][0]
+        self.path_vertices = [self._topology.get_vertex(previous_vertex_index)]
         self.path_halfedges = []
         halfedges_to_add: typing.List[dcelmesh.Mesh.Halfedge] = []
         ratios_to_add: typing.List[np.float64] = []
-        previous_vertex_check: typing.Optional[int] = None
         for index in range(1, len(mu_path)):
             i, j = mu_path[index]
 
@@ -397,15 +397,16 @@ class Computer:
                 halfedges_to_add = []
                 ratios_to_add = []
 
-                previous_vertex_check = i
+                previous_vertex_index = i
                 continue
 
             # Guard against some strange floating point quirks that
             # the meshutility solver has
-            if previous_vertex_check and (previous_vertex_check == i
-                                          or previous_vertex_check == j):
+            if previous_vertex_index is not None \
+                    and (previous_vertex_index == i
+                         or previous_vertex_index == j):
                 continue
-            previous_vertex_check = None
+            previous_vertex_index = None
 
             # Pick the right direction for the halfedge
             halfedge_ij = self._topology.get_halfedge(i, j)
