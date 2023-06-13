@@ -31,7 +31,7 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
     network_coordinates, network_edges, network_curvatures, network_latencies \
         = data.read_graphml(data_file_path,
                             os.path.join('..', 'data', 'latencies_US.csv'))
-    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates))
+    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.5))
     leaveout_count = int(leaveout_proportion * len(network_latencies))
     leaveout_seed = time.monotonic_ns() % (2**31 - 1)
     if leaveout_count > 0:
