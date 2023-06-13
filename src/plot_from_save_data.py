@@ -12,15 +12,15 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
-from linear_geodesic_optimization.optimization.geodesic_loss \
-    import Computer as GeodesicLoss
+from linear_geodesic_optimization.optimization.geodesic \
+    import Computer as Geodesic
 from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
 
-maxiters = 1000
+maxiters = 10000
 
 def get_beta(x, y):
     n = len(x)
@@ -32,6 +32,11 @@ def get_beta(x, y):
     nu_1 = n * x_y - sum_x * sum_y
     delta = n * x_x - sum_x * sum_x
     return (nu_0 / delta, nu_1 / delta)
+
+def get_r(x, y):
+    cx = x - np.mean(x)
+    cy = y - np.mean(y)
+    return (cx @ cy) / ((cx @ cx) * (cy @ cy))**0.5
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -58,15 +63,28 @@ if __name__ == '__main__':
         initial_radius = parameters['initial_radius']
         width = parameters['width']
         height = parameters['height']
+        leaveout_count = parameters['leaveout_count']
+        leaveout_seed = parameters['leaveout_seed']
 
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
     mesh = RectangleMesh(width, height)
 
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
-    network_vertices = mesh.map_coordinates_to_support(np.array(coordinates))
+    network_coordinates, network_edges, network_curvatures, network_latencies \
+        = data.read_graphml(data_file_path,
+                            os.path.join('..', 'data', 'latencies_US.csv'))
+    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.5))
     network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
+    if leaveout_count > 0:
+        rng = np.random.default_rng(leaveout_seed)
+        rng.shuffle(network_latencies)
+        network_latencies = network_latencies[-leaveout_count:]
+    true_latencies = np.array([latency for _, latency in network_latencies])
+    geodesics = [
+        Geodesic(mesh, u, v)
+        for (u, v), _ in network_latencies
+    ]
 
     L_geodesics = []
     L_smooths = []
@@ -95,17 +113,31 @@ if __name__ == '__main__':
             Ls.append(lambda_geodesic * L_geodesic + lambda_smooth * L_smooth
                       + lambda_curvature * L_curvature)
 
-            true_latencies = np.array(data['true_latencies'])
-            estimated_latencies = np.array(data['estimated_latencies'])
             if i == 0:
                 z_0 = data['mesh_parameters']
-                beta_0, beta_1 = get_beta(estimated_latencies, true_latencies)
-                before_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
+                beta_0, beta_1 = data['beta']
+                for geodesic in geodesics:
+                    geodesic.forward()
+                distances = np.array([
+                    geodesic.distance
+                    for geodesic in geodesics
+                ])
+                estimated_latencies = beta_0 + beta_1 * distances
+                before_data = (true_latencies, estimated_latencies)
+                print(f'Initial validation set correlation squared: {get_r(true_latencies, estimated_latencies)**2}')
 
         path_next = os.path.join(directory, str(i + 1))
         if i == maxiters or not os.path.exists(path_next):
-            beta_0, beta_1 = get_beta(estimated_latencies, true_latencies)
-            after_data = (true_latencies, beta_0 + beta_1 * estimated_latencies)
+            beta_0, beta_1 = data['beta']
+            for geodesic in geodesics:
+                geodesic.forward()
+            distances = np.array([
+                geodesic.distance
+                for geodesic in geodesics
+            ])
+            estimated_latencies = beta_0 + beta_1 * distances
+            after_data = (true_latencies, estimated_latencies)
+            print(f'Final validation set correlation squared: {get_r(true_latencies, estimated_latencies)**2}')
             break
 
     figures = {}

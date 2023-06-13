@@ -137,8 +137,8 @@ class Computer:
                     'L_curvature': float(self.curvature_loss.loss),
                     'L_smooth': float(self.smooth.loss),
                     'L_geodesic': float(self.geodesic_loss.loss),
-                    'true_latencies': Computer.to_float_list(self.geodesic_loss.t),
-                    'estimated_latencies': Computer.to_float_list(self.geodesic_loss.phi),
+                    'beta': (float(self.geodesic_loss.beta[0]),
+                             float(self.geodesic_loss.beta[1])),
                 }, f)
 
         self.iterations += 1
