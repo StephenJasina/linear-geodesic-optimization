@@ -20,7 +20,7 @@ from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
 
-maxiters = 10000
+maxiters = 300
 
 def get_beta(x, y):
     n = len(x)
@@ -79,8 +79,8 @@ if __name__ == '__main__':
     if leaveout_count > 0:
         rng = np.random.default_rng(leaveout_seed)
         rng.shuffle(network_latencies)
-        # network_latencies = network_latencies[-leaveout_count:]
-        network_latencies = network_latencies[:-leaveout_count]
+        network_latencies = network_latencies[-leaveout_count:]
+        # network_latencies = network_latencies[:-leaveout_count]
     latencies = data.map_latencies_to_mesh(mesh, network_vertices,
                                            network_latencies)
     true_latencies = np.array([latency for _, latency in latencies])
@@ -151,8 +151,8 @@ if __name__ == '__main__':
 
     figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
     figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
-    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters, 2.25)
-    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters, 2.25)
+    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters)
+    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters)
 
     vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
