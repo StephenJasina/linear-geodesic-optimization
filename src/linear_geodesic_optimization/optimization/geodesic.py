@@ -588,6 +588,7 @@ class Computer:
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
 
+        self.dif_edge_lengths = [{} for _ in self._topology.edges()]
         self.dif_distance = {}
 
         # Compute the partials of edge lengths first
@@ -598,7 +599,7 @@ class Computer:
             itertools.chain(*self._interior_unshared)
         ):
             edge = element[0].edge()
-            if edge.index() in self.dif_edge_lengths:
+            if self.dif_edge_lengths[edge.index()]:
                 continue
             u, v = edge.vertices()
             pu = self._coordinates[u.index()]
