@@ -383,6 +383,7 @@ class Computer:
         previous_vertex_index: typing.Optional[int] = mu_path[0][0]
         self.path_vertices = [self._topology.get_vertex(previous_vertex_index)]
         self.path_halfedges = []
+        self.path_ratios = []
         halfedges_to_add: typing.List[dcelmesh.Mesh.Halfedge] = []
         ratios_to_add: typing.List[np.float64] = []
         for index in range(1, len(mu_path)):
@@ -421,10 +422,11 @@ class Computer:
 
         # Compute point locations and the total geodesic distance
         self._start_points = []
+        self._end_points = []
+        self._double_boundary = []
         self._boundary = []
         self._interior_shared = []
         self._interior_unshared = []
-        self._end_points = []
         self.distance = np.float64(0.)
         for (start, end), middle in zip(itertools.pairwise(self.path_vertices),
                                         self.path_halfedges):
