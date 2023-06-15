@@ -79,11 +79,14 @@ if __name__ == '__main__':
     if leaveout_count > 0:
         rng = np.random.default_rng(leaveout_seed)
         rng.shuffle(network_latencies)
-        network_latencies = network_latencies[-leaveout_count:]
-    true_latencies = np.array([latency for _, latency in network_latencies])
+        # network_latencies = network_latencies[-leaveout_count:]
+        network_latencies = network_latencies[:-leaveout_count]
+    latencies = data.map_latencies_to_mesh(mesh, network_vertices,
+                                           network_latencies)
+    true_latencies = np.array([latency for _, latency in latencies])
     geodesics = [
         Geodesic(mesh, u, v)
-        for (u, v), _ in network_latencies
+        for (u, v), _ in latencies
     ]
 
     L_geodesics = []
@@ -124,7 +127,7 @@ if __name__ == '__main__':
                 ])
                 estimated_latencies = beta_0 + beta_1 * distances
                 before_data = (true_latencies, estimated_latencies)
-                print(f'Initial validation set correlation squared: {get_r(true_latencies, estimated_latencies)**2}')
+                print(f'Initial validation set correlation squared: {get_r(true_latencies, distances)**2}')
 
         path_next = os.path.join(directory, str(i + 1))
         if i == maxiters or not os.path.exists(path_next):
@@ -137,7 +140,7 @@ if __name__ == '__main__':
             ])
             estimated_latencies = beta_0 + beta_1 * distances
             after_data = (true_latencies, estimated_latencies)
-            print(f'Final validation set correlation squared: {get_r(true_latencies, estimated_latencies)**2}')
+            print(f'Final validation set correlation squared: {get_r(true_latencies, distances)**2}')
             break
 
     figures = {}
