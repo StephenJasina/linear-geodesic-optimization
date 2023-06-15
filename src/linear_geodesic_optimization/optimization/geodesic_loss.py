@@ -63,6 +63,15 @@ class Computer:
 
         n = self.phi.shape[0]
 
+        if n <= 1:
+            self.beta = (np.float64(0.), np.float64(1.))
+            if n == 0:
+                self.residuals = np.array([])
+            else:
+                self.residuals = np.array([np.float64(0.)])
+            self.loss = np.float64(0.)
+            return
+
         sum_phi = sum(self.phi)
         sum_t = sum(self.t)
         phi_phi = self.phi @ self.phi
@@ -74,15 +83,6 @@ class Computer:
         delta = n * phi_phi - sum_phi * sum_phi
         centered_t = self.t - sum_t / n
         n_var_t = centered_t @ centered_t
-
-        if n <= 1:
-            self.beta = (np.float64(0.), np.float64(1.))
-            if n == 0:
-                self.residuals = np.array([])
-            else:
-                self.residuals = np.array([np.float64(0.)])
-            self.loss = np.float64(0.)
-            return
 
         self.beta = (nu[0] / delta, nu[1] / delta)
         self.residuals = (self.beta[0] + self.beta[1] * self.phi) - self.t
