@@ -1,4 +1,5 @@
 import datetime
+import itertools
 import json
 import multiprocessing
 import os
@@ -19,19 +20,19 @@ from linear_geodesic_optimization.optimization import optimization
 warnings.simplefilter('error')
 
 def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
-         initial_radius, width, height,
+         initial_radius, width, height, scale,
          leaveout_proportion=0.,
          maxiter=1000, output_dir_name=os.path.join('..', 'out')):
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, _ = os.path.splitext(os.path.basename(data_file_name))
 
     # Construct a mesh
-    mesh = RectangleMesh(width, height)
+    mesh = RectangleMesh(width, height, scale)
 
     network_coordinates, network_edges, network_curvatures, network_latencies \
         = data.read_graphml(data_file_path,
                             os.path.join('..', 'data', 'latencies_US.csv'))
-    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.5))
+    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8))
     leaveout_count = int(leaveout_proportion * len(network_latencies))
     leaveout_seed = time.monotonic_ns() % (2**31 - 1)
     if leaveout_count > 0:
@@ -42,7 +43,7 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
     # Setup snapshots
     directory = os.path.join(
         output_dir_name, f'{data_name}',
-        f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}'
+        f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
     )
     if os.path.isdir(directory):
         shutil.rmtree(directory)
@@ -93,24 +94,25 @@ if __name__ == '__main__':
     #                    for i in [4, 10, 12, 14, 16, 18, 22]]
     data_file_names = [os.path.join('graph_US', f'graph{i}.graphml')
                        for i in [16]]
-    initial_radii = [16.]
+    lambda_curvatures = [1.]
     lambda_smooths = [0.0002]
-    # lambda_smooths = [0.]
-    lambda_geodesics = [0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1., 2., 4., 10., 20., 40., 100., 200., 400., 1000., 2000., 4000., 10000., 20000., 40000., 100000., 200000., 400000.]
-    # lambda_geodesics = [1.]
+    # lambda_geodesics = [0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1., 2., 4., 10., 20., 40., 100., 200., 400., 1000., 2000., 4000., 10000., 20000., 40000., 100000., 200000., 400000.]
+    lambda_geodesics = [0.]
+    initial_radii = [100.]
+    widths = [30]
+    heights = [30]
+    scales = [1., 2., 4., 10., 20., 40.]
+    leaveout_proportions = [1.]
 
-    arguments = []
-    for data_file_name in data_file_names:
-        for initial_radius in initial_radii:
-            for lambda_smooth in lambda_smooths:
-                for lambda_geodesic in lambda_geodesics:
-                    arguments.append((
-                        data_file_name,
-                        1., lambda_smooth, lambda_geodesic,
-                        initial_radius, 40, 40, 0.05,
-                        1000,
-                        os.path.join('..', 'out_leaveout')
-                    ))
+    arguments = list(itertools.product(
+        data_file_names,
+        lambda_curvatures, lambda_smooths, lambda_geodesics,
+        initial_radii, widths, heights, scales,
+        leaveout_proportions,
+        [10],
+        [os.path.join('..', 'out_test')]
+    ))
+    print(arguments)
     with multiprocessing.Pool(50) as p:
         p.starmap(main, arguments)
     # main(*arguments[0])
