@@ -16,9 +16,10 @@ def get_line_plot(data, title, x_max=None, y_max=None):
     ax.plot(range(len(data)), data)
     ax.set_xlim(xmax=x_max)
     if y_max is None:
-        ax.set_ylim(ymin=0, ymax=np.amax(data)*1.2)
-    else:
-        ax.set_ylim(ymin=0, ymax=y_max)
+        y_max = np.amax(data) * 1.2
+    if y_max == np.float64(0.):
+        y_max = np.float64(1.)
+    ax.set_ylim(ymin=0, ymax=y_max)
     ax.set_title(title)
     ax.set_xlabel('Iteration')
     ax.set_ylabel('Loss')
