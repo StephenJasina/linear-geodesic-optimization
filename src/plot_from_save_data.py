@@ -74,7 +74,7 @@ if __name__ == '__main__':
     network_coordinates, network_edges, network_curvatures, network_latencies \
         = data.read_graphml(data_file_path,
                             os.path.join('..', 'data', 'latencies_US.csv'))
-    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.5))
+    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8))
     network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
     if leaveout_count > 0:
         rng = np.random.default_rng(leaveout_seed)
