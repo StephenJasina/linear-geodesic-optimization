@@ -78,6 +78,8 @@ class Computer:
                 in zip(self._fat_edges,
                        self._network_curvatures,
                        self._network_edge_lengths):
+            if len(fat_edge) == 0:
+                continue
             loss_part = np.float64(0.)
             for vertex in fat_edge:
                 loss_part += (self._curvature.kappa_G[vertex.index()]
