@@ -154,7 +154,7 @@ def map_latencies_to_mesh(
 
 def get_mesh_output(directory: str,
                     max_iterations: typing.Optional[int] = None,
-                    postprocessed: bool = False) -> Mesh:
+                    postprocessed: bool = False) -> RectangleMesh:
     """
     Given a directory of output, return a mesh of the final output.
 
