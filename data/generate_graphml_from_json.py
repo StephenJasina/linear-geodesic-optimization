@@ -40,8 +40,5 @@ if __name__ == '__main__':
         u_label, v_label = tuple(edge_label)
         network.add_edge(u_label, v_label, ricciCurvature=curvature)
 
-    for node in network.nodes.values():
-        print(node)
-
     name = os.path.splitext(os.path.basename(sys.argv[1]))[0]
     nx.graphml.write_graphml(network, f'{name}.graphml')

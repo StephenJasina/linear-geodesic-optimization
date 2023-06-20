@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d2" for="edge" attr.name="ricciCurvature" attr.type="double" />
+  <key id="d1" for="node" attr.name="lat" attr.type="double" />
+  <key id="d0" for="node" attr.name="lon" attr.type="double" />
+  <graph edgedefault="undirected">
+    <node id="A">
+      <data key="d0">-90.0</data>
+      <data key="d1">15.700786352679103</data>
+    </node>
+    <node id="B">
+      <data key="d0">-63.60424028268552</data>
+      <data key="d1">0.0</data>
+    </node>
+    <node id="C">
+      <data key="d0">-90.0</data>
+      <data key="d1">-15.700786352679089</data>
+    </node>
+    <node id="D">
+      <data key="d0">90.0</data>
+      <data key="d1">-15.700786352679089</data>
+    </node>
+    <node id="E">
+      <data key="d0">63.60424028268552</data>
+      <data key="d1">0.0</data>
+    </node>
+    <node id="F">
+      <data key="d0">90.0</data>
+      <data key="d1">15.700786352679103</data>
+    </node>
+    <edge source="A" target="B">
+      <data key="d2">1.0</data>
+    </edge>
+    <edge source="A" target="C">
+      <data key="d2">1.0</data>
+    </edge>
+    <edge source="B" target="C">
+      <data key="d2">1.0</data>
+    </edge>
+    <edge source="B" target="E">
+      <data key="d2">-2.0</data>
+    </edge>
+    <edge source="D" target="E">
+      <data key="d2">1.0</data>
+    </edge>
+    <edge source="D" target="F">
+      <data key="d2">1.0</data>
+    </edge>
+    <edge source="E" target="F">
+      <data key="d2">1.0</data>
+    </edge>
+  </graph>
+</graphml>
