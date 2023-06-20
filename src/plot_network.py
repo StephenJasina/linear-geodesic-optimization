@@ -22,10 +22,11 @@ if data_type == '.json':
     coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
 elif data_type == '.graphml':
     coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
-network_vertices = mesh.map_coordinates_to_support(coordinates)
+coordinates = np.array(coordinates)
+network_vertices = mesh.map_coordinates_to_support(coordinates, 0.8)
 
 mesh.set_parameters(np.random.random(mesh.get_parameters().shape))
-vertices = mesh.get_vertices()
+vertices = mesh.get_coordinates()
 x = list(sorted(set(vertices[:,0])))
 y = list(sorted(set(vertices[:,1])))
 z = vertices[:,2].reshape(len(x), len(y))
@@ -33,9 +34,6 @@ z = vertices[:,2].reshape(len(x), len(y))
 width = len(x)
 height = len(y)
 
-x = x[1:width - 1]
-y = y[1:height - 1]
-z = z[1:width - 1,1:height - 1]
 z = z - np.amin(z)
 
 heat_map = get_heat_map(x, y, None, network_name,
