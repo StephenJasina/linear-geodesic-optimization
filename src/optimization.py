@@ -77,7 +77,7 @@ def main(data_file_name, lambda_curvature, lambda_smooth, lambda_geodesic,
 
     computer = optimization.Computer(
         mesh, network_vertices, network_edges, network_curvatures,
-        network_latencies, 1.01 * 2**0.5 / width,
+        network_latencies, 1.01 * 2**0.5 * scale / width,
         lambda_curvature, lambda_smooth, lambda_geodesic,
         directory)
 
