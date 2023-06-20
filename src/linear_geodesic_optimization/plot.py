@@ -104,19 +104,19 @@ def get_heat_map(x=None, y=None, z=None, title='',
     return fig
 
 def get_mesh_plot(mesh, title, remove_boundary=True):
-    vertices = mesh.get_vertices()
+    vertices = mesh.get_coordinates()
     x, y, z = vertices[:,0], vertices[:,1], vertices[:,2]
 
-    boundary_vertices = mesh.get_boundary_vertices()
-    faces = [
-        face for face in mesh.get_faces()
-        if not remove_boundary or
-           (face[0] not in boundary_vertices and
-            face[1] not in boundary_vertices and
-            face[2] not in boundary_vertices)
-    ]
+    faces = []
+    for face in mesh.get_topology().faces():
+        v0, v1, v2 = face.vertices()
+        if not remove_boundary or not (v0.is_on_boundary()
+                                       or v1.is_on_boundary()
+                                       or v2.is_on_boundary()):
+            faces.append([v0.index(), v1.index(), v2.index()])
 
-    interior_vertices = [v for v in range(len(z)) if v not in boundary_vertices]
+    interior_vertices = [v.index() for v in mesh.get_topology().vertices()
+                         if not remove_boundary or not v.is_on_boundary()]
     z_interior = z[interior_vertices]
     if len(z_interior) != 0:
         z_min = np.amin(z_interior)
