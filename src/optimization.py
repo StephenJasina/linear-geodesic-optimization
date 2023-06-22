@@ -108,7 +108,7 @@ if __name__ == '__main__':
     initial_radii = [20.]
     sides = [40]
     scales = [1.]
-    leaveout_proportions = [1.]
+    leaveout_proportions = [0.]
 
     arguments = list(itertools.product(
         data_file_names, latency_file_names,
