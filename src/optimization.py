@@ -63,6 +63,7 @@ def main(data_file_name, latency_file_name,
             'initial_radius': initial_radius,
             'width': width,
             'height': height,
+            'scale': scale,
             'leaveout_count': leaveout_count,
             'leaveout_seed': leaveout_seed
         }, f)
@@ -95,16 +96,17 @@ def main(data_file_name, latency_file_name,
                             options={'maxiter': maxiter})
 
 if __name__ == '__main__':
-    # data_file_names = [os.path.join('graph_US', f'graph{i}.graphml')
-    #                    for i in [4, 10, 12, 14, 16, 18, 22]]
-    data_file_names = [os.path.join('toy', 'toy.graphml')]
-    # latency_file_names = ['latencies_US.csv']
-    latency_file_names = [None]
+    data_file_names = [
+        os.path.join('graph_US', f'graph{i}.graphml')
+        # for i in [4, 10, 12, 14, 16, 18, 22]
+        for i in [16]
+    ]
+    latency_file_names = ['latencies_US.csv']
     lambda_curvatures = [1.]
     lambda_smooths = [0.0002]
-    lambda_geodesics = [0.]
-    initial_radii = list(range(2, 21))
-    sides = [30]
+    lambda_geodesics = [0., 0.0001, 0.0002, 0.0004, 0.001, 0.002, 0.004, 0.01, 0.02, 0.04, 0.1, 0.2, 0.4, 1., 2., 4., 10., 20., 40., 100., 200., 400., 1000., 2000., 4000., 10000., 20000., 40000., 100000., 200000., 400000.]
+    initial_radii = [20.]
+    sides = [40]
     scales = [1.]
     leaveout_proportions = [1.]
 
@@ -113,8 +115,8 @@ if __name__ == '__main__':
         lambda_curvatures, lambda_smooths, lambda_geodesics,
         initial_radii, sides, scales,
         leaveout_proportions,
-        [100],
-        [os.path.join('..', 'out_toy')]
+        [1000],
+        [os.path.join('..', 'out_paper')]
     ))
     with multiprocessing.Pool() as p:
         p.starmap(main, arguments)
