@@ -20,7 +20,7 @@ from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
 
-maxiters = 300
+maxiters = 1000
 
 def get_beta(x, y):
     n = len(x)
@@ -74,6 +74,7 @@ if __name__ == '__main__':
         initial_radius = parameters['initial_radius']
         width = parameters['width']
         height = parameters['height']
+        scale = parameters['scale']
         leaveout_count = parameters['leaveout_count']
         leaveout_seed = parameters['leaveout_seed']
 
@@ -83,7 +84,7 @@ if __name__ == '__main__':
         if latency_file_name is not None \
         else None
 
-    mesh = RectangleMesh(width, height)
+    mesh = RectangleMesh(width, height, scale)
 
     network_coordinates, network_edges, network_curvatures, network_latencies \
         = data.read_graphml(data_file_path, latency_file_path)
