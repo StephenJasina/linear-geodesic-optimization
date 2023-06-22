@@ -11,10 +11,11 @@ if __name__ == '__main__':
     height = 40
     mesh = RectangleMesh(width, height)
 
-    cutoff = 16
-    scale_factor = 1.
+    scale_factor = 0.8
 
+    cutoff = 4
     data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
+    # data_file_name = os.path.join('toy', 'elbow.graphml')
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 

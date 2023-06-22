@@ -93,7 +93,7 @@ def read_graphml(data_file_path: str,
     """
     network = nx.read_graphml(data_file_path)
     coordinates: typing.List[typing.Tuple[np.float64, np.float64]] \
-        = [mercator(node['lon'], node['lat'])
+        = [mercator(node['long'], node['lat'])
            for node in network.nodes.values()]
     label_to_index = {label: index
                       for index, label in enumerate(network.nodes)}
