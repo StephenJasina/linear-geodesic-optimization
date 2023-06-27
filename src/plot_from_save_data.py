@@ -163,10 +163,10 @@ if __name__ == '__main__':
         + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
         + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
-    # figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
-    # figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
-    # figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters)
-    # figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters)
+    figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
+    figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
+    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters)
+    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters)
 
     vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
@@ -184,7 +184,7 @@ if __name__ == '__main__':
         for py in y
     ])
     z = z - np.array(z_0)
-    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+    z = (z - np.amin(z[distances == 0.])) * np.exp(-10000 * distances**2)
     z = z - np.amin(z)
     z = 0.15 * z / np.amax(z)
 
@@ -196,22 +196,23 @@ if __name__ == '__main__':
     figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
                                        network_vertices, network_edges, network_curvatures)
 
-    # laplacian = Laplacian(mesh)
-    # curvature = Curvature(mesh, laplacian)
-    # curvature.forward()
-    # kappa = np.array(curvature.kappa_G).reshape(width, height).T
-    # kappa[0,:] = 0.
-    # kappa[-1,:] = 0.
-    # kappa[:,0] = 0.
-    # kappa[:,-1] = 0.
-    # figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
-    #                                     network_vertices, network_edges, network_curvatures)
+    laplacian = Laplacian(mesh)
+    curvature = Curvature(mesh, laplacian)
+    curvature.forward()
+    kappa = np.array(curvature.kappa_G).reshape(width, height).T
+    kappa[0,:] = 0.
+    kappa[-1,:] = 0.
+    kappa[:,0] = 0.
+    kappa[:,-1] = 0.
+    np.clip(kappa, -3, 3, kappa)
+    figures['curvature'] = get_heat_map(x, y, kappa, '(Clipped) Curvature' + lambda_string,
+                                        network_vertices, network_edges, network_curvatures)
 
     if sum(len(arr) for arr in before_data) > 0:
         figures['scatter'] = get_scatter_plot(before_data, after_data,
                                               'Latency Prediction' + lambda_string)
 
-    # figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
+    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
     # for filename, figure in figures.items():
     #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
