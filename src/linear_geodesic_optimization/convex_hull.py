@@ -57,7 +57,7 @@ def compute_convex_hull(
     at a connected component, for example).
 
     Return a list of the indices of the vertices on the convex hull,
-    oriented counter-clockwise.
+    oriented counterclockwise.
     """
     if indices is None:
         indices = list(range(len(points)))
@@ -156,7 +156,7 @@ def project_to_line_segment(
     left: npt.NDArray[np.float64],
     right: npt.NDArray[np.float64]
 ) -> npt.NDArray[np.float64]:
-    """Project a point onto the line passing through left and right."""
+    """Project `point` onto the segment connecting `left` and `right`."""
     direction = right - left
     line_projection = left \
         + (point - left) @ direction / (direction @ direction) * direction
