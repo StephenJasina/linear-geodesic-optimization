@@ -64,10 +64,7 @@ if __name__ == '__main__':
         parameters = pickle.load(f)
 
         data_file_name = parameters['data_file_name']
-        # TODO: simplify this logic
-        latency_file_name = parameters['latency_file_name'] \
-            if 'latency_file_name' in parameters \
-            else 'latencies_US.csv'
+        latency_file_name = parameters['latency_file_name']
         lambda_curvature = parameters['lambda_curvature']
         lambda_smooth = parameters['lambda_smooth']
         lambda_geodesic = parameters['lambda_geodesic']
@@ -88,13 +85,16 @@ if __name__ == '__main__':
 
     network_coordinates, network_edges, network_curvatures, network_latencies \
         = data.read_graphml(data_file_path, latency_file_path)
-    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8))
-    network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
+    network_vertices = mesh.map_coordinates_to_support(
+        np.array(network_coordinates), np.float64(0.8))
+    network_convex_hulls = convex_hull.compute_connected_convex_hulls(
+        network_vertices, network_edges)
     if leaveout_count > 0:
         rng = np.random.default_rng(leaveout_seed)
         rng.shuffle(network_latencies)
         network_latencies = network_latencies[-leaveout_count:]
-        # network_latencies = network_latencies[:-leaveout_count]
+    # Uncomment the next line to disable latency scatter plot
+    network_latencies = []
     latencies = data.map_latencies_to_mesh(mesh, network_vertices,
                                            network_latencies)
     true_latencies = np.array([latency for _, latency in latencies])
@@ -141,7 +141,7 @@ if __name__ == '__main__':
                 ])
                 estimated_latencies = beta_0 + beta_1 * distances
                 before_data = (true_latencies, estimated_latencies)
-                print(f'Initial validation set correlation squared: {get_r(true_latencies, distances)**2}')
+                # print(f'Initial validation set correlation squared: {get_r(true_latencies, distances)**2}')
 
         path_next = os.path.join(directory, str(i + 1))
         if i == maxiters or not os.path.exists(path_next):
@@ -154,7 +154,7 @@ if __name__ == '__main__':
             ])
             estimated_latencies = beta_0 + beta_1 * distances
             after_data = (true_latencies, estimated_latencies)
-            print(f'Final validation set correlation squared: {get_r(true_latencies, distances)**2}')
+            # print(f'Final validation set correlation squared: {get_r(true_latencies, distances)**2}')
             break
 
     figures = {}
@@ -163,10 +163,10 @@ if __name__ == '__main__':
         + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
         + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
-    figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
-    figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
-    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters)
-    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters)
+    # figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
+    # figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
+    # figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters)
+    # figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters)
 
     vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
@@ -174,15 +174,19 @@ if __name__ == '__main__':
     z = vertices[:,2]
 
     # # Smooth using convex hull
-    # distances = np.array([
-    #     np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-    #     for px in x
-    #     for py in y
-    # ])
+    distances = np.array([
+        convex_hull.distance_to_convex_hulls(
+            np.array([px, py]),
+            network_vertices,
+            network_convex_hulls
+        )
+        for px in x
+        for py in y
+    ])
     z = z - np.array(z_0)
-    # z = (z - np.amin(z)) * np.exp(-100 * distances**2)
-    # z = z - np.amin(z)
-    # z = 0.10 * z / np.amax(z)
+    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+    z = z - np.amin(z)
+    z = 0.15 * z / np.amax(z)
 
     mesh.set_parameters(z)
 
@@ -192,23 +196,23 @@ if __name__ == '__main__':
     figures['altitude'] = get_heat_map(x, y, z, 'Altitude' + lambda_string,
                                        network_vertices, network_edges, network_curvatures)
 
-    laplacian = Laplacian(mesh)
-    curvature = Curvature(mesh, laplacian)
-    curvature.forward()
-    kappa = np.array(curvature.kappa_G).reshape(width, height).T
-    kappa[0,:] = 0.
-    kappa[-1,:] = 0.
-    kappa[:,0] = 0.
-    kappa[:,-1] = 0.
-    figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
-                                        network_vertices, network_edges, network_curvatures)
+    # laplacian = Laplacian(mesh)
+    # curvature = Curvature(mesh, laplacian)
+    # curvature.forward()
+    # kappa = np.array(curvature.kappa_G).reshape(width, height).T
+    # kappa[0,:] = 0.
+    # kappa[-1,:] = 0.
+    # kappa[:,0] = 0.
+    # kappa[:,-1] = 0.
+    # figures['curvature'] = get_heat_map(x, y, kappa, 'Curvature' + lambda_string,
+    #                                     network_vertices, network_edges, network_curvatures)
 
     if sum(len(arr) for arr in before_data) > 0:
         figures['scatter'] = get_scatter_plot(before_data, after_data,
                                               'Latency Prediction' + lambda_string)
 
-    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
+    # figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
-    for filename, figure in figures.items():
-        figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
-    # plt.show()
+    # for filename, figure in figures.items():
+    #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
+    plt.show()

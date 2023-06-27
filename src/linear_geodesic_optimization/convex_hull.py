@@ -1,18 +1,73 @@
+"""Functions for computing quantities related to the convex hull."""
+
+import typing
+
 import numpy as np
+import numpy.typing as npt
 
-def compute_convex_hull(points):
-    '''
-    An implementation of the Graham scan algorithm. As input, take a list of
-    pairs. Returns a list of the indices of the vertices on the convex hull,
+
+def get_connected_components(
+    n: int,
+    edges: typing.List[typing.Tuple[int, int]]
+) -> typing.List[typing.List[int]]:
+    """
+    Compute the connected components of a graph.
+
+    As input, take the number of vertices and a list of tuples
+    representing edges. Return a list of connected components, where
+    each component is represented as a list of indices.
+    """
+    adjacency_list: typing.List[typing.List[int]] = [[] for _ in range(n)]
+    for (i, j) in edges:
+        adjacency_list[i].append(j)
+        adjacency_list[j].append(i)
+    visited = [False for _ in range(n)]
+
+    components: typing.List[typing.List[int]] = []
+    for i in range(n):
+        if visited[i]:
+            continue
+
+        component: typing.List[int] = []
+        stack = [i]
+        while stack:
+            j = stack[-1]
+            del stack[-1]
+
+            if visited[j]:
+                continue
+
+            component.append(j)
+            stack.extend(adjacency_list[j])
+            visited[j] = True
+        components.append(component)
+
+    return components
+
+
+def compute_convex_hull(
+    points: npt.NDArray[np.float64],
+    indices: typing.Optional[typing.List[int]] = None
+) -> typing.List[int]:
+    """
+    Run the Graham scan algorithm.
+
+    As input, take a list of coordinate pairs and an optional list of
+    indices for which to subset the coordinates (useful for looking only
+    at a connected component, for example).
+
+    Return a list of the indices of the vertices on the convex hull,
     oriented counter-clockwise.
-    '''
-
-    points = np.array(points)
+    """
+    if indices is None:
+        indices = list(range(len(points)))
 
     pivot_point_index = 0
     pivot_point = points[pivot_point_index]
-    for index, point in enumerate(points):
-        if point[1] < pivot_point[1] or (point[1] == pivot_point[1] and point[0] < pivot_point[0]):
+    for index in indices:
+        point = points[index]
+        if point[1] < pivot_point[1] or (point[1] == pivot_point[1]
+                                         and point[0] < pivot_point[0]):
             pivot_point_index = index
             pivot_point = point
 
@@ -26,7 +81,8 @@ def compute_convex_hull(points):
             ),
             index
         )
-        for index, point in enumerate(points)
+        for index in indices
+        for point in (points[index],)  # This is essentially a let
         if point @ point > 0
     )]
 
@@ -40,75 +96,107 @@ def compute_convex_hull(points):
             point_top = points[convex_hull[-1]]
             point_second_to_top = points[convex_hull[-2]]
 
-            if np.cross(point_top - point_index, point_second_to_top - point_index) < 0:
+            if np.cross(point_top - point_index,
+                        point_second_to_top - point_index) < 0:
                 break
 
-            del(convex_hull[-1])
+            del convex_hull[-1]
 
         convex_hull.append(index)
 
     return convex_hull
 
-def is_in_convex_hull(point, points, convex_hull=None):
-    '''
-    Return whether a point lies in a convex hull as computed by
-    compute_convex_hull.
-    '''
 
-    point = np.array(point)
-    points = np.array(points)
+def compute_connected_convex_hulls(
+    points: npt.NDArray[np.float64],
+    edges: typing.List[typing.Tuple[int, int]]
+) -> typing.List[typing.List[int]]:
+    """
+    Compute the convex hull of each connected component of a graph.
 
-    if convex_hull is None:
-        convex_hull = compute_convex_hull(points)
+    This function returns a list of the convex hulls, where each convex
+    hull is represented as a list of indices of boundary vertices
+    oriented counterclockwise.
+    """
+    n = len(points)
+    return [
+        compute_convex_hull(points, component)
+        for component in get_connected_components(n, edges)
+    ]
 
+
+def is_in_convex_hull(
+    point: npt.NDArray[np.float64],
+    points: npt.NDArray[np.float64],
+    convex_hull: typing.List[int]
+) -> bool:
+    """
+    Return whether a point lies in a convex hull.
+
+    The convex hull should be the output as computed by
+    `compute_convex_hull`.
+    """
+    if len(convex_hull) < 2:
+        return False
+
+    # The signs of these cross products determines whether the point is
+    # on the interior or exterior of the convex hull
     crosses = np.array([
-        np.cross(point - points[left_index], points[right_index] - points[left_index])
-        for left_index, right_index in zip(convex_hull, [*convex_hull[1:], convex_hull[0]])
+        np.cross(point - points[left_index],
+                 points[right_index] - points[left_index])
+        for left_index, right_index in zip(convex_hull,
+                                           [*convex_hull[1:], convex_hull[0]])
     ])
 
     return np.all(crosses >= 0) or np.all(crosses <= 0)
 
-def project_to_line(point, left, right):
-    '''
-    Project a point onto the line passing through left and right
-    '''
 
+def project_to_line_segment(
+    point: npt.NDArray[np.float64],
+    left: npt.NDArray[np.float64],
+    right: npt.NDArray[np.float64]
+) -> npt.NDArray[np.float64]:
+    """Project a point onto the line passing through left and right."""
     direction = right - left
-    return left + (point - left) @ direction / (direction @ direction) * direction
+    line_projection = left \
+        + (point - left) @ direction / (direction @ direction) * direction
+    if (line_projection - left) @ (right - left) >= 0 \
+            and (line_projection - right) @ (left - right) >= 0:
+        return line_projection
 
-def is_in_segment(projection, left, right):
-    '''
-    Determine if a point lying on a line spanned by left and right is between
-    left and right
-    '''
+    if np.linalg.norm(point - left) <= np.linalg.norm(point - right):
+        return np.array(left)
+    else:
+        return np.array(right)
 
-    return (projection - left) @ (right - left) >= 0 and (projection - right) @ (left - right) >= 0
 
-def project_to_convex_hull(point, points, convex_hull=None):
-    '''
-    Return the distance to the convex hull as computed by compute_convex_hull.
-    '''
+def distance_to_convex_hulls(
+    point: npt.NDArray[np.float64],
+    points: npt.NDArray[np.float64],
+    convex_hulls: typing.List[typing.List[int]]
+) -> np.float64:
+    """
+    Return the minimal distance to a set of convex hulls.
 
-    point = np.array(point)
-    points = np.array(points)
+    The convex hulls should be the outputs as computed by
+    `compute_convex_hull`.
+    """
+    distance = np.float64(np.inf)
+    for convex_hull in convex_hulls:
+        if is_in_convex_hull(point, points, convex_hull):
+            return np.float64(0.)
 
-    if convex_hull is None:
-        convex_hull = compute_convex_hull(points)
-
-    if is_in_convex_hull(point, points, convex_hull):
-        return np.copy(point)
-
-    # Project the point onto each of the line segments on the boundary of the
-    # convex hull. Also project it to each of the vertices (i.e., just take the
-    # vertices). The projection will be the nearest of these.
-    projections = [
-        project_to_line(point, points[left_index], points[right_index])
-        for left_index, right_index in zip(convex_hull, [*convex_hull[1:], convex_hull[0]])
-    ]
-    projections = [
-        projection
-        for left_index, right_index, projection in zip(convex_hull, [*convex_hull[1:], convex_hull[0]], projections)
-        if is_in_segment(projection, points[left_index], points[right_index])
-    ] + [points[index] for index in convex_hull]
-    distances = [np.linalg.norm(point - projection) for projection in projections]
-    return projections[np.argmin(distances)]
+        if len(convex_hull) == 1:
+            projections = [points[convex_hull[0]]]
+        else:
+            projections = [
+                project_to_line_segment(point,
+                                        points[left_index],
+                                        points[right_index])
+                for left_index, right_index
+                in zip(convex_hull, [*convex_hull[1:], convex_hull[0]])
+            ]
+        distance = min(distance,
+                       min([np.linalg.norm(point - projection)
+                            for projection in projections]))
+    return distance
