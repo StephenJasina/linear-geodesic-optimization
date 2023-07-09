@@ -187,25 +187,31 @@ def get_mesh_output(directory: str,
 
     mesh = RectangleMesh(width, height)
 
-    coordinates, _, _, _, labels = read_graphml(data_file_name,
-                                                with_labels=True)
+    coordinates, network_edges, _, _, labels = read_graphml(data_file_name,
+                                                            with_labels=True)
     coordinates = np.array(coordinates)
-    network_vertices = mesh.map_coordinates_to_support(coordinates)
+    network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8))
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
                               for network_vertex in network_vertices]
-    network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
+    network_convex_hulls = convex_hull.compute_connected_convex_hulls(
+        network_vertices, network_edges)
 
     if postprocessed:
         vertices = mesh.get_coordinates()
         x = list(sorted(set(vertices[:,0])))
         y = list(sorted(set(vertices[:,1])))
-        z = z - z_0
         distances = np.array([
-            np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
+            convex_hull.distance_to_convex_hulls(
+                np.array([px, py]),
+                network_vertices,
+                network_convex_hulls
+            )
             for px in x
             for py in y
         ])
-        z = (z - np.amin(z)) * np.exp(-100 * distances**2)
+        z = z - np.array(z_0)
+        z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
+            * np.exp(-1000 * distances**2)
         z = z - np.amin(z)
 
     mesh.set_parameters(z)

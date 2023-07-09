@@ -173,7 +173,7 @@ if __name__ == '__main__':
     y = list(sorted(set(vertices[:,1])))
     z = vertices[:,2]
 
-    # # Smooth using convex hull
+    # Smooth using convex hull
     distances = np.array([
         convex_hull.distance_to_convex_hulls(
             np.array([px, py]),
@@ -184,7 +184,8 @@ if __name__ == '__main__':
         for py in y
     ])
     z = z - np.array(z_0)
-    z = (z - np.amin(z[distances == 0.])) * np.exp(-10000 * distances**2)
+    z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
+        * np.exp(-1000 * distances**2)
     z = z - np.amin(z)
     z = 0.15 * z / np.amax(z)
 
@@ -212,7 +213,7 @@ if __name__ == '__main__':
         figures['scatter'] = get_scatter_plot(before_data, after_data,
                                               'Latency Prediction' + lambda_string)
 
-    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
+    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string, False)
 
     # for filename, figure in figures.items():
     #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)

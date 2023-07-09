@@ -62,7 +62,7 @@ def compute_convex_hull(
     if indices is None:
         indices = list(range(len(points)))
 
-    pivot_point_index = 0
+    pivot_point_index = indices[0]
     pivot_point = points[pivot_point_index]
     for index in indices:
         point = points[index]
@@ -117,11 +117,16 @@ def compute_connected_convex_hulls(
     This function returns a list of the convex hulls, where each convex
     hull is represented as a list of indices of boundary vertices
     oriented counterclockwise.
+
+    For this problem, we care only about the connected components that
+    contain an edge, so each component will have at least two vertices.
     """
     n = len(points)
     return [
-        compute_convex_hull(points, component)
+        convex_hull
         for component in get_connected_components(n, edges)
+        for convex_hull in (compute_convex_hull(points, component),)
+        if len(convex_hull) > 1
     ]
 
 
@@ -136,8 +141,11 @@ def is_in_convex_hull(
     The convex hull should be the output as computed by
     `compute_convex_hull`.
     """
-    if len(convex_hull) < 2:
+    if len(convex_hull) == 0:
         return False
+
+    if len(convex_hull) == 1:
+        return np.all(np.equal(point, points[convex_hull[0]]))
 
     # The signs of these cross products determines whether the point is
     # on the interior or exterior of the convex hull

@@ -13,16 +13,13 @@ if __name__ == '__main__':
 
     scale_factor = 0.8
 
-    cutoff = 4
+    cutoff = 10
     data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
     # data_file_name = os.path.join('toy', 'elbow.graphml')
     data_file_path = os.path.join('..', 'data', data_file_name)
-    data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
+    data_name, _ = os.path.splitext(os.path.basename(data_file_name))
 
-    if data_type == '.json':
-        coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
-    elif data_type == '.graphml':
-        coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
+    coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
     coordinates = np.array(coordinates)
     network_vertices = mesh.map_coordinates_to_support(coordinates, scale_factor)
 
@@ -33,6 +30,7 @@ if __name__ == '__main__':
         position = network_vertices[index]
         # addVertex accepts (latitude, longitude) pairs, so we have to swap x and y
         print(f'  addVertex(null, {position[1] * 20.}, {position[0] * 20.}, true, name="{str(index)}");')
+        # print(f'  addVertex(null, {position[1] * 20. * (height - 1) / height}, {position[0] * 20. * (width - 1) / width}, true, name="{str(index)}");')
 
     print()
 
@@ -47,6 +45,7 @@ if __name__ == '__main__':
     left, _ = data.inverse_mercator(np.amin(coordinates[:,0]), 0)
     right, _ = data.inverse_mercator(np.amax(coordinates[:,0]), 0)
     zoom_factor = scale_factor * 360. / (right - left)
+    # zoom_factor = scale_factor * 360. / (right - left) * (width - 1) / width
 
     print(f'Center is {center}')
     print(f'Zoom factor is {zoom_factor}')
