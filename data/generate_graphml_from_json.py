@@ -35,7 +35,7 @@ if __name__ == '__main__':
             float((position[0] - mu_x) / divisor),
             float((position[1] - mu_y) / divisor)
         )
-        network.add_node(vertex_label, lon=longitude, lat=latitude)
+        network.add_node(vertex_label, long=longitude, lat=latitude)
     for edge_label, curvature in curvatures.items():
         u_label, v_label = tuple(edge_label)
         network.add_edge(u_label, v_label, ricciCurvature=curvature)
