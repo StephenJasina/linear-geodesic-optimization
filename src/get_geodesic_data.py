@@ -9,11 +9,9 @@ import numpy as np
 from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
-from linear_geodesic_optimization.mesh.sphere import Mesh as SphereMesh
-from linear_geodesic_optimization.optimization import geodesic, linear_regression
-from linear_geodesic_optimization import plot
+from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
-max_iterations = 250
+max_iterations = 10000
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -47,30 +45,53 @@ if __name__ == '__main__':
 
     mesh = RectangleMesh(width, height)
 
-    coordinates, _, _, _, labels = data.read_graphml(data_file_name, with_labels=True)
-    network_vertices = mesh.map_coordinates_to_support(coordinates)
-    nearest_vertex_indices = [mesh.nearest_vertex_index(network_vertex) for network_vertex in network_vertices]
-    network_convex_hull = convex_hull.compute_convex_hull(network_vertices)
+    network_coordinates, network_edges, _, _, labels \
+        = data.read_graphml(data_file_name, with_labels=True)
+    network_vertices = mesh.map_coordinates_to_support(
+        np.array(network_coordinates), np.float64(0.8))
+    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
+                              for network_vertex in network_vertices]
+    network_convex_hulls = convex_hull.compute_connected_convex_hulls(
+        network_vertices, network_edges)
 
-    vertices = mesh.get_vertices()
+    vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
-    z = z - z_0
-    distances = np.array([
-        np.linalg.norm(np.array([px, py]) - convex_hull.project_to_convex_hull([px, py], network_vertices, network_convex_hull))
-        for py in y
-        for px in x
-    ])
-    z = (z - np.amin(z)) * np.exp(-100 * distances**2)
-    z = z - np.amin(z)
+
+    # Postprocessing
+    # distances = np.array([
+    #     convex_hull.distance_to_convex_hulls(
+    #         np.array([px, py]),
+    #         network_vertices,
+    #         network_convex_hulls
+    #     )
+    #     for px in x
+    #     for py in y
+    # ])
+    # z = z - np.array(z_0)
+    # z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
+    #     * np.exp(-1000 * distances**2)
+    # z = z - np.amin(z)
+    # if np.amax(z) != np.float64(0.):
+    #     z = 0.15 * z / np.amax(z)
+
     mesh.set_parameters(z)
 
-    geodesic_forward = geodesic.Forward(mesh)
+    geodesics_unique = {}
+    for mesh_i in set(nearest_vertex_indices):
+        for mesh_j in set(nearest_vertex_indices):
+            if mesh_i <= mesh_j:
+                geodesic_forward = Geodesic(mesh, mesh_i, mesh_j)
+                geodesic_forward.forward()
+                geodesics_unique[mesh_i,mesh_j] = geodesic_forward.distance
+                geodesics_unique[mesh_j,mesh_i] = geodesic_forward.distance
+
     geodesics = {}
     for mesh_i, label_i in zip(nearest_vertex_indices, labels):
-        geodesic_forward.calc(mesh_i)
         for mesh_j, label_j in zip(nearest_vertex_indices, labels):
-            geodesics[label_i,label_j] = geodesic_forward.phi[mesh_j]
+            geodesic_forward = Geodesic(mesh, mesh_i, mesh_j)
+            geodesic_forward.forward()
+            geodesics[label_i,label_j] = geodesics_unique[mesh_i,mesh_j]
 
     with open(os.path.join(directory, 'geodesics.csv'), 'w') as f:
         writer = csv.writer(f)
