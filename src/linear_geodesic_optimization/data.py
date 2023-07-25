@@ -209,6 +209,9 @@ def get_mesh_output(directory: str,
             for px in x
             for py in y
         ])
+        # Add a small amount of space around the convex hull
+        # TODO: Maybe make this "smarter"
+        distances = np.maximum(distances - 0.05, 0.)
         z = z - np.array(z_0)
         z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
             * np.exp(-1000 * distances**2)

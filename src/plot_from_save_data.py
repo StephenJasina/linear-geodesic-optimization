@@ -20,7 +20,7 @@ from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
 
-maxiters = 1000
+maxiters = 10000
 
 def get_beta(x, y):
     n = len(x)
@@ -187,7 +187,8 @@ if __name__ == '__main__':
     z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
         * np.exp(-1000 * distances**2)
     z = z - np.amin(z)
-    z = 0.15 * z / np.amax(z)
+    if np.amax(z) != np.float64(0.):
+        z = 0.15 * z / np.amax(z)
 
     mesh.set_parameters(z)
 
@@ -215,6 +216,6 @@ if __name__ == '__main__':
 
     figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string, False)
 
-    # for filename, figure in figures.items():
-    #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
-    plt.show()
+    for filename, figure in figures.items():
+        figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
+    # plt.show()

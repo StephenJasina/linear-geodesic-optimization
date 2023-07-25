@@ -103,7 +103,7 @@ def get_heat_map(x=None, y=None, z=None, title='',
 
     return fig
 
-def get_mesh_plot(mesh, title, remove_boundary=True):
+def get_mesh_plot(mesh, title, remove_boundary=True, ax=None):
     vertices = mesh.get_coordinates()
     x, y, z = vertices[:,0], vertices[:,1], vertices[:,2]
 
@@ -124,11 +124,19 @@ def get_mesh_plot(mesh, title, remove_boundary=True):
         if z_min != z_max:
             z = (z - z_min) / (z_max - z_min) / 4.
 
-    fig = plt.figure()
-    ax = fig.add_subplot(projection='3d')
-    ax.plot_trisurf(x, y, z, triangles=faces)
+    to_return = None
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.plot_trisurf(x, y, z, triangles=faces, color='tab:blue')
+        to_return = fig
+    else:
+        to_return = ax.plot_trisurf(x, y, z, triangles=faces, color='tab:blue',
+                                    animated=True)
+
     ax.set_title(title)
     ax.set_xlim([-0.5, 0.5])
     ax.set_ylim([-0.5, 0.5])
     ax.set_aspect('equal')
-    return fig
+
+    return to_return
