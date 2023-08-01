@@ -1,3 +1,4 @@
+import csv
 import json
 import math
 import os
@@ -42,3 +43,9 @@ if __name__ == '__main__':
 
     name = os.path.splitext(os.path.basename(sys.argv[1]))[0]
     nx.graphml.write_graphml(network, f'{name}.graphml')
+
+    with open(f'{name}_latencies.csv', 'w') as latencies_csv:
+        latencies_writer = csv.writer(latencies_csv)
+        for edge_label, latency in latencies.items():
+            u_label, v_label = tuple(edge_label)
+            latencies_writer.writerow([u_label, v_label, latency])
