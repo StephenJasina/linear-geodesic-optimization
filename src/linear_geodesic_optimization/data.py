@@ -110,11 +110,10 @@ def read_graphml(data_file_path: str,
             latencies_reader = csv.reader(latencies_file)
             for row in latencies_reader:
                 latency = float(row[2])
-                if latency != 0.:
-                    network_latencies.append((
-                        (label_to_index[row[0]], label_to_index[row[1]]),
-                        latency
-                    ))
+                network_latencies.append((
+                    (label_to_index[row[0]], label_to_index[row[1]]),
+                    latency
+                ))
 
     if with_labels:
         return coordinates, network_edges, network_curvatures, \
