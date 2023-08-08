@@ -8,20 +8,19 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.plot import get_heat_map
 
-width = 40
-height = 40
+width = 50
+height = 50
 mesh = RectangleMesh(width, height)
 
-cutoff = 16
-network_name = f'Graph U.S. ({cutoff})'
-data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
+# cutoff = 16
+# network_name = f'Graph U.S. ({cutoff})'
+# data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
+network_name = 'Two Islands'
+data_file_name = os.path.join('toy', 'two_islands.graphml')
 data_file_path = os.path.join('..', 'data', data_file_name)
 data_name, data_type = os.path.splitext(os.path.basename(data_file_name))
 
-if data_type == '.json':
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_json(data_file_path)
-elif data_type == '.graphml':
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
+coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
 coordinates = np.array(coordinates)
 network_vertices = mesh.map_coordinates_to_support(coordinates, 0.8)
 
@@ -36,7 +35,8 @@ height = len(y)
 
 z = z - np.amin(z)
 
+# network_curvatures = [None] * len(network_curvatures)
 heat_map = get_heat_map(x, y, None, network_name,
                         network_vertices, network_edges, network_curvatures, network_vertices)
-heat_map.savefig('network.png', dpi=300)
+heat_map.savefig('network.png', dpi=1000)
 plt.show()

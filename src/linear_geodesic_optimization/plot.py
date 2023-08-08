@@ -84,18 +84,23 @@ def get_heat_map(x=None, y=None, z=None, title='',
         if edge == []:
             continue
 
+        if curvature is None:
+            color = 'k'
+        else:
+            color = mpl.colormaps['RdBu']((curvature + 2) / 4)
+
         if isinstance(edge[0], Iterable):
             ax.plot(edge[:,0], edge[:,1],
-                    color=mpl.colormaps['RdBu']((curvature + 2) / 4))
+                    color=color)
         else:
             u, v = edge
             ax.plot([network_vertices[u][0], network_vertices[v][0]],
                     [network_vertices[u][1], network_vertices[v][1]],
-                    color=mpl.colormaps['RdBu']((curvature + 2) / 4))
+                    color=color)
 
     # Plot the vertices
     for vertex in extra_points:
-        ax.plot(vertex[0], vertex[1], '.', color='purple')
+        ax.plot(vertex[0], vertex[1], '.', ms=12, color='green')
 
     ax.set_title(title)
     ax.set_xlim(np.amin(x), np.amax(x))
