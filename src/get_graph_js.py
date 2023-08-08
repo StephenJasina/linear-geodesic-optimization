@@ -7,15 +7,15 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 if __name__ == '__main__':
-    width = 40
-    height = 40
+    width = 50
+    height = 50
     mesh = RectangleMesh(width, height)
 
     scale_factor = 0.8
 
-    cutoff = 10
-    data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
-    # data_file_name = os.path.join('toy', 'elbow.graphml')
+    # cutoff = 22
+    # data_file_name = os.path.join('graph_US', f'graph{cutoff}.graphml')
+    data_file_name = os.path.join('toy', 'two_islands_complete.graphml')
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, _ = os.path.splitext(os.path.basename(data_file_name))
 
@@ -30,7 +30,6 @@ if __name__ == '__main__':
         position = network_vertices[index]
         # addVertex accepts (latitude, longitude) pairs, so we have to swap x and y
         print(f'  addVertex(null, {position[1] * 20.}, {position[0] * 20.}, true, name="{str(index)}");')
-        # print(f'  addVertex(null, {position[1] * 20. * (height - 1) / height}, {position[0] * 20. * (width - 1) / width}, true, name="{str(index)}");')
 
     print()
 
@@ -45,7 +44,6 @@ if __name__ == '__main__':
     left, _ = data.inverse_mercator(np.amin(coordinates[:,0]), 0)
     right, _ = data.inverse_mercator(np.amax(coordinates[:,0]), 0)
     zoom_factor = scale_factor * 360. / (right - left)
-    # zoom_factor = scale_factor * 360. / (right - left) * (width - 1) / width
 
     print(f'Center is {center}')
     print(f'Zoom factor is {zoom_factor}')
