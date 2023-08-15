@@ -24,8 +24,8 @@ sys.path.append('.')
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = '../out_paper/graph10/1.0_0.0002_0.0_20.0_40_40_1.0/'
-max_iterations = 1000
+directory = '../out_two_islands/two_islands/1.0_0.004_0.0_20.0_50_50_1.0/'
+max_iterations = 10000
 vertical_scale = 0.15
 
 sys.path.append(r'python/surface/src')

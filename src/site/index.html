@@ -39,9 +39,6 @@
 
     <script src="js/perlin.js"></script>
     <script type="module" src="js/script.js"></script>
-    <div id="heatmap-div">
-      <img id="heatmap-img" width="350" height="350"/>
-    </div>
     <div id="gui">
       <div id="div-vertex" class="gui-box">
         <button type="button" id="btn-add-vertex">Add vertex</button>
@@ -89,45 +86,30 @@
         <label for="hide-surface" id="hide-surface-label"> Hide extra surface</label><br>
         <input type="checkbox" id="use-calc-surface" name="use-calc-surface" checked>
         <label for="use-calc-surface"> Use calculated surface</label><br>
+        <input type="checkbox" id="show-grid" name="show-grid">
+        <label for="show-grid"> Show grid</label><br>
 
         <p>Positive Height: <span id="posheight-slider-val"></span></p>
         <input type="range" min="0.01" max="20" value="1.0" class="slider" step="0.01" id="posheight-slider">
-        <!-- <input type="range" min="0.01" max="20" value="2" class="slider" step="0.01" id="posheight-slider"> -->
-
 
         <p>Positive Range: <span id="posrange-slider-val"></span></p>
         <input type="range" min="0" max="10" value="2.5" class="slider" step="0.01" id="posrange-slider">
         <p>Positive Amplitude: <span id="amp-slider-val"></span></p>
-        <!-- <input type="range" min="0.01" max="3" value="1.5" class="slider" step="0.01" id="amp-slider"> -->
         <input type="range" min="0.01" max="3" value="2.5" class="slider" step="0.01" id="amp-slider">
         <p>Saddle X Range (Along Edge): <span id="xspread-slider-val" color="#4CAF50"></span></p>
         <input type="range" min="-20" max="20" value="0" class="slider" step="0.000001" id="xspread-slider">
         <p>Saddle Y Range (Across Edge): <span id="yspread-slider-val"></span></p>
         <input type="range" min="-10" max="10" value="1.5" class="slider" step="0.000001" id="yspread-slider">
         <p>Saddle Steepness: <span id="xlimit-slider-val"></span></p>
-        <!-- <input type="range" min="0.001" max="2" value="0.50" class="slider" step="0.000001" id="xlimit-slider"> -->
         <input type="range" min="0.001" max="2" value="0.75" class="slider" step="0.000001" id="xlimit-slider">
         <p>Saddle Steepness 2: <span id="xlimit2-slider-val"></span></p>
-        <!-- <input type="range" min="0.001" max="2" value="0.50" class="slider" step="0.000001" id="xlimit2-slider"> -->
         <input type="range" min="0.001" max="2" value="0.75" class="slider" step="0.000001" id="xlimit2-slider">
         <p>Saddle Narrowness: <span id="ylimit-slider-val"></span></p>
         <input type="range" min="0.001" max="10" value="2" class="slider" step="0.000001" id="ylimit-slider">
         <p>Saddle Height: <span id="height-slider-val"></span></p>
-        <!-- <input type="range" min="-2" max="4" value="0.75" class="slider" step="0.000001" id="height-slider"> -->
         <input type="range" min="-2" max="4" value="1.50" class="slider" step="0.000001" id="height-slider">
         <p>Saddle Rotation: <span id="rotation-slider-val"></span></p>
         <input type="range" min="-3.14" max="3.14" value="0" class="slider" step="0.000001" id="rotation-slider">
-
-
-        <!-- <p>Hide +X:</p>
-        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide+x-slider">
-        <p>Hide -X:</p>
-        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide-x-slider">
-        <p>Hide +Y:</p>
-
-        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide+y-slider">
-        <p>Hide -Y:</p>
-        <input type="range" min="0" max="5" value="10" class="slider" step="0.1" id="hide-y-slider"> -->
       </div>
 
 
