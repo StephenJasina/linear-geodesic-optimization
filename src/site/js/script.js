@@ -187,19 +187,6 @@ var contourMeshLines = [];
 
 plane.geometry.dynamic = true;
 
-// Extended plane for wraparound distance calculation
-// TODO: Remove this, as this tool should only support planar
-// geometries and not cylindrical ones
-var extendGeom = new T.PlaneGeometry(
-  planeW, planeH * 2,
-  divisions - 1, 2 * divisions * 2 - 1
-);
-var ePlane = new T.Mesh(extendGeom, new THREE.MeshPhongMaterial({
-  color: 0x00ff00
-}));
-ePlane.rotation.set(-Math.PI / 2, 0, 0);
-ePlane.position.z += 10;
-
 for (let face of plane.geometry.faces) {
   face.vertexColors[0] = new T.Color(0xffffff);
   face.vertexColors[1] = new T.Color(0xffffff);
@@ -707,21 +694,6 @@ function updatePlaneHeights(map) {
       });
     }
   }
-
-  // Set extended plane
-  // TODO: This should be removed when the rest of the extended plane
-  // code is
-  for (let i = 0; i < divisions; i++) {
-    for (let j = 0; j < divisions; j++) {
-      ePlane.geometry.vertices[(i + divisions) * divisions + j].z = map[i][j];
-      ePlane.geometry.vertices[i * divisions + j].z = map[i][j];
-    }
-  }
-
-  ePlane.geometry.groupsNeedUpdate = true;
-  ePlane.geometry.verticesNeedUpdate = true;
-  ePlane.geometry.colorsNeedUpdate = true;
-  ePlane.geometry.computeVertexNormals();
 
   for (let face of plane.geometry.faces) {
     let z1 = plane.geometry.vertices[face.a].z;
