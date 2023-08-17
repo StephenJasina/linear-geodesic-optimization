@@ -23,9 +23,6 @@ let contcolor = 0xff0000;
 
 let T = THREE;
 
-// TODO: Remove this when removing the extended plane
-let useSplitEdges = false;
-
 let showHoverGraph = true;
 
 let vertexCount = 0;
@@ -901,9 +898,6 @@ function wheelEvent(event) {
 
 function calcOpacityMap(opacityMap, vertices, edges, heightMap) {
   for (let id in edges) {
-    if (edges[id].split) {
-      continue;
-    }
     let startPt = [edges[id].start.mesh.position.x, edges[id].start.mesh.position.z];
     let endPt = [edges[id].end.mesh.position.x, edges[id].end.mesh.position.z];
 
@@ -939,9 +933,6 @@ function calcDistanceOnSurface(plane, vertices, edges) {
   }
   plane.geometry.verticesNeedUpdate = true;
   for (let id in edges) {
-    if (edges[id].split) {
-      continue;
-    }
     let start = edges[id].start;
     let end = edges[id].end;
     let startNode = convert3JStoVerts(start.mesh.position.x, start.mesh.position.z);
@@ -1725,7 +1716,6 @@ function edgeChange() {
   edge.start = vertices[startId];
   edge.end = vertices[endId];
   edge.weight = weight;
-  edge.checkSplit();
 }
 
 function removeEdge() {
@@ -1780,43 +1770,16 @@ let VertexObj = class {
 }
 
 let EdgeObj = class {
-  // TODO: Remove split edge logic
   constructor(id, start, end, weight) {
     this.id = id;
     this.start = start;
     this.end = end;
     this.weight = weight;
     this.bearing = GreatCircle.bearing(start.lat, start.long, end.lat, end.long);
-    this.split = false;
     this.neg_mod = 1;
     this.nrw_mod = 1;
     this.nheight_mod = 1;
     this.mesh = null;
-    if (start.long > end.long && this.bearing <= 180) {
-      this.split = useSplitEdges;
-      let p1 = [start.mesh.position.x, start.mesh.position.z];
-      this.startSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z) + 20], [10, 10], [-10, 10]);
-      this.endSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z) - 20], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z)], [10, -10], [-10, -10]);
-      this.startSplit = [this.startSplit[0] * 155 / 10, this.startSplit[1] * 180 / 10];
-      this.endSplit = [this.endSplit[0] * 155 / 10, this.endSplit[1] * 180 / 10];
-    } else if (start.long < end.long && this.bearing >= 180) {
-      this.split = useSplitEdges;
-      let p1 = [start.mesh.position.x, start.mesh.position.z];
-      this.startSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z) - 20], [10, -10], [-10, -10]);
-      this.endSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z) + 20], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z)], [10, 10], [-10, 10]);
-      this.startSplit = [this.startSplit[0] * 155 / 10, this.startSplit[1] * 180 / 10];
-      this.endSplit = [this.endSplit[0] * 155 / 10, this.endSplit[1] * 180 / 10];
-    }
-  }
-
-  checkSplit() {
-    let start = this.start;
-    let end = this.end;
-    if (start.long > end.long && this.bearing <= 180) {
-      this.split = useSplitEdges;
-      this.startSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z + 20)], [7, 10], [-7, 10]);
-      this.endSplit = math.intersect([parseFloat(start.mesh.position.x), parseFloat(start.mesh.position.z - 20)], [parseFloat(end.mesh.position.x), parseFloat(end.mesh.position.z)], [7, -10], [-7, -10]);
-    }
   }
 }
 
@@ -1944,40 +1907,13 @@ function calcSurface() {
     });
   }
 
-  let splitCount = 0;
   for (let id in current_edges) {
     let edge = current_edges[id];
-    if (edge.split) {
-      data.nodes.push({
-        id: data.nodes.length,
-        city: "splitstart" + splitCount,
-        lat: edge.startSplit[0],
-        long: edge.startSplit[1]
-      });
-      data.nodes.push({
-        id: data.nodes.length,
-        city: "splitend" + splitCount,
-        lat: edge.endSplit[0],
-        long: edge.endSplit[1]
-      });
-      data.links.push({
-        source: edge.start.id,
-        target: data.nodes.length - 2,
-        ricciCurvature: edge.weight
-      });
-      data.links.push({
-        source: edge.end.id,
-        target: data.nodes.length - 1,
-        ricciCurvature: edge.weight
-      });
-      splitCount++;
-    } else {
-      data.links.push({
-        source: edge.start.id,
-        target: edge.end.id,
-        ricciCurvature: edge.weight
-      });
-    }
+    data.links.push({
+      source: edge.start.id,
+      target: edge.end.id,
+      ricciCurvature: edge.weight
+    });
   }
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.responseType = "text";
