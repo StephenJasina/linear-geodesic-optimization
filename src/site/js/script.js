@@ -306,8 +306,6 @@ window.onload = function() {
   controls.update();
 
   var animate = function() {
-    updateSliderVals();
-
     if (showMap.checked) {
       plane.material[0].map = mapTexture;
       texture = mapTexture;
@@ -558,10 +556,6 @@ document.addEventListener("keyup", function(event) {
     document.removeEventListener('pointerup', pointerUp);
   }
 });
-
-function updateSliderVals() {
-  document.getElementById("posheight-slider-val").innerHTML = parseFloat(document.getElementById("posheight-slider").value).toFixed(2);
-}
 
 function cycleThresholds() {
   let btnCycle = document.getElementById("btn-cycle-thresholds");
