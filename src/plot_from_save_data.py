@@ -200,6 +200,7 @@ if __name__ == '__main__':
 
     laplacian = Laplacian(mesh)
     curvature = Curvature(mesh, laplacian)
+    mesh.set_parameters(vertices[:,2])
     curvature.forward()
     kappa = np.array(curvature.kappa_G).reshape(width, height).T
     kappa[0,:] = 0.
@@ -214,8 +215,10 @@ if __name__ == '__main__':
         figures['scatter'] = get_scatter_plot(before_data, after_data,
                                               'Latency Prediction' + lambda_string)
 
+    # mesh.set_parameters(z)
+    mesh.set_parameters(vertices[:,2] - np.array(z_0))
     figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string, False)
 
-    for filename, figure in figures.items():
-        figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
-    # plt.show()
+    # for filename, figure in figures.items():
+    #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
+    plt.show()
