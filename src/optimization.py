@@ -96,19 +96,20 @@ def main(data_file_name, latency_file_name,
                             options={'maxiter': maxiter})
 
 if __name__ == '__main__':
-    data_file_names = [
-        os.path.join('graph_US', f'graph{i}.graphml')
-        # for i in [4, 10, 12, 14, 16, 18, 22]
-        for i in [10]
-    ]
-    latency_file_names = ['latencies_US.csv']
+    # data_file_names = [
+    #     os.path.join('graph_US', f'graph{i}.graphml')
+    #     for i in [4, 10, 12, 14, 16, 18, 22]
+    # ]
+    # latency_file_names = [os.path.join('graph_US', 'latencies_US.csv')]
+    data_file_names = [os.path.join('toy', 'two_islands.graphml')]
+    latency_file_names = [os.path.join('toy', 'two_islands_latencies.csv')]
     lambda_curvatures = [1.]
-    lambda_smooths = [0.0002]
+    lambda_smooths = [0.004]
     lambda_geodesics = [0.]
     initial_radii = [20.]
-    sides = [40]
+    sides = [50]
     scales = [1.]
-    leaveout_proportions = [0.]
+    leaveout_proportions = [1.]
 
     arguments = list(itertools.product(
         data_file_names, latency_file_names,
@@ -120,4 +121,3 @@ if __name__ == '__main__':
     ))
     with multiprocessing.Pool() as p:
         p.starmap(main, arguments)
-    # main(*arguments[0])

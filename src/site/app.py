@@ -8,6 +8,7 @@ from flask import Response
 import networkx as nx
 from networkx.readwrite import json_graph
 from OllivierRicci import ricciCurvature
+import os
 import potpourri3d as pp3d
 import sys
 import pickle
@@ -18,7 +19,7 @@ sys.path.append('.')
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = '../out_two_islands/two_islands/1.0_0.004_0.0_20.0_50_50_1.0/'
+directory = os.path.join('site', 'example_output')
 max_iterations = 10000
 vertical_scale = 0.15
 
