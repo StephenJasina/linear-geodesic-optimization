@@ -920,7 +920,6 @@ function calcDistanceOnSurface(plane, vertices, edges) {
       let data = xmlHttp.responseText;
       data = JSON.parse(data);
       let distances = data.distances;
-      let grads = data.grads;
       let paths = data.paths;
       drawSurfacePathsFlip(paths, edges);
     }
