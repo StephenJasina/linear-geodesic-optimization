@@ -12,7 +12,7 @@ from flask import request
 from flask import Response
 import networkx as nx
 from networkx.readwrite import json_graph
-from OllivierRicci import ricciCurvature
+from GraphRicciCurvature.OllivierRicci import OllivierRicci
 
 # Assume we're running from src/
 sys.path.append('.')
@@ -21,8 +21,7 @@ from linear_geodesic_optimization.mesh.basic import Mesh as BasicMesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
-# directory = os.path.join('site', 'example_output')
-directory = '/home/jasina/research/linear-geodesic-optimization/out_grid_size/elbow/1.0_0.0004_0.0_20.0_30_30_1.0/'
+directory = os.path.join('site', 'example_output')
 max_iterations = 10000
 vertical_scale = 0.15
 
@@ -34,11 +33,9 @@ retval = None
 @app.route('/calc-curvature', methods=['POST'])
 def calc_curvature():
     data = request.json
-    G = json_graph.node_link_graph(data)
-    Gf = ricciCurvature(G,alpha=0,verbose=True)
-    Gr = json_graph.node_link_data(Gf)
-
-    return Gr
+    G = json_graph.node_link_graph(data, multigraph=False)
+    G = OllivierRicci(G, alpha=0).compute_ricci_curvature()
+    return json_graph.node_link_data(G)
 
 @app.route('/calc-distance', methods=['POST'])
 def calc_distance():

@@ -16,7 +16,7 @@ You'll need the following to get the optimization routine running:
 
 For the webapp, the following will additionally be required:
 * `flask`
-* `cvxpy`
+* `GraphRicciCurvature`
 
 ## Usage
 From the `src` directory, run `python optimization.py` to run the optimizer. At the end of the file are some parameters that can be changed to modify the optimization.
