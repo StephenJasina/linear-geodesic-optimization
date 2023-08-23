@@ -65,6 +65,10 @@ class Computer:
         interpolate between the two endpoints of each halfedge using the
         corresponding ratio.
         """
+        self.path_coordinates: typing.List[typing.List[np.float64]] = []
+        """
+        The actual coordinates of the geodesic path.
+        """
         self._start_points: typing.List[npt.NDArray[np.float64]] = []
         """List of the start locations for each path component."""
         self._end_points: typing.List[npt.NDArray[np.float64]] = []
@@ -376,6 +380,11 @@ class Computer:
         mu_path, mu_path_ratios = meshutility.pygeodesic.find_path(
             self._coordinates, self._faces, self._u, self._v
         )
+        self.path_coordinates = [
+            list((1 - ratio) * self._coordinates[i]
+                 + ratio * self._coordinates[j])
+            for (i, j), ratio in zip(mu_path, mu_path_ratios)
+        ]
 
         # Split the path up piecewise, where boundaries are marked by
         # vertices. Make sure to orient path_edges sensibly: each

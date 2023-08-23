@@ -1,25 +1,28 @@
 #!/usr/bin/python3
+import csv
 import json
+import os
+import pickle
+import sys
+
+import dcelmesh
 import flask
 import numpy as np
-import csv
 from flask import request
 from flask import Response
 import networkx as nx
 from networkx.readwrite import json_graph
 from OllivierRicci import ricciCurvature
-import os
-import potpourri3d as pp3d
-import sys
-import pickle
-from python.geodesic import GeodesicDistanceComputation
 
 # Assume we're running from src/
 sys.path.append('.')
 from linear_geodesic_optimization import data
+from linear_geodesic_optimization.mesh.basic import Mesh as BasicMesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
+from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
-directory = os.path.join('site', 'example_output')
+# directory = os.path.join('site', 'example_output')
+directory = '/home/jasina/research/linear-geodesic-optimization/out_grid_size/elbow/1.0_0.0004_0.0_20.0_30_30_1.0/'
 max_iterations = 10000
 vertical_scale = 0.15
 
@@ -44,23 +47,17 @@ def calc_distance():
     tris = np.array(data['faces'])
     nodes = np.array(data['nodes'])
     edges = np.array(data['edges'])
-    # TODO: Change this to use the other geodesics algorithm
-    compute_distance = GeodesicDistanceComputation(verts, tris)
-    distances = []
-    grads = []
-    paths = []
-    for node in nodes:
-        dist = compute_distance(node)
-        distances.append(dist.tolist())
-    path_solver = pp3d.EdgeFlipGeodesicSolver(verts, tris)
-    for edge in edges:
-        if edge[0] != edge[1]:
-            paths.append(path_solver.find_geodesic_path(v_start=edge[0], v_end=edge[1]).tolist())
-        else:
-            paths.append([[0, 0, 0]])
-    ret = {}
-    ret['distances'] = distances
-    ret['paths'] = paths
+    mesh = BasicMesh(dcelmesh.Mesh(len(verts), tris), verts)
+    geodesics = [
+        Geodesic(mesh, u, v)
+        for (u, v) in edges
+    ]
+    for geodesic in geodesics:
+        geodesic.forward()
+    ret = {
+        'distances': [geodesic.distance for geodesic in geodesics],
+        'paths': [geodesic.path_coordinates for geodesic in geodesics]
+    }
     return json.dumps(ret)
 
 @app.route('/calc-surface', methods=['POST'])
