@@ -1,17 +1,17 @@
-import { EffectComposer } from './scripts/EffectComposer.js';
-import { RenderPass } from './scripts/RenderPass.js';
-import { ShaderPass } from './scripts/ShaderPass.js';
-import { CopyShader } from './scripts/CopyShader.js';
-import { FXAAShader } from './scripts/FXAAShader.js';
-import { LineGeometry } from './scripts/LineGeometry.js';
-import { Line2 } from './scripts/Line2.js';
-import { LineMaterial } from './scripts/LineMaterial.js';
-import { SelectionBox } from './scripts/SelectionBox.js';
-import { SelectionHelper } from './scripts/SelectionHelper.js';
-import RBush from './scripts/rbush/index.js'
-import quickselect from './scripts/quickselect/index.js'
-import Draw from './scripts/ol/interaction/Draw.js';
-import { transformExtent } from './scripts/ol/proj.js';
+import { EffectComposer } from "./scripts/EffectComposer.js";
+import { RenderPass } from "./scripts/RenderPass.js";
+import { ShaderPass } from "./scripts/ShaderPass.js";
+import { CopyShader } from "./scripts/CopyShader.js";
+import { FXAAShader } from "./scripts/FXAAShader.js";
+import { LineGeometry } from "./scripts/LineGeometry.js";
+import { Line2 } from "./scripts/Line2.js";
+import { LineMaterial } from "./scripts/LineMaterial.js";
+import { SelectionBox } from "./scripts/SelectionBox.js";
+import { SelectionHelper } from "./scripts/SelectionHelper.js";
+import RBush from "./scripts/rbush/index.js"
+import quickselect from "./scripts/quickselect/index.js"
+import Draw from "./scripts/ol/interaction/Draw.js";
+import { transformExtent } from "./scripts/ol/proj.js";
 
 let bgcolor = 0xf3f3f3;
 let graphcolor = 0xffffff;
@@ -82,9 +82,9 @@ scene.background = new THREE.Color(bgcolor);
 var controls = new T.OrbitControls(camera, renderer.domElement);
 
 const olMap = createMap();
-const canv = document.createElement('canvas');
+const canv = document.createElement("canvas");
 canv.id = "canvas-texture";
-let ctx = canv.getContext('2d');
+let ctx = canv.getContext("2d");
 ctx.canvas.width = 4000;
 ctx.canvas.height = 4000;
 ctx.fillStyle = canvascolor;
@@ -206,17 +206,17 @@ let renderPass = new RenderPass(scene, camera);
 let fxaaPass = new ShaderPass(FXAAShader);
 fxaaPass.renderToScreen = false;
 let pixelRatio = renderer.getPixelRatio();
-fxaaPass.material.uniforms['resolution'].value.x = 1 / (window.innerWidth * pixelRatio);
-fxaaPass.material.uniforms['resolution'].value.y = 1 / (window.innerHeight * pixelRatio);
+fxaaPass.material.uniforms["resolution"].value.x = 1 / (window.innerWidth * pixelRatio);
+fxaaPass.material.uniforms["resolution"].value.y = 1 / (window.innerHeight * pixelRatio);
 
 let composer = new EffectComposer(renderer);
 composer.addPass(renderPass);
 composer.addPass(fxaaPass);
 
 window.onload = function() {
-  var mapCanvas = document.getElementById('map').getElementsByTagName('canvas')[0];
+  var mapCanvas = document.getElementById("map").getElementsByTagName("canvas")[0];
 
-  let ctx = mapCanvas.getContext('2d');
+  let ctx = mapCanvas.getContext("2d");
   const customTexture = texture;
   const mapTexture = new T.CanvasTexture(ctx.canvas);
   mapTexture.minFilter = THREE.LinearFilter;
@@ -229,15 +229,15 @@ window.onload = function() {
 
   mapdiv.style.display = "none";
 
-  window.addEventListener('wheel', wheelEvent, true);
+  window.addEventListener("wheel", wheelEvent, true);
 
-  var dropNodes = document.getElementById('drop-nodes');
-  dropNodes.addEventListener('dragover', dragOver, false);
-  dropNodes.addEventListener('drop', fileSelectNodes, false);
+  var dropNodes = document.getElementById("drop-nodes");
+  dropNodes.addEventListener("dragover", dragOver, false);
+  dropNodes.addEventListener("drop", fileSelectNodes, false);
 
-  var dropEdges = document.getElementById('drop-edges');
-  dropEdges.addEventListener('dragover', dragOver, false);
-  dropEdges.addEventListener('drop', fileSelectEdges, false);
+  var dropEdges = document.getElementById("drop-edges");
+  dropEdges.addEventListener("dragover", dragOver, false);
+  dropEdges.addEventListener("drop", fileSelectEdges, false);
 
   let btnAddVertex = document.getElementById("btn-add-vertex");
   btnAddVertex.onclick = addVertex;
@@ -408,7 +408,7 @@ window.onload = function() {
 
     linesCleared = false;
 
-    // Set plane vertices' height
+    // Set plane vertices" height
     heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.));
 
     // Draw point on surface texture
@@ -488,7 +488,7 @@ window.onload = function() {
 }
 
 let selectionBox = new SelectionBox(camera, scene);
-let helper = new SelectionHelper(selectionBox, renderer, 'selectBox');
+let helper = new SelectionHelper(selectionBox, renderer, "selectBox");
 
 document.addEventListener("keydown", function(event) {
   // Shift click for select
@@ -549,9 +549,9 @@ document.addEventListener("keyup", function(event) {
     document.body.style.cursor = "auto";
     controls.enablePan = true;
     controls.update();
-    document.removeEventListener('pointerdown', pointerDown);
-    document.removeEventListener('pointermove', pointerMove);
-    document.removeEventListener('pointerup', pointerUp);
+    document.removeEventListener("pointerdown", pointerDown);
+    document.removeEventListener("pointermove", pointerMove);
+    document.removeEventListener("pointerup", pointerUp);
   }
 });
 
@@ -569,9 +569,10 @@ function cycleThresholds() {
 // TODO: This function is currently not in use. The curvature
 // computation should probably be moved into the backend, as code for
 // that already exists there. The colors are also likely slightly
-// imprecise. Finally, this function currently relies on the size of the
+// imprecise. This function currently also relies on the size of the
 // mesh to be 50x50, so it needs to be rewritten to take `divisions`
-// into account
+// into account. Finally, the actual computation is currently incorrect,
+// as it fails to divide the angle defect by the vertex area.
 function colorCurvature(plane) {
   // CURVATURE calc
   let max_curv = 0;
@@ -827,7 +828,7 @@ function pointerUp(event) {
 function wheelEvent(event) {
   olMap.updateSize();
 
-  if (document.elementFromPoint(event.clientX, event.clientY).tagName != 'CANVAS') {
+  if (document.elementFromPoint(event.clientX, event.clientY).tagName != "CANVAS") {
     return;
   }
   var mapdiv = document.getElementById("map");
@@ -838,8 +839,8 @@ function wheelEvent(event) {
     mapZoomLevel -= 1;
   }
   let newMapResolution = mapResolution * Math.pow(0.95, -mapZoomLevel)
-  mapdiv.style.width = newMapResolution + 'px';
-  mapdiv.style.height = newMapResolution + 'px';
+  mapdiv.style.width = newMapResolution + "px";
+  mapdiv.style.height = newMapResolution + "px";
   olMap.updateSize();
   olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
   olMap.getView().setResolution(circumferenceEarth / newMapResolution / mapZoomFactor)
@@ -926,7 +927,7 @@ function drawSurfacePathsFlip(paths, edges) {
     let material = new T.LineBasicMaterial({
       color: line_color,
       linewidth: 4,
-      linecap: 'round'
+      linecap: "round"
     });
     for (let pt of paths[i]) {
       if (subPlanes.length != 0) {
@@ -977,8 +978,8 @@ function subgraphSelect(selected) {
         name: selected[id].name
       };
     } else if (selected[id].geometry.type == "BufferGeometry") {
-      let start = selected[id].name.split('/')[0];
-      let end = selected[id].name.split('/')[1];
+      let start = selected[id].name.split("/")[0];
+      let end = selected[id].name.split("/")[1];
       let weight = selected[id].userData.weight;
       let neg_mod = selected[id].userData.neg_mod;
       let nrw_mod = selected[id].userData.nrw_mod;
@@ -1052,10 +1053,10 @@ function subgraphSelect(selected) {
   let width = xRange[1] - xRange[0]
   let height = yRange[1] - yRange[0]
   // --- DRAW PLANE ---
-  let ctx = canv.getContext('2d')
+  let ctx = canv.getContext("2d")
   if (document.getElementById("show-map").checked) {
-    let mapCanvas = document.getElementById('map').getElementsByTagName('canvas')[0]
-    ctx = mapCanvas.getContext('2d')
+    let mapCanvas = document.getElementById("map").getElementsByTagName("canvas")[0]
+    ctx = mapCanvas.getContext("2d")
   }
 
   var subTexture = new T.CanvasTexture(ctx.canvas)
@@ -1242,7 +1243,7 @@ function subgraphSelect(selected) {
   xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
       data = xmlHttp.responseText
-      data = data.substring(data.indexOf('['))
+      data = data.substring(data.indexOf("["))
       data = JSON.parse(data)
       console.log(data)
       console.log("data recv")
@@ -1277,7 +1278,7 @@ function setPlaneHeights(plane, map) {
 
 function vertexNameChange() {
   // TODO: Deal with duplicate names
-  if (this.value == '') {
+  if (this.value == "") {
     return;
   }
   let parentDiv = this.parentElement;
@@ -1294,7 +1295,7 @@ function vertexNameChange() {
 }
 
 function vertexPositionChange() {
-  if (this.value == '' || isNaN(this.value)) {
+  if (this.value == "" || isNaN(this.value)) {
     return;
   }
   let parentDiv = this.parentElement;
@@ -1322,7 +1323,7 @@ function vertexPositionChange() {
 }
 
 function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
-  if (typeof drawPoint == 'undefined') {
+  if (typeof drawPoint == "undefined") {
     drawPoint = true;
   }
 
@@ -1361,7 +1362,7 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
   idLbl.setAttribute("for", "id");
   idLbl.textContent = vertexCount;
 
-  if (typeof name == 'undefined') {
+  if (typeof name == "undefined") {
     name = vertexCount;
   }
 
@@ -1432,7 +1433,7 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
       x: 1,
       y: 1,
       z: 1,
-      ease: 'elastic'
+      ease: "elastic"
     });
   }
   vertices[String(vertexCount)] = new VertexObj(vertexCount, name, newPt, sprite, lat, long);
@@ -1462,7 +1463,7 @@ function addVertexSec(obj, x, y, vertices, drawPoint = false) {
       x: 1,
       y: 1,
       z: 1,
-      ease: 'elastic'
+      ease: "elastic"
     });
   }
 
@@ -1555,15 +1556,15 @@ function drawEdge(edge, lineMat) {
 }
 
 function addEdge(obj, start, end, weight) {
-  if (typeof start == 'undefined') {
+  if (typeof start == "undefined") {
     start = 0;
   }
 
-  if (typeof end == 'undefined') {
+  if (typeof end == "undefined") {
     end = 0;
   }
 
-  if (typeof weight == 'undefined') {
+  if (typeof weight == "undefined") {
     weight = 0;
   }
 
@@ -1653,7 +1654,7 @@ function addEdgeSec(obj, start, end, weight, vertices, edges) {
 
 function edgeChange() {
   // TODO: Deal with non existent vertices
-  if (this.value == '' || isNaN(this.value)) {
+  if (this.value == "" || isNaN(this.value)) {
     return;
   }
   let parentDiv = this.parentElement;
@@ -1675,8 +1676,8 @@ function removeEdge() {
 }
 
 function getNameSprite(name) {
-  let canvas = document.createElement('canvas');
-  let ctx = canvas.getContext('2d');
+  let canvas = document.createElement("canvas");
+  let ctx = canvas.getContext("2d");
 
   let metrics = ctx.measureText(name);
   let textWidth = metrics.width;
@@ -1741,19 +1742,19 @@ let GraphObj = class {
 }
 
 function createMap() {
-  var mapdiv = document.createElement('div');
-  mapdiv.id = 'map';
-  mapdiv.class = 'map-div';
-  mapdiv.style.width = mapResolution + 'px';
-  mapdiv.style.height = mapResolution + 'px';
+  var mapdiv = document.createElement("div");
+  mapdiv.id = "map";
+  mapdiv.class = "map-div";
+  mapdiv.style.width = mapResolution + "px";
+  mapdiv.style.height = mapResolution + "px";
   document.body.appendChild(mapdiv);
   var map = new ol.Map({
-    target: 'map',
-    renderer: 'canvas',
+    target: "map",
+    renderer: "canvas",
     layers: [
       new ol.layer.Tile({
         source: new ol.source.Stamen({
-          layer: 'terrain'
+          layer: "terrain"
         }),
       })
     ],
@@ -1878,7 +1879,7 @@ function calcSurface() {
       let scale = 20.;
       document.body.style.cursor = "auto";
       data = xmlHttp.responseText;
-      data = data.substring(data.indexOf('['));
+      data = data.substring(data.indexOf("["));
       data = JSON.parse(data);
       let hm = [];
       if (graphs.length > 0) {
@@ -1902,23 +1903,23 @@ function calcSurface() {
 }
 
 function createAndUpdateAlphaMapD3(map) {
-  var svg = d3.select('#alpha-svg');
+  var svg = d3.select("#alpha-svg");
   var width = 512;
   var height = 512;
-  if (d3.select('#alpha-svg').empty()) {
-    var svg = d3.select('body')
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .attr('id', 'alpha-svg')
-      .attr('display', 'none');
+  if (d3.select("#alpha-svg").empty()) {
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("id", "alpha-svg")
+      .attr("display", "none");
   }
   svg.selectAll("*").remove();
-  svg.append('rect')
-    .attr('width', '100%')
-    .attr('height', '100%')
-    .attr('fill', '#333333');
-  svg.append('g');
+  svg.append("rect")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("fill", "#333333");
+  svg.append("g");
 
   // Add X axis
   var x = d3.scaleLinear()
@@ -1973,22 +1974,22 @@ function createAndUpdateAlphaMapD3(map) {
       return color(d.value);
     });
 
-  var alphaCanv = document.getElementById('alpha-canvas');
+  var alphaCanv = document.getElementById("alpha-canvas");
   if (alphaCanv == null) {
-    alphaCanv = document.createElement('canvas');
-    alphaCanv.id = 'alpha-canvas';
+    alphaCanv = document.createElement("canvas");
+    alphaCanv.id = "alpha-canvas";
     alphaCanv.height = height;
     alphaCanv.width = width;
-    alphaCanv.style.display = 'none';
+    alphaCanv.style.display = "none";
 
     document.body.appendChild(alphaCanv);
   }
 
-  var ctx = alphaCanv.getContext('2d');
+  var ctx = alphaCanv.getContext("2d");
 
-  var svgEle = document.getElementById('alpha-svg');
-  var img = document.createElement('img');
-  img.setAttribute('src', "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent((new XMLSerializer()).serializeToString(svgEle)))));
+  var svgEle = document.getElementById("alpha-svg");
+  var img = document.createElement("img");
+  img.setAttribute("src", "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent((new XMLSerializer()).serializeToString(svgEle)))));
   img.onload = function() {
     ctx.drawImage(img, 0, 0);
   }
@@ -2012,34 +2013,34 @@ function readEdgeFile(file) {
   reader.onload = function() {
     let current_edges = {};
     let text = reader.result;
-    let lines = text.split('\n');
+    let lines = text.split("\n");
     let i = -1;
     let inputNames = [];
     let negative_edges = [];
-    if (file.name.substr(-3) != 'csv') {
-      let inputNameData = lines[0].split('\"');
+    if (file.name.substr(-3) != "csv") {
+      let inputNameData = lines[0].split("\"");
       let k = -1;
       for (let nameData of inputNameData) {
         k++;
         nameData = nameData.trim();
-        if (nameData == '') {
+        if (nameData == "") {
           continue;
         }
         if (k % 2 == 1) {
           inputNames.push(nameData);
         } else {
-          inputNames = inputNames.concat(nameData.split(' '));
+          inputNames = inputNames.concat(nameData.split(" "));
         }
       }
     } else {
-      inputNames = lines[0].split(',').slice(1);
+      inputNames = lines[0].split(",").slice(1);
     }
 
-    if (file.name.substr(-3) != 'csv') {
+    if (file.name.substr(-3) != "csv") {
       for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
         let data = line.split("\"");
-        let currentNode = '';
+        let currentNode = "";
         if (data.length > 1) { // Two word name - deal with double quotes
           currentNode = data[1];
           data = data[2].split(" ");
@@ -2048,7 +2049,7 @@ function readEdgeFile(file) {
           currentNode = data[0];
           data = data.splice(1);
         }
-        if (data[0] == '' || isNaN(data[0])) {
+        if (data[0] == "" || isNaN(data[0])) {
           continue;
         }
         let currentId = names[currentNode];
@@ -2080,7 +2081,7 @@ function readEdgeFile(file) {
 
         let currentId = names[currentNode];
         for (let j = 0; j < i; j++) {
-          if (data[j] == '' || isNaN(data[0])) {
+          if (data[j] == "" || isNaN(data[0])) {
             continue;
           }
           let weight = parseFloat(data[j]);
@@ -2122,14 +2123,14 @@ function fileSelectNodes(evt) {
 
   reader.onload = function() {
     let text = reader.result;
-    let lines = text.split('\n');
+    let lines = text.split("\n");
     for (let line of lines) {
-      let data = line.split(',');
-      if (data[1] == '' || isNaN(data[1])) {
+      let data = line.split(",");
+      if (data[1] == "" || isNaN(data[1])) {
         continue;
       }
       let projected = ol.proj.fromLonLat([data[2], data[1]]);
-      // TODO: This next line seems strange. It's presumably based off
+      // TODO: This next line seems strange. It"s presumably based off
       // of https://epsg.io/3857, but it might need to be edited
       addVertex(null, projected[1] / 20048966.10 * 10, projected[0] / 20026376.39 * 10, true, data[0], parseFloat(data[1]), parseFloat(data[2]));
     }
@@ -2140,7 +2141,7 @@ function fileSelectNodes(evt) {
 function dragOver(evt) {
   evt.stopPropagation();
   evt.preventDefault();
-  evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  evt.dataTransfer.dropEffect = "copy"; // Explicitly show this is a copy.
 }
 
 function convert3JStoVerts(x, y) {
