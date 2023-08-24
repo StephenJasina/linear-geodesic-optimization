@@ -58,9 +58,9 @@ let last_cycle = Date.now();
 let thresh_change = false;
 
 // ThreeJS Scene Setup
-var scene = new T.Scene();
+let scene = new T.Scene();
 let div = 64;
-var camera = new THREE.OrthographicCamera(
+let camera = new THREE.OrthographicCamera(
   window.innerWidth / -div, window.innerWidth / div,
   window.innerHeight / div, window.innerHeight / -div,
   0.1, 1000
@@ -69,7 +69,7 @@ camera.position.x = -15;
 camera.position.z = 20;
 camera.position.y = 15;
 
-var renderer = new THREE.WebGLRenderer({
+let renderer = new THREE.WebGLRenderer({
   logarithmicDepthBuffer: true,
   antialias: false
 });
@@ -79,7 +79,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 scene.background = new THREE.Color(bgcolor);
-var controls = new T.OrbitControls(camera, renderer.domElement);
+let controls = new T.OrbitControls(camera, renderer.domElement);
 
 const olMap = createMap();
 const canv = document.createElement("canvas");
@@ -89,7 +89,7 @@ ctx.canvas.width = 4000;
 ctx.canvas.height = 4000;
 ctx.fillStyle = canvascolor;
 ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-var texture = new T.CanvasTexture(ctx.canvas);
+let texture = new T.CanvasTexture(ctx.canvas);
 texture.minFilter = THREE.LinearFilter;
 texture.center = new T.Vector2(0.5, 0.5)
 texture.rotation = -Math.PI / 2
@@ -99,25 +99,25 @@ let ptMat = new T.MeshBasicMaterial({
   color: vertexcolor
 });
 
-var clipPlaneUp = new T.Plane(new T.Vector3(0, 2, 0), 2);
-var clipPlaneLeft = new T.Plane(new T.Vector3(-1, 0, 0), -planeXMin);
-var clipPlaneRight = new T.Plane(new T.Vector3(1, 0, 0), planeXMax);
-var clipPlaneFront = new T.Plane(new T.Vector3(0, 0, -1), -planeYMin);
-var clipPlaneBack = new T.Plane(new T.Vector3(0, 0, 1), planeYMax);
+let clipPlaneUp = new T.Plane(new T.Vector3(0, 2, 0), 2);
+let clipPlaneLeft = new T.Plane(new T.Vector3(-1, 0, 0), -planeXMin);
+let clipPlaneRight = new T.Plane(new T.Vector3(1, 0, 0), planeXMax);
+let clipPlaneFront = new T.Plane(new T.Vector3(0, 0, -1), -planeYMin);
+let clipPlaneBack = new T.Plane(new T.Vector3(0, 0, 1), planeYMax);
 
-var loader = new T.ImageLoader();
-var aMap = loader.load("images/grayscale.png");
+let loader = new T.ImageLoader();
+let aMap = loader.load("images/grayscale.png");
 
-var geometry = new T.PlaneGeometry(
+let geometry = new T.PlaneGeometry(
   planeW, planeH,
   divisions - 1, divisions - 1
 );
-var material = new T.MeshBasicMaterial({
+let material = new T.MeshBasicMaterial({
   color: graphcolor,
   side: T.DoubleSide
 });
 // TODO: change back
-var planeMat = new THREE.MeshPhongMaterial({
+let planeMat = new THREE.MeshPhongMaterial({
   color: graphcolor,
   clippingPlanes: [clipPlaneLeft, clipPlaneRight, clipPlaneFront, clipPlaneBack],
   vertexColors: T.VertexColors,
@@ -132,7 +132,7 @@ var planeMat = new THREE.MeshPhongMaterial({
 let transparentMat = new T.MeshLambertMaterial({
   visible: false
 });
-var transparentPlaneMat = new THREE.MeshPhongMaterial({
+let transparentPlaneMat = new THREE.MeshPhongMaterial({
   color: graphcolor,
   clippingPlanes: [clipPlaneLeft, clipPlaneRight, clipPlaneFront, clipPlaneBack],
   vertexColors: T.VertexColors,
@@ -145,7 +145,7 @@ var transparentPlaneMat = new THREE.MeshPhongMaterial({
   opacity: 0.5
 });
 let mMat = [planeMat, transparentMat, transparentPlaneMat];
-var plane = new T.Mesh(geometry, mMat);
+let plane = new T.Mesh(geometry, mMat);
 
 plane.rotation.set(-Math.PI / 2, 0, 0);
 scene.add(plane);
@@ -160,7 +160,7 @@ const directionalLight = new T.DirectionalLight(0xffffff, 0.6);
 directionalLight.position.set(1.5, 0.1, 10);
 scene.add(directionalLight);
 
-var alight = new THREE.AmbientLight(0x404040); // soft white light
+let alight = new THREE.AmbientLight(0x404040); // soft white light
 scene.add(alight);
 
 let vertices = {};
@@ -174,12 +174,12 @@ let current_edges = {};
 
 edgecolor_sec = 0x2cc57c;
 edgecolor = 0x178e51;
-var lineMat = new T.LineBasicMaterial({
+let lineMat = new T.LineBasicMaterial({
   color: edgecolor,
   linewidth: 6,
   clippingPlanes: [clipPlaneUp]
 });
-var lineMatSec = new T.LineBasicMaterial({
+let lineMatSec = new T.LineBasicMaterial({
   color: edgecolor_sec,
   linewidth: 1.5,
   depthFunc: T.LessDepth
@@ -193,8 +193,8 @@ for (let face of plane.geometry.faces) {
   face.vertexColors[2] = new T.Color(0xffffff);
 }
 
-var contX = [];
-var contY = [];
+let contX = [];
+let contY = [];
 for (let i = 0; i < heightMap.length; i++) {
   contX.push(i);
   contY.push(i);
@@ -214,7 +214,7 @@ composer.addPass(renderPass);
 composer.addPass(fxaaPass);
 
 window.onload = function() {
-  var mapCanvas = document.getElementById("map").getElementsByTagName("canvas")[0];
+  let mapCanvas = document.getElementById("map").getElementsByTagName("canvas")[0];
 
   let ctx = mapCanvas.getContext("2d");
   const customTexture = texture;
@@ -225,17 +225,17 @@ window.onload = function() {
   mapTexture.rotation = -Math.PI / 2;
   plane.material[2].map = mapTexture;
 
-  var mapdiv = document.getElementById("map");
+  let mapdiv = document.getElementById("map");
 
   mapdiv.style.display = "none";
 
   window.addEventListener("wheel", wheelEvent, true);
 
-  var dropNodes = document.getElementById("drop-nodes");
+  let dropNodes = document.getElementById("drop-nodes");
   dropNodes.addEventListener("dragover", dragOver, false);
   dropNodes.addEventListener("drop", fileSelectNodes, false);
 
-  var dropEdges = document.getElementById("drop-edges");
+  let dropEdges = document.getElementById("drop-edges");
   dropEdges.addEventListener("dragover", dragOver, false);
   dropEdges.addEventListener("drop", fileSelectEdges, false);
 
@@ -303,7 +303,7 @@ window.onload = function() {
   controls.minZoom = 1;
   controls.update();
 
-  var animate = function() {
+  let animate = function() {
     if (showMap.checked) {
       plane.material[0].map = mapTexture;
       texture = mapTexture;
@@ -767,7 +767,7 @@ function pointerDown(event) {
   if (event.which != 1) {
     return;
   }
-  for (var item of selectionBox.collection) {
+  for (let item of selectionBox.collection) {
     if (Array.isArray(item.material)) {
       continue;
     }
@@ -783,7 +783,7 @@ function pointerDown(event) {
 
 function pointerMove(event) {
   if (helper.isDown) {
-    for (var i = 0; i < selectionBox.collection.length; i++) {
+    for (let i = 0; i < selectionBox.collection.length; i++) {
       if (Array.isArray(selectionBox.collection[i].material)) {
         continue
       }
@@ -796,8 +796,8 @@ function pointerMove(event) {
       0.5
     );
 
-    var allSelected = selectionBox.select();
-    for (var i = 0; i < allSelected.length; i++) {
+    let allSelected = selectionBox.select();
+    for (let i = 0; i < allSelected.length; i++) {
       if (Array.isArray(allSelected[i].material)) {
         continue;
       }
@@ -816,8 +816,8 @@ function pointerUp(event) {
     0.5
   );
 
-  var allSelected = selectionBox.select();
-  for (var i = 0; i < allSelected.length; i++) {
+  let allSelected = selectionBox.select();
+  for (let i = 0; i < allSelected.length; i++) {
     if (Array.isArray(allSelected[i].material)) {
       continue;
     }
@@ -831,7 +831,7 @@ function wheelEvent(event) {
   if (document.elementFromPoint(event.clientX, event.clientY).tagName != "CANVAS") {
     return;
   }
-  var mapdiv = document.getElementById("map");
+  let mapdiv = document.getElementById("map");
   mapdiv.style.display = "block";
   if (event.deltaY < 0) {
     mapZoomLevel += 1;
@@ -897,7 +897,7 @@ function calcDistanceOnSurface(plane, vertices, edges) {
     nodes: nodes,
     edges: send_edges
   };
-  var xmlHttp = new XMLHttpRequest();
+  let xmlHttp = new XMLHttpRequest();
   xmlHttp.responseType = "text"
 
   xmlHttp.onreadystatechange = function() {
@@ -918,10 +918,11 @@ function drawSurfacePathsFlip(paths, edges) {
   for (let i = 0, j = 0; i < paths.length; i++, j++) {
     let points = [];
     let line_color = new T.Color("hsl(0, 0%, 100%)");
+    let endColor;
     if (edges[j].weight >= 0) {
-      var endColor = new T.Color("hsl(222, 100%, 61%)");
+      endColor = new T.Color("hsl(222, 100%, 61%)");
     } else {
-      var endColor = new T.Color("hsl(356, 74%, 52%)");
+      endColor = new T.Color("hsl(356, 74%, 52%)");
     }
     line_color.lerp(endColor, Math.min(Math.abs(edges[j].weight), 1));
     let material = new T.LineBasicMaterial({
@@ -947,12 +948,12 @@ function subgraphSelect(selected) {
   if (selected.length <= 1) {
     return;
   }
-  var data = {
+  let data = {
     nodes: [],
     links: []
   };
-  var nodes = {};
-  var edges = [];
+  let nodes = {};
+  let edges = [];
   let ids = {};
   let xRange = [planeXMax, planeXMin];
   let yRange = [planeYMax, planeYMin];
@@ -1059,7 +1060,7 @@ function subgraphSelect(selected) {
     ctx = mapCanvas.getContext("2d")
   }
 
-  var subTexture = new T.CanvasTexture(ctx.canvas)
+  let subTexture = new T.CanvasTexture(ctx.canvas)
   subTexture.minFilter = THREE.LinearFilter
   subTexture.center = new T.Vector2(0.5, 0.5)
   subTexture.rotation = -Math.PI / 2
@@ -1068,9 +1069,9 @@ function subgraphSelect(selected) {
   subTexture.offset.x = mid[1] / 20
   subTexture.offset.y = mid[0] / 20
 
-  var subGeom = new T.PlaneGeometry(width, height, divisions - 1, divisions - 1)
-  // var material = new T.MeshBasicMaterial( { color: graphcolor, side: T.DoubleSide} )
-  var subMat = new THREE.MeshPhongMaterial({
+  let subGeom = new T.PlaneGeometry(width, height, divisions - 1, divisions - 1)
+  // let material = new T.MeshBasicMaterial( { color: graphcolor, side: T.DoubleSide} )
+  let subMat = new THREE.MeshPhongMaterial({
     color: graphcolor,
     clippingPlanes: [clipPlaneRight, clipPlaneLeft, clipPlaneBack, clipPlaneFront],
     vertexColors: T.VertexColors,
@@ -1080,7 +1081,7 @@ function subgraphSelect(selected) {
     wireframe: false,
     map: subTexture
   })
-  var subPlane = new T.Mesh(subGeom, subMat)
+  let subPlane = new T.Mesh(subGeom, subMat)
 
   // TODO: change
   subPlane.position.set(mid[0], 2, mid[1])
@@ -1230,11 +1231,11 @@ function subgraphSelect(selected) {
     return
   }
 
-  var xmlHttp = new XMLHttpRequest();
+  let xmlHttp = new XMLHttpRequest();
   xmlHttp.responseType = "text"
-  var smooth_pen = document.getElementById("input-smooth").value
-  var niter = document.getElementById("input-niter").value
-  var send_data = {
+  let smooth_pen = document.getElementById("input-smooth").value
+  let niter = document.getElementById("input-niter").value
+  let send_data = {
     graph: data,
     smooth_pen: smooth_pen,
     niter: niter
@@ -1742,13 +1743,13 @@ let GraphObj = class {
 }
 
 function createMap() {
-  var mapdiv = document.createElement("div");
+  let mapdiv = document.createElement("div");
   mapdiv.id = "map";
   mapdiv.class = "map-div";
   mapdiv.style.width = mapResolution + "px";
   mapdiv.style.height = mapResolution + "px";
   document.body.appendChild(mapdiv);
-  var map = new ol.Map({
+  let map = new ol.Map({
     target: "map",
     renderer: "canvas",
     layers: [
@@ -1767,7 +1768,7 @@ function createMap() {
 }
 
 function calculateCurvature() {
-  var data = {
+  let data = {
     nodes: [],
     links: []
   };
@@ -1791,7 +1792,7 @@ function calculateCurvature() {
       target: edge.end.id
     });
   }
-  var xmlHttp = new XMLHttpRequest();
+  let xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
       data = JSON.parse(xmlHttp.responseText)
@@ -1832,7 +1833,7 @@ function calculateCurvature() {
 }
 
 function calcSurface() {
-  var data = {
+  let data = {
     nodes: [],
     links: []
   };
@@ -1863,11 +1864,11 @@ function calcSurface() {
       ricciCurvature: edge.weight
     });
   }
-  var xmlHttp = new XMLHttpRequest();
+  let xmlHttp = new XMLHttpRequest();
   xmlHttp.responseType = "text";
-  var smooth_pen = document.getElementById("input-smooth").value;
-  var niter = document.getElementById("input-niter").value;
-  var send_data = {
+  let smooth_pen = document.getElementById("input-smooth").value;
+  let niter = document.getElementById("input-niter").value;
+  let send_data = {
     graph: data,
     smooth_pen: smooth_pen,
     niter: niter,
@@ -1903,11 +1904,11 @@ function calcSurface() {
 }
 
 function createAndUpdateAlphaMapD3(map) {
-  var svg = d3.select("#alpha-svg");
-  var width = 512;
-  var height = 512;
+  let svg = d3.select("#alpha-svg");
+  let width = 512;
+  let height = 512;
   if (d3.select("#alpha-svg").empty()) {
-    var svg = d3.select("body")
+    let svg = d3.select("body")
       .append("svg")
       .attr("width", width)
       .attr("height", height)
@@ -1922,7 +1923,7 @@ function createAndUpdateAlphaMapD3(map) {
   svg.append("g");
 
   // Add X axis
-  var x = d3.scaleLinear()
+  let x = d3.scaleLinear()
     .domain([0, map.length])
     .range([0, width]);
   svg.append("g")
@@ -1930,16 +1931,16 @@ function createAndUpdateAlphaMapD3(map) {
     .call(d3.axisBottom(x));
 
   // Add Y axis
-  var y = d3.scaleLinear()
+  let y = d3.scaleLinear()
     .domain([0, map[0].length])
     .range([height, 0]);
   svg.append("g")
     .call(d3.axisLeft(y));
 
-  var color = d3.scaleLinear()
+  let color = d3.scaleLinear()
     .domain([0.0, 0.002]) // Points per square pixel. .002
     .range(["#333333", "white"]);
-  var data = [];
+  let data = [];
 
   for (let i = 0; i < map.length; i++) {
     for (let j = 0; j < map[i].length; j++) {
@@ -1953,7 +1954,7 @@ function createAndUpdateAlphaMapD3(map) {
   }
 
   // Modify bandwidth
-  var densityData = d3.contourDensity()
+  let densityData = d3.contourDensity()
     .x(function(d) {
       return x(d.x);
     })
@@ -1974,7 +1975,7 @@ function createAndUpdateAlphaMapD3(map) {
       return color(d.value);
     });
 
-  var alphaCanv = document.getElementById("alpha-canvas");
+  let alphaCanv = document.getElementById("alpha-canvas");
   if (alphaCanv == null) {
     alphaCanv = document.createElement("canvas");
     alphaCanv.id = "alpha-canvas";
@@ -1985,10 +1986,10 @@ function createAndUpdateAlphaMapD3(map) {
     document.body.appendChild(alphaCanv);
   }
 
-  var ctx = alphaCanv.getContext("2d");
+  let ctx = alphaCanv.getContext("2d");
 
-  var svgEle = document.getElementById("alpha-svg");
-  var img = document.createElement("img");
+  let svgEle = document.getElementById("alpha-svg");
+  let img = document.createElement("img");
   img.setAttribute("src", "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent((new XMLSerializer()).serializeToString(svgEle)))));
   img.onload = function() {
     ctx.drawImage(img, 0, 0);
@@ -2002,14 +2003,14 @@ function fileSelectEdges(evt) {
   evt.stopPropagation();
   evt.preventDefault();
 
-  var files = evt.dataTransfer.files; // FileList object.
+  let files = evt.dataTransfer.files; // FileList object.
   for (let file of files) {
     readEdgeFile(file);
   }
 }
 
 function readEdgeFile(file) {
-  var reader = new FileReader();
+  let reader = new FileReader();
   reader.onload = function() {
     let current_edges = {};
     let text = reader.result;
@@ -2118,8 +2119,8 @@ function readEdgeFile(file) {
 function fileSelectNodes(evt) {
   evt.stopPropagation();
   evt.preventDefault();
-  var files = evt.dataTransfer.files; // FileList object.
-  var reader = new FileReader();
+  let files = evt.dataTransfer.files; // FileList object.
+  let reader = new FileReader();
 
   reader.onload = function() {
     let text = reader.result;
