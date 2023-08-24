@@ -28,9 +28,11 @@ let showHoverGraph = true;
 let vertexCount = 0;
 let edgeCount = 0;
 
-let zoomWidths = [];
-let zoomHeights = [];
-let zoomLevels = [];
+let circumferenceEarth = 40075016.68557849;
+let mapZoomFactor = 1.6;
+let mapCenter = [0.0, 0.0];
+let mapResolution = 1000
+let mapZoomLevel = 0
 
 let planeXMin = -10;
 let planeXMax = 10;
@@ -183,8 +185,6 @@ var lineMatSec = new T.LineBasicMaterial({
   depthFunc: T.LessDepth
 });
 
-var contourMeshLines = [];
-
 plane.geometry.dynamic = true;
 
 for (let face of plane.geometry.faces) {
@@ -229,9 +229,7 @@ window.onload = function() {
 
   mapdiv.style.display = "none";
 
-  // TODO: Stack for -ve zoom levels for consistency
-  // TODO: Enable
-  // window.addEventListener('wheel', wheelEvent, true);
+  window.addEventListener('wheel', wheelEvent, true);
 
   var dropNodes = document.getElementById('drop-nodes');
   dropNodes.addEventListener('dragover', dragOver, false);
@@ -826,39 +824,25 @@ function pointerUp(event) {
   subgraphSelect(allSelected);
 }
 
-// TODO: This function needs to be rewritten. Currently, it increases
-// the resolution of the map, but it also changes the viewing window
-// itself.
 function wheelEvent(event) {
   olMap.updateSize();
 
   if (document.elementFromPoint(event.clientX, event.clientY).tagName != 'CANVAS') {
     return;
   }
-  var mapdiv = document.getElementById("map")
-  mapdiv.style.display = "block"
-  if (event.deltaY > 0) { // zoom out
-    if (zoomLevels.length != 0) {
-      mapdiv.style.width = zoomWidths.pop() + 'px';
-      mapdiv.style.height = zoomHeights.pop() + 'px';
-      olMap.updateSize();
-      olMap.getView().setZoom(zoomLevels.pop());
-    }
-    // olMap.getView().setCenter(ol.proj.fromLonLat([87.6, 41.8]))
-  } else { // zoom in
-    zoomWidths.push(mapdiv.offsetWidth);
-    zoomHeights.push(mapdiv.offsetHeight);
-    zoomLevels.push(olMap.getView().getZoom());
-    olMap.getView().setZoom(olMap.getView().getZoom() + 0.05);
-    mapdiv.style.width = mapdiv.offsetWidth * 1.05 + 'px';
-    mapdiv.style.height = mapdiv.offsetHeight * 1.05 + 'px';
-    olMap.updateSize();
-    let p1 = ol.proj.fromLonLat([0, 0]);
-    let p2 = ol.proj.fromLonLat([100 / (2 ** zoomLevels.length), 100 / (2 ** zoomLevels.length)]);
-    let extents = [p1[0], p1[1], p2[0], p2[1]];
-    // olMap.getLayers().array_[0].setExtent(extents);
-    // olMap.getView().setCenter(ol.proj.fromLonLat([87.6, 41.8]));
+  var mapdiv = document.getElementById("map");
+  mapdiv.style.display = "block";
+  if (event.deltaY < 0) {
+    mapZoomLevel += 1;
+  } else if (mapZoomLevel > 0) {
+    mapZoomLevel -= 1;
   }
+  let newMapResolution = mapResolution * Math.pow(0.95, -mapZoomLevel)
+  mapdiv.style.width = newMapResolution + 'px';
+  mapdiv.style.height = newMapResolution + 'px';
+  olMap.updateSize();
+  olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
+  olMap.getView().setResolution(circumferenceEarth / newMapResolution / mapZoomFactor)
   mapdiv.style.display = "none";
 }
 
@@ -1545,7 +1529,7 @@ function drawEdge(edge, lineMat) {
   let mat = new T.LineBasicMaterial({
     color: edgecolor,
     linewidth: 5,
-    clippingPlanes: [clipPlaneUp, clipPlaneRight, clipPlaneLeft, clipPlaneBack, clipPlaneFront, ]
+    clippingPlanes: [clipPlaneUp, clipPlaneRight, clipPlaneLeft, clipPlaneBack, clipPlaneFront]
   })
   let line = new T.Line(geom, mat);
   let color = new T.Color("hsl(0, 0%, 100%)");
@@ -1757,13 +1741,11 @@ let GraphObj = class {
 }
 
 function createMap() {
-  let zoomFactor = 1.6;
-  let center = [0, 0];
   var mapdiv = document.createElement('div');
   mapdiv.id = 'map';
   mapdiv.class = 'map-div';
-  mapdiv.style.width = '2000px';
-  mapdiv.style.height = '2000px';
+  mapdiv.style.width = mapResolution + 'px';
+  mapdiv.style.height = mapResolution + 'px';
   document.body.appendChild(mapdiv);
   var map = new ol.Map({
     target: 'map',
@@ -1776,8 +1758,8 @@ function createMap() {
       })
     ],
     view: new ol.View({
-      center: ol.proj.fromLonLat(center),
-      resolution: 40075016.68557849 / 2000 / zoomFactor
+      center: ol.proj.fromLonLat(mapCenter),
+      resolution: circumferenceEarth / mapResolution / mapZoomFactor
     })
   });
   return map;
