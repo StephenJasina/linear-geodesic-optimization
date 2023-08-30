@@ -7,12 +7,12 @@ import sys
 
 import dcelmesh
 import flask
+from GraphRicciCurvature.OllivierRicci import OllivierRicci
 import numpy as np
 from flask import request
 from flask import Response
 import networkx as nx
 from networkx.readwrite import json_graph
-from GraphRicciCurvature.OllivierRicci import OllivierRicci
 
 # Assume we're running from src/
 sys.path.append('.')
@@ -42,7 +42,6 @@ def calc_distance():
     data = request.json
     verts = np.array(data['verts'])
     tris = np.array(data['faces'])
-    nodes = np.array(data['nodes'])
     edges = np.array(data['edges'])
     mesh = BasicMesh(dcelmesh.Mesh(len(verts), tris), verts)
     geodesics = [
