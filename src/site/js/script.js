@@ -512,7 +512,7 @@ document.addEventListener("keydown", function(event) {
         }
       });
     }
-    // TODO: zoom width, heights, levels reset
+    subPlanes = [];
 
     gsap.to(camera, {
       duration: 1,
@@ -540,7 +540,15 @@ document.addEventListener("keydown", function(event) {
     });
 
     olMap.getView().setZoom(0);
-    subPlanes = [];
+    let mapdiv = document.getElementById("map");
+    mapdiv.style.display = "block";
+    mapZoomLevel = 0;
+    mapdiv.style.width = mapResolution + "px";
+    mapdiv.style.height = mapResolution + "px";
+    olMap.updateSize();
+    olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
+    olMap.getView().setResolution(circumferenceEarth / mapResolution / mapZoomFactor)
+    mapdiv.style.display = "none";
   }
 });
 
