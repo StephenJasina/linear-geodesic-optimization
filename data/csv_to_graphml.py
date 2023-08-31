@@ -84,23 +84,18 @@ if __name__ == '__main__':
                         dest='probes_filename', required=True)
     parser.add_argument('--epsilon', '-e', metavar='<epsilon>',
                         dest='epsilon', type=float, required=False)
-    parser.add_argument('--output-file', '-o', metavar='<filename>',
-                        dest='output_filename', required=False)
+    parser.add_argument('--output', '-o', metavar='<basename>',
+                        dest='output_basename', required=True)
     args = parser.parse_args()
     latencies_filename = args.latencies_filename
     probes_filename = args.probes_filename
-    epsilon = args.epsilon
-    if epsilon is None:
-        epsilon = np.inf
-    output_filename = args.output_filename
+    epsilons = [args.epsilon]
+    if args.epsilon is None:
+        epsilons = list(range(1, 81))
+    output_basename = args.output_basename
 
-    with open(probes_filename, 'r') as probes_file, \
-            open(latencies_filename, 'r') as latencies_file:
-        graph = get_graph(probes_file, latencies_file, epsilon)
-
-        # Write the graphml
-        if output_filename is None:
-            for line in nx.generate_graphml(graph):
-                print(line)
-        else:
-            nx.write_graphml(graph, output_filename)
+    for epsilon in epsilons:
+        with open(probes_filename, 'r') as probes_file, \
+                open(latencies_filename, 'r') as latencies_file:
+            graph = get_graph(probes_file, latencies_file, epsilon)
+            nx.write_graphml(graph, f'{output_basename}_{epsilon}.graphml')
