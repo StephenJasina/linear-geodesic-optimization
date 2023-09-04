@@ -11,36 +11,6 @@ from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization.mesh.mesh import Mesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-def read_json(data_file_path):
-    coordinates = []
-    label_to_index = {}
-    network_edges = []
-    network_curvatures = []
-    network_latencies = []
-
-    with open(data_file_path) as f:
-        full_json = json.load(f)
-        position_json = full_json['position']
-        curvature_json = full_json['curvature']
-        latency_json = full_json['latency']
-
-        label_to_index = {label: index for index, label in enumerate(position_json)}
-        coordinates = list(position_json.values())
-
-        network_curvatures = list(curvature_json.values())
-        network_edges = [
-            (label_to_index[edge[0]], label_to_index[edge[1]])
-            for edge in curvature_json
-        ]
-
-        network_latencies = [[] for _ in coordinates]
-        for edge, latency in latency_json.items():
-            network_latencies[label_to_index[edge[0]]].append(
-                (label_to_index[edge[1]], latency)
-            )
-
-    return coordinates, network_edges, network_curvatures, network_latencies
-
 def mercator(longitude: np.float64, latitude: np.float64) \
         -> typing.Tuple[np.float64, np.float64]:
     '''
