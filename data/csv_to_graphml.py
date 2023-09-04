@@ -91,11 +91,11 @@ if __name__ == '__main__':
     probes_filename = args.probes_filename
     epsilons = [args.epsilon]
     if args.epsilon is None:
-        epsilons = list(range(1, 81))
+        epsilons = list(range(1, 31))
     output_basename = args.output_basename
 
     for epsilon in epsilons:
         with open(probes_filename, 'r') as probes_file, \
                 open(latencies_filename, 'r') as latencies_file:
             graph = get_graph(probes_file, latencies_file, epsilon)
-            nx.write_graphml(graph, f'{output_basename}_{epsilon}.graphml')
+            nx.write_graphml(graph, f'{output_basename}{epsilon}.graphml')
