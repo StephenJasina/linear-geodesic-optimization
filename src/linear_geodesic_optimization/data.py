@@ -77,12 +77,12 @@ def read_graphml(data_file_path: str,
                                                 np.float64]] = []
     if latencies_file_path is not None:
         with open(latencies_file_path) as latencies_file:
-            latencies_reader = csv.reader(latencies_file)
+            latencies_reader = csv.DictReader(latencies_file)
             for row in latencies_reader:
-                latency = float(row[2])
                 network_latencies.append((
-                    (label_to_index[row[0]], label_to_index[row[1]]),
-                    latency
+                    (label_to_index[row['source_id']],
+                     label_to_index[row['target_id']]),
+                    row['rtt']
                 ))
 
     if with_labels:
