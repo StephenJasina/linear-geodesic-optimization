@@ -1,17 +1,7 @@
 import { EffectComposer } from "./scripts/EffectComposer.js";
 import { RenderPass } from "./scripts/RenderPass.js";
 import { ShaderPass } from "./scripts/ShaderPass.js";
-import { CopyShader } from "./scripts/CopyShader.js";
 import { FXAAShader } from "./scripts/FXAAShader.js";
-import { LineGeometry } from "./scripts/LineGeometry.js";
-import { Line2 } from "./scripts/Line2.js";
-import { LineMaterial } from "./scripts/LineMaterial.js";
-import { SelectionBox } from "./scripts/SelectionBox.js";
-import { SelectionHelper } from "./scripts/SelectionHelper.js";
-import RBush from "./scripts/rbush/index.js"
-import quickselect from "./scripts/quickselect/index.js"
-import Draw from "./scripts/ol/interaction/Draw.js";
-import { transformExtent } from "./scripts/ol/proj.js";
 
 let bgcolor = 0xf3f3f3;
 let graphcolor = 0xffffff;
@@ -56,6 +46,9 @@ let last_cycle = Date.now();
 
 // Flag to indicate threshold change -> update heights when thresh changed
 let thresh_change = false;
+
+// Flag to indicate the show map checkbox's state in the last animation frame
+let showMapPrevious = false;
 
 // ThreeJS Scene Setup
 let scene = new T.Scene();
@@ -169,7 +162,6 @@ let graphs = [];
 let names = {};
 let linesDrawn = [];
 let linesCleared = true;
-let subPlanes = [];
 let current_edges = {};
 
 edgecolor_sec = 0x2cc57c;
@@ -246,11 +238,7 @@ window.onload = function() {
   btnAddEdge.onclick = addEdge;
 
   document.getElementById("btn-calc-dist").onclick = function() {
-    if (subPlanes.length != 0) {
-      calcDistanceOnSurface(subPlanes[0].plane, vertices, current_edges);
-    } else {
-      calcDistanceOnSurface(plane, vertices, current_edges);
-    }
+    calcDistanceOnSurface(plane, vertices, current_edges);
   }
 
   let hideSurface = document.getElementById("hide-surface");
@@ -276,6 +264,8 @@ window.onload = function() {
   document.getElementById("threshold-slider").onchange = function() {
     thresh_change = true;
   }
+
+  showMapPrevious = showMap.checked;
 
   let vertexControlDiv = document.getElementById("div-vertex");
   let edgeControlDiv = document.getElementById("div-edge");
@@ -305,6 +295,15 @@ window.onload = function() {
 
   let animate = function() {
     if (showMap.checked) {
+      if (!showMapPrevious) {
+        // For now, disable opacity changes
+        // opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
+        // calcOpacityMap(opacityMap, vertices, current_edges, map);
+        opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(1.0));
+
+        aMap = createAndUpdateAlphaMapD3(opacityMap);
+      }
+      plane.material[0].alphaMap = aMap;
       plane.material[0].map = mapTexture;
       texture = mapTexture;
       ctx = mapCanvas.getContext("2d");
@@ -313,12 +312,9 @@ window.onload = function() {
       texture = customTexture;
       ctx = canv.getContext("2d");
     }
-    plane.material[0].needsUpdate = true;
-    plane.material[2].needsUpdate = true;
+    showMapPrevious = showMap.checked;
 
     curvMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-
-    requestAnimationFrame(animate);
 
     controls.update();
 
@@ -358,7 +354,7 @@ window.onload = function() {
 
     // Draw physical graph edge, texture edge
     for (let id in current_edges) {
-      let lineWidth = 12;
+      let lineWidth = 6;
       let borders = true;
       let edge = current_edges[id];
 
@@ -446,31 +442,10 @@ window.onload = function() {
       updatePlaneHeights(map);
     }
 
-    if (showMap.checked) {
-      // For now, disable opacity changes
-      opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(1.0));
-
-      calcOpacityMap(opacityMap, vertices, current_edges, map);
-      aMap = createAndUpdateAlphaMapD3(opacityMap);
-
-      plane.material[0].alphaMap = aMap;
-    }
-
-    for (let p of subPlanes) {
-      for (let i = p.start[0]; i < p.end[0]; i++) {
-        for (let j = p.start[1]; j < p.end[1]; j++) {
-          plane.geometry.vertices[j * divisions + i].z = 0;
-        }
-      }
-
-      p.plane.material.alphaMap = aMap;
-      p.plane.material.map.needsUpdate = true;
-      p.plane.geometry.colorsNeedUpdate = true;
-    }
-
     // colorCurvature(plane)
 
     plane.material[0].needsUpdate = true;
+    plane.material[2].needsUpdate = true;
     texture.needsUpdate = true;
 
     plane.geometry.groupsNeedUpdate = true;
@@ -480,40 +455,19 @@ window.onload = function() {
 
     // Render
     renderer.localClippingEnabled = hideSurface.checked;
-    olMap.render();
+    if (showMap.checked) {
+      olMap.render();
+    }
     composer.render();
+
+    requestAnimationFrame(animate);
   }
 
-  animate();
+  requestAnimationFrame(animate);
 }
 
-let selectionBox = new SelectionBox(camera, scene);
-let helper = new SelectionHelper(selectionBox, renderer, "selectBox");
-
 document.addEventListener("keydown", function(event) {
-  // Shift click for select
-  if (event.key == "Shift") {
-    controls.enablePan = false;
-    controls.update();
-    document.body.style.cursor = "crosshair";
-    document.addEventListener("pointerdown", pointerDown);
-    document.addEventListener("pointermove", pointerMove);
-    document.addEventListener("pointerup", pointerUp);
-  } else if (event.key == "Escape") {
-    for (let i in subPlanes) {
-      let sPlane = subPlanes[i].plane;
-      gsap.to(sPlane.scale, {
-        duration: 1,
-        x: 0.1,
-        y: 0.1,
-        z: 0.1,
-        onComplete: function() {
-          scene.remove(sPlane);
-        }
-      });
-    }
-    subPlanes = [];
-
+  if (event.key == "Escape") {
     gsap.to(camera, {
       duration: 1,
       zoom: 1,
@@ -549,17 +503,6 @@ document.addEventListener("keydown", function(event) {
     olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
     olMap.getView().setResolution(circumferenceEarth / mapResolution / mapZoomFactor)
     mapdiv.style.display = "none";
-  }
-});
-
-document.addEventListener("keyup", function(event) {
-  if (event.key == "Shift") {
-    document.body.style.cursor = "auto";
-    controls.enablePan = true;
-    controls.update();
-    document.removeEventListener("pointerdown", pointerDown);
-    document.removeEventListener("pointermove", pointerMove);
-    document.removeEventListener("pointerup", pointerUp);
   }
 });
 
@@ -657,18 +600,6 @@ function drawGrid(canvas) {
   let height = canvas.height;
   let start_i = 0;
   let start_j = 0;
-  if (subPlanes.length > 0) {
-    let sp = subPlanes[0];
-    start_i = (sp.ystart3JS - planeXMin) / planeW * canvas.width;
-    width = (sp.ystart3JS + sp.height - planeXMin) / planeW * canvas.width;
-    start_j = (-sp.xstart3JS - planeYMin) / planeH * canvas.height;
-    height = (-sp.xstart3JS - sp.width - planeYMin) / planeH * canvas.height;
-    if (height < start_j) {
-      let temp = height;
-      height = start_j;
-      start_j = temp;
-    }
-  }
 
   ctx.beginPath();
   for (let i = start_i; i <= width; i += (width - start_i) / cols) {
@@ -771,68 +702,6 @@ function helpClick(event) {
   }
 }
 
-function pointerDown(event) {
-  if (event.which != 1) {
-    return;
-  }
-  for (let item of selectionBox.collection) {
-    if (Array.isArray(item.material)) {
-      continue;
-    }
-    item.material = item.material.clone();
-  }
-
-  selectionBox.startPoint.set(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    -(event.clientY / window.innerHeight) * 2 + 1,
-    0.5
-  );
-}
-
-function pointerMove(event) {
-  if (helper.isDown) {
-    for (let i = 0; i < selectionBox.collection.length; i++) {
-      if (Array.isArray(selectionBox.collection[i].material)) {
-        continue
-      }
-      selectionBox.collection[i].material = selectionBox.collection[i].material.clone();
-    }
-
-    selectionBox.endPoint.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1,
-      0.5
-    );
-
-    let allSelected = selectionBox.select();
-    for (let i = 0; i < allSelected.length; i++) {
-      if (Array.isArray(allSelected[i].material)) {
-        continue;
-      }
-      allSelected[i].material = allSelected[i].material.clone();
-    }
-  }
-}
-
-function pointerUp(event) {
-  if (event.which != 1) {
-    return;
-  }
-  selectionBox.endPoint.set(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    -(event.clientY / window.innerHeight) * 2 + 1,
-    0.5
-  );
-
-  let allSelected = selectionBox.select();
-  for (let i = 0; i < allSelected.length; i++) {
-    if (Array.isArray(allSelected[i].material)) {
-      continue;
-    }
-  }
-  subgraphSelect(allSelected);
-}
-
 function wheelEvent(event) {
   olMap.updateSize();
 
@@ -846,12 +715,14 @@ function wheelEvent(event) {
   } else if (mapZoomLevel > 0) {
     mapZoomLevel -= 1;
   }
-  let newMapResolution = mapResolution * Math.pow(0.95, -mapZoomLevel)
+  console.log(mapZoomLevel);
+  let effectiveMapZoomLevel = Math.min(mapZoomLevel, 54)
+  let newMapResolution = mapResolution * Math.pow(0.95, -effectiveMapZoomLevel)
   mapdiv.style.width = newMapResolution + "px";
   mapdiv.style.height = newMapResolution + "px";
   olMap.updateSize();
   olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
-  olMap.getView().setResolution(circumferenceEarth / newMapResolution / mapZoomFactor)
+  olMap.getView().setResolution(circumferenceEarth / newMapResolution / effectiveMapZoomLevel)
   mapdiv.style.display = "none";
 }
 
@@ -939,338 +810,12 @@ function drawSurfacePathsFlip(paths, edges) {
       linecap: "round"
     });
     for (let pt of paths[i]) {
-      if (subPlanes.length != 0) {
-        pt[2] += subPlanes[0].plane.position.y + 0.01;
-        pt[0] += subPlanes[0].plane.position.x;
-        pt[1] -= subPlanes[0].plane.position.z;
-      }
       points.push(new T.Vector3(pt[0], pt[2], -pt[1]));
     }
     const geometry = new T.BufferGeometry().setFromPoints(points);
     const line = new T.Line(geometry, material);
     scene.add(line);
   }
-}
-
-function subgraphSelect(selected) {
-  if (selected.length <= 1) {
-    return;
-  }
-  let data = {
-    nodes: [],
-    links: []
-  };
-  let nodes = {};
-  let edges = [];
-  let ids = {};
-  let xRange = [planeXMax, planeXMin];
-  let yRange = [planeYMax, planeYMin];
-
-  // Get nodes and edges from selected shapes
-  for (let id in selected) {
-    if (selected[id].geometry.type == "SphereGeometry") {
-      xRange[0] = Math.min(xRange[0], selected[id].position.x);
-      xRange[1] = Math.max(xRange[1], selected[id].position.x);
-      yRange[0] = Math.min(yRange[0], selected[id].position.z);
-      yRange[1] = Math.max(yRange[1], selected[id].position.z);
-
-      data.nodes.push({
-        id: parseInt(id),
-        city: selected[id].name,
-        lat: parseFloat(selected[id].position.x),
-        long: parseFloat(selected[id].position.z)
-      });
-      ids[selected[id].name] = parseInt(id);
-      nodes[selected[id].name] = {
-        lat: parseFloat(selected[id].position.x),
-        long: parseFloat(selected[id].position.z),
-        name: selected[id].name
-      };
-    } else if (selected[id].geometry.type == "BufferGeometry") {
-      let start = selected[id].name.split("/")[0];
-      let end = selected[id].name.split("/")[1];
-      let weight = selected[id].userData.weight;
-      let neg_mod = selected[id].userData.neg_mod;
-      let nrw_mod = selected[id].userData.nrw_mod;
-      let nheight_mod = selected[id].userData.nheight_mod;
-      if (ids[start] == undefined || ids[end] == undefined) {
-        continue;
-      }
-      let startname = Math.min(nodes[start].name, nodes[end].name);
-      let endname = Math.max(nodes[start].name, nodes[end].name);
-
-      if (refine_data[startname] && refine_data[startname][endname]) {
-        let ref = refine_data[startname][endname];
-
-        if (ref > 0) {
-          neg_mod = 1.2 * neg_mod;
-          nrw_mod = 1.2 * nrw_mod;
-          nheight_mod = 1.2 * nheight_mod;
-        } else if (ref < -1) {
-          neg_mod = 0.8 * neg_mod;
-          nrw_mod = 0.8 * nrw_mod;
-        }
-        selected[id].userData.neg_mod = neg_mod;
-        selected[id].userData.nrw_mod = nrw_mod;
-        selected[id].userData.nheight_mod = nheight_mod;
-      }
-      let edge = {
-        start: nodes[start],
-        end: nodes[end],
-        weight: weight,
-        nrw_mod: nrw_mod,
-        neg_mod: neg_mod,
-        nheight_mod: nheight_mod
-      };
-      data.links.push({
-        source: ids[start],
-        target: ids[end],
-        ricciCurvature: weight
-      });
-      edges.push(edge);
-    }
-  }
-
-  // TODO: Frome here on, the code in this function seems to need a lot
-  // of reworking. It has been left more or less as it was found. Some
-  // lines have been commented out if the corresponding features have
-  // been removed.
-
-  refine_data = [];
-
-  let padding = 0.25;
-  xRange[0] = Math.max(-7, xRange[0] - padding);
-  xRange[1] = Math.min(7, xRange[1] + padding);
-  yRange[0] = Math.max(-10, yRange[0] - padding);
-  yRange[1] = Math.min(10, yRange[1] + padding);
-
-  data.nodes.push({
-    id: data.length,
-    city: "edge1",
-    lat: parseFloat(xRange[0]),
-    long: parseFloat(yRange[0])
-  });
-  data.nodes.push({
-    id: data.length,
-    city: "edge2",
-    lat: parseFloat(xRange[1]),
-    long: parseFloat(yRange[1])
-  });
-
-
-  let mid = [(xRange[0] + xRange[1]) / 2, (yRange[0] + yRange[1]) / 2]
-  let width = xRange[1] - xRange[0]
-  let height = yRange[1] - yRange[0]
-  // --- DRAW PLANE ---
-  let ctx = canv.getContext("2d")
-  if (document.getElementById("show-map").checked) {
-    let mapCanvas = document.getElementById("map").getElementsByTagName("canvas")[0]
-    ctx = mapCanvas.getContext("2d")
-  }
-
-  let subTexture = new T.CanvasTexture(ctx.canvas)
-  subTexture.minFilter = THREE.LinearFilter
-  subTexture.center = new T.Vector2(0.5, 0.5)
-  subTexture.rotation = -Math.PI / 2
-  subTexture.repeat.y = (xRange[1] - xRange[0]) / 20
-  subTexture.repeat.x = (yRange[1] - yRange[0]) / 20
-  subTexture.offset.x = mid[1] / 20
-  subTexture.offset.y = mid[0] / 20
-
-  let subGeom = new T.PlaneGeometry(width, height, divisions - 1, divisions - 1)
-  // let material = new T.MeshBasicMaterial( { color: graphcolor, side: T.DoubleSide} )
-  let subMat = new THREE.MeshPhongMaterial({
-    color: graphcolor,
-    clippingPlanes: [clipPlaneRight, clipPlaneLeft, clipPlaneBack, clipPlaneFront],
-    vertexColors: T.VertexColors,
-    side: THREE.DoubleSide,
-    flatShading: false,
-    shininess: 0,
-    wireframe: false,
-    map: subTexture
-  })
-  let subPlane = new T.Mesh(subGeom, subMat)
-
-  // TODO: change
-  subPlane.position.set(mid[0], 2, mid[1])
-  subPlane.rotation.set(-Math.PI / 2, 0., 0.)
-  let spObj = {}
-  spObj.xstart3JS = xRange[0]
-  spObj.width = width
-  spObj.ystart3JS = yRange[0]
-  spObj.height = height
-  spObj.start = [Math.floor((xRange[0] + 10) * divisions / 20), Math.floor((yRange[0] + 10) * divisions / 20)]
-  spObj.end = [Math.ceil((xRange[1] + 10) * divisions / 20), Math.ceil((yRange[1] + 10) * divisions / 20)]
-  spObj.plane = subPlane
-  subPlane.scale.set(0.1, 0.1, 0.1)
-  scene.add(subPlane)
-  subPlanes.push(spObj)
-  let scale = Math.min(width, height) / divisions
-  scale *= 10 // 10
-  console.log(scale)
-
-  // plane.position.set(0, -10, 0)
-
-  //TODO: change back
-
-  gsap.to(camera, {
-    duration: 1,
-    zoom: 2,
-    onUpdate: function() {
-      camera.updateProjectionMatrix();
-    }
-  })
-
-  gsap.to(controls.target, {
-    duration: 1,
-    x: subPlane.position.x,
-    y: subPlane.position.y,
-    z: subPlane.position.z,
-    onUpdate: function() {
-      controls.update();
-    }
-  })
-
-  gsap.to(plane.position, {
-    duration: 1,
-    y: -20,
-    onUpdate: function() {},
-    onComplete: function() {
-      plane.visible = false
-    }
-  })
-
-  gsap.to(subPlane.scale, {
-    duration: 1,
-    x: 1,
-    y: 1,
-    z: 1,
-  })
-
-  // let btn = document.createElement("button")
-  // btn.innerHTML = "Zoom Out"
-  // btn.id = "zoom-out"
-  // document.body.appendChild(btn)
-  // plane.material.transparent = true
-  // plane.material.opacity = 0.5f
-
-
-  // controls.target = subPlane.position
-  // camera.zoom = 2
-  // controls.update()
-  // camera.updateProjectionMatrix()
-  // ---GENERATE SURFACE
-  let chkCalcSurface = document.getElementById("use-calc-surface")
-  let newHeightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-
-  let modifier = Math.max(width, height) / 20
-  console.log(modifier, width, height)
-  // modifier = 0.4
-
-  if (!chkCalcSurface.checked) {
-    let planeXMin = xRange[0]
-    let planeWidth = xRange[1] - xRange[0]
-    let planeYMin = yRange[0]
-    let planeHeight = yRange[1] - yRange[0]
-
-    for (let edge of edges) {
-      if (edge.weight < 0)
-        continue
-      // let startname = Math.min(edge.start.name, edge.end.name)
-      // let endname = Math.max(edge.start.name, edge.end.name)
-      // console.log(startname, endname)
-      // if (refine_data[startname] && refine_data[startname][endname]) {
-      //   console.log(startname, endname, refine_data[startname][endname])
-      // }
-      let startPt = convert3JStoHMgeneric([edge.start.lat, edge.start.long], planeXMin, planeYMin, planeWidth, planeHeight)
-      let endPt = convert3JStoHMgeneric([edge.end.lat, edge.end.long], planeXMin, planeYMin, planeWidth, planeHeight)
-      let start = {
-        x: startPt[0],
-        y: startPt[1]
-      }
-      let end = {
-        x: endPt[0],
-        y: endPt[1]
-      }
-      let mid = {
-        x: Math.floor((startPt[0] + endPt[0]) / 2),
-        y: Math.floor((startPt[1] + endPt[1]) / 2)
-      }
-      // setHeights(start, mid, end, edge.weight, newHeightMap, modifier)
-    }
-
-
-
-    for (let edge of edges) {
-      if (edge.weight > 0)
-        continue
-      console.log(edge)
-      let startname = Math.min(edge.start.name, edge.end.name)
-      let endname = Math.max(edge.start.name, edge.end.name)
-      let neg_mod = edge.neg_mod
-      console.log(neg_mod)
-      let nrw_mod = edge.nrw_mod
-      let nheight_mod = edge.nheight_mod
-
-      let startPt = convert3JStoHMgeneric([edge.start.lat, edge.start.long], planeXMin, planeYMin, planeWidth, planeHeight)
-      let endPt = convert3JStoHMgeneric([edge.end.lat, edge.end.long], planeXMin, planeYMin, planeWidth, planeHeight)
-      //TODO: remove
-      startPt[1] += 1
-      endPt[1] += 1
-      let start = {
-        x: startPt[0],
-        y: startPt[1]
-      }
-      let end = {
-        x: endPt[0],
-        y: endPt[1]
-      }
-      let mid = {
-        x: Math.floor((startPt[0] + endPt[0]) / 2),
-        y: Math.floor((startPt[1] + endPt[1]) / 2)
-      }
-      // setHeights(start, mid, end, edge.weight, newHeightMap, modifier, neg_mod, nrw_mod, nheight_mod)
-    }
-
-    setPlaneHeights(subPlane, newHeightMap)
-    spObj.heightmap = newHeightMap
-
-
-    return
-  }
-
-  let xmlHttp = new XMLHttpRequest();
-  xmlHttp.responseType = "text"
-  let smooth_pen = document.getElementById("input-smooth").value
-  let niter = document.getElementById("input-niter").value
-  let send_data = {
-    graph: data,
-    smooth_pen: smooth_pen,
-    niter: niter
-  }
-
-  xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      data = xmlHttp.responseText
-      data = data.substring(data.indexOf("["))
-      data = JSON.parse(data)
-      console.log(data)
-      console.log("data recv")
-      let newHeightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-      for (let i = 0; i < divisions; i++) {
-        for (let j = 0; j < divisions; j++) {
-          newHeightMap[j][49 - i] = data[i * divisions + j] * scale
-        }
-      }
-      console.log(newHeightMap)
-      setPlaneHeights(subPlane, newHeightMap)
-    }
-  }
-  xmlHttp.open("post", "calc-surface");
-  xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-  xmlHttp.send(JSON.stringify(send_data));
-  console.log("data sent")
 }
 
 function setPlaneHeights(plane, map) {
@@ -1734,7 +1279,6 @@ let EdgeObj = class {
     this.start = start;
     this.end = end;
     this.weight = weight;
-    this.bearing = GreatCircle.bearing(start.lat, start.long, end.lat, end.long);
     this.neg_mod = 1;
     this.nrw_mod = 1;
     this.nheight_mod = 1;
@@ -1912,17 +1456,17 @@ function calcSurface() {
 }
 
 function createAndUpdateAlphaMapD3(map) {
-  let svg = d3.select("#alpha-svg");
   let width = 512;
   let height = 512;
   if (d3.select("#alpha-svg").empty()) {
-    let svg = d3.select("body")
+    d3.select("body")
       .append("svg")
       .attr("width", width)
       .attr("height", height)
       .attr("id", "alpha-svg")
       .attr("display", "none");
   }
+  let svg = d3.select("#alpha-svg");
   svg.selectAll("*").remove();
   svg.append("rect")
     .attr("width", "100%")
@@ -2004,7 +1548,6 @@ function createAndUpdateAlphaMapD3(map) {
   }
 
   return new T.CanvasTexture(alphaCanv);
-
 }
 
 function fileSelectEdges(evt) {
@@ -2156,9 +1699,6 @@ function dragOver(evt) {
 function convert3JStoVerts(x, y) {
   // Depends on plane geometry
   // Change from -10,10 to 0,49
-  if (subPlanes.length != 0) {
-    return convert3JStoVertsSubgraph(x, y);
-  }
   x = parseFloat(x);
   y = parseFloat(y);
   x -= planeXMin;
@@ -2168,20 +1708,6 @@ function convert3JStoVerts(x, y) {
   y /= planeH;
   y *= divisions - 1;
   let retval = Math.round(y) * divisions + Math.round(x);
-  return retval;
-}
-
-function convert3JStoVertsSubgraph(x, y) {
-  let spObj = subPlanes[0];
-  x = parseFloat(x);
-  y = parseFloat(y);
-  x -= spObj.xstart3JS;
-  x /= spObj.width;
-  x *= divisions - 1;
-  y -= spObj.ystart3JS;
-  y /= spObj.height;
-  y *= divisions - 1;
-  let retval = Math.round(y) * 50 + Math.round(x);
   return retval;
 }
 
