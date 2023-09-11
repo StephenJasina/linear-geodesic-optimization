@@ -19,8 +19,8 @@ let vertexCount = 0;
 let edgeCount = 0;
 
 let circumferenceEarth = 40075016.68557849;
-let mapZoomFactor = 1.6;
 let mapCenter = [0.0, 0.0];
+let mapZoomFactor = 1.6;
 let mapResolution = 1000
 let mapZoomLevel = 0
 
@@ -715,14 +715,13 @@ function wheelEvent(event) {
   } else if (mapZoomLevel > 0) {
     mapZoomLevel -= 1;
   }
-  console.log(mapZoomLevel);
   let effectiveMapZoomLevel = Math.min(mapZoomLevel, 54)
   let newMapResolution = mapResolution * Math.pow(0.95, -effectiveMapZoomLevel)
   mapdiv.style.width = newMapResolution + "px";
   mapdiv.style.height = newMapResolution + "px";
   olMap.updateSize();
   olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
-  olMap.getView().setResolution(circumferenceEarth / newMapResolution / effectiveMapZoomLevel)
+  olMap.getView().setResolution(circumferenceEarth / newMapResolution / mapZoomFactor)
   mapdiv.style.display = "none";
 }
 
