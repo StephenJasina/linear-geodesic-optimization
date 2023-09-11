@@ -79,11 +79,14 @@ def read_graphml(data_file_path: str,
         with open(latencies_file_path) as latencies_file:
             latencies_reader = csv.DictReader(latencies_file)
             for row in latencies_reader:
-                network_latencies.append((
-                    (label_to_index[row['source_id']],
-                     label_to_index[row['target_id']]),
-                    row['rtt']
-                ))
+                source_id = row['source_id']
+                target_id = row['target_id']
+                if source_id in label_to_index and target_id in label_to_index:
+                    network_latencies.append((
+                        (label_to_index[source_id],
+                         label_to_index[target_id]),
+                        row['rtt']
+                    ))
 
     if with_labels:
         return coordinates, network_edges, network_curvatures, \
