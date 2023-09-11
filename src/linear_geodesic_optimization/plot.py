@@ -80,7 +80,10 @@ def get_heat_map(x=None, y=None, z=None, title='',
         fig.colorbar(im)
 
     # Plot the edges
-    for edge, curvature in zip(network_edges, network_curvatures):
+    edges_curvatures = list(zip(network_edges, network_curvatures))
+    rng = np.random.default_rng()
+    rng.shuffle(edges_curvatures)
+    for edge, curvature in edges_curvatures:
         if edge == []:
             continue
 
