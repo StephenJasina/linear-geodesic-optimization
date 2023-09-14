@@ -65,6 +65,27 @@ def get_scatter_plot(before_data, after_data, title):
 
     return fig
 
+def get_network_plot(graph):
+    fig, ax = plt.subplots(1, 1, facecolor='#808080')
+    ax.set_aspect('equal')
+    ax.axis('off')
+
+    # Plot the edges
+    for u, v, data in graph.edges(data=True):
+        color = mpl.colormaps['RdBu']((data['ricciCurvature'] + 2) / 4)
+
+        lat_u = graph.nodes[u]['lat']
+        long_u = graph.nodes[u]['long']
+        lat_v = graph.nodes[v]['lat']
+        long_v = graph.nodes[v]['long']
+        ax.plot([long_u, long_v], [lat_u, lat_v], color=color)
+
+    # Plot the vertices
+    for _, data in graph.nodes(data=True):
+        ax.plot(data['long'], data['lat'], '.', ms=4, color='green')
+
+    return fig
+
 def get_heat_map(x=None, y=None, z=None, title='',
                  network_vertices=[], network_edges=[], network_curvatures=[], extra_points=[],
                  v_range=(None, None)):
@@ -103,7 +124,7 @@ def get_heat_map(x=None, y=None, z=None, title='',
 
     # Plot the vertices
     for vertex in extra_points:
-        ax.plot(vertex[0], vertex[1], '.', ms=12, color='green')
+        ax.plot(vertex[0], vertex[1], '.', ms=4, color='green')
 
     ax.set_title(title)
     ax.set_xlim(np.amin(x), np.amax(x))
