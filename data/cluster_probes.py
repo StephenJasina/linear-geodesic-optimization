@@ -5,33 +5,50 @@ import sklearn.cluster
 import utility
 
 def get_cluster_center(cluster):
-    p = sum([
-        utility.get_sphere_point((float(data['lat']), float(data['long'])))
+    """Find the point in the cluster nearest to its centroid."""
+    sphere_points = [
+        utility.get_sphere_point((data['lat'], data['long']))
         for _, data in cluster
+    ]
+    centroid_direction = sum(sphere_points)
+    center_index = np.argmax([
+        centroid_direction @ sphere_point
+        for sphere_point in sphere_points
     ])
-    p = p / np.linalg.norm(p)
-    return utility.get_latlong(p)
 
-def cluster_graph(graph, eps=None, min_samples=None):
+    return cluster[center_index]
+
+def cluster_graph(graph, eps, min_samples):
+    """
+    Simplify a graph using the DBSCAN algorithm.
+
+    As input, take a graph whose vertices have `lat` (latitude) and
+    `long` (longitude) attributes. The edges must also have associated
+    `rtt` (round trip time, or RTT) attributes.
+
+    For the given graph, cluster the vertices according to the input
+    parameters. Then, for each cluster, pick a representative node.
+    Generate a new graph on these representative nodes, where an edge
+    exists between two representative nodes if there is an edge between
+    their corresponding clusters. If there are multiple such edges
+    between clusters, the associated RTT is the minimal one.
+    """
     nodes = list(graph.nodes(data=True))
-    latlongs = np.array([
-        (float(data['lat']), float(data['long']))
-        for _, data in nodes
-    ])
 
-    # Compute clusters. Ensure that each cluster has a unique label
-    # (rather than clusters of size 1 being labeled with -1).
     if 'cluster' in nodes[0][1]:
         cluster_labels = [data['cluster'] for _, data in nodes]
         cluster_count = max(cluster_labels) + 1
     else:
+        # Compute clusters. Ensure that each cluster has a unique label.
+        # In particular, nodes that are labeled as "noise" by the
+        # algorithm are instead treated as clusters of size 1
         clustering = sklearn.cluster.DBSCAN(
             eps=eps, min_samples=min_samples,
             metric=utility.get_spherical_distance
         )
         clustering.fit([
-            utility.get_sphere_point(latlong)
-            for latlong in latlongs
+            utility.get_sphere_point((data['lat'], data['long']))
+            for _, data in nodes
         ])
         cluster_labels = list(clustering.labels_)
         cluster_count = max(cluster_labels) + 1
@@ -44,20 +61,17 @@ def cluster_graph(graph, eps=None, min_samples=None):
 
     # Copy nodes to new graph
     clusters = [[] for _ in range(cluster_count)]
-    for node, label in zip(nodes, cluster_labels):
-        clusters[label].append(node)
-    # TODO: maybe don't seed the RNG, or even use it
-    rng = np.random.default_rng(0)
+    cluster_centers = []
+    for (node, data), label in zip(nodes, cluster_labels):
+        clusters[label].append((node, data))
     for cluster in clusters:
-        rng.shuffle(cluster)
-    for cluster in clusters:
-        node, data = cluster[0]
-        data['lat'], data['long'] = get_cluster_center(cluster)
+        node, data = get_cluster_center(cluster)
+        cluster_centers.append(node)
         new_graph.add_node(node, **data)
 
     # Copy edges to new graph
     for i, cluster_i in enumerate(clusters):
-        for cluster_j in clusters[i+1:]:
+        for j, cluster_j in enumerate(clusters[i+1:], start=i+1):
             rtt = min([
                 graph.edges[node_i,node_j]['rtt']
                 for node_i, _ in cluster_i
@@ -65,6 +79,7 @@ def cluster_graph(graph, eps=None, min_samples=None):
                 if (node_i, node_j) in graph.edges
             ], default=np.inf)
             if rtt != np.inf:
-                new_graph.add_edge(cluster_i[0][0], cluster_j[0][0], rtt=rtt)
+                new_graph.add_edge(cluster_centers[i], cluster_centers[j],
+                                   rtt=rtt)
 
     return new_graph

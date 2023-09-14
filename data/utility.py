@@ -18,10 +18,14 @@ def get_latlong(p):
 
 def get_spherical_distance(a, b):
     """Find the distance on the unit sphere between two unit vectors."""
+    # The value of (a @ b) is clamped between -1 and 1 to avoid issues
+    # with floating point
     return np.arccos(min(max(a @ b, -1.), 1.))
 
 def get_GCD_latency(latlong_a, latlong_b):
-    """Find the great circle distance between two points on Earth."""
+    """Find the great circle latency between two points on Earth."""
+    # The following are in meters and meters per second
+    circumference_earth = 40075016.68557849
     radius_earth = 40075016.68557849 / (2 * np.pi)
     c = 299792458
 
@@ -29,6 +33,6 @@ def get_GCD_latency(latlong_a, latlong_b):
     p_a = get_sphere_point(latlong_a)
     p_b = get_sphere_point(latlong_b)
 
-    # Note that the dot product is clamped to [-1, 1] to deal with
-    # floating point error
+    # Compute the latency, which is the travel time at the rate of two
+    # thirds the speed of light
     return get_spherical_distance(p_a, p_b) * radius_earth / (2. * c / 3.)
