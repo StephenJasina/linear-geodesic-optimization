@@ -110,4 +110,4 @@ if __name__ == '__main__':
     for epsilon in epsilons:
         graph = get_graph(probes_filename, latencies_filename, epsilon,
                           300000, 2)
-        nx.write_graphml(graph, f'{output_basename}{epsilon}.graphml')
+        nx.write_graphml(graph, f'{output_basename}.graphml')

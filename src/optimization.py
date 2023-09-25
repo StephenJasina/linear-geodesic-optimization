@@ -23,7 +23,8 @@ def main(data_file_name, latency_file_name,
          lambda_curvature, lambda_smooth, lambda_geodesic,
          initial_radius, sides, scale,
          leaveout_proportion=0.,
-         maxiter=1000, output_dir_name=os.path.join('..', 'out')):
+         maxiter=1000, output_dir_name=os.path.join('..', 'out'),
+         initialization_file_path=None):
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, _ = os.path.splitext(os.path.basename(data_file_name))
     latency_file_path = os.path.join('..', 'data', latency_file_name) \
@@ -69,16 +70,18 @@ def main(data_file_name, latency_file_name,
         }, f)
 
     # Initialize mesh
-    z = np.array([
-        (initial_radius**2
-            - (i / (width - 1) - 0.5)**2
-            - (j / (height - 1) - 0.5)**2)**0.5
-        for i in range(width)
-        for j in range(height)
-    ]).reshape((width * height,))
-    z = z - np.amin(z)
-    # with open('initialization', 'rb') as f:
-    #     z = np.array(pickle.load(f)['mesh_parameters'])
+    if initialization_file_path is None:
+        z = np.array([
+            (initial_radius**2
+                - (i / (width - 1) - 0.5)**2
+                - (j / (height - 1) - 0.5)**2)**0.5
+            for i in range(width)
+            for j in range(height)
+        ]).reshape((width * height,))
+        z = z - np.amin(z)
+    else:
+        with open(initialization_file_path, 'rb') as f:
+            z = np.array(pickle.load(f)['mesh_parameters'])
     z = mesh.set_parameters(z)
 
     computer = optimization.Computer(
