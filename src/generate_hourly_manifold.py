@@ -31,11 +31,11 @@ if __name__ == '__main__':
             initialiazation_file_path = os.path.join(directory, str(iteration))
 
         optimization.main(
-            os.path.join('..', 'data', 'graph_Europe_hourly', f'graph_{i}.graphml'),
-            os.path.join('..', 'data', 'graph_Europe_hourly', f'latencies_{i}.csv'),
+            os.path.join('graph_Europe_hourly', f'graph_{i}.graphml'),
+            os.path.join('graph_Europe_hourly', f'latencies_{i}.csv'),
             lambda_curvature, lambda_smooth, lambda_geodesic,
             initial_radius, sides, scale, leaveout_proportion,
             max_iterations,
-            os.path.join('..', 'out_Europe_hourly'),
+            os.path.join('..', 'out_test'),
             initialiazation_file_path
         )
