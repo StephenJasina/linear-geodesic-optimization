@@ -132,7 +132,7 @@ def get_heat_map(x=None, y=None, z=None, title='',
 
     return fig
 
-def get_mesh_plot(mesh, title, remove_boundary=True, ax=None):
+def get_mesh_plot(mesh, title, remove_boundary=False, ax=None):
     vertices = mesh.get_coordinates()
     x, y, z = vertices[:,0], vertices[:,1], vertices[:,2]
 
