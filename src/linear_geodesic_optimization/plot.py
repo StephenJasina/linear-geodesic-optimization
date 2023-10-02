@@ -132,40 +132,51 @@ def get_heat_map(x=None, y=None, z=None, title='',
 
     return fig
 
-def get_mesh_plot(mesh, title, remove_boundary=False, ax=None):
+def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
     vertices = mesh.get_coordinates()
     x, y, z = vertices[:,0], vertices[:,1], vertices[:,2]
 
     faces = []
     for face in mesh.get_topology().faces():
-        v0, v1, v2 = face.vertices()
-        if not remove_boundary or not (v0.is_on_boundary()
-                                       or v1.is_on_boundary()
-                                       or v2.is_on_boundary()):
-            faces.append([v0.index(), v1.index(), v2.index()])
+        faces.append([v.index() for v in face.vertices()])
 
-    interior_vertices = [v.index() for v in mesh.get_topology().vertices()
-                         if not remove_boundary or not v.is_on_boundary()]
-    z_interior = z[interior_vertices]
-    if len(z_interior) != 0:
-        z_min = np.amin(z_interior)
-        z_max = np.amax(z_interior)
-        if z_min != z_max:
-            z = (z - z_min) / (z_max - z_min) / 4.
+    z_min = np.amin(z)
+    z_max = np.amax(z)
+    if z_min != z_max:
+        z = (z - z_min) / (z_max - z_min) / 4.
 
     to_return = None
     if ax is None:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
-        ax.plot_trisurf(x, y, z, triangles=faces, color='tab:blue')
+        p3dc = ax.plot_trisurf(x, y, z, triangles=faces, color='tab:blue')
+        if face_colors is not None:
+            p3dc.set_fc(face_colors)
         to_return = fig
     else:
         to_return = ax.plot_trisurf(x, y, z, triangles=faces, color='tab:blue',
                                     animated=True)
+        if face_colors is not None:
+            to_return.set_fc(face_colors)
+
+    if network is not None:
+        network_vertices, network_edges, network_curvatures = network
+        # Plot the edges
+        for (u, v), curvature in zip(network_edges, network_curvatures):
+            color = mpl.colormaps['RdBu']((curvature + 2) / 4)
+
+            ax.plot([network_vertices[u][0], network_vertices[v][0]],
+                    [network_vertices[u][1], network_vertices[v][1]],
+                    [0.7, 0.7], color=color)
+
+        # Plot the vertices
+        for vertex in network_vertices:
+            ax.plot(vertex[0], vertex[1], 0.7, '.', ms=4, color='green')
 
     ax.set_title(title)
     ax.set_xlim([-0.5, 0.5])
     ax.set_ylim([-0.5, 0.5])
     ax.set_aspect('equal')
+    ax.set_axis_off()
 
     return to_return
