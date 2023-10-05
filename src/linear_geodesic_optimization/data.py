@@ -75,6 +75,8 @@ def read_graphml(data_file_path: str,
            for edge in network.edges.values()]
     network_latencies: typing.List[typing.Tuple[typing.Tuple[int, int],
                                                 np.float64]] = []
+    network_city : typing.List[str] = [node['city'] for node in network.nodes.values()]
+
     if latencies_file_path is not None:
         with open(latencies_file_path) as latencies_file:
             latencies_reader = csv.DictReader(latencies_file)
@@ -90,7 +92,7 @@ def read_graphml(data_file_path: str,
 
     if with_labels:
         return coordinates, network_edges, network_curvatures, \
-            network_latencies, list(network.nodes)
+            network_latencies, list(network.nodes), network_city
     else:
         return coordinates, network_edges, network_curvatures, \
             network_latencies
@@ -166,7 +168,7 @@ def get_mesh_output(
 
     mesh = RectangleMesh(width, height)
 
-    coordinates, network_edges, _, _, labels = read_graphml(data_file_name,
+    coordinates, network_edges, _, _, labels, name = read_graphml(data_file_name,
                                                             with_labels=True)
     coordinates = np.array(coordinates)
     network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8))

@@ -2,6 +2,7 @@ import os
 
 import optimization
 
+project_dir = '/Users/loqmansalamatian/Documents/GitHub/linear-geodesic-optimization/'
 if __name__ == '__main__':
     lambda_curvature = 1.
     lambda_smooth = 0.004
@@ -15,12 +16,11 @@ if __name__ == '__main__':
     leaveout_proportion = 1.
 
     max_iterations = 200
-
     for i in range(24):
         initialiazation_file_path = None
         if i != 0:
             directory = os.path.join(
-                '..', 'out_Europe_hourly', f'graph_{i - 1}',
+                project_dir,'out_Europe_hourly', f'graph_{i - 1}',
                 f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
             )
             iteration = max(
@@ -36,6 +36,6 @@ if __name__ == '__main__':
             lambda_curvature, lambda_smooth, lambda_geodesic,
             initial_radius, sides, scale, leaveout_proportion,
             max_iterations,
-            os.path.join('..', 'out_test'),
+            os.path.join('..', 'out_Europe_hourly'),
             initialiazation_file_path
         )

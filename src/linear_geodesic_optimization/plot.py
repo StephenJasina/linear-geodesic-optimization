@@ -4,6 +4,10 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
+# can be installed with `pip install adjustText` or `conda install -c conda-forge adjusttext`
+from adjustText import adjust_text
+
+
 # Allow TeX to be used in titles, axes, etc.
 plt.rcParams.update({
     'font.family': 'serif',
@@ -160,7 +164,7 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
             to_return.set_fc(face_colors)
 
     if network is not None:
-        network_vertices, network_edges, network_curvatures = network
+        network_vertices, network_edges, network_curvatures, network_name = network
         # Plot the edges
         for (u, v), curvature in zip(network_edges, network_curvatures):
             color = mpl.colormaps['RdBu']((curvature + 2) / 4)
@@ -169,9 +173,37 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
                     [network_vertices[u][1], network_vertices[v][1]],
                     [0.7, 0.7], color=color)
 
-        # Plot the vertices
+        # # Plot the vertices
         for vertex in network_vertices:
             ax.plot(vertex[0], vertex[1], 0.7, '.', ms=4, color='green')
+        # Plot the name of a few cities above the vertices
+        # for vertex, name in zip(network_vertices, network_name):
+        # texts = [ax.text(vertex[0], vertex[1], 0.7, name, fontsize=4) for (vertex,name) in zip(network_vertices, network_name)]
+        ### only show the text if it is not overlapping with another text
+        # adjust_text(texts)
+
+        def get_min_distance_based_on_label(label, base_distance=1.0, scaling_factor=0.1):
+            """Determine spacing based on label length."""
+            return base_distance + scaling_factor * len(label)
+
+        def is_too_close(new_vertex, labeled_vertices, label, base_distance=0.175, scaling_factor=0.01):
+            """Check if the new vertex is too close to any of the already labeled vertices."""
+            min_distance = get_min_distance_based_on_label(label, base_distance, scaling_factor)
+
+            for v, l in labeled_vertices:
+                dist = ((new_vertex[0] - v[0]) ** 2 + (new_vertex[1] - v[1]) ** 2) ** 0.5
+                if dist < min_distance:
+                    return True
+            return False
+
+        labeled_vertices = []
+        texts = []
+
+        for vertex, name in zip(network_vertices, network_name):
+            if not is_too_close(vertex, labeled_vertices, name):
+                texts.append(ax.text(vertex[0], vertex[1], 0.7, name, fontsize=4))
+                labeled_vertices.append((vertex, name))
+
 
     ax.set_title(title)
     ax.set_xlim([-0.5, 0.5])
