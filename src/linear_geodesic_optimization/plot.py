@@ -1,7 +1,8 @@
 from collections.abc import Iterable
 
-from matplotlib import pyplot as plt
 import matplotlib as mpl
+from matplotlib import pyplot as plt
+from matplotlib.colors import LightSource
 import numpy as np
 
 # Allow TeX to be used in titles, axes, etc.
@@ -158,6 +159,68 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
                                     animated=True)
         if face_colors is not None:
             to_return.set_fc(face_colors)
+
+    if network is not None:
+        network_vertices, network_edges, network_curvatures = network
+        # Plot the edges
+        for (u, v), curvature in zip(network_edges, network_curvatures):
+            color = mpl.colormaps['RdBu']((curvature + 2) / 4)
+
+            ax.plot([network_vertices[u][0], network_vertices[v][0]],
+                    [network_vertices[u][1], network_vertices[v][1]],
+                    [0.7, 0.7], color=color)
+
+        # Plot the vertices
+        for vertex in network_vertices:
+            ax.plot(vertex[0], vertex[1], 0.7, '.', ms=4, color='green')
+
+    ax.set_title(title)
+    ax.set_xlim([-0.5, 0.5])
+    ax.set_ylim([-0.5, 0.5])
+    ax.set_aspect('equal')
+    ax.set_axis_off()
+
+    return to_return
+
+def get_rectangular_mesh_plot(z, face_colors, title, network=None, ax=None):
+    width, height = face_colors.shape[:2]
+    x, y = np.meshgrid(
+        np.linspace(-0.5, 0.5, width),
+        np.linspace(-0.5, 0.5, height),
+        indexing='ij'
+    )
+
+    # Resize z to match face_colors, interpolating if needed
+    z = np.array([
+        [
+            (1 - lambda_j) * ((1 - lambda_i) * z[i_left,j_bottom] + lambda_i * z[i_right,j_bottom])
+                + lambda_j * ((1 - lambda_i) * z[i_left,j_top] + lambda_i * z[i_right,j_top])
+            for j in np.linspace(0, z.shape[1] - 1, height)
+            for lambda_j in (j % 1,)
+            for j_bottom in (np.floor(j).astype(int),)
+            for j_top in (np.ceil(j).astype(int),)
+        ]
+        for i in np.linspace(0, z.shape[0] - 1, width)
+        for lambda_i in (i % 1,)
+        for i_left in (np.floor(i).astype(int),)
+        for i_right in (np.ceil(i).astype(int),)
+    ])
+
+    z_min = np.amin(z)
+    z_max = np.amax(z)
+    if z_min != z_max:
+        z = (z - z_min) / (z_max - z_min) / 4.
+
+    to_return = None
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.plot_surface(x, y, z, facecolors=face_colors,
+                        rcount=height, ccount=width)
+        to_return = fig
+    else:
+        to_return = ax.plot_surface(x, y, z, facecolors=face_colors,
+                                    rcount=height, ccount=width)
 
     if network is not None:
         network_vertices, network_edges, network_curvatures = network

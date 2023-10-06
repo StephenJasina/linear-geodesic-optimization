@@ -7,10 +7,10 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 
 from linear_geodesic_optimization import data
-from linear_geodesic_optimization.plot import get_mesh_plot
+from linear_geodesic_optimization.plot import get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = os.path.join('..', 'out_Europe_hourly')
+directory = os.path.join('..', 'out_US_hourly')
 
 lambda_curvature = 1.
 lambda_smooth = 0.004
@@ -22,7 +22,7 @@ scale = 1.
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
 
 manifold_count = 24
-fps = 24
+fps = 6
 
 def get_image_data(data_file_path, resolution=100):
     coordinates, _, _, _ = data.read_graphml(data_file_path)
@@ -57,7 +57,7 @@ def get_image_data(data_file_path, resolution=100):
     fig, ax = plt.subplots()
     image_data = map.arcgisimage(service='USA_Topo_Maps', ax=ax,
                                  xpixels=resolution, y_pixels=resolution).get_array()
-    image_data = np.flipud(image_data) / 255
+    image_data = np.flipud(image_data).swapaxes(0, 1) / 255
     plt.close(fig)
     return image_data
 
@@ -91,16 +91,8 @@ if __name__ == '__main__':
         parameters = pickle.load(f)
         data_file_name = parameters['data_file_name']
         data_file_path = os.path.join('..', 'data', data_file_name)
-    resolution = 1000
-    image_data = get_image_data(data_file_path, resolution)
-    mesh_coordinates = mesh.get_coordinates()
-    face_colors = [
-        image_data[int(resolution * (face_center[1] / scale + 0.5)),
-                   int(resolution * (face_center[0] / scale + 0.5))]
-        for face in mesh.get_topology().faces()
-        for face_center in (sum(mesh_coordinates[v.index()]
-                                for v in face.vertices()) / 3,)
-    ]
+    resolution = 500
+    face_colors = get_image_data(data_file_path, resolution)
 
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d', facecolor='#808080')
@@ -110,7 +102,8 @@ if __name__ == '__main__':
         right = min(left + 1, manifold_count - 1)
         lam = i - left
         z = (1 - lam) * zs[left] + lam * zs[right]
-        mesh.set_parameters(z)
+        # mesh.set_parameters(z)
+        z = np.reshape(z, (width, height))
 
         with open(os.path.join(directory, f'graph_{right}', subdirectory_name, 'parameters'), 'rb') as f:
             parameters = pickle.load(f)
@@ -122,7 +115,7 @@ if __name__ == '__main__':
 
         ax.clear()
         return [
-            get_mesh_plot(mesh, None, face_colors,
+            get_rectangular_mesh_plot(z, face_colors, None,
                           [network_vertices, network_edges, network_curvatures],
                           ax),
             ax.text2D(0.05, 0.95, f'{left:02}:{round(lam*60):02}',
@@ -133,4 +126,4 @@ if __name__ == '__main__':
                                               (manifold_count - 1) * fps + 1),
                                   interval=1000/fps,
                                   blit=True)
-    ani.save(os.path.join('..', 'animation_Europe.mp4'), dpi=300)
+    ani.save(os.path.join('..', 'animation_test.mp4'), dpi=300)
