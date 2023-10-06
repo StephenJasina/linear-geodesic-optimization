@@ -73,11 +73,12 @@ def get_measurements(date_start, date_stop,
             })
 
 if __name__ == '__main__':
+    ip_type = 'ipv4'
     date_start = datetime.datetime(year=2023, month=8, day=29)
     hour = datetime.timedelta(hours=1)
     for i in range(24):
         get_measurements(date_start + i * hour,
                          date_start + (i + 1) * hour,
-                         os.path.join('graph_Europe_hourly', 'probes.csv'),
-                         os.path.join('graph_Europe_hourly',
+                         os.path.join('graph_Europe_hourly', ip_type, 'probes.csv'),
+                         os.path.join('graph_Europe_hourly', ip_type,
                                       f'latencies_{i}.csv'))

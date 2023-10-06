@@ -49,7 +49,10 @@ def get_graph(
             lat_target = graph.nodes[id_target]['lat']
             long_target = graph.nodes[id_target]['long']
             rtt = float(row['rtt'])
-
+            if graph.nodes[id_source]['city'] == 'Oslo':
+                print(graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
+                    [lat_source, long_source],
+                    [lat_target, long_target]))
             # Only add edges satisfying the cutoff requirement
             if (
                 rtt - utility.get_GCD_latency(

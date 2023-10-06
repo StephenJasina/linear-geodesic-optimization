@@ -4,6 +4,7 @@ from ripe.atlas.cousteau import AnchorRequest, ProbeRequest, MeasurementRequest
 
 continent = 'Europe'
 
+ip_type = 'ipv6'
 with open('countries.csv', 'r') as countries_file:
     reader = csv.DictReader(countries_file)
     countries = {
@@ -12,12 +13,12 @@ with open('countries.csv', 'r') as countries_file:
         if row['Region Name'] == continent
     }
 
-with open('probes.csv', 'w') as probes_file:
+with open(f'probes_{ip_type}.csv', 'w') as probes_file:
     csv_writer = csv.DictWriter(
         probes_file,
         [
             'id', 'city', 'country', 'latitude', 'longitude',
-            'fqdn', 'ipv4', 'measurement_id'
+            'fqdn', ip_type, 'measurement_id'
         ]
     )
     csv_writer.writeheader()
@@ -47,7 +48,12 @@ with open('probes.csv', 'w') as probes_file:
             # Get the measurement ID for pings targeting this probe.
             # Some of the probes don't have associated measurements, so
             # we skip them.
-            address = probe['address_v4']
+            if ip_type == 'ipv4':
+                address = probe['address_v4']
+            else:
+                address = probe['address_v6']
+            if address is None:
+                continue
             measurement_id = None
             for measurement in MeasurementRequest(
                 target_ip = address,
@@ -56,7 +62,8 @@ with open('probes.csv', 'w') as probes_file:
                 tags = ['anchoring', 'mesh'],
                 status = 2
             ):
-                if measurement['description'].startswith(
+                # Check that the measurement is for the right IP type
+                if measurement['af'] == int(ip_type[-1]) and measurement['description'].startswith(
                     'Anchoring Mesh Measurement'
                 ):
                     measurement_id = measurement['id']
@@ -83,6 +90,6 @@ with open('probes.csv', 'w') as probes_file:
                 'latitude': probe['geometry']['coordinates'][1],
                 'longitude': probe['geometry']['coordinates'][0],
                 'fqdn': anchor['fqdn'],
-                'ipv4': address,
+                ip_type: address,
                 'measurement_id': measurement_id,
             })

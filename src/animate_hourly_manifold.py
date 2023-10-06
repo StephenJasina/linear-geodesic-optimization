@@ -8,25 +8,12 @@ from matplotlib import animation as animation
 # from mpl_toolkits.basemap import Basemap
 import numpy as np
 import time
-
+from utils import *
 
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.plot import get_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = os.path.join('..', 'out_Europe_hourly')
-
-lambda_curvature = 1.
-lambda_smooth = 0.004
-lambda_geodesic = 0.
-initial_radius = 20.
-width = 50
-height = 50
-scale = 1.
-subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
-
-manifold_count = 24
-fps = 24
 
 def get_image_data(data_file_path, resolution=100):
     coordinates, _, _, _ = data.read_graphml(data_file_path)
@@ -67,7 +54,7 @@ def get_image_data(data_file_path, resolution=100):
 
 
 def investigating_graph(k=3):
-    path_to_graphml = '../data/graph_Europe_hourly/'
+    path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/'
 
     # Get all files with .graphml extension
     files = [f for f in os.listdir(path_to_graphml) if f.endswith('.graphml')]
@@ -85,19 +72,60 @@ def investigating_graph(k=3):
         for edge in graph.edges(data=True):
             edge_key = tuple(
                 sorted([edge[0], edge[1]]))  # Ensure edge key is consistent (node order doesn't matter)
-            curvature_value = edge[2].get('ricciCurvature', 0)  # Default to 0 if no curvature value found
+            curvature_value = edge[2].get('ricciCurvature', -3)  # Default to -3 if no curvature value found
 
             if edge_key not in curvature_data:
                 curvature_data[edge_key] = []
 
             curvature_data[edge_key].append(curvature_value)
 
+    # Investigate which edges have appeared and disappeared in the graph
+    appeared_edges = {}
+    disappeared_edges = {}
+
+    prev_edges = set()
+    for i, file in enumerate(sorted(files)):
+        graph = nx.read_graphml(os.path.join(path_to_graphml, file))
+        current_edges = set(graph.edges())
+
+        if i != 0:  # Skip the comparison for the first file
+            appeared = current_edges - prev_edges
+            disappeared = prev_edges - current_edges
+
+            if appeared:
+                for edge in list(appeared):
+                    if edge not in appeared_edges:
+                        appeared_edges[edge] = []
+                    appeared_edges[edge].append(i)
+            if disappeared:
+                for edge in list(disappeared):
+                    if edge not in disappeared_edges:
+                        disappeared_edges[edge] = []
+                    disappeared_edges[edge].append(i)
+
+        prev_edges = current_edges
+
+    # print("Edges that appeared:")
+    # for file, edges in appeared_edges.items():
+    #     print(f"In {file}:")
+    #     for edge in edges:
+    #         print(edge)
+
+    # print("\nEdges that disappeared:")
+    # for file, edges in disappeared_edges.items():
+    #     print(f"In {file}:")
+    #     print(edges)
+
+    # select top k edges with the most disappearance and appearance
+    sorted_edges = sorted(disappeared_edges, key=lambda x: len(disappeared_edges[x]), reverse=True)[:k]
+    # top_appeared = sorted(appeared_edges, key=lambda x: len(appeared_edges[x]), reverse=True)[:k]
+
     # Calculate the change in curvature for each edge
     curvature_changes = {edge: abs(max(curvatures) - min(curvatures)) for edge, curvatures in
                          curvature_data.items()}
 
     # Sort the edges based on curvature change
-    sorted_edges = sorted(curvature_changes.keys(), key=lambda x: curvature_changes[x], reverse=True)[:k]
+    # sorted_edges = sorted(curvature_changes.keys(), key=lambda x: curvature_changes[x], reverse=True)[:k]
 
     time_series = []
 
@@ -119,7 +147,7 @@ def investigating_graph(k=3):
                          latency_data.items()}
 
     # Sort the edges based on curvature change
-    sorted_edges = sorted(latency_changes.keys(), key=lambda x: latency_changes[x], reverse=True)[:k]
+    # sorted_edges = sorted(latency_changes.keys(), key=lambda x: latency_changes[x], reverse=True)[:k]
 
     # Sort and get the top N entries
     top_latency_changes = sorted(latency_changes.items(), key=lambda x: x[1], reverse=True)[:k]
@@ -133,6 +161,8 @@ def investigating_graph(k=3):
     ### sorted list(latency_changes.values())
     name_series = []
     for edge in sorted_edges:
+        if (edge[1], edge[0]) in latency_data:
+            latency_data[edge] = latency_data[(edge[1], edge[0])]
         time_series.append(latency_data[edge])
         name_series.append(probes[probes['id'] == int(edge[0])]['city'].values[0] + '-' + probes[probes['id'] == int(edge[1])]['city'].values[0])
     return time_series, name_series
@@ -183,16 +213,30 @@ if __name__ == '__main__':
     import matplotlib.gridspec as gridspec
 
     fig = plt.figure()
-    gs = gridspec.GridSpec(4, 1, height_ratios=[16, 1, 1,1])  # Adjust as necessary for more timeseries
+
+    # Define the grid shape (total rows, total cols)
+    gs = gridspec.GridSpec(4, 1, height_ratios=[16, 1, 1, 1], hspace=0)
 
     ax = fig.add_subplot(gs[0], projection='3d', facecolor='#808080')
     ax_ts1 = fig.add_subplot(gs[1])
     ax_ts2 = fig.add_subplot(gs[2])
     ax_ts3 = fig.add_subplot(gs[3])
-    # Dummy timeseries data, replace with your actual data
+
+    # Remove x ticks and labels from ax
+    # ax.set_xticks([])
+    # ax.set_xlabel('')
+
+
+
     ts_data1 = time_series[0]
     ts_data2 = time_series[1]
     ts_data3 = time_series[2]
+
+    ax_ts3.set_xlim(0, 24)
+    # ax_ts1.plot(ts_data1)
+    # ax_ts2.plot(ts_data2)
+    # ax_ts3.plot(ts_data3)
+
 
     # ax_ts1.set_ylim(0, 100)
     # ax_ts2.set_ylim(0, 100)
@@ -215,23 +259,45 @@ if __name__ == '__main__':
         with open(os.path.join(directory, f'graph_{right}', subdirectory_name, 'parameters'), 'rb') as f:
             parameters = pickle.load(f)
             data_file_name = parameters['data_file_name']
-            data_file_path = os.path.join('..', 'data', data_file_name)
+            data_file_path = os.path.join('..', 'data', ip_type, data_file_name)
             coordinates, network_edges, network_curvatures, \
             network_latencies, network_nodes, network_city = data.read_graphml(data_file_path, with_labels=True)
         coordinates = np.array(coordinates)
         network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8))
 
-        ax.clear()
 
         # Update timeseries plot
         line1, = ax_ts1.plot(ts_data1[:int(i) + 1], '-o', markersize=3, color='blue', label = name_series[0])
         line2, = ax_ts2.plot(ts_data2[:int(i) + 1], '-o', markersize=3, color='red', label= name_series[1])
         line3, = ax_ts3.plot(ts_data3[:int(i) + 1], '-o', markersize=3, color='green', label = name_series[2])
-        ax_ts1.legend(loc='upper left')
-        ax_ts2.legend(loc='upper left')
-        ax_ts3.legend(loc='upper left')
+        legend1 = ax_ts1.legend([line1], [name_series[0]], loc='upper right', fontsize=4)
+        legend2 = ax_ts2.legend([line2], [name_series[1]], loc='upper right', fontsize=4)
+        legend3 = ax_ts3.legend([line3], [name_series[2]], loc='upper right', fontsize= 4)
+        ax.set_xlim(0,24)
+        ax_ts1.tick_params(axis='both', which='major', labelsize=6)
+        ax_ts2.tick_params(axis='both', which='major', labelsize=6)
+        ax_ts3.tick_params(axis='both', which='major', labelsize=6)
+
+        # Remove x ticks and labels from ax_ts1 and ax_ts2 since they're stacked
+        ax_ts1.set_xticks([])
+        ax_ts1.set_xlabel('')
+        ax_ts1.set_yticks(np.arange(0, max(time_series[0]), 5))
+        ax_ts2.set_xticks([])
+        ax_ts2.set_yticks(np.arange(0, max(time_series[1]), 5))
+        ax_ts2.set_xlabel('')
+        ax_ts3.set_yticks(np.arange(0, max(time_series[2]), 5))
+        ax_ts3.set_xlabel('Time (hours)')
+        # ax_ts3.set_xticks([])
+        ax_ts1.set_xlim(0, 24)
+        ax_ts2.set_xlim(0, 24)
+        ax_ts3.set_xlim(0, 24)
+        ax_ts3.set_xticks(np.arange(0, 24, 1))
+        # ax_ts2.set_xticks(np.arange(0, 24, 1))
+        # ax_ts1.set_xticks(np.arange(0, 24, 1))
+
+        ax.clear()
         elapsed_time = time.time() - start_time
-        # print(f"Time taken for iteration {i}: {elapsed_time:.4f} seconds")
+        print(f"Time taken for iteration {i}: {elapsed_time:.4f} seconds")
 
         return [
             get_mesh_plot(mesh, None, None,
@@ -239,7 +305,7 @@ if __name__ == '__main__':
                           ax),
             ax.text2D(0.05, 0.95, f'{left:02}:{round(lam*60):02}',
                       transform=ax.transAxes),
-            line1, line2, line3
+            line1, line2, line3, legend1, legend2, legend3
         ]
 
 

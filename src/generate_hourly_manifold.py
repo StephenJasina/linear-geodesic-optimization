@@ -12,7 +12,7 @@ if __name__ == '__main__':
     sides = 50
     width = height = sides
     scale = 1.
-
+    ip_type = 'ipv4'
     leaveout_proportion = 1.
 
     max_iterations = 200
@@ -31,8 +31,8 @@ if __name__ == '__main__':
             initialiazation_file_path = os.path.join(directory, str(iteration))
 
         optimization.main(
-            os.path.join('graph_Europe_hourly', f'graph_{i}.graphml'),
-            os.path.join('graph_Europe_hourly', f'latencies_{i}.csv'),
+            os.path.join(ip_type, 'graph_Europe_hourly', f'graph_{i}.graphml'),
+            os.path.join(ip_type, 'graph_Europe_hourly', f'latencies_{i}.csv'),
             lambda_curvature, lambda_smooth, lambda_geodesic,
             initial_radius, sides, scale, leaveout_proportion,
             max_iterations,

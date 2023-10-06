@@ -1,4 +1,5 @@
 import numpy as np
+from math import radians, sin, cos, sqrt, atan2, acos
 
 def get_sphere_point(latlong):
     """Convert spherical coordinates to Cartesian coordinates."""
@@ -22,6 +23,21 @@ def get_spherical_distance(a, b):
     # with floating point
     return np.arccos(min(max(a @ b, -1.), 1.))
 
+# def get_GCD_latency(latlong_a, latlong_a):
+#     """Find the great circle latency between two points on Earth."""
+#     # The following are in meters and meters per second
+#     circumference_earth = 40075016.68557849
+#     radius_earth = 40075016.68557849 / (2 * np.pi)
+#     c = 299792458
+#
+#     # Convert spherical coordinates to Cartesian coordinates
+#     p_a = get_sphere_point(latlong_a)
+#     p_b = get_sphere_point(latlong_b)
+#
+#     # Compute the latency, which is the travel time at the rate of two
+#     # thirds the speed of light
+#     return get_spherical_distance(p_a, p_b) * radius_earth / (2. * c / 3.)
+
 def get_GCD_latency(latlong_a, latlong_b):
     """Find the great circle latency between two points on Earth."""
     # The following are in meters and meters per second
@@ -35,4 +51,13 @@ def get_GCD_latency(latlong_a, latlong_b):
 
     # Compute the latency, which is the travel time at the rate of two
     # thirds the speed of light
-    return get_spherical_distance(p_a, p_b) * radius_earth / (2. * c / 3.)
+    distance_km = get_spherical_distance(p_a, p_b) * radius_earth / 1000
+    speed_of_light_km_per_s = 299792.458
+    # Speed in fiber optics is 2/3 the speed of light in vacuum
+    speed_in_fiber_km_per_s = (2 / 3) * speed_of_light_km_per_s
+
+    # Compute time taken (latency) in milliseconds (1 second = 1000 milliseconds)
+    latency_ms = 2*(distance_km / speed_in_fiber_km_per_s) * 1000
+
+    return latency_ms
+

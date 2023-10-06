@@ -186,10 +186,13 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
             """Determine spacing based on label length."""
             return base_distance + scaling_factor * len(label)
 
-        def is_too_close(new_vertex, labeled_vertices, label, base_distance=0.175, scaling_factor=0.01):
+        def is_too_close(new_vertex, labeled_vertices, label, base_distance=0.05, scaling_factor=0.01):
             """Check if the new vertex is too close to any of the already labeled vertices."""
             min_distance = get_min_distance_based_on_label(label, base_distance, scaling_factor)
-
+            if label in ['Tallinn', 'Tuusula','Battipaglia']:
+                return False
+            if len(label) > 8:
+                return True
             for v, l in labeled_vertices:
                 dist = ((new_vertex[0] - v[0]) ** 2 + (new_vertex[1] - v[1]) ** 2) ** 0.5
                 if dist < min_distance:
@@ -201,7 +204,7 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
 
         for vertex, name in zip(network_vertices, network_name):
             if not is_too_close(vertex, labeled_vertices, name):
-                texts.append(ax.text(vertex[0], vertex[1], 0.7, name, fontsize=4))
+                texts.append(ax.text(vertex[0]-0.01, vertex[1]+0.01, 0.7, name, fontsize=4))
                 labeled_vertices.append((vertex, name))
 
 
