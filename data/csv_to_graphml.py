@@ -10,6 +10,31 @@ import numpy as np
 import cluster_probes
 import utility
 
+def minimize_id_removal(rtt_violation_list):
+    id_counts = {}
+
+    for id_source, id_target in rtt_violation_list:
+        id_counts[id_source] = id_counts.get(id_source, 0) + 1
+        id_counts[id_target] = id_counts.get(id_target, 0) + 1
+
+    ids_to_remove = set()
+
+    while rtt_violation_list:
+        # Find id with maximum count
+        max_id = max(id_counts, key=id_counts.get)
+        ids_to_remove.add(max_id)
+
+        # Remove all lines containing max_id
+        rtt_violation_list = [line for line in rtt_violation_list if max_id not in line[:2]]
+
+        # Reset id_counts for the next iteration
+        id_counts = {}
+        for line in rtt_violation_list:
+            id_counts[line[0]] = id_counts.get(line[0], 0) + 1
+            id_counts[line[1]] = id_counts.get(line[1], 0) + 1
+
+    return ids_to_remove
+
 def get_graph(
     probes_filename, latencies_filename, epsilon,
     clustering_distance=None, clustering_min_samples=None
@@ -27,6 +52,9 @@ def get_graph(
     """
     # Create the graph
     graph = nx.Graph()
+
+    # Create the RTT violation list
+    rtt_violation_list = []
 
     # Get the vertecies
     with open(probes_filename) as probes_file:
@@ -60,9 +88,11 @@ def get_graph(
             if rtt - utility.get_GCD_latency(
                 [lat_source, long_source],
                 [lat_target, long_target]) < 0:
-                print(graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
+                rtt_violation_list.append((id_source, id_target))
+                print(id_source, id_target, graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
                     [lat_source, long_source],
                     [lat_target, long_target]))
+
             # Only add edges satisfying the cutoff requirement
             if (
                 rtt - utility.get_GCD_latency(
@@ -75,6 +105,12 @@ def get_graph(
                 if ((id_source, id_target) not in graph.edges
                         or graph.edges[id_source,id_target]['rtt'] > rtt):
                     graph.add_edge(id_source, id_target, weight=1., rtt=rtt)
+
+    # Delete nodes with inconsistent geolocation
+    nodes_to_delete = minimize_id_removal(rtt_violation_list)
+
+    for node in nodes_to_delete:
+        graph.remove_node(node)
 
     # Simplify the graph by clustering
     if clustering_distance is not None and clustering_min_samples is not None:

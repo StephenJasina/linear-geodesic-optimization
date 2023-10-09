@@ -179,6 +179,6 @@ if __name__ == '__main__':
     date_start = datetime.datetime.strptime(date_start_str, '%Y-%m-%d')
     hour = datetime.timedelta(hours=1)
 
-    for i in range(13, 24):
+    for i in range(14, 24):
         output_hourly_file = os.path.join(output_file, f"latencies_{i}.csv")  # To create hourly files.
         get_measurements(date_start + i * hour, date_start + (i + 1) * hour, probes, output_hourly_file)
