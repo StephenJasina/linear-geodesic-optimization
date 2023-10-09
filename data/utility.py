@@ -57,7 +57,7 @@ def get_GCD_latency(latlong_a, latlong_b):
     speed_in_fiber_km_per_s = (2 / 3) * speed_of_light_km_per_s
 
     # Compute time taken (latency) in milliseconds (1 second = 1000 milliseconds)
-    latency_ms = 2*(distance_km / speed_in_fiber_km_per_s) * 1000
+    latency_ms = 5/4*(distance_km / speed_in_fiber_km_per_s) * 1000
 
     return latency_ms
 

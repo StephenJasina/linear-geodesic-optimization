@@ -48,11 +48,14 @@ def get_graph(
             long_source = graph.nodes[id_source]['long']
             lat_target = graph.nodes[id_target]['lat']
             long_target = graph.nodes[id_target]['long']
-            rtt = float(row['rtt'])
-            if graph.nodes[id_source]['city'] == 'Oslo':
-                print(graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
-                    [lat_source, long_source],
-                    [lat_target, long_target]))
+            rtt = row['rtt']
+            if rtt is None or rtt == '':
+                continue
+            rtt = float(rtt)
+            # if graph.nodes[id_source]['city'] == 'Oslo':
+            #     print(graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
+            #         [lat_source, long_source],
+            #         [lat_target, long_target]))
             # Only add edges satisfying the cutoff requirement
             if (
                 rtt - utility.get_GCD_latency(
@@ -96,15 +99,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--latencies-file', '-l', metavar='<filename>',
                         dest='latencies_filename', required=True)
-    parser.add_argument('--probes-file', '-p', metavar='<filename>',
-                        dest='probes_filename', required=True)
+    parser.add_argument('--ip-type', '-i', metavar='<ip-type>',required=True)
+    # parser.add_argument('--probes-file', '-p', metavar='<filename>',
+    #                     dest='probes_filename', required=True)
     parser.add_argument('--epsilon', '-e', metavar='<epsilon>',
                         dest='epsilon', type=int, required=False)
     parser.add_argument('--output', '-o', metavar='<basename>',
                         dest='output_basename', required=True)
     args = parser.parse_args()
     latencies_filename = args.latencies_filename
-    probes_filename = args.probes_filename
+    ip_type = args.ip_type
+    probes_filename = f'probes_{ip_type}.csv'
     epsilons = [args.epsilon]
     if args.epsilon is None:
         epsilons = list(range(1, 21))

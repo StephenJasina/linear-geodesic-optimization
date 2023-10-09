@@ -54,16 +54,17 @@ def get_image_data(data_file_path, resolution=100):
 
 
 def investigating_graph(k=3):
-    path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/'
-
+    path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/{threshold}/'
+    path_to_probes = f'../data/{ip_type}/'
+    path_to_latency = f'../data/{ip_type}/graph_Europe_hourly/'
     # Get all files with .graphml extension
     files = [f for f in os.listdir(path_to_graphml) if f.endswith('.graphml')]
-    files_latency = [f for f in os.listdir(path_to_graphml) if f.endswith('.csv') and not(f.startswith('probes'))]
+    files_latency = [f for f in os.listdir(path_to_latency) if f.endswith('.csv') and not(f.startswith('probes'))]
     curvature_data = {}
     latency_data = {}
 
     # Read Probes.csv file
-    probes = pd.read_csv(os.path.join(path_to_graphml, 'probes.csv'))
+    probes = pd.read_csv(os.path.join(path_to_probes, f'probes_{ip_type}.csv'))
     print(probes)
 
     for file in files:
@@ -117,7 +118,7 @@ def investigating_graph(k=3):
     #     print(edges)
 
     # select top k edges with the most disappearance and appearance
-    sorted_edges = sorted(disappeared_edges, key=lambda x: len(disappeared_edges[x]), reverse=True)[:k]
+    # sorted_edges = sorted(disappeared_edges, key=lambda x: len(disappeared_edges[x]), reverse=True)[:k]
     # top_appeared = sorted(appeared_edges, key=lambda x: len(appeared_edges[x]), reverse=True)[:k]
 
     # Calculate the change in curvature for each edge
@@ -125,12 +126,12 @@ def investigating_graph(k=3):
                          curvature_data.items()}
 
     # Sort the edges based on curvature change
-    # sorted_edges = sorted(curvature_changes.keys(), key=lambda x: curvature_changes[x], reverse=True)[:k]
+    sorted_edges = sorted(curvature_changes.keys(), key=lambda x: curvature_changes[x], reverse=True)[:k]
 
     time_series = []
 
     for file in files_latency:
-        latency = pd.read_csv(os.path.join(path_to_graphml, file))
+        latency = pd.read_csv(os.path.join(path_to_latency, file))
         ### change dtype of latency
         latency['source_id'] = latency['source_id'].astype('int32')
         latency['target_id'] = latency['target_id'].astype('int32')
@@ -177,7 +178,7 @@ if __name__ == '__main__':
         print(f'Reading data from manifold {i}')
 
         current_directory = os.path.join(
-            directory, f'graph_{i}', subdirectory_name
+            directory, f'graph_{i}_{threshold}', subdirectory_name
         )
 
         iteration = max(
@@ -256,10 +257,10 @@ if __name__ == '__main__':
         z = (1 - lam) * zs[left] + lam * zs[right]
         mesh.set_parameters(z)
 
-        with open(os.path.join(directory, f'graph_{right}', subdirectory_name, 'parameters'), 'rb') as f:
+        with open(os.path.join(directory, f'graph_{right}_{threshold}', subdirectory_name, 'parameters'), 'rb') as f:
             parameters = pickle.load(f)
             data_file_name = parameters['data_file_name']
-            data_file_path = os.path.join('..', 'data', ip_type, data_file_name)
+            data_file_path = os.path.join('..', 'data', data_file_name)
             coordinates, network_edges, network_curvatures, \
             network_latencies, network_nodes, network_city = data.read_graphml(data_file_path, with_labels=True)
         coordinates = np.array(coordinates)
@@ -281,11 +282,11 @@ if __name__ == '__main__':
         # Remove x ticks and labels from ax_ts1 and ax_ts2 since they're stacked
         ax_ts1.set_xticks([])
         ax_ts1.set_xlabel('')
-        ax_ts1.set_yticks(np.arange(0, max(time_series[0]), 5))
+        # ax_ts1.set_yticks(np.arange(0, max(time_series[0]), 5))
         ax_ts2.set_xticks([])
-        ax_ts2.set_yticks(np.arange(0, max(time_series[1]), 5))
+        # ax_ts2.set_yticks(np.arange(0, max(time_series[1]), 5))
         ax_ts2.set_xlabel('')
-        ax_ts3.set_yticks(np.arange(0, max(time_series[2]), 5))
+        # ax_ts3.set_yticks(np.arange(0, max(time_series[2]), 5))
         ax_ts3.set_xlabel('Time (hours)')
         # ax_ts3.set_xticks([])
         ax_ts1.set_xlim(0, 24)

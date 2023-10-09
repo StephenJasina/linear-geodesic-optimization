@@ -147,7 +147,7 @@ def get_mesh_output(
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        data_file_name = os.path.join('..', 'data', ip_type ,parameters['data_file_name'])
+        data_file_name = os.path.join('..', 'data' ,parameters['data_file_name'])
         width = parameters['width']
         height = parameters['height']
 

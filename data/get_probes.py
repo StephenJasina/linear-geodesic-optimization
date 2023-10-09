@@ -13,7 +13,7 @@ with open('countries.csv', 'r') as countries_file:
         if row['Region Name'] == continent
     }
 
-with open(f'probes_{ip_type}.csv', 'w') as probes_file:
+with open(f'{ip_type}/probes_{ip_type}.csv', 'w') as probes_file:
     csv_writer = csv.DictWriter(
         probes_file,
         [
