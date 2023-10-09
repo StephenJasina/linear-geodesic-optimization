@@ -12,7 +12,7 @@ if __name__ == '__main__':
     sides = 50
     width = height = sides
     scale = 1.
-    ip_type = 'ipv4'
+    ip_type = 'ipv6'
     leaveout_proportion = 1.
 
     max_iterations = 200
@@ -20,7 +20,7 @@ if __name__ == '__main__':
         initialiazation_file_path = None
         if i != 0:
             directory = os.path.join(
-                project_dir,'out_Europe_hourly', f'graph_{i - 1}_{threshold}',
+                project_dir, ip_type, 'out_Europe_hourly', f'graph_{i - 1}_{threshold}',
                 f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
             )
             iteration = max(
@@ -36,6 +36,6 @@ if __name__ == '__main__':
             lambda_curvature, lambda_smooth, lambda_geodesic,
             initial_radius, sides, scale, leaveout_proportion,
             max_iterations,
-            os.path.join('..', 'out_Europe_hourly'),
+            os.path.join(ip_type, 'out_Europe_hourly'),
             initialiazation_file_path
         )

@@ -56,6 +56,13 @@ def get_graph(
             #     print(graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
             #         [lat_source, long_source],
             #         [lat_target, long_target]))
+            # Check how often the difference is larger than 0
+            if rtt - utility.get_GCD_latency(
+                [lat_source, long_source],
+                [lat_target, long_target]) < 0:
+                print(graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
+                    [lat_source, long_source],
+                    [lat_target, long_target]))
             # Only add edges satisfying the cutoff requirement
             if (
                 rtt - utility.get_GCD_latency(
