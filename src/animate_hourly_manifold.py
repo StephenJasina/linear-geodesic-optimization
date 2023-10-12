@@ -260,7 +260,6 @@ if __name__ == '__main__':
         right = min(left + 1, manifold_count - 1)
         lam = i - left
         z = (1 - lam) * zs[left] + lam * zs[right]
-        # mesh.set_parameters(z)
         z = np.reshape(z, (width, height))
 
         with open(os.path.join(directory, f'graph_{right}_{threshold}', subdirectory_name, 'parameters'), 'rb') as f:
@@ -307,10 +306,7 @@ if __name__ == '__main__':
         print(f"Time taken for iteration {i}: {elapsed_time:.4f} seconds")
 
         return [
-            # get_rectangular_mesh_plot(z, face_colors, None,
-            #               [network_vertices, network_edges, network_curvatures],
-            #               ax),
-            get_mesh_plot(mesh, None, None,
+            get_rectangular_mesh_plot(z, face_colors, None,
                           [network_vertices, network_edges, network_curvatures, network_city],
                           ax),
             ax.text2D(0.05, 0.95, f'{left:02}:{round(lam*60):02}',
