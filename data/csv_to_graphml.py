@@ -11,6 +11,7 @@ import cluster_probes
 import utility
 
 def minimize_id_removal(rtt_violation_list):
+    """Approximately solve the min vertex cover problem."""
     id_counts = {}
 
     for id_source, id_target in rtt_violation_list:
@@ -80,18 +81,15 @@ def get_graph(
             if rtt is None or rtt == '':
                 continue
             rtt = float(rtt)
-            # if graph.nodes[id_source]['city'] == 'Oslo':
-            #     print(graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
-            #         [lat_source, long_source],
-            #         [lat_target, long_target]))
+
             # Check how often the difference is larger than 0
-            if rtt - utility.get_GCD_latency(
+            gcd_latency = utility.get_GCD_latency(
                 [lat_source, long_source],
-                [lat_target, long_target]) < 0:
+                [lat_target, long_target]
+            )
+            if rtt - gcd_latency < 0:
                 rtt_violation_list.append((id_source, id_target))
-                print(id_source, id_target, graph.nodes[id_source], graph.nodes[id_target], rtt, utility.get_GCD_latency(
-                    [lat_source, long_source],
-                    [lat_target, long_target]))
+                print(id_source, id_target, graph.nodes[id_source], graph.nodes[id_target], rtt, gcd_latency)
 
             # Only add edges satisfying the cutoff requirement
             if (
@@ -140,25 +138,30 @@ def get_graph(
 if __name__ == '__main__':
     # Parse arugments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--latencies-file', '-l', metavar='<filename>',
-                        dest='latencies_filename', required=True)
-    parser.add_argument('--ip-type', '-i', metavar='<ip-type>',required=True)
-    # parser.add_argument('--probes-file', '-p', metavar='<filename>',
-    #                     dest='probes_filename', required=True)
-    parser.add_argument('--epsilon', '-e', metavar='<epsilon>',
-                        dest='epsilon', type=int, required=False)
+    parser.add_argument('--probes-file', '-p', type=str, required=True,
+                        dest='probes_filename', metavar='<filename>',
+                        help='Input file containing probes information')
+    parser.add_argument('--latencies-file', '-l', type=str, required=True,
+                        dest='latencies_filename', metavar='<filename>',
+                        help='Input file containing latency information')
+    parser.add_argument('--ip-type', '-i', type=str, required=True,
+                        dest='ip_type', metavar='<ipv4/ipv6>',
+                        help='Type of IP (e.g., ipv4, ipv6).')
+    parser.add_argument('--epsilon', '-e', type=int, required=False,
+                        dest='epsilon', metavar='<epsilon>',
+                        help='Residual threshold')
     parser.add_argument('--output', '-o', metavar='<basename>',
-                        dest='output_basename', required=True)
+                        dest='output_filename', required=True)
     args = parser.parse_args()
     latencies_filename = args.latencies_filename
     ip_type = args.ip_type
-    probes_filename = f'probes_{ip_type}.csv'
+    probes_filename = args.probes_filename
     epsilons = [args.epsilon]
     if args.epsilon is None:
         epsilons = list(range(2, 40))
-    output_basename = args.output_basename
+    output_filename = args.output_filename
 
     for epsilon in epsilons:
         graph = get_graph(probes_filename, latencies_filename, epsilon,
                           300000, 2)
-        nx.write_graphml(graph, f'{output_basename}{epsilon}.graphml')
+        nx.write_graphml(graph, f'output_filename')

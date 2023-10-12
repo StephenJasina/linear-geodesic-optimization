@@ -1,23 +1,26 @@
+import argparse
 import csv
 
 from ripe.atlas.cousteau import AnchorRequest, ProbeRequest, MeasurementRequest
 
-continent = 'Europe'
+def get_countries(continent):
+    # Find all countries in continent
+    with open('countries.csv', 'r') as countries_file:
+        reader = csv.DictReader(countries_file)
+        countries = {
+            row['ISO-alpha2 Code']: row['Country or Area']
+            for row in reader
+            if row['Region Name'] == continent
+        }
 
-ip_type = 'ipv6'
-with open('countries.csv', 'r') as countries_file:
-    reader = csv.DictReader(countries_file)
-    countries = {
-        row['ISO-alpha2 Code']: row['Country or Area']
-        for row in reader
-        if row['Region Name'] == continent
-    }
+    return countries
 
-with open(f'{ip_type}/probes_{ip_type}.csv', 'w') as probes_file:
+def write_probes(countries, probes_file):
     csv_writer = csv.DictWriter(
         probes_file,
         [
-            'id', 'city', 'country', 'latitude', 'longitude',
+            'id', 'anchor_id',
+            'city', 'country', 'latitude', 'longitude',
             'fqdn', ip_type, 'measurement_id'
         ]
     )
@@ -85,6 +88,7 @@ with open(f'{ip_type}/probes_{ip_type}.csv', 'w') as probes_file:
 
             csv_writer.writerow({
                 'id': probe_id,
+                'anchor_id': anchor['id'],
                 'city': city,
                 'country': country_name,
                 'latitude': probe['geometry']['coordinates'][1],
@@ -93,3 +97,33 @@ with open(f'{ip_type}/probes_{ip_type}.csv', 'w') as probes_file:
                 ip_type: address,
                 'measurement_id': measurement_id,
             })
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Get probes in a given continent (or the U.S. by default)')
+
+    parser.add_argument('--ip-type', '-i', type=str, required=True,
+                        dest='ip_type', metavar='<ipv4/ipv6>',
+                        help='Type of IP (e.g., ipv4, ipv6).')
+    parser.add_argument('--continent', '-c', type=str, required=False,
+                        dest='continent', metavar='<continent>',
+                        help='Continent to which to constrain.')
+    parser.add_argument('--output', '-o', type=str, required=False,
+                        dest='probes_filename', metavar='<filename>',
+                        help='Output file for probes information')
+
+    args = parser.parse_args()
+
+    ip_type = args.ip_type
+    continent = args.continent
+    probes_filename = args.probes_filename
+
+    if continent is None:
+        countries = {'US': 'United States of America'}
+    else:
+        countries = get_countries(continent)
+
+    if probes_filename is None:
+        probes_filename = f'{ip_type}/probes_{ip_type}.csv'
+
+    with open(probes_filename, 'w') as probes_file:
+        write_probes(countries, probes_file)

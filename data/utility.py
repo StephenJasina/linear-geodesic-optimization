@@ -23,21 +23,6 @@ def get_spherical_distance(a, b):
     # with floating point
     return np.arccos(min(max(a @ b, -1.), 1.))
 
-# def get_GCD_latency(latlong_a, latlong_a):
-#     """Find the great circle latency between two points on Earth."""
-#     # The following are in meters and meters per second
-#     circumference_earth = 40075016.68557849
-#     radius_earth = 40075016.68557849 / (2 * np.pi)
-#     c = 299792458
-#
-#     # Convert spherical coordinates to Cartesian coordinates
-#     p_a = get_sphere_point(latlong_a)
-#     p_b = get_sphere_point(latlong_b)
-#
-#     # Compute the latency, which is the travel time at the rate of two
-#     # thirds the speed of light
-#     return get_spherical_distance(p_a, p_b) * radius_earth / (2. * c / 3.)
-
 def get_GCD_latency(latlong_a, latlong_b):
     """Find the great circle latency between two points on Earth in ms."""
     # The following are in meters and meters per second
