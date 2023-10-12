@@ -12,7 +12,7 @@ if __name__ == '__main__':
     sides = 50
     width = height = sides
     scale = 1.
-    ip_type = 'ipv6'
+    ip_type = 'ipv4'
     leaveout_proportion = 1.
 
     max_iterations = 200
