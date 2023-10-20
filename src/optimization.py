@@ -35,9 +35,9 @@ def main(data_file_name, latency_file_name,
     width = height = sides
     mesh = RectangleMesh(width, height, scale)
 
-    network_coordinates, network_edges, network_curvatures, network_latencies \
+    network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
         = data.read_graphml(data_file_path, latency_file_path)
-    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8))
+    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8), bounding_box)
     leaveout_count = int(leaveout_proportion * len(network_latencies))
     leaveout_seed = time.monotonic_ns() % (2**31 - 1)
     if leaveout_count > 0:
@@ -99,15 +99,13 @@ def main(data_file_name, latency_file_name,
                             options={'maxiter': maxiter})
 
 if __name__ == '__main__':
-    # data_file_names = [
-    #     os.path.join('graph_US', f'graph{i}.graphml')
-    #     for i in [4, 10, 12, 14, 16, 18, 22]
-    # ]
-    # latency_file_names = [os.path.join('graph_US', 'latencies_US.csv')]
-    data_file_names = [os.path.join('toy', 'two_islands.graphml')]
-    latency_file_names = [os.path.join('toy', 'two_islands_latencies.csv')]
+    data_file_names = [
+        os.path.join('ipv4', 'graph_Europe_clustered', f'graph{i}.graphml')
+        for i in range(1, 2)
+    ]
+    latency_file_names = [os.path.join('ipv4', 'graph_Europe', 'latencies.csv')]
     lambda_curvatures = [1.]
-    lambda_smooths = [0.004]
+    lambda_smooths = [0.004, 0.0004]
     lambda_geodesics = [0.]
     initial_radii = [20.]
     sides = [50]
@@ -120,7 +118,7 @@ if __name__ == '__main__':
         initial_radii, sides, scales,
         leaveout_proportions,
         [1000],
-        [os.path.join('..', 'out_test')]
+        [os.path.join('..', 'out_Europe_clustered')]
     ))
     with multiprocessing.Pool() as p:
         p.starmap(main, arguments)

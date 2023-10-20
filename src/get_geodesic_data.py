@@ -45,10 +45,10 @@ if __name__ == '__main__':
 
     mesh = RectangleMesh(width, height)
 
-    network_coordinates, network_edges, _, _, labels \
+    network_coordinates, bounding_box, network_edges, _, _, labels \
         = data.read_graphml(data_file_name, with_labels=True)
     network_vertices = mesh.map_coordinates_to_support(
-        np.array(network_coordinates), np.float64(0.8))
+        np.array(network_coordinates), np.float64(0.8), bounding_box)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
                               for network_vertex in network_vertices]
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(

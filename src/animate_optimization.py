@@ -48,10 +48,10 @@ if __name__ == '__main__':
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
 
-    network_coordinates, network_edges, _, _ \
+    network_coordinates, bounding_box, network_edges, _, _ \
         = data.read_graphml(data_file_path, None)
     network_vertices = mesh.map_coordinates_to_support(
-        np.array(network_coordinates), np.float64(0.8))
+        np.array(network_coordinates), np.float64(0.8), bounding_box)
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(
         network_vertices, network_edges)
 

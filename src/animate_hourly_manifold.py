@@ -16,7 +16,7 @@ from linear_geodesic_optimization.plot \
     import get_mesh_plot, get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = os.path.join('..', 'out_US_hourly')
+directory = os.path.join('..', 'out_Europe_hourly')
 
 lambda_curvature = 1.
 lambda_smooth = 0.004
@@ -27,11 +27,11 @@ height = 50
 scale = 1.
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
 
-manifold_count = 24
-fps = 6
+manifold_count = 3
+fps = 2
 
 def get_image_data(data_file_path, resolution=100):
-    coordinates, _, _, _ = data.read_graphml(data_file_path)
+    coordinates, _, _, _, _ = data.read_graphml(data_file_path)
     coordinates = np.array(coordinates)
     center = np.mean(coordinates, axis=0)
     scale_factor = 0.8
@@ -70,7 +70,7 @@ def get_image_data(data_file_path, resolution=100):
 
 def investigating_graph(k=3):
     path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/{threshold}/'
-    path_to_probes = f'../data/{ip_type}/'
+    path_to_probes = f'../data/{ip_type}/graph_Europe_hourly/probes.csv'
     path_to_latency = f'../data/{ip_type}/graph_Europe_hourly/'
     # Get all files with .graphml extension
     files = [f for f in os.listdir(path_to_graphml) if f.endswith('.graphml')]
@@ -79,8 +79,7 @@ def investigating_graph(k=3):
     latency_data = {}
 
     # Read Probes.csv file
-    probes = pd.read_csv(os.path.join(path_to_probes, f'probes_{ip_type}.csv'))
-    print(probes)
+    probes = pd.read_csv(path_to_probes)
 
     for file in files:
         graph = nx.read_graphml(os.path.join(path_to_graphml, file))
@@ -193,7 +192,7 @@ if __name__ == '__main__':
         print(f'Reading data from manifold {i}')
 
         current_directory = os.path.join(
-            directory, f'graph_{i}_{threshold}', subdirectory_name
+            directory, f'graph_{i}', subdirectory_name
         )
 
         iteration = max(
@@ -267,9 +266,10 @@ if __name__ == '__main__':
             data_file_name = parameters['data_file_name']
             data_file_path = os.path.join('..', 'data', data_file_name)
             coordinates, network_edges, network_curvatures, \
-            network_latencies, network_nodes, network_city = data.read_graphml(data_file_path, with_labels=True)
+            network_latencies, bounding_box, network_nodes, network_city \
+                = data.read_graphml(data_file_path, with_labels=True)
         coordinates = np.array(coordinates)
-        network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8))
+        network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8), bounding_box)
 
 
         # Update timeseries plot

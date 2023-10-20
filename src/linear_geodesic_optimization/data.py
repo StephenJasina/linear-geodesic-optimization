@@ -37,12 +37,16 @@ def read_graphml(data_file_path: str,
         -> typing.Union[
             typing.Tuple[
                 typing.List[typing.Tuple[np.float64, np.float64]],
+                typing.Optional[typing.Tuple[np.float64, np.float64,
+                                             np.float64, np.float64]],
                 typing.List[typing.Tuple[int, int]],
                 typing.List[np.float64],
                 typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]]
             ],
             typing.Tuple[
                 typing.List[typing.Tuple[np.float64, np.float64]],
+                typing.Optional[typing.Tuple[np.float64, np.float64,
+                                             np.float64, np.float64]],
                 typing.List[typing.Tuple[int, int]],
                 typing.List[np.float64],
                 typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]],
@@ -54,8 +58,8 @@ def read_graphml(data_file_path: str,
 
     Given the path of a graphml file, the optional path of a csv file,
     and an optional boolean, return:
-    * A list of (longitude, latitude) coordinate pairs representing
-      vertices
+    * A list of (x, y) coordinate pairs representing vertices
+    * An optional bounding box aruond the coordinates
     * A list of pairs of indices into the vertex list representing edges
     * A list of (Ollivier-Ricci) curvatures of each of the edges
     * A list of list of pairs representing measured latencies. This is
@@ -66,6 +70,16 @@ def read_graphml(data_file_path: str,
     coordinates: typing.List[typing.Tuple[np.float64, np.float64]] \
         = [mercator(node['long'], node['lat'])
            for node in network.nodes.values()]
+    bounding_box = None
+    if 'long_min' in network.graph:
+        coordiate_min = mercator(network.graph['long_min'],
+                                 network.graph['lat_min'])
+        coordiate_max = mercator(network.graph['long_max'],
+                                 network.graph['lat_max'])
+        bounding_box = (
+            coordiate_min[0], coordiate_max[0],
+            coordiate_min[1], coordiate_max[1]
+        )
     label_to_index = {label: index
                       for index, label in enumerate(network.nodes)}
     network_edges: typing.List[typing.Tuple[int, int]] \
@@ -92,10 +106,10 @@ def read_graphml(data_file_path: str,
                     ))
 
     if with_labels:
-        return coordinates, network_edges, network_curvatures, \
+        return coordinates, bounding_box, network_edges, network_curvatures, \
             network_latencies, list(network.nodes), network_city
     else:
-        return coordinates, network_edges, network_curvatures, \
+        return coordinates, bounding_box, network_edges, network_curvatures, \
             network_latencies
 
 def map_latencies_to_mesh(
@@ -169,10 +183,10 @@ def get_mesh_output(
 
     mesh = RectangleMesh(width, height)
 
-    coordinates, network_edges, _, _, labels, name = read_graphml(data_file_name,
-                                                            with_labels=True)
+    coordinates, bounding_box, network_edges, _, _, labels, name \
+        = read_graphml(data_file_name, with_labels=True)
     coordinates = np.array(coordinates)
-    network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8))
+    network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8), bounding_box)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
                               for network_vertex in network_vertices]
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(

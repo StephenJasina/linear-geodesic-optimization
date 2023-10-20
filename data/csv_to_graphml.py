@@ -58,14 +58,30 @@ def get_graph(
     rtt_violation_list = []
 
     # Get the vertecies
+    lat_min = np.inf
+    lat_max = -np.inf
+    long_min = np.inf
+    long_max = -np.inf
     with open(probes_filename) as probes_file:
         probes_reader = csv.DictReader(probes_file)
         for row in probes_reader:
+            lat = float(row['latitude'])
+            long = float(row['longitude'])
             graph.add_node(
                 row['id'],
                 city=row['city'], country=row['country'],
-                lat=float(row['latitude']), long=float(row['longitude'])
+                lat=lat, long=long
             )
+            lat_min = min(lat_min, lat)
+            lat_max = max(lat_max, lat)
+            long_min = min(long_min, long)
+            long_max = max(long_max, long)
+
+    # Store graph bounding box
+    graph.graph['lat_min'] = lat_min
+    graph.graph['lat_max'] = lat_max
+    graph.graph['long_min'] = long_min
+    graph.graph['long_max'] = long_max
 
     # Get the edges
     with open(latencies_filename) as latencies_file:
@@ -89,7 +105,6 @@ def get_graph(
             )
             if rtt - gcd_latency < 0:
                 rtt_violation_list.append((id_source, id_target))
-                print(id_source, id_target, graph.nodes[id_source], graph.nodes[id_target], rtt, gcd_latency)
 
             # Only add edges satisfying the cutoff requirement
             if (
@@ -105,9 +120,7 @@ def get_graph(
                     graph.add_edge(id_source, id_target, weight=1., rtt=rtt)
 
     # Delete nodes with inconsistent geolocation
-    nodes_to_delete = minimize_id_removal(rtt_violation_list)
-
-    for node in nodes_to_delete:
+    for node in minimize_id_removal(rtt_violation_list):
         graph.remove_node(node)
 
     # Simplify the graph by clustering
@@ -126,12 +139,6 @@ def get_graph(
     for _, _, d in graph.edges(data=True):
         del d['weight']
         del d['rtt']
-
-    # Delete nodes with no edges
-    nodes = list(graph.nodes)
-    for node in nodes:
-        if len(graph.edges(node)) == 0:
-            graph.remove_node(node)
 
     return graph
 
@@ -163,5 +170,6 @@ if __name__ == '__main__':
 
     for epsilon in epsilons:
         graph = get_graph(probes_filename, latencies_filename, epsilon,
-                          300000, 2)
-        nx.write_graphml(graph, f'output_filename')
+                          500000, 2)
+        # graph = get_graph(probes_filename, latencies_filename, epsilon)
+        nx.write_graphml(graph, f'{output_filename}')

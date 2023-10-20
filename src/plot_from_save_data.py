@@ -83,10 +83,10 @@ if __name__ == '__main__':
 
     mesh = RectangleMesh(width, height, scale)
 
-    network_coordinates, network_edges, network_curvatures, network_latencies \
+    network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
         = data.read_graphml(data_file_path, latency_file_path)
     network_vertices = mesh.map_coordinates_to_support(
-        np.array(network_coordinates), np.float64(0.8))
+        np.array(network_coordinates), np.float64(0.8), bounding_box)
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(
         network_vertices, network_edges)
     if leaveout_count > 0:

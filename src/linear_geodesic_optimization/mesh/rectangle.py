@@ -216,7 +216,10 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
     def map_coordinates_to_support(
             self,
             coordinates: npt.NDArray[np.float64],
-            scale_factor: np.float64 = np.float64(1.)
+            scale_factor: np.float64 = np.float64(1.),
+            bounding_box: typing.Optional[
+                typing.Tuple[np.float64, np.float64, np.float64, np.float64]
+            ] = None
     ) -> npt.NDArray[np.float64]:
         """
         Rescale coordinates so that they lie within the mesh support.
@@ -226,6 +229,9 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         support. The `scale_factor` parameter determines what proportion
         of the support is used (0.45 means at most 45% of the width and
         45% of the height is used).
+
+        If a bounding box is passed in, use that to determine
+        [long_min, long_max, lat_min, lat_max].
         """
         # Need this check to avoid out-of-bounds errors if coordinates
         # is empty
@@ -234,8 +240,13 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
         coordinates = coordinates[:, :2]
 
-        coordinates_min = np.amin(coordinates, axis=0)
-        coordinates_max = np.amax(coordinates, axis=0)
+        if bounding_box is None:
+            coordinates_min = np.amin(coordinates, axis=0)
+            coordinates_max = np.amax(coordinates, axis=0)
+        else:
+            coordinates_min = np.array([bounding_box[0], bounding_box[2]])
+            coordinates_max = np.array([bounding_box[1], bounding_box[3]])
+
         divisor = coordinates_max - coordinates_min
         divisor[np.where(divisor == 0.)] = 1.
         divisor = np.amax(divisor)

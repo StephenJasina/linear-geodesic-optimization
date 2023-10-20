@@ -82,4 +82,7 @@ def cluster_graph(graph, eps, min_samples):
                 new_graph.add_edge(cluster_centers[i], cluster_centers[j],
                                    rtt=rtt)
 
+    # Copy other attributes
+    new_graph.graph = dict(graph.graph)
+
     return new_graph

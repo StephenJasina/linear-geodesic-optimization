@@ -36,5 +36,5 @@ def get_GCD_latency(latlong_a, latlong_b):
 
     # Compute the latency, which is the travel time at the rate of two
     # thirds the speed of light
-    return (5 / 4) * 1000 * get_spherical_distance(p_a, p_b) * radius_earth \
+    return 2 * 1000 * get_spherical_distance(p_a, p_b) * radius_earth \
         / (2. * c / 3.)

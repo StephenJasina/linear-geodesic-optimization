@@ -70,7 +70,7 @@ def get_scatter_plot(before_data, after_data, title):
 
     return fig
 
-def get_network_plot(graph):
+def get_network_plot(graph, trim_vertices=False):
     fig, ax = plt.subplots(1, 1, facecolor='#808080')
     ax.set_aspect('equal')
     ax.axis('off')
@@ -86,8 +86,11 @@ def get_network_plot(graph):
         ax.plot([long_u, long_v], [lat_u, lat_v], color=color)
 
     # Plot the vertices
-    for _, data in graph.nodes(data=True):
-        ax.plot(data['long'], data['lat'], '.', ms=4, color='green')
+    for node, data in graph.nodes(data=True):
+        # If trim_vertices is set, then only plot the vertices with
+        # incident edges
+        if not trim_vertices or graph[node]:
+            ax.plot(data['long'], data['lat'], '.', ms=4, color='green')
 
     return fig
 

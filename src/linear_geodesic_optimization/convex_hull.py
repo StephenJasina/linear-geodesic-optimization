@@ -42,6 +42,12 @@ def get_connected_components(
             visited[j] = True
         components.append(component)
 
+    components = [
+        component
+        for component in components
+        if len(component) > 1
+    ]
+
     return components
 
 

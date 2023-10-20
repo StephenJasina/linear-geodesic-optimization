@@ -19,9 +19,10 @@ if __name__ == '__main__':
     data_file_path = os.path.join('..', 'data', data_file_name)
     data_name, _ = os.path.splitext(os.path.basename(data_file_name))
 
-    coordinates, network_edges, network_curvatures, network_latencies = data.read_graphml(data_file_path)
+    coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
+        = data.read_graphml(data_file_path)
     coordinates = np.array(coordinates)
-    network_vertices = mesh.map_coordinates_to_support(coordinates, scale_factor)
+    network_vertices = mesh.map_coordinates_to_support(coordinates, scale_factor, bounding_box)
 
     print('Edit the generateGraph and createMap functions in script.js')
     print('\n' + '=' * 80 + '\n')

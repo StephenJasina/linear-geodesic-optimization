@@ -19,7 +19,7 @@ width = 20
 height = 20
 mesh = RectangleMesh(width, height, extent=1.)
 
-coordinates, network_edges, network_curvatures, network_latencies \
+coordinates, _, network_edges, network_curvatures, _ \
     = data.read_graphml(
         os.path.join('..', 'data', 'graph_US', 'graph16.graphml')
     )
