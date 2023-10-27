@@ -100,12 +100,12 @@ def main(data_file_name, latency_file_name,
 
 if __name__ == '__main__':
     data_file_names = [
-        os.path.join('ipv4', 'graph_Europe_clustered', f'graph{i}.graphml')
-        for i in range(1, 2)
+        os.path.join('ipv4', 'graph_Europe_clustered_fine_threshold', f'graph_{epsilon:.2f}.graphml')
+        for epsilon in np.arange(1., 15.25, 0.25)
     ]
     latency_file_names = [os.path.join('ipv4', 'graph_Europe', 'latencies.csv')]
     lambda_curvatures = [1.]
-    lambda_smooths = [0.004, 0.0004]
+    lambda_smooths = [0.0004]
     lambda_geodesics = [0.]
     initial_radii = [20.]
     sides = [50]
