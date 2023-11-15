@@ -13,7 +13,7 @@ let contcolor = 0xff0000;
 
 let T = THREE;
 
-let showHoverGraph = true;
+let showHoverGraph = false;
 
 let vertexCount = 0;
 let edgeCount = 0;
@@ -295,15 +295,15 @@ window.onload = function() {
 
   let animate = function() {
     if (showMap.checked) {
-      if (!showMapPrevious) {
-        // For now, disable opacity changes
-        // opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-        // calcOpacityMap(opacityMap, vertices, current_edges, map);
-        opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(1.0));
+      // if (!showMapPrevious) {
+      //   // For now, disable opacity changes
+      //   // opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
+      //   // calcOpacityMap(opacityMap, vertices, current_edges, map);
+      //   opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(1.0));
 
-        aMap = createAndUpdateAlphaMapD3(opacityMap);
-      }
-      plane.material[0].alphaMap = aMap;
+      //   aMap = createAndUpdateAlphaMapD3(opacityMap);
+      // }
+      // plane.material[0].alphaMap = aMap;
       plane.material[0].map = mapTexture;
       texture = mapTexture;
       ctx = mapCanvas.getContext("2d");
@@ -404,7 +404,7 @@ window.onload = function() {
 
     linesCleared = false;
 
-    // Set plane vertices" height
+    // Set plane vertices' height
     heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.));
 
     // Draw point on surface texture
@@ -703,8 +703,6 @@ function helpClick(event) {
 }
 
 function wheelEvent(event) {
-  olMap.updateSize();
-
   if (document.elementFromPoint(event.clientX, event.clientY).tagName != "CANVAS") {
     return;
   }
@@ -1305,12 +1303,11 @@ function createMap() {
     renderer: "canvas",
     layers: [
       new ol.layer.Tile({
-        source: new ol.source.Stamen({
-          layer: "terrain"
-        }),
+        source: new ol.source.OSM(),
       })
     ],
     view: new ol.View({
+      projection: 'EPSG:3857',
       center: ol.proj.fromLonLat(mapCenter),
       resolution: circumferenceEarth / mapResolution / mapZoomFactor
     })
