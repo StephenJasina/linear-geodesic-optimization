@@ -1,0 +1,18 @@
+% As input, we are given a directed (multi-)graph \(G = \pof{V_G, E_G}\), where each vertex \(s \in V_G \subseteq S^2\) is a geographic position, and each edge \(e = \pof{s, s'}\) has an associated (Olivier-Ricci) curvature \(R_e \in \ooint{-2, 1}\) and an associated latency \(t_e \in \mathbb{R}_{\ge 0}\).
+
+	% We want to return a surface in \(\mathbb{R}^3\) that is the graph of a function \(\rho : S^2 \to \mathbb{R}_{> 0}\) whose minimal geodesics \(g_e\) between \(\pof{s, \rho\pof{s}}\) and \(\pof{s', \rho\pof{s'}}\) have length \(\phi_e\) that is in a linear relationship with the latency.
+
+% The strategy to realize this idea is to create a mesh \(M = \pof{V_M, E_M}\) supported on a subset of \(S^2\). We use a standard \href{https://en.wikipedia.org/wiki/Doubly_connected_edge_list}{half-edge} setup, so that \(E_M\) is a set of ordered pairs (edges are directed). Let \(P\) be the support. Then for each \(s_i \in P\), we want to assign a \(\rho_i \in \mathbb{R}_{> 0}\), which in turn gives a point \(v_i = \pof{s_i, \rho_i} \in V_M\). This setup is made explicit in \texttt{mesh/sphere.py}. Note that there is an assumption that if we project \(V_M\) onto \(S^2\), then that set contains \(V_G\). In practice, we can just use a fine enough mesh and map the vertices in \(V_G\) to their nearest projections.
+
+% A similar setup is found in \texttt{mesh/rectangle.py}, where we use \(\ccint{0, 1}^2\) instead of \(S^2\). In general, this setup just requires that the position of any mesh vertex is controlled by a single scalar parameter.
+
+\section{Inputs and Outputs}
+As input, we take an undirected graph \(G = \pof{V_G, E_G}\). Each vertex \(s \in V_G\) represents a node in a network and is annotated with location information. We therefore can compute quantities like \(\GCL\pof{s, s'}\), the Great Circle Latency between \(s\) and \(s'\).
+
+Additionally, an edge \(\cof{s, s'} \in E_G\) has an associated measured Round Trip Time \(\RTT\pof{s, s'}\). In practice, latencies are collected for almost every pair of nodes, so \(G\) is nearly complete.
+
+We also take several hyperparameters. First is the residual latency threshold \(\epsilon\). Next are weighting parameters for each component of the loss function. Finally, there are a few hyperparameters describing the output.
+
+We return a triangle mesh \(M = \pof{V_M, E_M}\), stored in a doubly connected edge list format. As hinted at above, the actual vertex-edge connectivity is to be selected before running the optimization. That said, each vertex has coordinates in \(\mathbb{R}^3\) which are to be chosen by the optimization algorithm. For the purposes of the algorithm and mesh regularity, we parameterize each vertex position with a single number. In our current implementation, each vertex \(v \in V_M\) can be broken into parts as \(\pof{p_v, z_v}\), where \(p_v\) is a latitude-longitude pair, and \(z_v\) is an altitude. The optimization algorithm then determines the best \(z\) values.
+
+Note that the above parameterization implies we can map vertices \(s \in V_G\) to positions on the mesh \(\pi\pof{s}\). For the purposes of the following computations, assume the stronger statement \(\pi\pof{s} \in V_M\). While this assumption is not strictly necessary, it significantly simplifies the geodesic distance computation. Furthermore, provided our mesh is fine enough, the stronger assumption will lead to minimal numerical error.

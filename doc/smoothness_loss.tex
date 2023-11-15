@@ -2,16 +2,18 @@
 
 % [This](https://www.cad-journal.net/files/vol_4/CAD_4(5)_2007_607-617.pdf) gives a good overview.
 
+\section{Smoothness Loss}
+
 We will define the following: \begin{center}\begin{tabular}{r|l}
-	\(\mathcal{L}_{\mathrm{smooth}}\pof{M}\) & A discrete approximation to the Dirichlet energy of \(\kappa\) on \(M\)
+	\(\mathcal{L}_{\mathrm{smooth}}\pof{M}\) & The surface area independent \href{http://graphics.berkeley.edu/papers/Joshi-EMC-2007-06/Joshi-EMC-2007-06.pdf}{\(\text{MVS}_{\text{cross}}\) energy}
 \end{tabular}\end{center}
 
-\subsubsection{Forward Computation}
-Following \href{https://www.cs.cmu.edu/~kmcrane/Projects/Other/SwissArmyLaplacian.pdf#page=28}{this tutorial}, we have \begin{align*}
-	\mathcal{L}_{\mathrm{smooth}}\pof{M} &\propto -\kappa^\intercal L_C^{\text{N}}\kappa.
-\end{align*} In terms of scaling, we divide by the surface area of the mesh when \(\rho = 0\) (that is, the area of a flat plane, a sphere, or similar).
+\subsection{Forward Computation}
+We use the  \begin{align*}
+	\mathcal{L}_{\mathrm{smooth}}\pof{M} &\propto -\pof{\kappa^+}^\intercal L_C^{\text{N}}\kappa^+ - \pof{\kappa^-}^\intercal L_C^{\text{N}}\kappa^-.
+\end{align*} In terms of scaling, we divide by the surface area of the mesh when \(z = 0\) (that is, the area of a flat plane, a sphere, or similar).
 
-\subsubsection{Reverse Computation}
-Differentiating, \begin{align*}
-	\frac{\partial\pof{\mathcal{L}_{\mathrm{smooth}}\pof{M}}}{\partial\rho_\ell} &\propto -\pof{\frac{\partial\kappa}{\rho_\ell}}^\intercal L_C^{\text{N}}\kappa - \kappa^\intercal\frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}\kappa - \kappa^\intercal L_C^{\text{N}}\frac{\partial\kappa}{\rho_\ell}.
+\subsection{Reverse Computation}
+Differentiating, and using matrix symmetry, \begin{align*}
+	\frac{\partial\pof{\mathcal{L}_{\mathrm{smooth}}\pof{M}}}{\partial z_\ell} &\propto -\pof{\kappa^+}^\intercal\pof{\frac{\partial L_C^{\text{N}}}{\partial z_\ell}\kappa^+ + 2L_C^{\text{N}}\frac{\partial\kappa^+}{\partial z_\ell}} - \pof{\kappa^-}^\intercal\pof{\frac{\partial L_C^{\text{N}}}{\partial z_\ell}\kappa^- + 2L_C^{\text{N}}\frac{\partial\kappa^-}{\partial z_\ell}}.
 \end{align*}

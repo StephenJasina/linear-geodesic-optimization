@@ -1,29 +1,29 @@
-Some mesh notation first. If \(i\) and \(j\) are two indices vertices for which \(\pof{v_i, v_j} \in E_M\), let \(c\pof{i, j}\) be the index such that \(v_i \to v_j \to v_{c\pof{i, j}}\) traces a triangle counterclockwise. Note that this index exists and is unique assuming we have a mesh without boundary. On a mesh with boundary, if no \(c\pof{i, j}\) exists, then the half-edge \(\pof{v_i, v_j}\) lies on the boundary.
+\section{Laplacian}
+
+Here and in the subsequent sections, computations can take serious advantage of vectors and matrices. Therefore, while notationally inelegant, we will assign indices to the vertices in \(V_M\).
+
+On that note, if \(i\) and \(j\) are two indices for which \(\pof{v_i, v_j} \in E_M\), let \(\nxt\pof{i, j}\) be the index such that \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) traces a triangle counterclockwise. Note that this index exists and is unique assuming we have a mesh without boundary. On a mesh with boundary, if no \(\nxt\pof{i, j}\) exists, then the half-edge \(\pof{v_i, v_j}\) lies on the boundary.
 
 We also write \(\partial M\) to represent the boundary of our mesh. Abusing notation, we can write things like \(v_i \in \partial M\) or \(\pof{v_i, v_j} \in \partial M\).
 
 We define the following variables: \begin{center}\begin{tabular}{r|l}
-	\(N_{i, j}\) & Outward normal of triangle \(v_i \to v_j \to v_{c\pof{i, j}}\) \\ \hline
-	\(A_{i, j}\) & Area of triangle \(v_i \to v_j \to v_{c\pof{i, j}}\) \\ \hline
+	\(N_{i, j}\) & Outward normal of triangle \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) \\ \hline
+	\(A_{i, j}\) & Area of triangle \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) \\ \hline
 	\(D_{i, j}\) & Vertex triangle areas; diagonal \\ \hline
-	\(\theta_{i, j}\) & Measure of \(\angle v_iv_{c\pof{i, j}}v_j\) \\ \hline
-	\(L_C^{\text{N}}\) & Cotangent operator with \href{https://en.wikipedia.org/wiki/Neumann_boundary_condition}{zero-Neumann boundary condition} \\ \hline
-	\(L_C^{\text{D}}\) & Cotangent operator with \href{https://en.wikipedia.org/wiki/Dirichlet_boundary_condition}{zero-Dirichlet boundary condition} \\ \hline
-	\(L_C\) & Cotangent operator in the no-boundary case; sparse
+	\(\theta_{i, j}\) & Measure of \(\angle v_iv_{\nxt\pof{i, j}}v_j\) \\ \hline
+	\(L_C^{\text{N}}\) & Cotangent operator with zero-Neumann boundary condition \\ \hline
+	\(L_C^{\text{D}}\) & Cotangent operator with zero-Dirichlet boundary condition
 \end{tabular}\end{center}
 
-\subsubsection{Forward Computation}
-
-We have the following (standard) definition of the Laplace-Beltrami operator on a mesh:
-
-\begin{align*}
-	N_{i, j} &= \pof{v_i - v_{c\pof{i, j}}} \times \pof{v_j - v_{c\pof{i, j}}}, \\
+\subsection{Forward Computation}
+We have the following (standard) definition of the Laplace-Beltrami operator on a mesh: \begin{align*}
+	N_{i, j} &= \pof{v_i - v_{\nxt\pof{i, j}}} \times \pof{v_j - v_{\nxt\pof{i, j}}}, \\
 	A_{i, j} &= \frac{1}{2}\norm{N_{i, j}}_2, \\
 	D_{i, j} &= \begin{cases}
 		\frac{1}{3}{\displaystyle\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}A_{i, k}} & \text{if \(i = j\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\cot\pof{\theta_{i, j}} &= \frac{\pof{v_i - v_{c\pof{i, j}}} \cdot \pof{v_j - v_{c\pof{i, j}}}}{2A_{i, j}}, \\
+	\cot\pof{\theta_{i, j}} &= \frac{\pof{v_i - v_{\nxt\pof{i, j}}} \cdot \pof{v_j - v_{\nxt\pof{i, j}}}}{2A_{i, j}}, \\
 	\pof{L_C^{\text{N}}}_{i, j} &= \begin{cases}
 		\frac{1}{2}\cot\pof{\theta_{i, j}} & \text{if \(\pof{v_i, v_j} \in \partial M\)}, \\
 		\frac{1}{2}\cot\pof{\theta_{j, i}} & \text{if \(\pof{v_j, v_i} \in \partial M\)}, \\
@@ -38,46 +38,39 @@ We have the following (standard) definition of the Laplace-Beltrami operator on 
 	\end{cases}
 \end{align*}
 
-Flipping our attention to meshes without boundary, the two definitions above coincide, so we can write \[L_C = L_C^{\text{Neumann}} = L_C^{\text{Dirichlet}}.\] We take special note of this case as this is what is described in great detail in the original heat method paper.
-
-\subsubsection{Reverse Computation}
-
-For the ease of notation, assume that we are using the spherical setup, so \(v_\ell = \rho_\ell s_\ell\).
-
-We compute
-
-\begin{align*}
-	\frac{\partial v_i}{\partial \rho_\ell} &= \begin{cases}
-		s_i & \text{if \(\ell = i\)}, \\
+\subsection{Reverse Computation}
+We compute \begin{align*}
+	\frac{\partial v_i}{\partial z_\ell} &= \begin{cases}
+		e_3 & \text{if \(\ell = i\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\frac{\partial N_{i, j}}{\partial \rho_\ell} &= \begin{cases}
-		\pof{v_{c\pof{i, j}} - v_j} \times \frac{\partial v_\ell}{\partial \rho_\ell} & \text{if \(\ell = i\)}, \\
-		\pof{v_i - v_{c\pof{i, j}}} \times \frac{\partial v_\ell}{\partial \rho_\ell} & \text{if \(\ell = j\)}, \\
-		\pof{v_j - v_i} \times \frac{\partial v_\ell}{\partial \rho_\ell} & \text{if \(\ell = c\pof{i, j}\)}, \\
+	\frac{\partial N_{i, j}}{\partial z_\ell} &= \begin{cases}
+		\pof{v_{\nxt\pof{i, j}} - v_j} \times \frac{\partial v_\ell}{\partial z_\ell} & \text{if \(\ell = i\)}, \\
+		\pof{v_i - v_{\nxt\pof{i, j}}} \times \frac{\partial v_\ell}{\partial z_\ell} & \text{if \(\ell = j\)}, \\
+		\pof{v_j - v_i} \times \frac{\partial v_\ell}{\partial z_\ell} & \text{if \(\ell = \nxt\pof{i, j}\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\frac{\partial A_{i, j}}{\partial \rho_\ell} &= \frac{1}{4A_{i, j}}N_{i, j} \cdot \frac{\partial N_{i, j}}{\partial \rho_\ell}, \\
-	\pof{\frac{\partial D}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
-		\frac{1}{3}{\displaystyle\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\frac{\partial A_{i, k}}{\partial \rho_\ell}} & \text{if \(i = j\)}, \\
+	\frac{\partial A_{i, j}}{\partial z_\ell} &= \frac{1}{4A_{i, j}}N_{i, j} \cdot \frac{\partial N_{i, j}}{\partial z_\ell}, \\
+	\pof{\frac{\partial D}{\partial z_\ell}}_{i, j} &= \begin{cases}
+		\frac{1}{3}{\displaystyle\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\frac{\partial A_{i, k}}{\partial z_\ell}} & \text{if \(i = j\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} &= \begin{cases}
-		\displaystyle\frac{\pof{v_j - v_{c\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = i\)}, \\
-		\displaystyle\frac{\pof{v_i - v_{c\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = j\)}, \\
-		\displaystyle\frac{\pof{2v_{c\pof{i, j}} - v_i - v_j} \cdot \frac{\partial v_\ell}{\partial \rho_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial \rho_\ell}}{2A_{i, j}} & \text{if \(\ell = c\pof{i, j}\)}, \\
+	\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{i, j}} &= \begin{cases}
+		\displaystyle\frac{\pof{v_j - v_{\nxt\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial z_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial z_\ell}}{2A_{i, j}} & \text{if \(\ell = i\)}, \\
+		\displaystyle\frac{\pof{v_i - v_{\nxt\pof{i, j}}} \cdot \frac{\partial v_\ell}{\partial z_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial z_\ell}}{2A_{i, j}} & \text{if \(\ell = j\)}, \\
+		\displaystyle\frac{\pof{2v_{\nxt\pof{i, j}} - v_i - v_j} \cdot \frac{\partial v_\ell}{\partial z_\ell} - 2\cot\pof{\theta_{i, j}}\frac{\partial A_{i, j}}{\partial z_\ell}}{2A_{i, j}} & \text{if \(\ell = \nxt\pof{i, j}\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\pof{\frac{\partial L_C^{\text{N}}}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
-		\frac{1}{2}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} & \text{if \(\pof{v_i, v_j} \in \partial M\)}, \\
-		\frac{1}{2}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}} & \text{if \(\pof{v_j, v_i} \in \partial M\)}, \\
-		\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}, \pof{v_j, v_i} \in E_M\)}, \\
-		-\frac{1}{2}\pof{\displaystyle\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, k}} + \sum_{\substack{k \\ \pof{v_k, v_i} \in E_M}}\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
+	\pof{\frac{\partial L_C^{\text{N}}}{\partial z_\ell}}_{i, j} &= \begin{cases}
+		\frac{1}{2}\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{i, j}} & \text{if \(\pof{v_i, v_j} \in \partial M\)}, \\
+		\frac{1}{2}\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{j, i}} & \text{if \(\pof{v_j, v_i} \in \partial M\)}, \\
+		\frac{1}{2}\pof{\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial z_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j}, \pof{v_j, v_i} \in E_M\)}, \\
+		-\frac{1}{2}\pof{\displaystyle\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}}\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{i, k}} + \sum_{\substack{k \\ \pof{v_k, v_i} \in E_M}}\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{k, i}}} & \text{if \(i = j\)}, \\
 		0 & \text{otherwise},
 	\end{cases} \\
-	\pof{\frac{\partial L_C^{\text{D}}}{\partial \rho_\ell}}_{i, j} &= \begin{cases}
-		\frac{1}{2}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j} \in E_M\), \(v_i \not\in \partial M\), and \(v_j \not\in \partial M\)}, \\
-		-\frac{1}{2}{\displaystyle\sum_{\substack{k \not\in \partial M \\ \pof{v_i, v_k} \in E_M \\ \pof{v_k, v_i} \in E_M}}\pof{\frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{i, k}} + \frac{\partial}{\partial \rho_\ell}\cot\pof{\theta_{k, i}}}} & \text{if \(i = j\) and \(v_i \not\in \partial M\)}, \\
+	\pof{\frac{\partial L_C^{\text{D}}}{\partial z_\ell}}_{i, j} &= \begin{cases}
+		\frac{1}{2}\pof{\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{i, j}} + \frac{\partial}{\partial z_\ell}\cot\pof{\theta_{j, i}}} & \text{if \(\pof{v_i, v_j} \in E_M\), \(v_i \not\in \partial M\), and \(v_j \not\in \partial M\)}, \\
+		-\frac{1}{2}{\displaystyle\sum_{\substack{k \not\in \partial M \\ \pof{v_i, v_k} \in E_M \\ \pof{v_k, v_i} \in E_M}}\pof{\frac{\partial}{\partial z_\ell}\cot\pof{\theta_{i, k}} + \frac{\partial}{\partial z_\ell}\cot\pof{\theta_{k, i}}}} & \text{if \(i = j\) and \(v_i \not\in \partial M\)}, \\
 		0 & \text{otherwise}.
 	\end{cases}
 \end{align*}

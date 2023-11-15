@@ -1,27 +1,32 @@
-We will define the following in this section: \begin{center}\begin{tabular}{r|l}
-	\(\widetilde{\phi}\) & Geodesic distances corresponding to edges in \(E_G\) \\ \hline
-	\(\widetilde{d}\) & Centered version of \(\widetilde{\phi}\) \\ \hline
-	\(d\) & Normalized and centered version of \(\widetilde{\phi}\) \\ \hline
-	\(\beta\) & The least squares linear estimator between \(d\) and \(t\) \\ \hline
-	\(\mathcal{L}_{\mathrm{geodesic}}\pof{M}\) & The sum of squared residuals when using \(\beta\) as an estimator, scaled to be unitless
-\end{tabular}\end{center} In this and the following sections, we will abuse notation a bit and write things like \(\phi_e\) to mean \(\phi_{i, j}\), where \(e = \pof{i, j} \in E_G\).
+\section{Geodesic Loss}
 
-\subsubsection{Forward Computation}
+We will define the following in this section: \begin{center}\begin{tabular}{r|l}
+	\(t\) & Vector of RTTs in \(\mathbb{R}^{\abs{E_G}}\) \\ \hline
+	\(\mathbf{1}\) & Vector of all ones in \(\mathbb{R}^{\abs{E_G}}\) \\ \hline
+	\(\nu_0\) & Intermediate value \\ \hline
+	\(\nu_1\) & Intermediate value \\ \hline
+	\(\delta\) & Intermediate value \\ \hline
+	\(\beta_0\) & The constant term in the least squares linear estimator between \(\phi\) and \(t\) \\ \hline
+	\(\beta_1\) & The linear term in the least squares linear estimator between \(\phi\) and \(t\) \\ \hline
+	\(\mathcal{L}_{\mathrm{geodesic}}\pof{M}\) & The sum of squared residuals when using \(\beta\) as an estimator, scaled to be unitless
+\end{tabular}\end{center}
+
+\subsection{Forward Computation}
 We make the following computations: \begin{align*}
-	\widetilde{\phi}_e &= \phi_e \text{ when \(e \in E_G\)}, \\
-	\widetilde{d} &= \widetilde{\phi} - \frac{1}{\abs{E_G}}\pof{\widetilde{\phi} \cdot \mathbf{1}}\mathbf{1}, \\
-	d &= \frac{1}{\sqrt{\frac{1}{\abs{E_G}}\widetilde{d} \cdot \widetilde{d}}}\widetilde{d}, \\
-	\beta_0 &= \frac{1}{\abs{E_G}}t \cdot \mathbf{1}, \\
-	\beta_1 &= \frac{1}{\abs{E_G}}t \cdot d, \\
-	\mathcal{L}_{\mathrm{geodesic}}\pof{M} &= \frac{1}{\abs{E_G}\Var\pof{t}}\norm{t - \pof{\beta_0\mathbf{1} + \beta_1d}}_2^2. \\
+	\nu_0 &= \pof{\mathbf{1}^\intercal t}\pof{\phi^\intercal\phi} - \pof{t^\intercal\phi}\pof{\mathbf{1}^\intercal\phi}, \\
+	\nu_1 &= \abs{E_G}t^\intercal\phi - \pof{\mathbf{1}^\intercal\phi}\pof{\mathbf{1}^\intercal t}, \\
+	\delta &= \abs{E_G}\phi^\intercal\phi - \pof{\mathbf{1}^\intercal\phi}^2, \\
+	\beta_0 &= \frac{\nu_0}{\delta}, \\
+	\beta_1 &= \frac{\nu_1}{\delta}, \\
+	\mathcal{L}_{\mathrm{geodesic}}\pof{M} &= \frac{1}{t^\intercal t}\norm{t - \pof{\beta_0\mathbf{1} + \beta_1\phi}}_2^2. \\
 \end{align*}
 
-\subsubsection{Reverse Computation}
+\subsection{Reverse Computation}
 The partials of the above quantities are as follows: \begin{align*}
-	\frac{\partial\widetilde{\phi}_e}{\partial\rho_\ell} &= \frac{\partial\phi_e}{\partial\rho_\ell}, \\
-	\frac{\partial \widetilde{d}}{\partial \rho_\ell} &= \frac{\partial\widetilde{\phi}}{\partial\rho_\ell} - \frac{1}{\abs{E_G}}\pof{\frac{\partial\widetilde{\phi}}{\partial\rho_\ell} \cdot \mathbf{1}}\mathbf{1}, \\
-	\frac{\partial d}{\partial\rho_\ell} &= \frac{1}{\sqrt{\frac{1}{\abs{E_G}}\widetilde{d} \cdot \widetilde{d}}}\pof{\frac{\partial\widetilde{d}}{\partial\rho_\ell} - \frac{1}{\abs{E_G}}\pof{d \cdot \frac{\partial\widetilde{d}}{\partial\rho_\ell}}d}, \\
-	\frac{\partial\beta_0}{\partial\rho_\ell} &= 0, \\
-	\frac{\partial\beta_1}{\partial\rho_\ell} &= \frac{1}{\abs{E_G}}t \cdot \frac{\partial d}{\partial\rho_\ell},\\
-	\frac{\partial\pof{\mathcal{L}_{\mathrm{geodesic}}\pof{M}}}{\partial\rho_\ell} &= -\frac{2}{\abs{E_G}\Var\pof{t}}\pof{t - \pof{\beta_0\mathbf{1} + \beta_1d}} \cdot \pof{\frac{\partial\beta_1}{\partial\rho_\ell}d + \beta_1\frac{\partial d}{\partial\rho_\ell}}.
+	\frac{\partial\nu_0}{\partial z_\ell} &= \pof{2\pof{\mathbf{1}^\intercal t}\phi - \pof{\mathbf{1}^\intercal\phi}t - \pof{t^\intercal\phi}\mathbf{1}}^\intercal\frac{\partial\phi}{\partial z_\ell}, \\
+	\frac{\partial\nu_1}{\partial z_\ell} &= \pof{\abs{E_G} - \pof{\mathbf{1}^\intercal t}\mathbf{1}}^\intercal\frac{\partial\phi}{\partial z_\ell}, \\
+	\frac{\partial\delta}{\partial z_\ell} &= 2\abs{E_G}\phi^\intercal\frac{\partial\phi}{\partial z_\ell}, \\
+	\frac{\partial\beta_0}{\partial z_\ell} &= \frac{1}{\delta}\pof{\frac{\partial\nu_0}{\partial z_\ell} - \beta_0\frac{\partial\delta}{\partial z_\ell}}, \\
+	\frac{\partial\beta_1}{\partial z_\ell} &= \frac{1}{\delta}\pof{\frac{\partial\nu_1}{\partial z_\ell} - \beta_1\frac{\partial\delta}{\partial z_\ell}}, \\
+	\frac{\partial\pof{\mathcal{L}_{\mathrm{geodesic}}\pof{M}}}{\partial z_\ell} &= -\frac{2}{t^\intercal t}\pof{t - \pof{\beta_0\mathbf{1} + \beta_1\phi}}\pof{\frac{\partial\beta_1}{\partial z_\ell}\phi + \beta_1\frac{\partial\phi}{\partial z_\ell}}.
 \end{align*}

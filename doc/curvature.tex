@@ -2,8 +2,10 @@
 % https://libigl.github.io/libigl-python-bindings/tut-chapter1/
 % http://multires.caltech.edu/pubs/diffGeoOps.pdf
 
+\section{Curvature}
 We will define the following: \begin{center}\begin{tabular}{r|l}
-	\(B_{\epsilon}\pof{e}\) & A ``fat edge'' on the sphere around \(e\) \\ \hline
+	\(E_G^\epsilon\) & The set of network edges at threshold \(\epsilon\) \\ \hline
+	\(\kappa^\text{R}_e\) & The Ollivier-Ricci curvature of the edge \(E_G^\epsilon\) \\ \hline
 	\(\widetilde{\kappa^\text{G}}_i\) & The discrete Gaussian curvature at \(v_i\), scaled by vertex area \\ \hline
 	\(\kappa^\text{G}_i\) & The discrete Gaussian curvature at \(v_i\) \\ \hline
 	\(\widetilde{N}_i\) & An outward pointing vector at \(v_i\) \\ \hline
@@ -11,9 +13,14 @@ We will define the following: \begin{center}\begin{tabular}{r|l}
 	\(\kappa^\text{H}_i\) & The mean curvature at \(v_i\) \\ \hline
 	\(\kappa^+_i\) & The first principal curvature at \(v_i\) \\ \hline
 	\(\kappa^-_i\) & The second principal curvature at \(v_i\)
-\end{tabular}\end{center} These quantities can be computed following \href{https://libigl.github.io/libigl-python-bindings/tut-chapter1/}{this tutorial}\footnote{Technically, the mean curvature is off by a factor of \(2\) here, but this aligns with the mean curvature of the surface we're estimating, in the sense that \(\kappa^{\text{H}}\) is the mean of \(\kappa^+\) and \(\kappa^-\).}.
+\end{tabular}\end{center}
 
-\subsubsection{Forward Computation}
+\subsection{Ollivier-Ricci Curvature}
+We use the \href{https://github.com/saibalmars/GraphRicciCurvature/}{GraphRicciCurvature} library to compute the Ollivier-Ricci curvatures of the edges of the graph \(\pof{V_G, E_G^\epsilon}\). Here, \(E_G^\epsilon \subseteq E_G\) is the set of edges whose RTTs are at most \(\epsilon\) milliseconds higher than their GCLs.
+
+Note that \(\kappa^\text{R}_e\) is then only defined for edges in \(E_G^\epsilon\), as opposed to being defined for all edges in \(E_G\).
+
+\subsection{Forward Computation}
 For these computations (particularly the mean curvature one), consider \(v\) as a matrix of vertex positions, where each row corresponds to a vertex. We will also use \(e_i\) to denote the \(i\)th standard basis vector. We have \begin{align*}
 	\theta_{i, j} &= \arctan\pof{\frac{1}{\cot\pof{\theta_{i, j}}}} \bmod \pi, \\
 	\widetilde{\kappa^\text{G}}_i &= 2\pi - \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \theta_{k, c\pof{i, k}}, \\
@@ -25,14 +32,14 @@ For these computations (particularly the mean curvature one), consider \(v\) as 
 	\kappa^-_i &= \kappa^{\text{H}}_i - \sqrt{\pof{\kappa^{\text{H}}_i}^2 - \kappa^{\text{G}}_i}.
 \end{align*}
 
-\subsubsection{Reverse Computation}
+\subsection{Reverse Computation}
 Differentiating, \begin{align*}
-	\frac{\partial\theta_{i, j}}{\partial\rho_\ell} &= -\frac{\partial\cot\pof{\theta_{i, j}}}{\partial \rho_\ell} \cdot \frac{1}{1 + \cot^2\pof{\theta_{i, j}}}, \\
-	\frac{\partial\widetilde{\kappa^\text{G}}_i}{\partial\rho_\ell} &= -\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial\theta_{k, c\pof{i, k}}}{\partial\rho_\ell}, \\
-	\frac{\partial\kappa^\text{G}}{\partial\rho_\ell} &= D^{-1}\pof{\frac{\dif\widetilde{\kappa^\text{G}}}{\partial\rho_\ell} - \frac{\dif D}{\partial\rho_\ell}\kappa^\text{G}}, \\
-	\frac{\partial\widetilde{N}_i}{\partial\rho_\ell} &= \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial N_{i, k}}{\partial\rho_\ell}, \\
-	\frac{\partial\widetilde{\kappa^\text{H}}_i}{\partial\rho_\ell} &= -\frac{1}{2}e_i^\intercal D^{-1}\pof{\pof{\frac{\partial L_C^{\text{N}}}{\partial\rho_\ell} - \frac{\partial D}{\partial\rho_\ell}D^{-1}L_C^{\text{N}}}v + L_C^{\text{N}}\frac{\partial v}{\partial\rho_\ell}}, \\
-	\frac{\partial\kappa_i^\text{H}}{\partial\rho_\ell} &= \frac{\sgn\pof{\widetilde{N}_i^\intercal\widetilde{\kappa^\text{H}}_i}}{\norm{\widetilde{\kappa^\text{H}}_i}_2}\widetilde{\kappa^\text{H}}_i^\intercal\frac{\partial\widetilde{\kappa^\text{H}}_i}{\partial\rho_\ell}, \\
-	\frac{\partial\kappa^+_i}{\partial\rho_\ell} &= \frac{2\kappa^+_i\frac{\partial\kappa^{\text{H}}_i}{\partial\rho_i} - \frac{\partial\kappa^{\text{G}}_i}{\partial\rho_i}}{\kappa^+_i - \kappa^-_i}, \\
-	\frac{\partial\kappa^-_i}{\partial\rho_\ell} &= \frac{\frac{\partial\kappa^{\text{G}}_i}{\partial\rho_i} - 2\kappa^-_i\frac{\partial\kappa^{\text{H}}_i}{\partial\rho_i}}{\kappa^+_i - \kappa^-_i}.
+	\frac{\partial\theta_{i, j}}{\partial z_\ell} &= -\frac{\partial\cot\pof{\theta_{i, j}}}{\partial z_\ell} \cdot \frac{1}{1 + \cot^2\pof{\theta_{i, j}}}, \\
+	\frac{\partial\widetilde{\kappa^\text{G}}_i}{\partial z_\ell} &= -\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial\theta_{k, c\pof{i, k}}}{\partial z_\ell}, \\
+	\frac{\partial\kappa^\text{G}}{\partial z_\ell} &= D^{-1}\pof{\frac{\dif\widetilde{\kappa^\text{G}}}{\partial z_\ell} - \frac{\dif D}{\partial z_\ell}\kappa^\text{G}}, \\
+	\frac{\partial\widetilde{N}_i}{\partial z_\ell} &= \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial N_{i, k}}{\partial z_\ell}, \\
+	\frac{\partial\widetilde{\kappa^\text{H}}_i}{\partial z_\ell} &= -\frac{1}{2}e_i^\intercal D^{-1}\pof{\pof{\frac{\partial L_C^{\text{N}}}{\partial z_\ell} - \frac{\partial D}{\partial z_\ell}D^{-1}L_C^{\text{N}}}v + L_C^{\text{N}}\frac{\partial v}{\partial z_\ell}}, \\
+	\frac{\partial\kappa_i^\text{H}}{\partial z_\ell} &= \frac{\sgn\pof{\widetilde{N}_i^\intercal\widetilde{\kappa^\text{H}}_i}}{\norm{\widetilde{\kappa^\text{H}}_i}_2}\widetilde{\kappa^\text{H}}_i^\intercal\frac{\partial\widetilde{\kappa^\text{H}}_i}{\partial z_\ell}, \\
+	\frac{\partial\kappa^+_i}{\partial z_\ell} &= \frac{2\kappa^+_i\frac{\partial\kappa^{\text{H}}_i}{\partial\rho_i} - \frac{\partial\kappa^{\text{G}}_i}{\partial\rho_i}}{\kappa^+_i - \kappa^-_i}, \\
+	\frac{\partial\kappa^-_i}{\partial z_\ell} &= \frac{\frac{\partial\kappa^{\text{G}}_i}{\partial\rho_i} - 2\kappa^-_i\frac{\partial\kappa^{\text{H}}_i}{\partial\rho_i}}{\kappa^+_i - \kappa^-_i}.
 \end{align*}
