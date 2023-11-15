@@ -13,10 +13,10 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.plot import get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = os.path.join('..', 'out_Europe_clustered_fine_threshold')
+directory = os.path.join('..', 'out_US_fine_threshold_nonsequential_smooth')
 
 lambda_curvature = 1.
-lambda_smooth = 0.0004
+lambda_smooth = 0.004
 lambda_geodesic = 0.
 initial_radius = 20.
 width = 50
@@ -24,14 +24,6 @@ height = 50
 scale = 1.
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
 
-epsilons = []
-with os.scandir(directory) as it:
-    entry_prefix = 'graph_'
-    for entry in it:
-        if entry.name.startswith(entry_prefix) and not entry.is_file():
-            epsilons.append((float(entry.name[len(entry_prefix):]), entry.name))
-epsilons = list(sorted(epsilons))
-manifold_count = len(epsilons)
 fps = 24
 # length in seconds
 animation_length = 10
@@ -74,6 +66,17 @@ def get_image_data(data_file_path, resolution=100):
     return image_data
 
 if __name__ == '__main__':
+    epsilons = []
+    entry_prefix = 'graph_'
+    with os.scandir(directory) as it:
+        for entry in it:
+            if entry.name.startswith(entry_prefix) and not entry.is_file():
+                epsilons.append((float(entry.name[len(entry_prefix):]), entry.name))
+    epsilons = list(sorted(epsilons))
+    manifold_count = len(epsilons)
+
+    initialization_path = os.path.join(directory, epsilons[0][1], subdirectory_name, '0')
+
     zs = {}
     for epsilon, entry_name in epsilons:
         print(f'Reading data from cutoff {epsilon}')
@@ -89,10 +92,13 @@ if __name__ == '__main__':
         )
         path = os.path.join(current_directory, str(iteration))
         mesh = data.get_mesh_output(
-            current_directory, postprocessed=True
+            current_directory, postprocessed=True,
+            initialization_path=initialization_path
         )
 
         zs[epsilon] = mesh.get_parameters()
+
+    z_max = np.amax(list(zs.values()))
 
     mesh = RectangleMesh(width, height, scale)
 
@@ -105,6 +111,7 @@ if __name__ == '__main__':
 
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
+    ax.set_facecolor((0.5, 0.5, 0.5))
 
     def get_frame(epsilon):
         print(f'Computing frame for cutoff {epsilon}')
@@ -125,6 +132,8 @@ if __name__ == '__main__':
         z = (1 - lam) * zs[left] + lam * zs[right]
         z = np.reshape(z, (width, height))
 
+        print(left, right, lam)
+
         entry_name = epsilons[left_index if lam < 0.5 else right_index][1]
         with open(os.path.join(directory, entry_name, subdirectory_name, 'parameters'), 'rb') as f:
             parameters = pickle.load(f)
@@ -140,6 +149,7 @@ if __name__ == '__main__':
 
         return [
             get_rectangular_mesh_plot(z, face_colors, None,
+                          np.amax(z) / z_max * 0.25,
                           [network_vertices, network_edges, network_curvatures, network_city],
                           ax),
             ax.text2D(0.05, 0.95, f'{epsilon}',
@@ -152,4 +162,4 @@ if __name__ == '__main__':
                                               int(animation_length * fps + 1)),
                                   interval=1000/fps,
                                   blit=True)
-    ani.save(os.path.join('..', 'animation_test.mp4'), dpi=300)
+    ani.save(os.path.join('..', 'animation_US_nonsequential_smooth.mp4'), dpi=300)
