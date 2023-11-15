@@ -217,7 +217,7 @@ if __name__ == '__main__':
 
     # mesh.set_parameters(z)
     mesh.set_parameters(vertices[:,2] - np.array(z_0))
-    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string, False)
+    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
     # for filename, figure in figures.items():
     #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
