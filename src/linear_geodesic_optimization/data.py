@@ -145,9 +145,7 @@ def get_mesh_output(
         directory: str,
         max_iterations: typing.Optional[int] = None,
         postprocessed: bool = False,
-        longitude_range: np.float64 = 0.,
-        latitude_range: np.float64 = 0.,
-        intialization_path: typing.Optional[str] = None
+        initialization_path: typing.Optional[str] = None
 ) -> RectangleMesh:
     """
     Given a directory of output, return a mesh of the final output.
@@ -165,9 +163,9 @@ def get_mesh_output(
         width = parameters['width']
         height = parameters['height']
 
-    if intialization_path is None:
-        intialization_path = os.path.join(directory, '0')
-    with open(intialization_path, 'rb') as f:
+    if initialization_path is None:
+        initialization_path = os.path.join(directory, '0')
+    with open(initialization_path, 'rb') as f:
         iteration_data = pickle.load(f)
         z_0 = np.array(iteration_data['mesh_parameters'])
 
