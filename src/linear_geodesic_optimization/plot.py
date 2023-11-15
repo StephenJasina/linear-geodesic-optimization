@@ -220,7 +220,8 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
 
     return to_return
 
-def get_rectangular_mesh_plot(z, face_colors, title, network=None, ax=None):
+def get_rectangular_mesh_plot(z, face_colors, title, vertical_scale=0.25,
+                              network=None, ax=None):
     width, height = face_colors.shape[:2]
     x, y = np.meshgrid(
         np.linspace(-0.5, 0.5, width),
@@ -247,7 +248,7 @@ def get_rectangular_mesh_plot(z, face_colors, title, network=None, ax=None):
     z_min = np.amin(z)
     z_max = np.amax(z)
     if z_min != z_max:
-        z = (z - z_min) / (z_max - z_min) / 4.
+        z = (z - z_min) / (z_max - z_min) * vertical_scale
 
     to_return = None
     if ax is None:
