@@ -154,22 +154,18 @@ if __name__ == '__main__':
     parser.add_argument('--ip-type', '-i', type=str, required=True,
                         dest='ip_type', metavar='<ipv4/ipv6>',
                         help='Type of IP (e.g., ipv4, ipv6).')
-    parser.add_argument('--epsilon', '-e', type=int, required=False,
+    parser.add_argument('--epsilon', '-e', type=float, required=True,
                         dest='epsilon', metavar='<epsilon>',
                         help='Residual threshold')
-    parser.add_argument('--output', '-o', metavar='<basename>',
+    parser.add_argument('--output', '-o', metavar='<filename>',
                         dest='output_filename', required=True)
     args = parser.parse_args()
     latencies_filename = args.latencies_filename
     ip_type = args.ip_type
     probes_filename = args.probes_filename
-    epsilons = [args.epsilon]
-    if args.epsilon is None:
-        epsilons = list(range(2, 40))
+    epsilon = args.epsilon
     output_filename = args.output_filename
 
-    for epsilon in epsilons:
-        graph = get_graph(probes_filename, latencies_filename, epsilon,
-                          500000, 2)
-        # graph = get_graph(probes_filename, latencies_filename, epsilon)
-        nx.write_graphml(graph, f'{output_filename}')
+    graph = get_graph(probes_filename, latencies_filename, epsilon,
+                      500000, 2)
+    nx.write_graphml(graph, f'{output_filename}')
