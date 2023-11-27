@@ -243,7 +243,6 @@ window.onload = function() {
 
   let hideSurface = document.getElementById("hide-surface");
   let chkCalcSurface = document.getElementById("use-calc-surface");
-  let useTransp = document.getElementById("use-transparency");
   let showMap = document.getElementById("show-map");
   let showGraph = document.getElementById("show-graph");
 
@@ -424,7 +423,6 @@ window.onload = function() {
     }
 
     let map = heightMap;
-    let useTransp = document.getElementById("use-transparency");
 
     if (document.getElementById("use-calc-surface").checked) {
       if (graphs.length > 0) {
@@ -616,7 +614,6 @@ function drawGrid(canvas) {
 }
 
 function updatePlaneHeights(map) {
-  let useTransp = document.getElementById("use-transparency");
 
   for (let i = 0; i < divisions; i++) {
     for (let j = 0; j < divisions; j++) {
@@ -642,8 +639,6 @@ function updatePlaneHeights(map) {
     points.push([Math.ceil(i), Math.ceil(j)]);
     points.push([Math.floor(i), Math.ceil(j)]);
     points.push([Math.ceil(i), Math.floor(j)]);
-    // if (opacityMap[Math.floor(i)][Math.floor(j)] == 1)
-    //   transparent = false
     v = face.b;
     i = v / divisions;
     j = v % divisions;
@@ -651,10 +646,6 @@ function updatePlaneHeights(map) {
     points.push([Math.ceil(i), Math.ceil(j)]);
     points.push([Math.floor(i), Math.ceil(j)]);
     points.push([Math.ceil(i), Math.floor(j)]);
-    // if (opacityMap[Math.floor(i)][Math.floor(j)] == 1)
-    //   transparent = false
-    // if ((i < xlimit || i > heightMap.length - xlimit) || (j < ylimit || j > heightMap[0].length - ylimit))
-    //   hide = true
     v = face.c;
     i = v / divisions;
     j = v % divisions;
@@ -662,8 +653,6 @@ function updatePlaneHeights(map) {
     points.push([Math.ceil(i), Math.ceil(j)]);
     points.push([Math.floor(i), Math.ceil(j)]);
     points.push([Math.ceil(i), Math.floor(j)]);
-    // if (opacityMap[Math.floor(i)][Math.floor(j)] == 1)
-    //   transparent = false
     for (let p of points) {
       if (0 <= p[0] && p[0] < divisions && 0 <= p[1] && p[1] < divisions) {
         if (opacityMap[p[0]][p[1]] == 1 || Math.abs(map[p[0]][p[1]]) > 0.5) {
@@ -671,25 +660,9 @@ function updatePlaneHeights(map) {
         }
       }
     }
-    // if ((i < xlimit || i > heightMap.length - xlimit) || (j < ylimit || j > heightMap[0].length - ylimit))
-    //   hide = true
-    if (false && hideSurface.checked && Math.abs(z1) == 0 && Math.abs(z2) == 0 && Math.abs(z3) == 0) {
-      face.materialIndex = 1; // Transparent
-    } else if (false && hideSurface.checked && (Math.abs(z2 - z1) > 0.5 || Math.abs(z3 - z1) > 0.5)) { // Extra condition for tests
-      face.materialIndex = 1;
-    } else if (false && hideSurface.checked && (Math.abs(z2 - z1) + Math.abs(z3 - z1) + Math.abs(z3 - z2) > 0.8)) { // Extra condition for tests
-      face.materialIndex = 1;
-    } else if (false && hideSurface.checked && (z1 == 0 || z2 == 0 || z3 == 0)) { // Extra condition for tests // Was true
-      face.materialIndex = 1;
-    } else if (false && hide && hideSurface.checked) {
-      face.materialIndex = 1;
-    } else if (false && hideSurface.checked && (z1 < -2.4 || z2 < -2.4 || z3 < -2.4)) { // Inward edge
-      face.materialIndex = 1;
-    } else if (transparent && useTransp.checked) {
-      face.materialIndex = 2;
-    } else {
-      face.materialIndex = 0;
-    }
+
+    // Set face to be opaque
+    face.materialIndex = 0;
   }
 }
 
