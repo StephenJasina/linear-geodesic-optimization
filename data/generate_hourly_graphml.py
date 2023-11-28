@@ -8,7 +8,7 @@ def csv_to_graphml(hour, ip_type='ipv4', e_value=4, directory='graph_Europe_hour
         os.makedirs(base_dir)
     probes_file = os.path.join(base_dir, f'probes.csv')
     latencies_file = os.path.join(base_dir, f'latencies_{hour}.csv')
-    output_file = os.path.join(base_dir, str(e_value) ,f'graph_{hour}_{e_value}')
+    output_file = os.path.join(base_dir, str(e_value) ,f'graph_{hour}')
 
     command = ['python', 'csv_to_graphml.py', '-p', probes_file,
                '-l', latencies_file, '-i', ip_type, '-o', output_file,

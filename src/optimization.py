@@ -100,12 +100,12 @@ def main(data_file_name, latency_file_name,
 
 if __name__ == '__main__':
     data_file_names = [
-        os.path.join('ipv4', 'graph_Europe_clustered_fine_threshold', f'graph_{epsilon:.2f}.graphml')
-        for epsilon in np.arange(1., 15.25, 0.25)
+        os.path.join('ipv4', 'graph_US_hourly', '10', f'graph_{hour}')
+        for hour in range(24)
     ]
-    latency_file_names = [os.path.join('ipv4', 'graph_Europe', 'latencies.csv')]
+    latency_file_names = [None]
     lambda_curvatures = [1.]
-    lambda_smooths = [0.0004]
+    lambda_smooths = [0.004]
     lambda_geodesics = [0.]
     initial_radii = [20.]
     sides = [50]
@@ -117,8 +117,8 @@ if __name__ == '__main__':
         lambda_curvatures, lambda_smooths, lambda_geodesics,
         initial_radii, sides, scales,
         leaveout_proportions,
-        [1000],
-        [os.path.join('..', 'out_Europe_clustered')]
+        [10000],
+        [os.path.join('..', 'out_US_hourly')]
     ))
     with multiprocessing.Pool() as p:
         p.starmap(main, arguments)

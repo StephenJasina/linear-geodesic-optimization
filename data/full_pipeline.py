@@ -13,8 +13,11 @@ def full_pipeline_hourly_manifold(ip_type='ipv4', date='2023-08-29', e_value=4,
     # check if the file already exists and if it does, don't run the command
     probes_filename = os.path.join(ip_type, directory, f'probes.csv')
     if not os.path.exists(probes_filename):
-        command = ['python', 'get_probes.py', '-i', ip_type, '-c', continent,
-                   '-o', probes_filename]
+        if continent is None:
+            command = ['python', 'get_probes.py', '-i', ip_type, '-o', probes_filename]
+        else:
+            command = ['python', 'get_probes.py', '-i', ip_type, '-c', continent,
+                       '-o', probes_filename]
         subprocess.run(command)
     # then get the measurements
     # check if the file already exists and if it does, don't run the command
@@ -35,4 +38,4 @@ def full_pipeline_hourly_manifold(ip_type='ipv4', date='2023-08-29', e_value=4,
 
 if __name__ == '__main__':
     # full_pipeline_hourly_manifold()
-    full_pipeline_hourly_manifold(date='2023-11-08', continent='Australia', directory='graph_Australia_outage')
+    full_pipeline_hourly_manifold(continent=None, e_value=10, directory='graph_US_hourly')
