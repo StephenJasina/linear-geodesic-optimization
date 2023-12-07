@@ -35,8 +35,8 @@ def main(data_file_name, latency_file_name,
     width = height = sides
     mesh = RectangleMesh(width, height, scale)
 
-    network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
-        = data.read_graphml(data_file_path, latency_file_path)
+    network = data.read_graphml(data_file_path, latency_file_path)
+    network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies = network
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8), bounding_box)
     leaveout_count = int(leaveout_proportion * len(network_latencies))
     leaveout_seed = time.monotonic_ns() % (2**31 - 1)
@@ -54,35 +54,36 @@ def main(data_file_name, latency_file_name,
         shutil.rmtree(directory)
     os.makedirs(directory)
 
+    parameters = {
+        'data_file_name': data_file_name,
+        'latency_file_name': latency_file_name,
+        'lambda_curvature': lambda_curvature,
+        'lambda_smooth': lambda_smooth,
+        'lambda_geodesic': lambda_geodesic,
+        'initial_radius': initial_radius,
+        'width': width,
+        'height': height,
+        'scale': scale,
+        'leaveout_count': leaveout_count,
+        'leaveout_seed': leaveout_seed
+    }
     with open(os.path.join(directory, 'parameters'), 'wb') as f:
-        pickle.dump({
-            'data_file_name': data_file_name,
-            'latency_file_name': latency_file_name,
-            'lambda_curvature': lambda_curvature,
-            'lambda_smooth': lambda_smooth,
-            'lambda_geodesic': lambda_geodesic,
-            'initial_radius': initial_radius,
-            'width': width,
-            'height': height,
-            'scale': scale,
-            'leaveout_count': leaveout_count,
-            'leaveout_seed': leaveout_seed
-        }, f)
+        pickle.dump(parameters, f)
 
     # Initialize mesh
     if initialization_file_path is None:
-        z = np.array([
+        z_0 = np.array([
             (initial_radius**2
                 - (i / (width - 1) - 0.5)**2
                 - (j / (height - 1) - 0.5)**2)**0.5
             for i in range(width)
             for j in range(height)
         ]).reshape((width * height,))
-        z = z - np.amin(z)
+        z_0 = z_0 - np.amin(z_0)
     else:
         with open(initialization_file_path, 'rb') as f:
-            z = np.array(pickle.load(f)['mesh_parameters'])
-    z = mesh.set_parameters(z)
+            z_0 = np.array(pickle.load(f)['mesh_parameters'])
+    z_0 = mesh.set_parameters(z_0)
 
     computer = optimization.Computer(
         mesh, network_vertices, network_edges, network_curvatures,
@@ -94,15 +95,26 @@ def main(data_file_name, latency_file_name,
     g = computer.reverse
 
     computer.diagnostics(None)
-    scipy.optimize.minimize(f, z, method='L-BFGS-B', jac=g,
-                            callback=computer.diagnostics,
-                            options={'maxiter': maxiter})
+    z = scipy.optimize.minimize(f, z_0, method='L-BFGS-B', jac=g,
+                                callback=computer.diagnostics,
+                                options={'maxiter': maxiter}).x
+    with open(os.path.join(directory, 'output'), 'wb') as f:
+        pickle.dump({
+            'parameters': parameters,
+            'initial': optimization.Computer.to_float_list(z_0),
+            'final': optimization.Computer.to_float_list(z),
+            'network': network,
+        }, f)
 
 if __name__ == '__main__':
     data_file_names = [
-        os.path.join('ipv4', 'graph_US_hourly', '10', f'graph_{hour}')
-        for hour in range(24)
+        os.path.join('toy', 'toy.graphml')
+        for hour in range(1)
     ]
+    # data_file_names = [
+    #     os.path.join('ipv4', 'graph_US_hourly', '10', f'graph_{hour}')
+    #     for hour in range(24)
+    # ]
     latency_file_names = [None]
     lambda_curvatures = [1.]
     lambda_smooths = [0.004]
@@ -117,8 +129,8 @@ if __name__ == '__main__':
         lambda_curvatures, lambda_smooths, lambda_geodesics,
         initial_radii, sides, scales,
         leaveout_proportions,
-        [10000],
-        [os.path.join('..', 'out_US_hourly')]
+        [1000],
+        [os.path.join('..', 'out_test')]
     ))
     with multiprocessing.Pool() as p:
         p.starmap(main, arguments)

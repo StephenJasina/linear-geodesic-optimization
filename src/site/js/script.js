@@ -7,13 +7,9 @@ let bgcolor = 0xf3f3f3;
 let graphcolor = 0xffffff;
 let vertexcolor = 0x4CAF50;
 let edgecolor = 0x21bf73;
-let edgecolor_sec = 0x4cd995;
 let canvascolor = "#ffffff";
-let contcolor = 0xff0000;
 
 let T = THREE;
-
-let showHoverGraph = false;
 
 let vertexCount = 0;
 let edgeCount = 0;
@@ -33,22 +29,9 @@ let planeH = planeYMax - planeYMin;
 let divisions = 50;
 let heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 let opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-let curvMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 let refine_data = {};
 
-let calcHeightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-
 let vertexHeight = 3;
-
-// Cycle variables for threshold cycle
-let cycle = false;
-let last_cycle = Date.now();
-
-// Flag to indicate threshold change -> update heights when thresh changed
-let thresh_change = false;
-
-// Flag to indicate the show map checkbox's state in the last animation frame
-let showMapPrevious = false;
 
 // ThreeJS Scene Setup
 let scene = new T.Scene();
@@ -75,9 +58,9 @@ scene.background = new THREE.Color(bgcolor);
 let controls = new T.OrbitControls(camera, renderer.domElement);
 
 const olMap = createMap();
-const canv = document.createElement("canvas");
-canv.id = "canvas-texture";
-let ctx = canv.getContext("2d");
+const blankCanvas = document.createElement("canvas");
+blankCanvas.id = "canvas-texture";
+let ctx = blankCanvas.getContext("2d");
 ctx.canvas.width = 4000;
 ctx.canvas.height = 4000;
 ctx.fillStyle = canvascolor;
@@ -122,23 +105,7 @@ let planeMat = new THREE.MeshPhongMaterial({
   transparent: true,
   opacity: 1.0
 }); //, alphaMap: T.ImageUtils.loadTexture("images/grayscale.png")} )
-let transparentMat = new T.MeshLambertMaterial({
-  visible: false
-});
-let transparentPlaneMat = new THREE.MeshPhongMaterial({
-  color: graphcolor,
-  clippingPlanes: [clipPlaneLeft, clipPlaneRight, clipPlaneFront, clipPlaneBack],
-  vertexColors: T.VertexColors,
-  side: THREE.DoubleSide,
-  flatShading: false,
-  shininess: 0,
-  wireframe: false,
-  map: texture,
-  transparent: true,
-  opacity: 0.5
-});
-let mMat = [planeMat, transparentMat, transparentPlaneMat];
-let plane = new T.Mesh(geometry, mMat);
+let plane = new T.Mesh(geometry, planeMat);
 
 plane.rotation.set(-Math.PI / 2, 0, 0);
 scene.add(plane);
@@ -164,17 +131,11 @@ let linesDrawn = [];
 let linesCleared = true;
 let current_edges = {};
 
-edgecolor_sec = 0x2cc57c;
 edgecolor = 0x178e51;
 let lineMat = new T.LineBasicMaterial({
   color: edgecolor,
   linewidth: 6,
   clippingPlanes: [clipPlaneUp]
-});
-let lineMatSec = new T.LineBasicMaterial({
-  color: edgecolor_sec,
-  linewidth: 1.5,
-  depthFunc: T.LessDepth
 });
 
 plane.geometry.dynamic = true;
@@ -183,13 +144,6 @@ for (let face of plane.geometry.faces) {
   face.vertexColors[0] = new T.Color(0xffffff);
   face.vertexColors[1] = new T.Color(0xffffff);
   face.vertexColors[2] = new T.Color(0xffffff);
-}
-
-let contX = [];
-let contY = [];
-for (let i = 0; i < heightMap.length; i++) {
-  contX.push(i);
-  contY.push(i);
 }
 
 // Composers and FXAA shader
@@ -215,7 +169,6 @@ window.onload = function() {
   mapTexture.magFilter = THREE.NearestFilter;
   mapTexture.center = new T.Vector2(0.5, 0.5);
   mapTexture.rotation = -Math.PI / 2;
-  plane.material[2].map = mapTexture;
 
   let mapdiv = document.getElementById("map");
 
@@ -223,13 +176,9 @@ window.onload = function() {
 
   window.addEventListener("wheel", wheelEvent, true);
 
-  let dropNodes = document.getElementById("drop-nodes");
-  dropNodes.addEventListener("dragover", dragOver, false);
-  dropNodes.addEventListener("drop", fileSelectNodes, false);
-
-  let dropEdges = document.getElementById("drop-edges");
-  dropEdges.addEventListener("dragover", dragOver, false);
-  dropEdges.addEventListener("drop", fileSelectEdges, false);
+  let dropOutputDiv = document.getElementById("drop-output");
+  dropOutputDiv.addEventListener("dragover", dragOver, false);
+  dropOutputDiv.addEventListener("drop", dropOutput, false);
 
   let btnAddVertex = document.getElementById("btn-add-vertex");
   btnAddVertex.onclick = addVertex;
@@ -237,53 +186,52 @@ window.onload = function() {
   let btnAddEdge = document.getElementById("btn-add-edge");
   btnAddEdge.onclick = addEdge;
 
-  document.getElementById("btn-calc-dist").onclick = function() {
-    calcDistanceOnSurface(plane, vertices, current_edges);
+  document.getElementById("btn-calculate-geodesics").onclick = function() {
+    calcDistanceOnSurface(plane, vertices, edges);
   }
 
-  let hideSurface = document.getElementById("hide-surface");
-  let chkCalcSurface = document.getElementById("use-calc-surface");
   let showMap = document.getElementById("show-map");
   let showGraph = document.getElementById("show-graph");
+  let showHoverGraph = document.getElementById("show-hover-graph");
 
-  showGraph.onchange = function() {
-    if (vertices[0] != undefined) {
+  function refresh_graph() {
+    if (showGraph.checked && showHoverGraph.checked) {
       for (let id in vertices) {
-        if (!showGraph.checked) {
-          scene.remove(vertices[id].mesh);
-          scene.remove(vertices[id].label);
-        } else {
-          scene.add(vertices[id].mesh);
-          scene.add(vertices[id].label);
-        }
+        scene.add(vertices[id].mesh);
+        scene.add(vertices[id].label);
+      }
+      for (let line of linesDrawn) {
+        scene.add(line);
+      }
+    } else {
+      for (let id in vertices) {
+        scene.remove(vertices[id].mesh);
+        scene.remove(vertices[id].label);
+      }
+      for (let line of linesDrawn) {
+        scene.remove(line);
+      }
+    }
+
+    if (!showGraph) {
+      let canvases = [mapCanvas, blankCanvas]
+      for (let canvas of canvases) {
+        let context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
   }
-
-  document.getElementById("threshold-slider").onchange = function() {
-    thresh_change = true;
-  }
-
-  showMapPrevious = showMap.checked;
+  showGraph.onchange = refresh_graph;
+  showHoverGraph.onchange = refresh_graph;
 
   let vertexControlDiv = document.getElementById("div-vertex");
   let edgeControlDiv = document.getElementById("div-edge");
-
-  let btnGenGraph = document.getElementById("btn-gen-graph");
-  btnGenGraph.onclick = generateGraph;
-
-  let btnGenGraphEmpty = document.getElementById("btn-gen-graph-empty");
-  btnGenGraphEmpty.onclick = generateGraphNoWeights;
 
   let btnCalcCurv = document.getElementById("btn-calc-curv");
   btnCalcCurv.onclick = calculateCurvature;
 
   let btnHelp = document.getElementById("btn-help");
   btnHelp.onclick = helpClick;
-
-  document.getElementById("btn-cycle-thresholds").onclick = cycleThresholds;
-
-  document.getElementById("btn-calc-surface").onclick = calcSurface;
 
   controls.enablePan = true;
   controls.panSpeed = 1;
@@ -294,51 +242,18 @@ window.onload = function() {
 
   let animate = function() {
     if (showMap.checked) {
-      // if (!showMapPrevious) {
-      //   // For now, disable opacity changes
-      //   // opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-      //   // calcOpacityMap(opacityMap, vertices, current_edges, map);
-      //   opacityMap = Array(divisions).fill().map(() => Array(divisions).fill(1.0));
-
-      //   aMap = createAndUpdateAlphaMapD3(opacityMap);
-      // }
-      // plane.material[0].alphaMap = aMap;
-      plane.material[0].map = mapTexture;
+      plane.material.map = mapTexture;
       texture = mapTexture;
       ctx = mapCanvas.getContext("2d");
     } else {
-      plane.material[0].map = customTexture;
+      plane.material.map = customTexture;
       texture = customTexture;
-      ctx = canv.getContext("2d");
+      ctx = blankCanvas.getContext("2d");
     }
-    showMapPrevious = showMap.checked;
-
-    curvMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
 
     controls.update();
 
-    // Update thresholds if cycling
-    if (cycle && (Date.now() - last_cycle) / 1000 > 2) {
-      let slider = document.getElementById("threshold-slider");
-      let value = parseInt(slider.value);
-      value += 1;
-      value %= (parseInt(slider.max) + 1);
-      slider.value = value;
-      last_cycle = Date.now();
-      thresh_change = true;
-    }
-
     ctx.fillStyle = canvascolor
-
-    if (graphs.length == 0) {
-      current_edges = {
-        ...edges
-      }
-    } else {
-      current_edges = {
-        ...graphs[document.getElementById("threshold-slider").value].edges
-      };
-    }
 
     if (!showMap.checked) {
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -352,98 +267,76 @@ window.onload = function() {
     ctx.setLineDash([]);
 
     // Draw physical graph edge, texture edge
-    for (let id in current_edges) {
-      let lineWidth = 6;
-      let borders = true;
-      let edge = current_edges[id];
+    if (showGraph.checked) {
+      for (let id in edges) {
+        let lineWidth = 6;
+        let borders = true;
+        let edge = edges[id];
 
-      if (showHoverGraph && showGraph.checked && (edge.mesh == null || linesCleared)) {
-        edge.mesh = drawEdge(edge, lineMat);
-      }
+        if (showHoverGraph.checked && (edge.mesh == null || linesCleared)) {
+          edge.mesh = drawEdge(edge, lineMat);
+        }
 
-      let startPt = [parseFloat(edge.start.mesh.position.x), parseFloat(edge.start.mesh.position.z)];
-      let endPt = [parseFloat(edge.end.mesh.position.x), parseFloat(edge.end.mesh.position.z)];
+        let startPt = [parseFloat(edge.start.mesh.position.x), parseFloat(edge.start.mesh.position.z)];
+        let endPt = [parseFloat(edge.end.mesh.position.x), parseFloat(edge.end.mesh.position.z)];
 
-      // Draw texture edge // TODO: undo
-      startPt = [
-        (1 - (startPt[0] - planeXMin) / planeW) * ctx.canvas.width,
-        (startPt[1] - planeYMin) * ctx.canvas.height / planeH
-      ];
-      endPt = [
-        (1 - (endPt[0] - planeXMin) / planeW) * ctx.canvas.width,
-        (endPt[1] - planeYMin) * ctx.canvas.height / planeH
-      ];
-      ctx.save();
-      ctx.globalAlpha = 1.0;
-      ctx.beginPath();
+        // Draw texture edge // TODO: undo
+        startPt = [
+          (1 - (startPt[0] - planeXMin) / planeW) * ctx.canvas.width,
+          (startPt[1] - planeYMin) * ctx.canvas.height / planeH
+        ];
+        endPt = [
+          (1 - (endPt[0] - planeXMin) / planeW) * ctx.canvas.width,
+          (endPt[1] - planeYMin) * ctx.canvas.height / planeH
+        ];
+        ctx.save();
+        ctx.globalAlpha = 1.0;
+        ctx.beginPath();
 
-      if (borders) {
+        if (borders) {
+          ctx.moveTo(startPt[1], startPt[0]);
+          ctx.lineTo(endPt[1], endPt[0]);
+          ctx.strokeStyle = "#000000";
+          ctx.lineWidth = lineWidth + 1;
+          ctx.stroke();
+        }
+
         ctx.moveTo(startPt[1], startPt[0]);
         ctx.lineTo(endPt[1], endPt[0]);
-        ctx.strokeStyle = "#000000";
-        ctx.lineWidth = lineWidth + 1;
+        let color = new T.Color();
+        let endColor;
+        if (edge.weight >= 0) {
+          endColor = new T.Color("hsl(222, 100%, 61%)");
+        } else {
+          endColor = new T.Color("hsl(356, 74%, 52%)");
+        }
+        color.lerp(endColor, Math.min(Math.abs(edge.weight), 1));
+        ctx.strokeStyle = "#" + color.getHexString();
+        ctx.lineWidth = lineWidth;
         ctx.stroke();
+        ctx.restore();
       }
 
-      ctx.moveTo(startPt[1], startPt[0]);
-      ctx.lineTo(endPt[1], endPt[0]);
-      let color = new T.Color();
-      let endColor;
-      if (edge.weight >= 0) {
-        endColor = new T.Color("hsl(222, 100%, 61%)");
-      } else {
-        endColor = new T.Color("hsl(356, 74%, 52%)");
-      }
-      color.lerp(endColor, Math.min(Math.abs(edge.weight), 1));
-      ctx.strokeStyle = "#" + color.getHexString();
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
-      ctx.restore();
-    }
+      linesCleared = false;
 
-    linesCleared = false;
+      // Draw point on surface texture
+      for (let id in vertices) {
+        let radius = 2;
+        let vertex = vertices[id];
+        let point = [parseFloat(vertex.mesh.position.x), parseFloat(vertex.mesh.position.z)];
+        point = [
+          (1 - (point[0] - planeXMin) / planeW) * ctx.canvas.width,
+          (point[1] - planeYMin) * ctx.canvas.height / planeH
+        ];
+        ctx.fillStyle = "#FF5C5C";
 
-    // Set plane vertices' height
-    heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.));
-
-    // Draw point on surface texture
-    for (let id in vertices) {
-      let radius = 2;
-      let vertex = vertices[id];
-      let point = [parseFloat(vertex.mesh.position.x), parseFloat(vertex.mesh.position.z)];
-      point = [
-        (1 - (point[0] - planeXMin) / planeW) * ctx.canvas.width,
-        (point[1] - planeYMin) * ctx.canvas.height / planeH
-      ];
-      ctx.fillStyle = "#FF5C5C";
-
-      ctx.beginPath();
-      ctx.arc(point[1], point[0], radius, 0, 2 * Math.PI);
-      ctx.fill();
-    }
-
-    let map = heightMap;
-
-    if (document.getElementById("use-calc-surface").checked) {
-      if (graphs.length > 0) {
-        map = graphs[document.getElementById("threshold-slider").value].heightmap;
-      } else {
-        map = calcHeightMap;
+        ctx.beginPath();
+        ctx.arc(point[1], point[0], radius, 0, 2 * Math.PI);
+        ctx.fill();
       }
     }
-    if (thresh_change) {
-      thresh_change = false;
-      updatePlaneHeights(map);
-    }
 
-    if (map == heightMap) {
-      updatePlaneHeights(map);
-    }
-
-    // colorCurvature(plane)
-
-    plane.material[0].needsUpdate = true;
-    plane.material[2].needsUpdate = true;
+    plane.material.needsUpdate = true;
     texture.needsUpdate = true;
 
     plane.geometry.groupsNeedUpdate = true;
@@ -452,7 +345,6 @@ window.onload = function() {
     plane.geometry.computeVertexNormals();
 
     // Render
-    renderer.localClippingEnabled = hideSurface.checked;
     if (showMap.checked) {
       olMap.render();
     }
@@ -464,130 +356,49 @@ window.onload = function() {
   requestAnimationFrame(animate);
 }
 
-document.addEventListener("keydown", function(event) {
-  if (event.key == "Escape") {
-    gsap.to(camera, {
-      duration: 1,
-      zoom: 1,
-      onUpdate: function() {
-        camera.updateProjectionMatrix();
-      }
-    });
-    gsap.to(controls.target, {
-      duration: 1,
-      x: 0,
-      y: 0,
-      z: 0,
-      onUpdate: function() {
-        controls.update();
-      }
-    });
-    gsap.to(plane.position, {
-      duration: 1,
-      y: 0,
-      onStart: function() {
-        plane.visible = true;
-      },
-      onUpdate: function() {}
-    });
+function resetView() {
+  gsap.to(camera, {
+    duration: 1,
+    zoom: 1,
+    onUpdate: function() {
+      camera.updateProjectionMatrix();
+    }
+  });
+  gsap.to(controls.target, {
+    duration: 1,
+    x: 0,
+    y: 0,
+    z: 0,
+    onUpdate: function() {
+      controls.update();
+    }
+  });
+  gsap.to(plane.position, {
+    duration: 1,
+    y: 0,
+    onStart: function() {
+      plane.visible = true;
+    },
+    onUpdate: function() {}
+  });
 
-    olMap.getView().setZoom(0);
-    let mapdiv = document.getElementById("map");
-    mapdiv.style.display = "block";
-    mapZoomLevel = 0;
-    mapdiv.style.width = mapResolution + "px";
-    mapdiv.style.height = mapResolution + "px";
-    olMap.updateSize();
-    olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
-    olMap.getView().setResolution(circumferenceEarth / mapResolution / mapZoomFactor)
-    mapdiv.style.display = "none";
+  olMap.getView().setZoom(0);
+  let mapdiv = document.getElementById("map");
+  mapdiv.style.display = "block";
+  mapZoomLevel = 0;
+  mapdiv.style.width = mapResolution + "px";
+  mapdiv.style.height = mapResolution + "px";
+  olMap.updateSize();
+  olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
+  olMap.getView().setResolution(circumferenceEarth / mapResolution / mapZoomFactor)
+  mapdiv.style.display = "none";
+}
+
+document.addEventListener("keydown", function(ev) {
+  if (ev.key == "Escape") {
+    resetView();
   }
 });
-
-function cycleThresholds() {
-  let btnCycle = document.getElementById("btn-cycle-thresholds");
-  cycle = !cycle;
-  if (!cycle) {
-    btnCycle.innerHTML = "Cycle Thresholds";
-  } else {
-    btnCycle.innerHTML = "Stop Cycle";
-  }
-  last_cycle = Date.now();
-}
-
-// TODO: This function is currently not in use. The curvature
-// computation should probably be moved into the backend, as code for
-// that already exists there. The colors are also likely slightly
-// imprecise. This function currently also relies on the size of the
-// mesh to be 50x50, so it needs to be rewritten to take `divisions`
-// into account. Finally, the actual computation is currently incorrect,
-// as it fails to divide the angle defect by the vertex area.
-function colorCurvature(plane) {
-  // CURVATURE calc
-  let max_curv = 0;
-  let min_curv = 1;
-  for (let i = 9; i < 39; i++) {
-    for (let j = 9; j < 39; j++) {
-      // console.log(plane.geometry.vertices[i].x + " " + plane.geometry.vertices[i].y)
-      let o = [plane.geometry.vertices[i * 50 + j].x, plane.geometry.vertices[i * 50 + j].y, plane.geometry.vertices[i * 50 + j].z];
-      let a = [plane.geometry.vertices[(i - 1) * 50 + j - 1].x, plane.geometry.vertices[(i - 1) * 50 + j - 1].y, plane.geometry.vertices[(i - 1) * 50 + j - 1].z];
-      let b = [plane.geometry.vertices[(i - 1) * 50 + j].x, plane.geometry.vertices[(i - 1) * 50 + j].y, plane.geometry.vertices[(i - 1) * 50 + j].z];
-      let c = [plane.geometry.vertices[i * 50 + j - 1].x, plane.geometry.vertices[i * 50 + j - 1].y, plane.geometry.vertices[i * 50 + j - 1].z];
-      let d = [plane.geometry.vertices[i * 50 + j + 1].x, plane.geometry.vertices[i * 50 + j + 1].y, plane.geometry.vertices[i * 50 + j + 1].z];
-      let e = [plane.geometry.vertices[(i + 1) * 50 + j].x, plane.geometry.vertices[(i + 1) * 50 + j].y, plane.geometry.vertices[(i + 1) * 50 + j].z];
-      let f = [plane.geometry.vertices[(i + 1) * 50 + j + 1].x, plane.geometry.vertices[(i + 1) * 50 + j + 1].y, plane.geometry.vertices[(i + 1) * 50 + j + 1].z];
-      let vxs = [a, b, d, f, e, c];
-      let angles = [];
-
-      for (let k = 0; k < vxs.length; k++) {
-        let posB = vxs[k];
-        let posC = vxs[(k + 1) % vxs.length];
-        let vec1 = [posB[0] - o[0], posB[1] - o[1], posB[2] - o[2]];
-        let vec2 = [posC[0] - o[0], posC[1] - o[1], posC[2] - o[2]];
-        let dot = vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2];
-        let norm_v1 = Math.sqrt(Math.pow(vec1[0], 2) + Math.pow(vec1[1], 2) + Math.pow(vec1[2], 2));
-        let norm_v2 = Math.sqrt(Math.pow(vec2[0], 2) + Math.pow(vec2[1], 2) + Math.pow(vec2[2], 2));
-        let angle1 = Math.acos(dot / (norm_v1 * norm_v2));
-        angles.push(angle1);
-      }
-      let curvature = 2 * Math.PI - angles.reduce((a, b) => a + b);
-      plane.geometry.vertices[i * 50 + j].curvature = curvature;
-      max_curv = Math.max(max_curv, curvature);
-      min_curv = Math.min(min_curv, curvature);
-    }
-  }
-
-  for (let face of plane.geometry.faces) {
-    const red = new THREE.Color(0xdf2935);
-    const blue = new THREE.Color(0x3772ff);
-    let curv = plane.geometry.vertices[face.a].curvature;
-    let scale = 2;
-    if (face.vertexColors[0] == undefined) {
-      face.vertexColors[0] = new THREE.Color(1, 1, 1);
-      face.vertexColors[1] = new THREE.Color(1, 1, 1);
-      face.vertexColors[2] = new THREE.Color(1, 1, 1);
-    }
-    face.vertexColors[0].setRGB(1, 1, 1);
-    if (curv > 0.01) {
-      face.vertexColors[0].lerp(blue, Math.ceil(scale * curv / max_curv) / scale);
-    } else if (curv < -0.01)
-      face.vertexColors[0].lerp(red, Math.ceil(scale * curv / min_curv) / scale);
-
-    curv = plane.geometry.vertices[face.b].curvature;
-    face.vertexColors[1].setRGB(1, 1, 1);
-    if (curv > 0.01)
-      face.vertexColors[1].lerp(blue, Math.ceil(scale * curv / max_curv) / scale);
-    else if (curv < -0.01)
-      face.vertexColors[1].lerp(red, Math.ceil(scale * curv / min_curv) / scale);
-
-    curv = plane.geometry.vertices[face.c].curvature;
-    face.vertexColors[2].setRGB(1, 1, 1);
-    if (curv > 0.01)
-      face.vertexColors[2].lerp(blue, Math.ceil(scale * curv / max_curv) / scale);
-    else if (curv < -0.01)
-      face.vertexColors[2].lerp(red, Math.ceil(scale * curv / min_curv) / scale);
-  }
-}
 
 function drawGrid(canvas) {
   let ctx = canvas.getContext("2d");
@@ -614,7 +425,6 @@ function drawGrid(canvas) {
 }
 
 function updatePlaneHeights(map) {
-
   for (let i = 0; i < divisions; i++) {
     for (let j = 0; j < divisions; j++) {
       gsap.to(plane.geometry.vertices[i * divisions + j], {
@@ -622,47 +432,6 @@ function updatePlaneHeights(map) {
         z: map[i][j],
       });
     }
-  }
-
-  for (let face of plane.geometry.faces) {
-    let z1 = plane.geometry.vertices[face.a].z;
-    let z2 = plane.geometry.vertices[face.b].z;
-    let z3 = plane.geometry.vertices[face.c].z;
-    let hide = false;
-    let v = face.a;
-    let i = Math.floor(v / divisions);
-    let j = v % divisions;
-
-    let transparent = true;
-    let points = [];
-    points.push([Math.floor(i), Math.floor(j)]);
-    points.push([Math.ceil(i), Math.ceil(j)]);
-    points.push([Math.floor(i), Math.ceil(j)]);
-    points.push([Math.ceil(i), Math.floor(j)]);
-    v = face.b;
-    i = v / divisions;
-    j = v % divisions;
-    points.push([Math.floor(i), Math.floor(j)]);
-    points.push([Math.ceil(i), Math.ceil(j)]);
-    points.push([Math.floor(i), Math.ceil(j)]);
-    points.push([Math.ceil(i), Math.floor(j)]);
-    v = face.c;
-    i = v / divisions;
-    j = v % divisions;
-    points.push([Math.floor(i), Math.floor(j)]);
-    points.push([Math.ceil(i), Math.ceil(j)]);
-    points.push([Math.floor(i), Math.ceil(j)]);
-    points.push([Math.ceil(i), Math.floor(j)]);
-    for (let p of points) {
-      if (0 <= p[0] && p[0] < divisions && 0 <= p[1] && p[1] < divisions) {
-        if (opacityMap[p[0]][p[1]] == 1 || Math.abs(map[p[0]][p[1]]) > 0.5) {
-          transparent = false;
-        }
-      }
-    }
-
-    // Set face to be opaque
-    face.materialIndex = 0;
   }
 }
 
@@ -694,26 +463,6 @@ function wheelEvent(event) {
   olMap.getView().setCenter(ol.proj.fromLonLat(mapCenter));
   olMap.getView().setResolution(circumferenceEarth / newMapResolution / mapZoomFactor)
   mapdiv.style.display = "none";
-}
-
-function calcOpacityMap(opacityMap, vertices, edges, heightMap) {
-  for (let id in edges) {
-    let startPt = [edges[id].start.mesh.position.x, edges[id].start.mesh.position.z];
-    let endPt = [edges[id].end.mesh.position.x, edges[id].end.mesh.position.z];
-
-    startPt = convert3JStoOM(startPt, divisions);
-    endPt = convert3JStoOM(endPt, divisions);
-    for (let i = 0; i < divisions; i++) {
-      for (let j = 0; j < divisions; j++) {
-        if (Math.abs(dist(startPt, [i, j]) + dist([i, j], endPt) - dist(startPt, endPt)) < 0.1) {
-          opacityMap[j][i] = 1;
-        }
-        if (heightMap[Math.floor(j / 2)][Math.floor(i / 2)] > 0.3) {
-          opacityMap[j][i] = 1;
-        }
-      }
-    }
-  }
 }
 
 function calcDistanceOnSurface(plane, vertices, edges) {
@@ -753,6 +502,7 @@ function calcDistanceOnSurface(plane, vertices, edges) {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
       let data = xmlHttp.responseText;
       data = JSON.parse(data);
+      console.log(data);
       let distances = data.distances;
       let paths = data.paths;
       drawSurfacePathsFlip(paths, edges);
@@ -943,11 +693,9 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
   newPt.position.z = yPos.value;
   newPt.name = name;
 
-  let sprite = getNameSprite(name)
-  sprite.position.set(xPos.value, vertexHeight + 0.1, yPos.value)
-
-  if (showHoverGraph && drawPoint) {
-    let sprite = getNameSprite(name);
+  let showHoverGraph = document.getElementById("show-hover-graph");
+  let sprite = getNameSprite(name);
+  if (showHoverGraph.checked && drawPoint) {
     sprite.position.set(xPos.value, vertexHeight + 0.1, yPos.value);
     scene.add(sprite);
     newPt.scale.set(0.1, 0.1, 0.1);
@@ -965,35 +713,6 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
   vertexCount++;
 }
 
-// TODO: It is unclear whether this function is needed. If it is, it
-// would be for the drag-and-drop file system
-function addVertexSec(obj, x, y, vertices, drawPoint = false) {
-  let newPt = new T.Mesh(ptGeom, ptMat);
-  newPt.position.y = vertexHeight;
-  newPt.position.x = x;
-  newPt.position.z = y;
-
-  length = Object.keys(vertices).length;
-
-  let sprite = getNameSprite(length);
-  sprite.position.set(x, vertexHeight + 0.5, y);
-
-  if (drawPoint) {
-    scene.add(sprite);
-    newPt.scale.set(0.1, 0.1, 0.1);
-    scene.add(newPt);
-    gsap.to(newPt.scale, {
-      duration: 1,
-      x: 1,
-      y: 1,
-      z: 1,
-      ease: "elastic"
-    });
-  }
-
-  vertices[String(length)] = new VertexObj(length, length, newPt, sprite);
-}
-
 function removeVertex() {
   let parentDiv = this.parentElement;
   let name = parentDiv.childNodes[0].textContent;
@@ -1003,51 +722,11 @@ function removeVertex() {
   parentDiv.remove();
 }
 
-function generateGraph() {
-  // Replace this with the default graph we want
-  addVertex(null, 1.4134275618374557, -8.0, true, name = "0");
-  addVertex(null, -1.4536103630714172e-15, -5.6537102473498235, true, name = "1");
-  addVertex(null, -1.4134275618374557, -8.0, true, name = "2");
-  addVertex(null, -1.4134275618374557, 8.0, true, name = "3");
-  addVertex(null, -1.4536103630714172e-15, 5.6537102473498235, true, name = "4");
-  addVertex(null, 1.4134275618374557, 8.0, true, name = "5");
-
-  addEdge(null, 0, 1, 0.3333);
-  addEdge(null, 0, 2, 0.5);
-  addEdge(null, 1, 2, 0.3333);
-  addEdge(null, 1, 4, -0.6667);
-  addEdge(null, 3, 4, 0.3333);
-  addEdge(null, 3, 5, 0.5);
-  addEdge(null, 4, 5, 0.3333);
-}
-
-function generateGraphNoWeights() {
-  addVertex(null, 1.4134275618374557, -8.0, true, name = "0");
-  addVertex(null, -1.4536103630714172e-15, -5.6537102473498235, true, name = "1");
-  addVertex(null, -1.4134275618374557, -8.0, true, name = "2");
-  addVertex(null, -1.4134275618374557, 8.0, true, name = "3");
-  addVertex(null, -1.4536103630714172e-15, 5.6537102473498235, true, name = "4");
-  addVertex(null, 1.4134275618374557, 8.0, true, name = "5");
-
-  addEdge(null, 0, 1, 0.);
-  addEdge(null, 0, 2, 0.);
-  addEdge(null, 1, 2, 0.);
-  addEdge(null, 1, 4, 0.);
-  addEdge(null, 3, 4, 0.);
-  addEdge(null, 3, 5, 0.);
-  addEdge(null, 4, 5, 0.);
-}
-
 function drawEdge(edge, lineMat) {
-  let points = [];
-  if (lineMat != lineMatSec) {
-    points.push(new T.Vector3(edge.start.mesh.position.x, vertexHeight + 0.0001, edge.start.mesh.position.z));
-    points.push(new T.Vector3(edge.end.mesh.position.x, vertexHeight + 0.0001, edge.end.mesh.position.z));
-  } else {
-    points.push(new T.Vector3(edge.start.mesh.position.x, vertexHeight, edge.start.mesh.position.z));
-    points.push(new T.Vector3(edge.end.mesh.position.x, vertexHeight, edge.end.mesh.position.z));
-  }
-  points.push(new T.Vector3(edge.start.mesh.position.x, vertexHeight + 0.0001, edge.start.mesh.position.z));
+  let points = [
+    new T.Vector3(edge.start.mesh.position.x, vertexHeight, edge.start.mesh.position.z),
+    new T.Vector3(edge.end.mesh.position.x, vertexHeight, edge.end.mesh.position.z)
+  ];
 
   let geom = new T.BufferGeometry().setFromPoints(points);
 
@@ -1158,22 +837,6 @@ function addEdge(obj, start, end, weight) {
   let edge = new EdgeObj(edgeCount, startPt, endPt, weight);
   edges[edgeCount] = edge;
   edgeCount++;
-}
-
-function addEdgeSec(obj, start, end, weight, vertices, edges) {
-  let vSize = Object.keys(vertices).length;
-  let eSize = Object.keys(edges).length;
-
-  let s = parseInt(start);
-  let e = parseInt(end);
-
-  weight = parseFloat(weight);
-
-  let startPt = vertices[s];
-  let endPt = vertices[e];
-
-  let edge = new EdgeObj(eSize, startPt, endPt, weight);
-  edges[eSize] = edge;
 }
 
 function edgeChange() {
@@ -1301,11 +964,6 @@ function calculateCurvature() {
   let current_edges = {
     ...edges
   };
-  if (graphs.length > 0) {
-    current_edges = {
-      ...graphs[document.getElementById("threshold-slider").value].edges
-    };
-  }
   for (let id in current_edges) {
     let edge = current_edges[id];
     data.links.push({
@@ -1320,11 +978,6 @@ function calculateCurvature() {
       let current_edges = {
         ...edges
       };
-      if (graphs.length > 0) {
-        current_edges = {
-          ...graphs[document.getElementById("threshold-slider").value].edges
-        };
-      }
       for (let id in data.links) {
         let link = data.links[id];
         for (let id2 in current_edges) {
@@ -1353,310 +1006,51 @@ function calculateCurvature() {
   xmlHttp.send(JSON.stringify(data));
 }
 
-function calcSurface() {
-  let data = {
-    nodes: [],
-    links: []
-  };
-  let current_edges = {
-    ...edges
-  };
-  if (graphs.length > 0) {
-    current_edges = {
-      ...graphs[document.getElementById("threshold-slider").value].edges
-    };
-  }
-  length = Object.keys(vertices).length;
-  for (let id in vertices) {
-    let node = vertices[id];
-    data.nodes.push({
-      id: parseInt(id),
-      city: String(node.name),
-      lat: node.lat + 1E-10,
-      long: node.long + 1E-10
-    });
-  }
+function dropOutput(evt) {
+  evt.stopPropagation();
+  evt.preventDefault();
 
-  for (let id in current_edges) {
-    let edge = current_edges[id];
-    data.links.push({
-      source: edge.start.id,
-      target: edge.end.id,
-      ricciCurvature: edge.weight
-    });
-  }
   let xmlHttp = new XMLHttpRequest();
   xmlHttp.responseType = "text";
-  let smooth_pen = document.getElementById("input-smooth").value;
-  let niter = document.getElementById("input-niter").value;
-  let send_data = {
-    graph: data,
-    smooth_pen: smooth_pen,
-    niter: niter,
-    map: heightMap
-  };
-
   xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      let scale = 20.;
-      document.body.style.cursor = "auto";
-      data = xmlHttp.responseText;
-      data = data.substring(data.indexOf("["));
-      data = JSON.parse(data);
-      let hm = [];
-      if (graphs.length > 0) {
-        hm = graphs[document.getElementById("threshold-slider").value].heightmap;
-      } else {
-        hm = calcHeightMap;
-      }
-      for (let i = 0; i < divisions; i++) {
-        for (let j = 0; j < divisions; j++) {
-          hm[j][divisions - 1 - i] = data[i * divisions + j] * scale;
-        }
-      }
-
-      updatePlaneHeights(hm);
+    if (xmlHttp.readyState != 4 || xmlHttp.status != 200) {
+      return;
     }
-  }
-  xmlHttp.open("post", "calc-surface");
-  xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xmlHttp.send(JSON.stringify(send_data));
-  document.body.style.cursor = "progress";
-}
 
-function createAndUpdateAlphaMapD3(map) {
-  let width = 512;
-  let height = 512;
-  if (d3.select("#alpha-svg").empty()) {
-    d3.select("body")
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("id", "alpha-svg")
-      .attr("display", "none");
-  }
-  let svg = d3.select("#alpha-svg");
-  svg.selectAll("*").remove();
-  svg.append("rect")
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("fill", "#333333");
-  svg.append("g");
+    let data = JSON.parse(xmlHttp.responseText);
 
-  // Add X axis
-  let x = d3.scaleLinear()
-    .domain([0, map.length])
-    .range([0, width]);
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+    // Set map
+    mapCenter = data.mapCenter;
+    mapZoomFactor = data.mapZoomFactor;
+    resetView();
 
-  // Add Y axis
-  let y = d3.scaleLinear()
-    .domain([0, map[0].length])
-    .range([height, 0]);
-  svg.append("g")
-    .call(d3.axisLeft(y));
-
-  let color = d3.scaleLinear()
-    .domain([0.0, 0.002]) // Points per square pixel. .002
-    .range(["#333333", "white"]);
-  let data = [];
-
-  for (let i = 0; i < map.length; i++) {
-    for (let j = 0; j < map[i].length; j++) {
-      if (map[i][j] == 1) {
-        data.push({
-          x: i,
-          y: j
-        });
+    // Set vertex heights
+    let heightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0))
+    for (let i = 0; i < divisions; i++) {
+      for (let j = 0; j < divisions; j++) {
+        heightMap[j][divisions - 1 - i] = data.heights[i * divisions + j] * 20.;
       }
+    }
+    updatePlaneHeights(heightMap);
+
+    // Add vertices and edges
+    for (let i = 0; i < data.vertices.length; ++i) {
+      let vertex = data.vertices[i];
+      addVertex(null, vertex[0], vertex[1], true, i.toString());
+    }
+    for (let i = 0; i < data.edges.length; ++i) {
+      let edge = data.edges[i];
+      addEdge(null, edge[0], edge[1], edge[2]);
     }
   }
 
-  // Modify bandwidth
-  let densityData = d3.contourDensity()
-    .x(function(d) {
-      return x(d.x);
-    })
-    .y(function(d) {
-      return y(d.y);
-    })
-    .size([width, height])
-    .bandwidth(4)
-    (data);
-
-
-  svg.insert("g", "g")
-    .selectAll("path")
-    .data(densityData)
-    .enter().append("path")
-    .attr("d", d3.geoPath())
-    .attr("fill", function(d) {
-      return color(d.value);
-    });
-
-  let alphaCanv = document.getElementById("alpha-canvas");
-  if (alphaCanv == null) {
-    alphaCanv = document.createElement("canvas");
-    alphaCanv.id = "alpha-canvas";
-    alphaCanv.height = height;
-    alphaCanv.width = width;
-    alphaCanv.style.display = "none";
-
-    document.body.appendChild(alphaCanv);
-  }
-
-  let ctx = alphaCanv.getContext("2d");
-
-  let svgEle = document.getElementById("alpha-svg");
-  let img = document.createElement("img");
-  img.setAttribute("src", "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent((new XMLSerializer()).serializeToString(svgEle)))));
-  img.onload = function() {
-    ctx.drawImage(img, 0, 0);
-  }
-
-  return new T.CanvasTexture(alphaCanv);
-}
-
-function fileSelectEdges(evt) {
-  evt.stopPropagation();
-  evt.preventDefault();
-
-  let files = evt.dataTransfer.files; // FileList object.
-  for (let file of files) {
-    readEdgeFile(file);
-  }
-}
-
-function readEdgeFile(file) {
   let reader = new FileReader();
   reader.onload = function() {
-    let current_edges = {};
-    let text = reader.result;
-    let lines = text.split("\n");
-    let i = -1;
-    let inputNames = [];
-    let negative_edges = [];
-    if (file.name.substr(-3) != "csv") {
-      let inputNameData = lines[0].split("\"");
-      let k = -1;
-      for (let nameData of inputNameData) {
-        k++;
-        nameData = nameData.trim();
-        if (nameData == "") {
-          continue;
-        }
-        if (k % 2 == 1) {
-          inputNames.push(nameData);
-        } else {
-          inputNames = inputNames.concat(nameData.split(" "));
-        }
-      }
-    } else {
-      inputNames = lines[0].split(",").slice(1);
-    }
-
-    if (file.name.substr(-3) != "csv") {
-      for (let i = 0; i < lines.length; i++) {
-        let line = lines[i];
-        let data = line.split("\"");
-        let currentNode = "";
-        if (data.length > 1) { // Two word name - deal with double quotes
-          currentNode = data[1];
-          data = data[2].split(" ");
-        } else {
-          data = data[0].split(" ");
-          currentNode = data[0];
-          data = data.splice(1);
-        }
-        if (data[0] == "" || isNaN(data[0])) {
-          continue;
-        }
-        let currentId = names[currentNode];
-        for (let j = 0; j < i; j++) {
-          let weight = parseFloat(data[j]);
-          if (weight == 0) {
-            continue;;
-          }
-          let endNode = inputNames[j];
-          let endId = names[endNode];
-          if (weight < 0) {
-            let n = {
-              start: currentId,
-              end: endId,
-              weight: weight
-            };
-            negative_edges.push(n);
-            continue;
-          }
-          addEdgeSec(null, currentId, endId, weight, vertices, current_edges);
-        }
-      }
-    } else {
-      for (let i = 0; i < lines.length; i++) {
-        let line = lines[i];
-        let data = line.split(",");
-        let currentNode = data[0];
-        data = data.splice(1);
-
-        let currentId = names[currentNode];
-        for (let j = 0; j < i; j++) {
-          if (data[j] == "" || isNaN(data[0])) {
-            continue;
-          }
-          let weight = parseFloat(data[j]);
-          let endNode = inputNames[j];
-          let endId = names[endNode];
-          if (weight < 0) {
-            let n = {
-              start: currentId,
-              end: endId,
-              weight: weight
-            };
-            negative_edges.push(n);
-            continue;
-          }
-          addEdgeSec(null, currentId, endId, weight, vertices, current_edges);
-        }
-      }
-    }
-    negative_edges.sort((a, b) => -(a.weight - b.weight));
-    for (let e of negative_edges) {
-      addEdgeSec(null, e.start, e.end, e.weight, vertices, current_edges);
-    }
-
-    let newHeightMap = Array(divisions).fill().map(() => Array(divisions).fill(0.0));
-    let newGraph = new GraphObj(vertices, current_edges, newHeightMap);
-    graphs.push(newGraph);
-
-    document.getElementById("threshold-slider").max = graphs.length - 1;
-    document.getElementById("threshold-slider").value = graphs.length - 1;
+    xmlHttp.open("post", "unpickle");
+    xmlHttp.setRequestHeader("Content-Type", "application/octet-stream");
+    xmlHttp.send(reader.result);
   }
-  reader.readAsText(file);
-}
-
-function fileSelectNodes(evt) {
-  evt.stopPropagation();
-  evt.preventDefault();
-  let files = evt.dataTransfer.files; // FileList object.
-  let reader = new FileReader();
-
-  reader.onload = function() {
-    let text = reader.result;
-    let lines = text.split("\n");
-    for (let line of lines) {
-      let data = line.split(",");
-      if (data[1] == "" || isNaN(data[1])) {
-        continue;
-      }
-      let projected = ol.proj.fromLonLat([data[2], data[1]]);
-      // TODO: This next line seems strange. It"s presumably based off
-      // of https://epsg.io/3857, but it might need to be edited
-      addVertex(null, projected[1] / 20048966.10 * 10, projected[0] / 20026376.39 * 10, true, data[0], parseFloat(data[1]), parseFloat(data[2]));
-    }
-  }
-  reader.readAsText(files[0]);
+  reader.readAsArrayBuffer(evt.dataTransfer.files[0]);
 }
 
 function dragOver(evt) {
@@ -1678,24 +1072,6 @@ function convert3JStoVerts(x, y) {
   y *= divisions - 1;
   let retval = Math.round(y) * divisions + Math.round(x);
   return retval;
-}
-
-function convert3JStoHMgeneric(point, planeXMin, planeYMin, planeWidth, planeHeight) {
-  point[0] = (point[0] - planeXMin); // Change from (min,max) to (0, newmax)
-  point[1] = (point[1] - planeYMin); // Change from (min,max) to (0, newmax)
-  point[0] = Math.round((point[0] / planeWidth) * (divisions - 1)); // Change from (0, planeWidth) to (0, divisions)
-  point[1] = Math.round((point[1] / planeHeight) * (divisions - 1)); // Change from (0, planeHeight) to (0, divisions)
-  return point;
-}
-
-function convert3JStoOM(point, divisions) {
-  point[0] = (point[0] - planeXMin); // Change from (min,max) to (0, newmax)
-  point[1] = (point[1] - planeYMin); // Change from (min,max) to (0, newmax)
-
-  point[0] = Math.round((point[0] / planeW) * (divisions - 1)); // Change from (0, planeWidth) to (0, divisions)
-  point[1] = Math.round((point[1] / planeH) * (divisions - 1)); // Change from (0, planeHeight) to (0, divisions)
-
-  return point;
 }
 
 function dist(startPt, endPt) {

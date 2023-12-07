@@ -16,7 +16,7 @@ if __name__ == '__main__':
     input_directory = args.input_directory
     output_filename = args.output_filename
 
-    mesh = data.get_mesh_output(input_directory, postprocessed=False)
+    mesh = data.get_mesh_output_from_directory(input_directory, postprocessed=False)
     n = mesh.get_topology().n_vertices()
 
     with open(output_filename, 'w') as output_file:

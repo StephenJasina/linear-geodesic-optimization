@@ -33,8 +33,6 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/d3-contour.v1.min.js"></script>
 
-
-
     <script type="module" src="js/scripts/three.module.js"></script>
 
     <script src="js/perlin.js"></script>
@@ -49,37 +47,17 @@
       </div>
       <div id="div-extra" class="gui-box">
         <!-- <button type="button" id="btn-scrn">Take screenshot</button> -->
-        <div id="div-calc-surface">
-          <button type="button" id="btn-calc-surface">Calculate Surface</button>
-          <br>
-          <label for="input-smooth">Smoothness</label>
-          <input type="text" value="1" id="input-smooth">
-          <br>
-          <label for="input-niter">No. of iterations</label>
-          <input type="text" value="20" id="input-niter">
-        </div>
-
-        <button type="button" id="btn-gen-graph">Generate sample graph</button>
-        <button type="button" id="btn-calc-dist">Calculate Distance</button>
-        <button type="button" id="btn-gen-graph-empty">Generate graph (No Weights)</button>
+        <button type="button" id="btn-calculate-geodesics">Calculate Geodesics</button>
 
         <div id="dropzone">
-          <div id="drop-nodes" class="drop-box">Drop location files here</div>
-          <output id="node-list"></output>
-          <div id="drop-edges" class="drop-box">Drop edge files here</div>
-          <output id="edge-list"></output>
+          <div id="drop-output" class="drop-box">Drop optimization output here</div>
         </div>
-        <p>Threshold:</p>
-        <input type="range" min="0" max="5" value="0" class="slider" step="1" id="threshold-slider">
-        <button type="button" id="btn-cycle-thresholds">Cycle Thresholds</button>
         <input type="checkbox" id="show-map" name="show-map">
         <label for="show-map"> Show map</label><br>
         <input type="checkbox" id="show-graph" name="show-graph" checked>
         <label for="show-graph"> Show graph</label><br>
-        <input type="checkbox" id="hide-surface" name="hide-surface" checked>
-        <label for="hide-surface" id="hide-surface-label"> Hide extra surface</label><br>
-        <input type="checkbox" id="use-calc-surface" name="use-calc-surface" checked>
-        <label for="use-calc-surface"> Use calculated surface</label><br>
+        <input type="checkbox" id="show-hover-graph" name="show-hover-graph">
+        <label for="show-hover-graph"> Show hovering graph</label><br>
         <input type="checkbox" id="show-grid" name="show-grid">
         <label for="show-grid"> Show grid</label><br>
       </div>
@@ -95,9 +73,7 @@
         <li> Left click + drag to rotate </li>
         <li> Right click + drag to pan </li>
         <li> Scroll to zoom </li>
-        <li> <kbd class="key">Shift</kbd> + Left click + drag to select subgraph </li>
-        <li> <kbd class="key">Esc</kbd> to exit subgraph </li>
-        <li> Click <kbd class="button">Calculate Surface</kbd> to generate surface based on graph </li>
+        <li> <kbd class="key">Esc</kbd> to reset zoom </li>
       </ul>
       <p style="padding: 10px;">Map tiles by <a href="http://stamen.com">Stamen Design</a>,
         under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.

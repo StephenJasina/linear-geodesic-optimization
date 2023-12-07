@@ -21,10 +21,6 @@ from linear_geodesic_optimization.mesh.basic import Mesh as BasicMesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
-directory = os.path.join('site', 'example_output')
-max_iterations = 10000
-vertical_scale = 0.15
-
 sys.path.append(r'python/surface/src')
 
 app = flask.Flask(__name__, static_folder='')
@@ -56,28 +52,64 @@ def calc_distance():
     }
     return json.dumps(ret)
 
-@app.route('/calc-surface', methods=['POST'])
-def calc_surface():
-    json_data = request.json
+@app.route('/unpickle', methods=['POST'])
+def unpickle():
+    unpickled_data = pickle.loads(request.get_data())
+    if (
+        'parameters' in unpickled_data
+        and 'initial' in unpickled_data
+        and 'final' in unpickled_data
+        and 'network' in unpickled_data
+    ):
+        # Get height data
 
-    # TODO: Actually run the optimization algorithm with this data
-    smooth_pen = int(json_data['smooth_pen'])
-    niter = int(json_data['niter'])
-    hmap = json_data['map']
-    G = json_graph.node_link_graph(json_data['graph'])
-    H = nx.Graph(G)
+        z = unpickled_data['final']
+        z_0 = unpickled_data['initial']
 
-    mesh = data.get_mesh_output(directory, max_iterations, True)
-    z = mesh.get_parameters()
-    width = mesh.get_width()
-    height = mesh.get_height()
+        parameters = unpickled_data['parameters']
+        width = parameters['width']
+        height = parameters['height']
 
-    z = np.flip(z.reshape((width, height)), axis=1).T.reshape((-1))
-    z = z - np.amin(z)
-    z = z * vertical_scale / np.amax(z)
-    z = z - np.amax(z)
-    z = z.tolist()
-    return Response(json.dumps(z), mimetype='text/plain')
+        network = unpickled_data['network']
+
+        mesh = data.get_mesh_output(z, width, height, network, True, z_0)
+        z = mesh.get_parameters()
+        z = np.flip(z.reshape((width, height)), axis=1).T.reshape((-1))
+        z = z - np.amin(z)
+        z = z * 0.15 / np.amax(z)
+        z = z - np.amax(z)
+        z = z.tolist()
+
+        # Get map and network data
+        coordinates, bounding_box, network_edges, network_curvatures, network_latencies = network
+        coordinates = np.array(coordinates)
+        network_vertices = mesh.map_coordinates_to_support(coordinates, 0.8, bounding_box)
+        vertices = [
+            (network_vertex[1] * 20., network_vertex[0] * 20.)
+            for network_vertex in network_vertices
+        ]
+        edges = [
+            [str(edge[0]), str(edge[1]), curvature]
+            for edge, curvature in zip(network_edges, network_curvatures)
+        ]
+
+        center_xy = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
+        center = data.inverse_mercator(*center_xy)
+        left, _ = data.inverse_mercator(np.amin(coordinates[:,0]), 0)
+        right, _ = data.inverse_mercator(np.amax(coordinates[:,0]), 0)
+        zoom_factor = 0.8 * 360. / (right - left)
+
+        to_return = {
+            'heights': z,
+            'vertices': vertices,
+            'edges': edges,
+            'mapCenter': center,
+            'mapZoomFactor': zoom_factor,
+        }
+    else:
+        to_return = {}
+
+    return Response(json.dumps(to_return), mimetype='application/json')
 
 @app.route('/')
 def static_proxy():

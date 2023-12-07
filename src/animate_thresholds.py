@@ -13,7 +13,7 @@ from linear_geodesic_optimization import data
 from linear_geodesic_optimization.plot import get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-directory = os.path.join('..', 'out_US_fine_threshold_nonsequential_smooth')
+directory = os.path.join('..', 'out_US_fine_threshold_clustered_nonsequential_smooth')
 
 lambda_curvature = 1.
 lambda_smooth = 0.004
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             if name.isdigit()
         )
         path = os.path.join(current_directory, str(iteration))
-        mesh = data.get_mesh_output(
+        mesh = data.get_mesh_output_from_directory(
             current_directory, postprocessed=True,
             initialization_path=initialization_path
         )
@@ -132,8 +132,6 @@ if __name__ == '__main__':
         z = (1 - lam) * zs[left] + lam * zs[right]
         z = np.reshape(z, (width, height))
 
-        print(left, right, lam)
-
         entry_name = epsilons[left_index if lam < 0.5 else right_index][1]
         with open(os.path.join(directory, entry_name, subdirectory_name, 'parameters'), 'rb') as f:
             parameters = pickle.load(f)
@@ -162,4 +160,4 @@ if __name__ == '__main__':
                                               int(animation_length * fps + 1)),
                                   interval=1000/fps,
                                   blit=True)
-    ani.save(os.path.join('..', 'animation_US_nonsequential_smooth.mp4'), dpi=300)
+    ani.save(os.path.join('..', 'animation_US_clustered.mp4'), dpi=300)

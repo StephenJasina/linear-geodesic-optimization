@@ -142,7 +142,7 @@ def map_latencies_to_mesh(
 
     return latencies
 
-def get_mesh_output(
+def get_mesh_output_from_directory(
         directory: str,
         max_iterations: typing.Optional[int] = None,
         postprocessed: bool = False,
@@ -156,11 +156,10 @@ def get_mesh_output(
     optionally done to make the output a bit more aesthetically
     pleasing.
     """
-
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        data_file_name = os.path.join('..', 'data' ,parameters['data_file_name'])
+        data_file_name = os.path.join('..', 'data', parameters['data_file_name'])
         width = parameters['width']
         height = parameters['height']
 
@@ -180,10 +179,27 @@ def get_mesh_output(
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
+    network = read_graphml(data_file_name)
+
+    return get_mesh_output(z, width, height, network, postprocessed, z_0)
+
+def get_mesh_output(
+        z: typing.List[np.float64],
+        width: int,
+        height: height,
+        network,
+        postprocessed: bool = False,
+        z_0: typing.Optional[typing.List[np.float64]] = None,
+) -> RectangleMesh:
+    """
+    Return a mesh with the given parameters.
+
+    Some extra postprocessing is optionally done to make the output a
+    bit more aesthetically pleasing.
+    """
     mesh = RectangleMesh(width, height)
 
-    coordinates, bounding_box, network_edges, _, _, labels, name \
-        = read_graphml(data_file_name, with_labels=True)
+    coordinates, bounding_box, network_edges, _, _ = network
     coordinates = np.array(coordinates)
     network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8), bounding_box)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
