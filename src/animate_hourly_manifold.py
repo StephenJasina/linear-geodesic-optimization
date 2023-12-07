@@ -9,14 +9,11 @@ from matplotlib import animation as animation
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import time
-from utils import *
 
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.plot \
     import get_mesh_plot, get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
-
-directory = os.path.join('..', 'out_Europe_hourly')
 
 lambda_curvature = 1.
 lambda_smooth = 0.004
@@ -25,10 +22,17 @@ initial_radius = 20.
 width = 50
 height = 50
 scale = 1.
+ip_type = 'ipv4'
+threshold = 10
+
+directory = os.path.join('..', 'out_Europe_hourly', str(threshold))
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
 
-manifold_count = 3
-fps = 2
+manifold_count = 24
+fps = 12
+
+
+include_line_graph = False
 
 def get_image_data(data_file_path, resolution=100):
     coordinates, _, _, _, _ = data.read_graphml(data_file_path)
@@ -186,13 +190,21 @@ def investigating_graph(k=3):
 if __name__ == '__main__':
     initialization_path = os.path.join(directory, 'graph_0', subdirectory_name, '0')
 
-    time_series, name_series= investigating_graph(k=3)
-    zs = []
-    for i in range(manifold_count):
-        print(f'Reading data from manifold {i}')
+    hours = []
+    entry_prefix = 'graph_'
+    with os.scandir(directory) as it:
+        for entry in it:
+            if entry.name.startswith(entry_prefix) and not entry.is_file():
+                hours.append((float(entry.name[len(entry_prefix):]), entry.name))
+    hours = list(sorted(hours))
+    manifold_count = len(hours)
+
+    zs = {}
+    for hour, entry_name in hours:
+        print(f'Reading data from manifold {hour}')
 
         current_directory = os.path.join(
-            directory, f'graph_{i}', subdirectory_name
+            directory, entry_name, subdirectory_name
         )
 
         iteration = max(
@@ -201,12 +213,14 @@ if __name__ == '__main__':
             if name.isdigit()
         )
         path = os.path.join(current_directory, str(iteration))
-        mesh = data.get_mesh_output(
+        mesh = data.get_mesh_output_from_directory(
             current_directory, postprocessed=True,
-            intialization_path=initialization_path
+            initialization_path=initialization_path
         )
 
-        zs.append(mesh.get_parameters())
+        zs[hour] = mesh.get_parameters()
+
+    z_max = np.amax(list(zs.values()))
 
     mesh = RectangleMesh(width, height, scale)
 
@@ -219,100 +233,124 @@ if __name__ == '__main__':
 
     fig = plt.figure()
 
-    # Define the grid shape (total rows, total cols)
-    gs = gridspec.GridSpec(4, 1, height_ratios=[16, 1, 1, 1], hspace=0)
+    if include_line_graph:
+        time_series, name_series= investigating_graph(k=3)
 
-    ax = fig.add_subplot(gs[0], projection='3d', facecolor='#808080')
-    ax_ts1 = fig.add_subplot(gs[1])
-    ax_ts2 = fig.add_subplot(gs[2])
-    ax_ts3 = fig.add_subplot(gs[3])
+        # Define the grid shape (total rows, total cols)
+        gs = gridspec.GridSpec(4, 1, height_ratios=[16, 1, 1, 1], hspace=0)
 
-    # Remove x ticks and labels from ax
-    # ax.set_xticks([])
-    # ax.set_xlabel('')
+        ax = fig.add_subplot(gs[0], projection='3d', facecolor='#808080')
+        ax_ts1 = fig.add_subplot(gs[1])
+        ax_ts2 = fig.add_subplot(gs[2])
+        ax_ts3 = fig.add_subplot(gs[3])
+
+        # Remove x ticks and labels from ax
+        # ax.set_xticks([])
+        # ax.set_xlabel('')
+
+        ts_data1 = time_series[0]
+        ts_data2 = time_series[1]
+        ts_data3 = time_series[2]
+
+        ax_ts3.set_xlim(0, 24)
+        # ax_ts1.plot(ts_data1)
+        # ax_ts2.plot(ts_data2)
+        # ax_ts3.plot(ts_data3)
 
 
+        # ax_ts1.set_ylim(0, 100)
+        # ax_ts2.set_ylim(0, 100)
+        # ax_ts3.set_ylim(0, 100)
+        # ax_ts1.clear()
+        # ax_ts1.plot(ts_data1)
+        #
+        # ax_ts2.clear()
+        # ax_ts2.plot(ts_data2)
+    else:
+        ax = fig.add_subplot(projection='3d')
+        ax.set_facecolor((0.5, 0.5, 0.5))
 
-    ts_data1 = time_series[0]
-    ts_data2 = time_series[1]
-    ts_data3 = time_series[2]
-
-    ax_ts3.set_xlim(0, 24)
-    # ax_ts1.plot(ts_data1)
-    # ax_ts2.plot(ts_data2)
-    # ax_ts3.plot(ts_data3)
-
-
-    # ax_ts1.set_ylim(0, 100)
-    # ax_ts2.set_ylim(0, 100)
-    # ax_ts3.set_ylim(0, 100)
-    # ax_ts1.clear()
-    # ax_ts1.plot(ts_data1)
-    #
-    # ax_ts2.clear()
-    # ax_ts2.plot(ts_data2)
-    def get_frame(i):
+    def get_frame(hour):
         start_time = time.time()
         ### print time taken for each loop
-        print(f'Computing frame at t={i}')
-        left = int(i)
-        right = min(left + 1, manifold_count - 1)
-        lam = i - left
+        print(f'Computing frame at t={hour}')
+
+        for left_index in range(len(hours) + 1):
+            if left_index == len(hours) or hours[left_index][0] > hour:
+                break
+        left_index -= 1
+        for right_index in range(len(hours) - 1, -2, -1):
+            if right_index == -1 or hours[right_index][0] < hour:
+                break
+        right_index += 1
+
+        left = hours[left_index][0]
+        right = hours[right_index][0]
+
+        lam = 0. if right == left else (hour - left) / (right - left)
         z = (1 - lam) * zs[left] + lam * zs[right]
         z = np.reshape(z, (width, height))
 
-        with open(os.path.join(directory, f'graph_{right}_{threshold}', subdirectory_name, 'parameters'), 'rb') as f:
+        entry_name = hours[left_index if lam < 0.5 else right_index][1]
+        with open(os.path.join(directory, entry_name, subdirectory_name, 'parameters'), 'rb') as f:
             parameters = pickle.load(f)
             data_file_name = parameters['data_file_name']
             data_file_path = os.path.join('..', 'data', data_file_name)
-            coordinates, network_edges, network_curvatures, \
-            network_latencies, bounding_box, network_nodes, network_city \
+            coordinates, bounding_box, network_edges, network_curvatures, \
+            network_latencies, network_nodes, network_city \
                 = data.read_graphml(data_file_path, with_labels=True)
         coordinates = np.array(coordinates)
         network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8), bounding_box)
 
 
-        # Update timeseries plot
-        line1, = ax_ts1.plot(ts_data1[:int(i) + 1], '-o', markersize=3, color='blue', label = name_series[0])
-        line2, = ax_ts2.plot(ts_data2[:int(i) + 1], '-o', markersize=3, color='red', label= name_series[1])
-        line3, = ax_ts3.plot(ts_data3[:int(i) + 1], '-o', markersize=3, color='green', label = name_series[2])
-        legend1 = ax_ts1.legend([line1], [name_series[0]], loc='upper right', fontsize=4)
-        legend2 = ax_ts2.legend([line2], [name_series[1]], loc='upper right', fontsize=4)
-        legend3 = ax_ts3.legend([line3], [name_series[2]], loc='upper right', fontsize= 4)
-        ax.set_xlim(0,24)
-        ax_ts1.tick_params(axis='both', which='major', labelsize=6)
-        ax_ts2.tick_params(axis='both', which='major', labelsize=6)
-        ax_ts3.tick_params(axis='both', which='major', labelsize=6)
+        if include_line_graph:
+            # Update timeseries plot
+            line1, = ax_ts1.plot(ts_data1[:int(hour) + 1], '-o', markersize=3, color='blue', label = name_series[0])
+            line2, = ax_ts2.plot(ts_data2[:int(hour) + 1], '-o', markersize=3, color='red', label= name_series[1])
+            line3, = ax_ts3.plot(ts_data3[:int(hour) + 1], '-o', markersize=3, color='green', label = name_series[2])
+            legend1 = ax_ts1.legend([line1], [name_series[0]], loc='upper right', fontsize=4)
+            legend2 = ax_ts2.legend([line2], [name_series[1]], loc='upper right', fontsize=4)
+            legend3 = ax_ts3.legend([line3], [name_series[2]], loc='upper right', fontsize= 4)
+            ax.set_xlim(0,24)
+            ax_ts1.tick_params(axis='both', which='major', labelsize=6)
+            ax_ts2.tick_params(axis='both', which='major', labelsize=6)
+            ax_ts3.tick_params(axis='both', which='major', labelsize=6)
 
-        # Remove x ticks and labels from ax_ts1 and ax_ts2 since they're stacked
-        ax_ts1.set_xticks([])
-        ax_ts1.set_xlabel('')
-        # ax_ts1.set_yticks(np.arange(0, max(time_series[0]), 5))
-        ax_ts2.set_xticks([])
-        # ax_ts2.set_yticks(np.arange(0, max(time_series[1]), 5))
-        ax_ts2.set_xlabel('')
-        # ax_ts3.set_yticks(np.arange(0, max(time_series[2]), 5))
-        ax_ts3.set_xlabel('Time (hours)')
-        # ax_ts3.set_xticks([])
-        ax_ts1.set_xlim(0, 24)
-        ax_ts2.set_xlim(0, 24)
-        ax_ts3.set_xlim(0, 24)
-        ax_ts3.set_xticks(np.arange(0, 24, 1))
-        # ax_ts2.set_xticks(np.arange(0, 24, 1))
-        # ax_ts1.set_xticks(np.arange(0, 24, 1))
+            # Remove x ticks and labels from ax_ts1 and ax_ts2 since they're stacked
+            ax_ts1.set_xticks([])
+            ax_ts1.set_xlabel('')
+            # ax_ts1.set_yticks(np.arange(0, max(time_series[0]), 5))
+            ax_ts2.set_xticks([])
+            # ax_ts2.set_yticks(np.arange(0, max(time_series[1]), 5))
+            ax_ts2.set_xlabel('')
+            # ax_ts3.set_yticks(np.arange(0, max(time_series[2]), 5))
+            ax_ts3.set_xlabel('Time (hours)')
+            # ax_ts3.set_xticks([])
+            ax_ts1.set_xlim(0, 24)
+            ax_ts2.set_xlim(0, 24)
+            ax_ts3.set_xlim(0, 24)
+            ax_ts3.set_xticks(np.arange(0, 24, 1))
+            # ax_ts2.set_xticks(np.arange(0, 24, 1))
+            # ax_ts1.set_xticks(np.arange(0, 24, 1))
+
+        elapsed_time = time.time() - start_time
+        print(f"Time taken for iteration {hour}: {elapsed_time:.4f} seconds")
 
         ax.clear()
-        elapsed_time = time.time() - start_time
-        print(f"Time taken for iteration {i}: {elapsed_time:.4f} seconds")
 
         return [
             get_rectangular_mesh_plot(z, face_colors, None,
-                          [network_vertices, network_edges, network_curvatures, network_city],
-                          ax),
+                np.amax(z) / z_max * 0.25,
+                [network_vertices, network_edges, network_curvatures, network_city],
+                ax
+            ),
             ax.text2D(0.05, 0.95, f'{left:02}:{round(lam*60):02}',
-                      transform=ax.transAxes),
-            line1, line2, line3, legend1, legend2, legend3
-        ]
+                      transform=ax.transAxes)
+        ] + (
+            [line1, line2, line3, legend1, legend2, legend3]
+            if include_line_graph
+            else []
+        )
 
 
     ani = animation.FuncAnimation(fig, get_frame,
@@ -320,4 +358,4 @@ if __name__ == '__main__':
                                               (manifold_count - 1) * fps + 1),
                                   interval=1000/fps,
                                   blit=True)
-    ani.save(os.path.join('..', 'animation_test.mp4'), dpi=300)
+    ani.save(os.path.join('..', 'animation_Europe_hourly.mp4'), dpi=300)
