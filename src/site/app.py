@@ -21,8 +21,6 @@ from linear_geodesic_optimization.mesh.basic import Mesh as BasicMesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
-sys.path.append(r'python/surface/src')
-
 app = flask.Flask(__name__, static_folder='')
 retval = None
 
