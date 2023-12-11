@@ -3,6 +3,8 @@ import csv
 import os
 import sys
 
+import matplotlib.pyplot as plt
+
 import csv_to_graphml
 
 
@@ -28,7 +30,7 @@ if __name__ == '__main__':
         probes_filename, latencies_filename, epsilon, 500000, 2
     )
 
-    severities = []
+    goodnesses = []
     triangle_count = 0
     tiv_count = 0
     tiv_edges = set()
@@ -42,7 +44,12 @@ if __name__ == '__main__':
 
                 rtt_max = max(rtt_uv, rtt_uw, rtt_vw)
                 rtt_sum = rtt_uv + rtt_uw + rtt_vw
+                goodness = rtt_max / (rtt_sum - rtt_max) * (1 + 2 * rtt_max - rtt_sum)
+                goodnesses.append(goodness)
+
                 if 2 * rtt_max > rtt_sum:
+                    tiv_count += 1
+
                     if rtt_uv > rtt_uw:
                         if rtt_uv > rtt_vw:
                             tiv_edges.add((min(u, v), max(u, v)))
@@ -54,11 +61,24 @@ if __name__ == '__main__':
                         else:
                             tiv_edges.add((min(v, w), max(v, w)))
 
+                    print(f'TIV with goodness {goodness:.4f}')
 
-                    tiv_count += 1
-                    severity = rtt_max / (rtt_sum - rtt_max)
-                    severities.append(severity)
-                    print(f'TIV with severity {severity:.4f}')
     print(f'Proportion of TIVs (triangles): {(tiv_count / triangle_count):.4f}')
     print(f'Proportion of TIVs (edges): {(len(tiv_edges) / len(graph.edges)):.4f}')
-    print(f'Worst severity: {max(severities):.4f}')
+    print(f'Worst goodness: {max(goodnesses):.4f}')
+
+    fig = plt.figure()
+    ax_1, ax_2 = fig.subplots(1, 2, sharey=True)
+    if goodnesses:
+        ax_1.ecdf(goodnesses)
+    ax_1.set_title('Goodness (All Triangles)')
+    ax_1.set_xlabel('r')
+    ax_1.set_ylabel('CDF')
+
+    goodness_violators = [goodness for goodness in goodnesses if goodness > 1]
+    if goodness_violators:
+        ax_2.ecdf([goodness for goodness in goodnesses if goodness > 1])
+    ax_2.set_title('Goodness (Violators Only)')
+    ax_2.set_xlabel('r')
+    ax_2.set_ylabel('CDF')
+    plt.show()
