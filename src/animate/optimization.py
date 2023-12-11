@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib import animation as animation
 import numpy as np
 
+sys.path.append('.')
 from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh

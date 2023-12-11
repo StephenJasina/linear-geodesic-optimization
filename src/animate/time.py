@@ -1,5 +1,6 @@
 import os
 import pickle
+import sys
 
 import networkx as nx
 import pandas as pd
@@ -10,6 +11,7 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 import time
 
+sys.path.append('.')
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.plot \
     import get_mesh_plot, get_rectangular_mesh_plot

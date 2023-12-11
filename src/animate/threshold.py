@@ -1,5 +1,6 @@
 import os
 import pickle
+import sys
 
 import networkx as nx
 import pandas as pd
@@ -9,6 +10,7 @@ from matplotlib import animation as animation
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 
+sys.path.append('.')
 from linear_geodesic_optimization import data
 from linear_geodesic_optimization.plot import get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
