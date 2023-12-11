@@ -20,11 +20,11 @@ def full_pipeline_hourly_manifold(ip_type='ipv4', date='2023-08-29', e_value=4,
                        '-o', probes_filename]
         subprocess.run(command)
     # then get the measurements
-    # check if the file already exists and if it does, don't run the command
-    if not os.path.exists(os.path.join(ip_type, directory,
-                                       'latencies_23.csv')):
-        time_initial = datetime.datetime.fromisoformat(date)
-        for hour in range(24):
+    time_initial = datetime.datetime.fromisoformat(date)
+    for hour in range(24):
+        # check if the file already exists and if it does, don't run the command
+        if not os.path.exists(os.path.join(ip_type, directory,
+                                           f'latencies_{hour}.csv')):
             time_start = time_initial + datetime.timedelta(hours=hour)
             time_end = time_initial + datetime.timedelta(hours=hour+1)
             command = ['python', 'get_measurements.py',

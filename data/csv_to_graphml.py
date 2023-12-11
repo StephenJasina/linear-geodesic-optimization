@@ -138,7 +138,6 @@ def get_graph(
     # Delete extraneous edge data
     for _, _, d in graph.edges(data=True):
         del d['weight']
-        del d['rtt']
 
     return graph
 
