@@ -1,0 +1,2533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key36" for="node" attr.name="id" attr.type="int" />
+  <key id="key37" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key38" for="node" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="name" attr.type="string" />
+  <key id="key41" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key42" for="node" attr.name="type" attr.type="string" />
+  <key id="key43" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">6/11/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Continent</data>
+   <data key="key13">Europe</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">Colt Telecom </data>
+   <data key="key23">2010_08</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.colt.net/oracleUCM/groups/public/documents/digitalasset/colt_011195.pdf</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">1</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key39">Colt</data>
+   <data key="key40">internet_top_pop (Colt)</data>
+   <data key="key41">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key43">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">48.3063899999999999992</data>
+      <data key="key21">14.2861099999999999997</data>
+      <data key="key32">-2.0595840626146837, -8.7863144033123195</data>
+      <data key="key35">0</data>
+      <data key="key36">0</data>
+      <data key="key38">Linz</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.4239099999999999986</data>
+      <data key="key21">9.37476999999999999983</data>
+      <data key="key32">-1.9478757238349718, -8.6276763669812127</data>
+      <data key="key35">0</data>
+      <data key="key36">1</data>
+      <data key="key38">St Pollen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">54.0887000000000000011</data>
+      <data key="key21">12.1404900000000000003</data>
+      <data key="key32">-3.3081196174340697, -8.304448612098172</data>
+      <data key="key35">0</data>
+      <data key="key36">2</data>
+      <data key="key38">Rostock</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3988599999999999993</data>
+      <data key="key21">13.0656599999999999996</data>
+      <data key="key32">-3.0865071214233595, -8.448897471567145</data>
+      <data key="key35">0</data>
+      <data key="key36">3</data>
+      <data key="key38">Potsdam</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.3396199999999999983</data>
+      <data key="key21">12.3712900000000000002</data>
+      <data key="key32">-2.7784358201310249, -8.7819541653492799</data>
+      <data key="key35">0</data>
+      <data key="key36">4</data>
+      <data key="key38">Leipzig</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0508900000000000012</data>
+      <data key="key21">13.7383199999999999997</data>
+      <data key="key32">-2.8210367334785666, -8.5642259755689825</data>
+      <data key="key35">0</data>
+      <data key="key36">5</data>
+      <data key="key38">Dresden</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0833300000000000013</data>
+      <data key="key21">19.9166700000000000004</data>
+      <data key="key32">-2.6525532984377791, -8.4369836441785893</data>
+      <data key="key35">0</data>
+      <data key="key36">6</data>
+      <data key="key38">Krakov</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.2297699999999999985</data>
+      <data key="key21">21.0117800000000000005</data>
+      <data key="key32">-2.8185154806152957, -8.3287746748565983</data>
+      <data key="key35">0</data>
+      <data key="key36">7</data>
+      <data key="key38">Warsaw</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4477800000000000009</data>
+      <data key="key21">11.0683300000000000001</data>
+      <data key="key32">-2.692531534244579, -8.9859683293683172</data>
+      <data key="key35">0</data>
+      <data key="key36">8</data>
+      <data key="key38">Nuremberg</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">48.3060299999999999999</data>
+      <data key="key21">11.9068600000000000003</data>
+      <data key="key32">-2.4781653056095045, -9.2562079484664945</data>
+      <data key="key35">0</data>
+      <data key="key36">9</data>
+      <data key="key38">Erding</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">48.2084900000000000017</data>
+      <data key="key21">16.3720799999999999993</data>
+      <data key="key32">-2.3622374774247565, -8.8643821824053521</data>
+      <data key="key35">0</data>
+      <data key="key36">10</data>
+      <data key="key38">Vienna</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0880400000000000002</data>
+      <data key="key21">14.4207600000000000003</data>
+      <data key="key32">-2.5822553050648795, -8.6402736197663277</data>
+      <data key="key35">0</data>
+      <data key="key36">11</data>
+      <data key="key38">Prague</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4883300000000000002</data>
+      <data key="key21">8.46472000000000000027</data>
+      <data key="key32">-3.1832884193670905, -9.6527921091883773</data>
+      <data key="key35">0</data>
+      <data key="key36">12</data>
+      <data key="key38">Mannheim</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">48.1374300000000000001</data>
+      <data key="key21">11.5754899999999999998</data>
+      <data key="key32">-2.578178699934552, -9.1781693047122737</data>
+      <data key="key35">0</data>
+      <data key="key36">13</data>
+      <data key="key38">Munich</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.9333299999999999999</data>
+      <data key="key21">6.94999999999999999983</data>
+      <data key="key32">-3.6096313070161918, -9.1695087376295064</data>
+      <data key="key35">0</data>
+      <data key="key36">14</data>
+      <data key="key38">Cologne</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.0766699999999999986</data>
+      <data key="key21">4.29861</data>
+      <data key="key32">-4.3268556338739943, -9.6327503332440347</data>
+      <data key="key35">0</data>
+      <data key="key36">15</data>
+      <data key="key38">The Hague</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3705199999999999987</data>
+      <data key="key21">9.73322000000000000022</data>
+      <data key="key32">-3.3676061426313919, -8.137044166976219</data>
+      <data key="key35">0</data>
+      <data key="key36">16</data>
+      <data key="key38">Hannover</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2217200000000000004</data>
+      <data key="key21">6.77616000000000000009</data>
+      <data key="key32">-3.8198137772488234, -8.9211430561239968</data>
+      <data key="key35">0</data>
+      <data key="key36">17</data>
+      <data key="key38">Dusseldorf</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2166700000000000015</data>
+      <data key="key21">4.41667000000000000001</data>
+      <data key="key32">-4.2613610527844958, -9.9556059075683461</data>
+      <data key="key35">0</data>
+      <data key="key36">18</data>
+      <data key="key38">Antwerp</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">51.9225000000000000006</data>
+      <data key="key21">4.47917000000000000001</data>
+      <data key="key32">-4.5280159783244693, -9.4983966585799759</data>
+      <data key="key35">0</data>
+      <data key="key36">19</data>
+      <data key="key38">Rotterdam</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8009700000000000014</data>
+      <data key="key21">-9.37825999999999999988</data>
+      <data key="key32">-3.8324275004310264, -12.398786314697151</data>
+      <data key="key35">0</data>
+      <data key="key36">20</data>
+      <data key="key38">Sintra</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5021299999999999999</data>
+      <data key="key21">15.0871900000000000001</data>
+      <data key="key32">-1.5438333158088562, -13.138081926818764</data>
+      <data key="key35">0</data>
+      <data key="key36">21</data>
+      <data key="key38">Catania</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1500000000000000014</data>
+      <data key="key21">-8.61667000000000000027</data>
+      <data key="key32">-3.9763942911817858, -12.265743178432867</data>
+      <data key="key35">0</data>
+      <data key="key36">22</data>
+      <data key="key38">Porto</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.7166700000000000015</data>
+      <data key="key21">-9.13332999999999999973</data>
+      <data key="key32">-3.8031918881307276, -12.21973524341915</data>
+      <data key="key35">0</data>
+      <data key="key36">23</data>
+      <data key="key38">Lisbon</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7272199999999999984</data>
+      <data key="key21">8.56028000000000000025</data>
+      <data key="key32">-1.5222289467449606, -12.989411471246399</data>
+      <data key="key35">0</data>
+      <data key="key36">24</data>
+      <data key="key38">Sassari</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1177300000000000013</data>
+      <data key="key21">16.8511800000000000008</data>
+      <data key="key32">-1.1448421377427571, -13.115606345191383</data>
+      <data key="key35">0</data>
+      <data key="key36">25</data>
+      <data key="key38">Bari</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1158199999999999993</data>
+      <data key="key21">13.3597599999999999999</data>
+      <data key="key32">-1.2014268687602387, -12.968672728411244</data>
+      <data key="key35">0</data>
+      <data key="key36">26</data>
+      <data key="key38">Palermo</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2073799999999999984</data>
+      <data key="key21">9.13462000000000000008</data>
+      <data key="key32">-1.4330686347456376, -13.230150711134987</data>
+      <data key="key35">0</data>
+      <data key="key36">27</data>
+      <data key="key38">Cagliari</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n28">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">52.9833299999999999992</data>
+      <data key="key21">-0.0166699999999999999999</data>
+      <data key="key32">-4.0064023903851282, -10.944215068456357</data>
+      <data key="key35">0</data>
+      <data key="key36">28</data>
+      <data key="key38">Boston</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Sweden</data>
+      <data key="key15">1</data>
+      <data key="key18">59.3833300000000000006</data>
+      <data key="key21">16.4333299999999999999</data>
+      <data key="key32">-4.0468022918655802, -11.13074229618786</data>
+      <data key="key35">0</data>
+      <data key="key36">29</data>
+      <data key="key38">Chicago</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">49.0047199999999999985</data>
+      <data key="key21">8.38583000000000000022</data>
+      <data key="key32">-2.963466274430826, -9.8923294768203878</data>
+      <data key="key35">0</data>
+      <data key="key36">30</data>
+      <data key="key38">Karlsruhe</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">48.6833299999999999999</data>
+      <data key="key21">9.01666999999999999992</data>
+      <data key="key32">-2.8513492945779917, -9.4619443692511052</data>
+      <data key="key35">0</data>
+      <data key="key36">31</data>
+      <data key="key38">Boblingen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.3645299999999999999</data>
+      <data key="key21">8.79202000000000000006</data>
+      <data key="key32">-1.9838156108869984, -10.391106371328386</data>
+      <data key="key35">0</data>
+      <data key="key36">32</data>
+      <data key="key38">Pfaffikon</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.4297100000000000017</data>
+      <data key="key21">9.37614000000000000039</data>
+      <data key="key32">-2.1474005346219971, -10.373897811423234</data>
+      <data key="key35">0</data>
+      <data key="key36">33</data>
+      <data key="key38">St Gallen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">48.7396100000000000001</data>
+      <data key="key21">9.30473</data>
+      <data key="key32">-2.642824276822092, -9.6023802473866944</data>
+      <data key="key35">0</data>
+      <data key="key36">34</data>
+      <data key="key38">Esslingen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.5</data>
+      <data key="key21">8.75</data>
+      <data key="key32">-2.092731334132194, -10.510175060224034</data>
+      <data key="key35">0</data>
+      <data key="key36">35</data>
+      <data key="key38">Winterthur</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5160000000000000003</data>
+      <data key="key21">6.63282000000000000013</data>
+      <data key="key32">-2.6129649691171299, -10.803479508485404</data>
+      <data key="key35">0</data>
+      <data key="key36">36</data>
+      <data key="key38">Lausanne</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1324000000000000003</data>
+      <data key="key21">7.24411000000000000016</data>
+      <data key="key32">-2.7817567059843129, -10.69212565842629</data>
+      <data key="key35">0</data>
+      <data key="key36">37</data>
+      <data key="key38">Biel/Bienne</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.7000000000000000007</data>
+      <data key="key21">8.63332999999999999973</data>
+      <data key="key32">-2.2752383632031901, -10.344996680948142</data>
+      <data key="key35">0</data>
+      <data key="key36">38</data>
+      <data key="key38">Schaffhausen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">46.3831799999999999998</data>
+      <data key="key21">6.23954999999999999991</data>
+      <data key="key32">-2.6832233429839496, -10.970919627834062</data>
+      <data key="key35">0</data>
+      <data key="key36">39</data>
+      <data key="key38">Nyon</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4166699999999999987</data>
+      <data key="key21">4.4333299999999999999</data>
+      <data key="key32">-4.3149398218335646, -10.294680279482275</data>
+      <data key="key35">0</data>
+      <data key="key36">40</data>
+      <data key="key38">Charleroi</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6411899999999999995</data>
+      <data key="key21">5.57178000000000000005</data>
+      <data key="key32">-4.0133869299238727, -10.263824503346582</data>
+      <data key="key35">0</data>
+      <data key="key36">41</data>
+      <data key="key38">Liege</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8361899999999999993</data>
+      <data key="key21">4.31454000000000000015</data>
+      <data key="key32">-4.1573031977292727, -10.460164285639626</data>
+      <data key="key35">0</data>
+      <data key="key36">42</data>
+      <data key="key38">Anderlecht</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4541299999999999989</data>
+      <data key="key21">3.95228999999999999998</data>
+      <data key="key32">-4.3795412488185583, -10.175325082035194</data>
+      <data key="key35">0</data>
+      <data key="key36">43</data>
+      <data key="key38">Mons</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8795900000000000003</data>
+      <data key="key21">4.7009300000000000001</data>
+      <data key="key32">-4.4367590065972626, -10.347017117744802</data>
+      <data key="key35">0</data>
+      <data key="key36">44</data>
+      <data key="key38">Leuven</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4408299999999999996</data>
+      <data key="key21">5.47777999999999999983</data>
+      <data key="key32">-4.8611168340366468, -9.3956631269911597</data>
+      <data key="key35">0</data>
+      <data key="key36">45</data>
+      <data key="key38">Eindhoven</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Luxembourg</data>
+      <data key="key15">1</data>
+      <data key="key18">49.6116699999999999984</data>
+      <data key="key21">6.1300000000000000001</data>
+      <data key="key32">-4.2295397726770787, -10.1415376662762</data>
+      <data key="key35">0</data>
+      <data key="key36">46</data>
+      <data key="key38">Luxembourg</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n47">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8666699999999999994</data>
+      <data key="key21">4.40000000000000000009</data>
+      <data key="key32">-4.0803668459753712, -10.130383543168216</data>
+      <data key="key35">0</data>
+      <data key="key36">47</data>
+      <data key="key38">Evere</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5865600000000000015</data>
+      <data key="key21">4.77596</data>
+      <data key="key32">-4.8291030835276541, -9.2078954693947885</data>
+      <data key="key35">0</data>
+      <data key="key36">48</data>
+      <data key="key38">Breda</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">51.6991699999999999998</data>
+      <data key="key21">5.30416999999999999984</data>
+      <data key="key32">-4.6865710030826957, -9.3310339037656185</data>
+      <data key="key35">0</data>
+      <data key="key36">49</data>
+      <data key="key38">Den Bosch</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Denmark</data>
+      <data key="key15">1</data>
+      <data key="key18">55.6759399999999999992</data>
+      <data key="key21">12.5655299999999999997</data>
+      <data key="key32">-3.7058231967372333, -7.9297403649132976</data>
+      <data key="key35">0</data>
+      <data key="key36">50</data>
+      <data key="key38">Copenhagen</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n51">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">53.5499999999999999993</data>
+      <data key="key21">10</data>
+      <data key="key32">-3.5855346971842756, -8.2317502812861214</data>
+      <data key="key35">0</data>
+      <data key="key36">51</data>
+      <data key="key38">Hamburg</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Sweden</data>
+      <data key="key15">1</data>
+      <data key="key18">55.6058699999999999988</data>
+      <data key="key21">13.0007299999999999997</data>
+      <data key="key32">-3.5975582691694821, -7.7882786794127012</data>
+      <data key="key35">0</data>
+      <data key="key36">52</data>
+      <data key="key38">Malmo</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n53">
+      <data key="key3">Denmark</data>
+      <data key="key15">1</data>
+      <data key="key18">56.1567400000000000009</data>
+      <data key="key21">10.2107600000000000003</data>
+      <data key="key32">-3.665410112426073, -8.0742213346137657</data>
+      <data key="key35">0</data>
+      <data key="key36">53</data>
+      <data key="key38">Aarhus</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n54">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">53.0666700000000000001</data>
+      <data key="key21">-0.816669999999999999987</data>
+      <data key="key32">-3.6605429320081062, -10.772464662856892</data>
+      <data key="key35">0</data>
+      <data key="key36">54</data>
+      <data key="key38">Newark</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n55">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">53.0789699999999999985</data>
+      <data key="key21">-0.140079999999999999994</data>
+      <data key="key32">-3.8371082850241991, -10.795620480436618</data>
+      <data key="key35">0</data>
+      <data key="key36">55</data>
+      <data key="key38">New York</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n56">
+      <data key="key3">Sweden</data>
+      <data key="key15">1</data>
+      <data key="key18">59.3325800000000000006</data>
+      <data key="key21">18.0648999999999999994</data>
+      <data key="key32">-3.7908511660220809, -7.685878215947584</data>
+      <data key="key35">0</data>
+      <data key="key36">56</data>
+      <data key="key38">Stockholm</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Finland</data>
+      <data key="key15">1</data>
+      <data key="key18">60.1695200000000000005</data>
+      <data key="key21">24.9354500000000000003</data>
+      <data key="key32">-3.7933705638711208, -7.5393555065162348</data>
+      <data key="key35">0</data>
+      <data key="key36">57</data>
+      <data key="key38">Helsinki</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Sweden</data>
+      <data key="key15">1</data>
+      <data key="key18">57.7071600000000000004</data>
+      <data key="key21">11.9667900000000000001</data>
+      <data key="key32">-3.8863850324204767, -7.8374007044984291</data>
+      <data key="key35">0</data>
+      <data key="key36">58</data>
+      <data key="key38">Gothenburg</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Norway</data>
+      <data key="key15">1</data>
+      <data key="key18">59.9127299999999999996</data>
+      <data key="key21">10.7460899999999999997</data>
+      <data key="key32">-3.954988434909493, -7.6903753164215356</data>
+      <data key="key35">0</data>
+      <data key="key36">59</data>
+      <data key="key38">Oslo</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n60">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">-3.144164884642255, -8.1421002878759943</data>
+      <data key="key35">1</data>
+      <data key="key36">60</data>
+      <data key="key38">None</data>
+    </node>
+    <node id="n61">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6277299999999999998</data>
+      <data key="key21">17.93682</data>
+      <data key="key32">-1.2834668527541719, -13.129092625219567</data>
+      <data key="key35">0</data>
+      <data key="key36">61</data>
+      <data key="key38">Brindisi</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n62">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">-3.7937891838428301, -10.606353517979425</data>
+      <data key="key35">1</data>
+      <data key="key36">62</data>
+      <data key="key38">None</data>
+    </node>
+    <node id="n63">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.0504800000000000006</data>
+      <data key="key21">8.30634999999999999992</data>
+      <data key="key32">-2.0166979072465065, -10.984586060272058</data>
+      <data key="key35">0</data>
+      <data key="key36">63</data>
+      <data key="key38">Lucerne</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n64">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">45.8333300000000000013</data>
+      <data key="key21">9.03333000000000000025</data>
+      <data key="key32">-1.9165439081823861, -11.481128723947684</data>
+      <data key="key35">0</data>
+      <data key="key36">64</data>
+      <data key="key38">Chiasso</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n65">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.0467599999999999995</data>
+      <data key="key21">9.69937000000000000034</data>
+      <data key="key32">-1.9589801660756443, -11.923666875725957</data>
+      <data key="key35">0</data>
+      <data key="key36">65</data>
+      <data key="key38">Piacenza</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n66">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4063200000000000006</data>
+      <data key="key21">8.93385999999999999999</data>
+      <data key="key32">-1.8107450550788242, -12.474526617813854</data>
+      <data key="key35">0</data>
+      <data key="key36">66</data>
+      <data key="key38">Genova</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n67">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.5426400000000000008</data>
+      <data key="key21">10.3159999999999999996</data>
+      <data key="key32">-1.8563592888281919, -12.030090742748877</data>
+      <data key="key35">0</data>
+      <data key="key36">67</data>
+      <data key="key38">Livorno</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n68">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7666700000000000008</data>
+      <data key="key21">11.25</data>
+      <data key="key32">-1.6016940755671332, -12.76036251621904</data>
+      <data key="key35">0</data>
+      <data key="key36">68</data>
+      <data key="key38">Firenze</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n69">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.0633300000000000009</data>
+      <data key="key21">12.5808299999999999999</data>
+      <data key="key32">-1.9985568306598938, -12.360491075633867</data>
+      <data key="key35">0</data>
+      <data key="key36">69</data>
+      <data key="key38">Rimini</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n70">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.8026599999999999985</data>
+      <data key="key21">10.3289799999999999999</data>
+      <data key="key32">-1.7972584095100761, -12.156269735789984</data>
+      <data key="key35">0</data>
+      <data key="key36">70</data>
+      <data key="key38">Parma</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n71">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.829080000000000001</data>
+      <data key="key21">8.82193000000000000001</data>
+      <data key="key32">-2.0741943122761559, -12.215072856576656</data>
+      <data key="key35">0</data>
+      <data key="key36">71</data>
+      <data key="key38">Varese</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n72">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.8099799999999999986</data>
+      <data key="key21">9.08744000000000000036</data>
+      <data key="key32">-1.9324355128562163, -11.760983759759283</data>
+      <data key="key35">0</data>
+      <data key="key36">72</data>
+      <data key="key38">Como</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n73">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">-2.6553708416874251, -10.614182019811381</data>
+      <data key="key35">1</data>
+      <data key="key36">73</data>
+      <data key="key38">None</data>
+    </node>
+    <node id="n74">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.3666699999999999994</data>
+      <data key="key21">8.55000000000000000017</data>
+      <data key="key32">-2.2983362822504918, -10.510905725652215</data>
+      <data key="key35">0</data>
+      <data key="key36">74</data>
+      <data key="key38">Zurich</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n75">
+      <data key="key3">Ireland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.3439900000000000006</data>
+      <data key="key21">-6.26718999999999999998</data>
+      <data key="key32">-4.1718443277372295, -10.78968971109091</data>
+      <data key="key35">0</data>
+      <data key="key36">75</data>
+      <data key="key38">Dublin</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n76">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">53.480949999999999999</data>
+      <data key="key21">-2.23742999999999999999</data>
+      <data key="key32">-4.1844719155245693, -10.912286916494637</data>
+      <data key="key35">0</data>
+      <data key="key36">76</data>
+      <data key="key38">Manchester</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n77">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">52.4666700000000000015</data>
+      <data key="key21">-1.91667000000000000001</data>
+      <data key="key32">-4.364634786702136, -10.987165458343572</data>
+      <data key="key35">0</data>
+      <data key="key36">77</data>
+      <data key="key38">Birmingham</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n78">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0499999999999999993</data>
+      <data key="key21">3.71666999999999999997</data>
+      <data key="key32">-3.8708804645184998, -10.436547389839218</data>
+      <data key="key35">0</data>
+      <data key="key36">78</data>
+      <data key="key38">Ghent</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n79">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">-3.1915313686976474, -11.898628401710232</data>
+      <data key="key35">1</data>
+      <data key="key36">79</data>
+      <data key="key38">None</data>
+    </node>
+    <node id="n80">
+      <data key="key3">Spain</data>
+      <data key="key15">1</data>
+      <data key="key18">39.4697500000000000009</data>
+      <data key="key21">-0.377390000000000000007</data>
+      <data key="key32">-3.4994581992180485, -12.145803732218255</data>
+      <data key="key35">0</data>
+      <data key="key36">80</data>
+      <data key="key38">Valencia</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n81">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8947400000000000006</data>
+      <data key="key21">12.4839000000000000003</data>
+      <data key="key32">-1.3696698767018465, -13.01887853051516</data>
+      <data key="key35">0</data>
+      <data key="key36">81</data>
+      <data key="key38">Rome</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n82">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">43.2969499999999999987</data>
+      <data key="key21">5.38106999999999999987</data>
+      <data key="key32">-2.7532499698571726, -11.567027872642456</data>
+      <data key="key35">0</data>
+      <data key="key36">82</data>
+      <data key="key38">Marseille</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n83">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7031300000000000015</data>
+      <data key="key21">7.26608000000000000011</data>
+      <data key="key32">-2.7226680198294466, -11.707271618574218</data>
+      <data key="key35">0</data>
+      <data key="key36">83</data>
+      <data key="key38">Nice</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n84">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">43.5999999999999999986</data>
+      <data key="key21">3.88332999999999999995</data>
+      <data key="key32">-2.9738543791941883, -11.744703275866851</data>
+      <data key="key35">0</data>
+      <data key="key36">84</data>
+      <data key="key38">Montpellier</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n85">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">45.1666699999999999987</data>
+      <data key="key21">5.71667000000000000018</data>
+      <data key="key32">-3.1316209310619438, -11.256389638567097</data>
+      <data key="key35">0</data>
+      <data key="key36">85</data>
+      <data key="key38">Grenoble</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n86">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">44.8333300000000000013</data>
+      <data key="key21">-0.566669999999999999987</data>
+      <data key="key32">-3.5844944914609731, -11.846790160754109</data>
+      <data key="key35">0</data>
+      <data key="key36">86</data>
+      <data key="key38">Bordeaux</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n87">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7023700000000000013</data>
+      <data key="key21">8.4581299999999999999</data>
+      <data key="key32">-2.0999278246584328, -11.910732567246686</data>
+      <data key="key35">0</data>
+      <data key="key36">87</data>
+      <data key="key38">Borgomanero</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n88">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4405600000000000002</data>
+      <data key="key21">8.61684000000000000028</data>
+      <data key="key32">-1.7164404522492174, -12.034349687523495</data>
+      <data key="key35">0</data>
+      <data key="key36">88</data>
+      <data key="key38">Novara</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n89">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.55986</data>
+      <data key="key21">8.05002000000000000023</data>
+      <data key="key32">-1.8022903525527483, -11.910089307696063</data>
+      <data key="key35">0</data>
+      <data key="key36">89</data>
+      <data key="key38">Biella</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n90">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.3973299999999999992</data>
+      <data key="key21">7.54453000000000000014</data>
+      <data key="key32">-2.5189673618358532, -11.933420352273892</data>
+      <data key="key35">0</data>
+      <data key="key36">90</data>
+      <data key="key38">Cuneo</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n91">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4562499999999999993</data>
+      <data key="key21">-0.971130000000000000008</data>
+      <data key="key32">-4.2444800484210043, -10.699692969444893</data>
+      <data key="key35">0</data>
+      <data key="key36">91</data>
+      <data key="key38">Reading</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n92">
+      <data key="key3">Denmark</data>
+      <data key="key15">1</data>
+      <data key="key18">55.4903999999999999991</data>
+      <data key="key21">9.47215999999999999984</data>
+      <data key="key32">-3.7512574800518985, -8.1786103890345832</data>
+      <data key="key35">0</data>
+      <data key="key36">92</data>
+      <data key="key38">Kolding</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n93">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.8333300000000000013</data>
+      <data key="key21">14.25</data>
+      <data key="key32">-1.2859953551047716, -13.256979291218999</data>
+      <data key="key35">0</data>
+      <data key="key36">93</data>
+      <data key="key38">Napoli</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n94">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2233899999999999983</data>
+      <data key="key21">2.91184999999999999994</data>
+      <data key="key32">-3.7361803343197395, -10.447696180004881</data>
+      <data key="key35">0</data>
+      <data key="key36">94</data>
+      <data key="key38">Ostend</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n95">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4386099999999999999</data>
+      <data key="key21">12.3266700000000000003</data>
+      <data key="key32">-1.0429930058991705, -12.763598466942701</data>
+      <data key="key35">0</data>
+      <data key="key36">95</data>
+      <data key="key38">Venezia</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n96">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.6666699999999999987</data>
+      <data key="key21">12.2449999999999999999</data>
+      <data key="key32">-1.9166651045234437, -12.255026022892858</data>
+      <data key="key35">0</data>
+      <data key="key36">96</data>
+      <data key="key38">Treviso</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n97">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">47.0666700000000000001</data>
+      <data key="key21">15.4499999999999999998</data>
+      <data key="key32">-2.2446418357643054, -8.9713703323563863</data>
+      <data key="key35">0</data>
+      <data key="key36">97</data>
+      <data key="key38">Graz</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n98">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">48.14816</data>
+      <data key="key21">17.1067399999999999998</data>
+      <data key="key32">-2.3401097064566017, -8.7467797473793301</data>
+      <data key="key35">0</data>
+      <data key="key36">98</data>
+      <data key="key38">Bratislava</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n99">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">47.7994099999999999991</data>
+      <data key="key21">13.0439899999999999996</data>
+      <data key="key32">-1.8850378410952562, -8.8008823583470814</data>
+      <data key="key35">0</data>
+      <data key="key36">99</data>
+      <data key="key38">Salzburg</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n100">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">46.624720000000000001</data>
+      <data key="key21">14.3052800000000000001</data>
+      <data key="key32">-2.1354604418375276, -9.0617374175475458</data>
+      <data key="key35">0</data>
+      <data key="key36">100</data>
+      <data key="key38">Klagenfurt</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n101">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.4980100000000000013</data>
+      <data key="key21">19.0399099999999999993</data>
+      <data key="key32">-2.2667173582898634, -8.6443312236117968</data>
+      <data key="key35">0</data>
+      <data key="key36">101</data>
+      <data key="key38">Budapest</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n102">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">47.2626600000000000011</data>
+      <data key="key21">11.3945400000000000001</data>
+      <data key="key32">-1.7407533316263344, -8.7940978183406351</data>
+      <data key="key35">0</data>
+      <data key="key36">102</data>
+      <data key="key38">Innsbruck</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n103">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">46.0678699999999999998</data>
+      <data key="key21">11.1210800000000000001</data>
+      <data key="key32">-2.1313270320331932, -12.335799022136213</data>
+      <data key="key35">0</data>
+      <data key="key36">103</data>
+      <data key="key38">Trento</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n104">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4322499999999999988</data>
+      <data key="key21">26.1062600000000000003</data>
+      <data key="key32">-2.2095774885453716, -8.5086979524781583</data>
+      <data key="key35">0</data>
+      <data key="key36">104</data>
+      <data key="key38">Bucharest</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n105">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.6478299999999999996</data>
+      <data key="key21">10.9253899999999999999</data>
+      <data key="key32">-1.6420762087926246, -12.480923676007356</data>
+      <data key="key35">0</data>
+      <data key="key36">105</data>
+      <data key="key38">Modena</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n106">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.6982499999999999991</data>
+      <data key="key21">10.6312500000000000003</data>
+      <data key="key32">-1.7821310018461056, -12.322824025913619</data>
+      <data key="key35">0</data>
+      <data key="key36">106</data>
+      <data key="key38">Reggio Emilia</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n107">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.41519</data>
+      <data key="key21">11.8818100000000000001</data>
+      <data key="key32">-1.2305843211034624, -12.78603904962028</data>
+      <data key="key35">0</data>
+      <data key="key36">107</data>
+      <data key="key38">Padova</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n108">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4938099999999999989</data>
+      <data key="key21">11.3387499999999999999</data>
+      <data key="key32">-1.5782766038171954, -12.630945303010476</data>
+      <data key="key35">0</data>
+      <data key="key36">108</data>
+      <data key="key38">Bologna</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n109">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.6979799999999999997</data>
+      <data key="key21">9.66895000000000000035</data>
+      <data key="key32">-1.6430023477283688, -12.224450832446871</data>
+      <data key="key35">0</data>
+      <data key="key36">109</data>
+      <data key="key38">Bergamo</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n110">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5824800000000000012</data>
+      <data key="key21">9.27484999999999999969</data>
+      <data key="key32">-2.2119523712365039, -12.076321674875334</data>
+      <data key="key35">0</data>
+      <data key="key36">110</data>
+      <data key="key38">Monza</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n111">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4341899999999999996</data>
+      <data key="key21">10.9977899999999999998</data>
+      <data key="key32">-1.2754875184405365, -12.55924798955691</data>
+      <data key="key35">0</data>
+      <data key="key36">111</data>
+      <data key="key38">Verona</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n112">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5247799999999999999</data>
+      <data key="key21">10.2272699999999999998</data>
+      <data key="key32">-1.4150040062485698, -12.366828924173005</data>
+      <data key="key35">0</data>
+      <data key="key36">112</data>
+      <data key="key38">Brescia</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n113">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.648609999999999999</data>
+      <data key="key21">13.7799999999999999998</data>
+      <data key="key32">-2.0919603257506227, -12.036093052643915</data>
+      <data key="key35">0</data>
+      <data key="key36">113</data>
+      <data key="key38">Trieste</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n114">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5572900000000000006</data>
+      <data key="key21">11.5408999999999999997</data>
+      <data key="key32">-2.2121406407044795, -12.214619986717857</data>
+      <data key="key35">0</data>
+      <data key="key36">114</data>
+      <data key="key38">Vicenza</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n115">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6333300000000000006</data>
+      <data key="key21">3.0666700000000000001</data>
+      <data key="key32">-3.5939035717225631, -10.60149843700839</data>
+      <data key="key35">0</data>
+      <data key="key36">115</data>
+      <data key="key38">Lille</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n116">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8280299999999999987</data>
+      <data key="key21">3.26486999999999999997</data>
+      <data key="key32">-4.3311534881343459, -10.458712495680308</data>
+      <data key="key35">0</data>
+      <data key="key36">116</data>
+      <data key="key38">Kortnijk</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n117">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.5666700000000000001</data>
+      <data key="key21">7.59999999999999999991</data>
+      <data key="key32">-2.6331468059106253, -10.43611013701277</data>
+      <data key="key35">0</data>
+      <data key="key36">117</data>
+      <data key="key38">Basel</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n118">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.5833300000000000013</data>
+      <data key="key21">7.75</data>
+      <data key="key32">-2.9919722521835657, -10.36043278821796</data>
+      <data key="key35">0</data>
+      <data key="key36">118</data>
+      <data key="key38">Strasbourg</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n119">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">48.7823200000000000015</data>
+      <data key="key21">9.17702000000000000027</data>
+      <data key="key32">-2.7582092690451843, -9.5411825736160374</data>
+      <data key="key35">0</data>
+      <data key="key36">119</data>
+      <data key="key38">Stuttgart</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n120">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9480899999999999987</data>
+      <data key="key21">7.44744000000000000005</data>
+      <data key="key32">-2.7687333434707213, -10.498078939397683</data>
+      <data key="key35">0</data>
+      <data key="key36">120</data>
+      <data key="key38">Bern</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n121">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">47.2172499999999999987</data>
+      <data key="key21">-1.55335999999999999999</data>
+      <data key="key32">-3.5548721769674092, -11.58687929146968</data>
+      <data key="key35">0</data>
+      <data key="key36">121</data>
+      <data key="key38">Nantes</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n122">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">43.6042599999999999985</data>
+      <data key="key21">1.44367000000000000003</data>
+      <data key="key32">-3.391955364379994, -11.874798124908288</data>
+      <data key="key35">0</data>
+      <data key="key36">122</data>
+      <data key="key38">Toulouse</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n123">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">45.75</data>
+      <data key="key21">4.84999999999999999991</data>
+      <data key="key32">-2.9996715809253538, -11.170218314330032</data>
+      <data key="key35">0</data>
+      <data key="key36">123</data>
+      <data key="key38">Lyon</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n124">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2022200000000000004</data>
+      <data key="key21">6.14569000000000000006</data>
+      <data key="key32">-2.8314145047562169, -11.081369197927074</data>
+      <data key="key35">0</data>
+      <data key="key36">124</data>
+      <data key="key38">Geneve</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n125">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1666699999999999987</data>
+      <data key="key21">8.51666999999999999992</data>
+      <data key="key32">-2.1407104396810661, -10.752745898971284</data>
+      <data key="key35">0</data>
+      <data key="key36">125</data>
+      <data key="key38">Zug</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n126">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">46.0100799999999999987</data>
+      <data key="key21">8.96004000000000000014</data>
+      <data key="key32">-1.9424574985184628, -11.225173280015726</data>
+      <data key="key35">0</data>
+      <data key="key36">126</data>
+      <data key="key38">Lugano</data>
+      <data key="key42">MAN</data>
+    </node>
+    <node id="n127">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">53.0751600000000000011</data>
+      <data key="key21">8.80777000000000000017</data>
+      <data key="key32">-3.6294162213841479, -8.3443369865026487</data>
+      <data key="key35">0</data>
+      <data key="key36">127</data>
+      <data key="key38">Bremen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n128">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">52.1666699999999999987</data>
+      <data key="key21">11.6666699999999999996</data>
+      <data key="key32">-3.0698947953729037, -7.9733353024234015</data>
+      <data key="key35">0</data>
+      <data key="key36">128</data>
+      <data key="key38">Magdemburg</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n129">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.090830000000000001</data>
+      <data key="key21">5.12222000000000000008</data>
+      <data key="key32">-4.5375486087914556, -9.194235632238259</data>
+      <data key="key35">0</data>
+      <data key="key36">129</data>
+      <data key="key38">Utrecht</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n130">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3702499999999999993</data>
+      <data key="key21">5.21413000000000000003</data>
+      <data key="key32">-4.1901888214945879, -8.9702820902052558</data>
+      <data key="key35">0</data>
+      <data key="key36">130</data>
+      <data key="key38">Almere</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n131">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.2233300000000000007</data>
+      <data key="key21">5.17638999999999999992</data>
+      <data key="key32">-4.3383543974058041, -9.1319805154749076</data>
+      <data key="key35">0</data>
+      <data key="key36">131</data>
+      <data key="key38">Hilversum</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n132">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3025000000000000015</data>
+      <data key="key21">4.68889000000000000018</data>
+      <data key="key32">-4.2115666020117413, -9.3729925933095419</data>
+      <data key="key35">0</data>
+      <data key="key36">132</data>
+      <data key="key38">Hoofddorp</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n133">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2000000000000000007</data>
+      <data key="key21">6.6833299999999999999</data>
+      <data key="key32">-3.7009473781972502, -8.9255340424090317</data>
+      <data key="key35">0</data>
+      <data key="key36">133</data>
+      <data key="key38">Neuss</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n134">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2666700000000000008</data>
+      <data key="key21">7.1833299999999999999</data>
+      <data key="key32">-3.9112035887651739, -8.7657637836334796</data>
+      <data key="key35">0</data>
+      <data key="key36">134</data>
+      <data key="key38">Wuppertal</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n135">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5166700000000000008</data>
+      <data key="key21">7.44999999999999999983</data>
+      <data key="key32">-3.8886388611344227, -8.6096847985841798</data>
+      <data key="key35">0</data>
+      <data key="key36">135</data>
+      <data key="key38">Dortmund</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n136">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4500000000000000007</data>
+      <data key="key21">7.01666999999999999992</data>
+      <data key="key32">-3.7264030453113439, -8.5727973276463842</data>
+      <data key="key35">0</data>
+      <data key="key36">136</data>
+      <data key="key38">Essen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n137">
+      <data key="key3">Spain</data>
+      <data key="key15">1</data>
+      <data key="key18">41.3887900000000000002</data>
+      <data key="key21">2.15899000000000000003</data>
+      <data key="key32">-3.3169471969361908, -12.073827254490347</data>
+      <data key="key35">0</data>
+      <data key="key36">137</data>
+      <data key="key38">Barcelona</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n138">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.0704900000000000006</data>
+      <data key="key21">7.68681999999999999995</data>
+      <data key="key32">-2.3812337627071876, -11.846395912139982</data>
+      <data key="key35">0</data>
+      <data key="key36">138</data>
+      <data key="key38">Turin</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n139">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8534099999999999984</data>
+      <data key="key21">2.34880000000000000002</data>
+      <data key="key32">-3.2813407092081865, -10.772469501474017</data>
+      <data key="key35">0</data>
+      <data key="key36">139</data>
+      <data key="key38">Paris</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n140">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5085299999999999994</data>
+      <data key="key21">-0.125740000000000000003</data>
+      <data key="key32">-4.0088378139611613, -10.698875340062067</data>
+      <data key="key35">0</data>
+      <data key="key36">140</data>
+      <data key="key38">London</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n141">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1166699999999999994</data>
+      <data key="key21">8.6833299999999999999</data>
+      <data key="key32">-3.3978094189427859, -9.411967907381003</data>
+      <data key="key35">0</data>
+      <data key="key36">141</data>
+      <data key="key38">Frankfurt</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n142">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8504500000000000011</data>
+      <data key="key21">4.34878000000000000018</data>
+      <data key="key32">-4.1742763489998822, -10.31669390556273</data>
+      <data key="key35">0</data>
+      <data key="key36">142</data>
+      <data key="key38">Brussels</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n143">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3740300000000000014</data>
+      <data key="key21">4.88968999999999999993</data>
+      <data key="key32">-4.1025987693131318, -9.1090560442747179</data>
+      <data key="key35">0</data>
+      <data key="key36">143</data>
+      <data key="key38">Amsterdam</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n144">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">52.5243699999999999993</data>
+      <data key="key21">13.41053</data>
+      <data key="key32">-3.0291732761960102, -8.3463551446818798</data>
+      <data key="key35">0</data>
+      <data key="key36">144</data>
+      <data key="key38">Berlin</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n145">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">47.3166700000000000001</data>
+      <data key="key21">5.01666999999999999992</data>
+      <data key="key32">-2.9289528364345143, -11.308582041463577</data>
+      <data key="key35">0</data>
+      <data key="key36">145</data>
+      <data key="key38">Dijon</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n146">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">47.3833300000000000006</data>
+      <data key="key21">0.683330000000000000013</data>
+      <data key="key32">-3.2504565019218217, -10.614385193962057</data>
+      <data key="key35">0</data>
+      <data key="key36">146</data>
+      <data key="key38">Tours</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n147">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5833300000000000013</data>
+      <data key="key21">0.333329999999999999991</data>
+      <data key="key32">-3.2540009616203065, -10.462039988997525</data>
+      <data key="key35">0</data>
+      <data key="key36">147</data>
+      <data key="key38">Poitiers</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n148">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.0833300000000000013</data>
+      <data key="key21">-1.68333000000000000001</data>
+      <data key="key32">-3.4842041732216642, -11.325003133640987</data>
+      <data key="key35">0</data>
+      <data key="key36">148</data>
+      <data key="key38">Rennes</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n149">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4431299999999999996</data>
+      <data key="key21">1.09931999999999999997</data>
+      <data key="key32">-3.3875357397663413, -11.053499305458283</data>
+      <data key="key35">0</data>
+      <data key="key36">149</data>
+      <data key="key38">Rouen</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n150">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4500000000000000007</data>
+      <data key="key21">-2.58332999999999999999</data>
+      <data key="key32">-4.3529645640454904, -10.830043634093455</data>
+      <data key="key35">0</data>
+      <data key="key36">150</data>
+      <data key="key38">Bristol</data>
+      <data key="key42">Colt connected City</data>
+    </node>
+    <node id="n151">
+      <data key="key3">Spain</data>
+      <data key="key15">1</data>
+      <data key="key18">40.4164999999999999987</data>
+      <data key="key21">-3.70256000000000000004</data>
+      <data key="key32">-3.6793673274241225, -12.086290195893175</data>
+      <data key="key35">0</data>
+      <data key="key36">151</data>
+      <data key="key38">Madrid</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+    <node id="n152">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key21">9.18950999999999999963</data>
+      <data key="key32">-1.9725827106702531, -12.112897427776344</data>
+      <data key="key35">0</data>
+      <data key="key36">152</data>
+      <data key="key38">Milan</data>
+      <data key="key42">Data Centre and MAN</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n10">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n99">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n99">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e4" source="n2" target="n144">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n51">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e6" source="n3" target="n144">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e7" source="n3" target="n144">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e8" source="n4" target="n8">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n5">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e10" source="n5" target="n144">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e11" source="n5" target="n11">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e12" source="n6" target="n11">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e13" source="n6" target="n7">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e14" source="n7" target="n144">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e15" source="n8" target="n13">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e16" source="n9" target="n13">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e17" source="n9" target="n13">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e18" source="n10" target="n97">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e19" source="n10" target="n97">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e20" source="n10" target="n98">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e21" source="n10" target="n98">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e22" source="n10" target="n101">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e23" source="n10" target="n11">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e24" source="n10" target="n13">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e25" source="n12" target="n141">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e26" source="n12" target="n30">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e27" source="n13" target="n119">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e28" source="n14" target="n17">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e29" source="n14" target="n141">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e30" source="n15" target="n18">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e31" source="n15" target="n19">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e32" source="n15" target="n132">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e33" source="n16" target="n51">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e34" source="n16" target="n60">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e35" source="n17" target="n136">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e36" source="n17" target="n143">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e37" source="n17" target="n133">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e38" source="n17" target="n133">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e39" source="n17" target="n134">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e40" source="n18" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e41" source="n19" target="n49">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e42" source="n20" target="n23">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e43" source="n21" target="n81">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e44" source="n22" target="n23">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e45" source="n23" target="n151">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e46" source="n23" target="n151">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e47" source="n24" target="n81">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e48" source="n25" target="n81">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e49" source="n26" target="n81">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e50" source="n27" target="n81">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e51" source="n28" target="n140">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e52" source="n28" target="n29">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e53" source="n30" target="n118">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e54" source="n30" target="n119">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e55" source="n31" target="n119">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e56" source="n31" target="n119">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e57" source="n32" target="n33">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e58" source="n32" target="n35">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e59" source="n33" target="n74">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e60" source="n33" target="n38">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e61" source="n34" target="n119">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e62" source="n34" target="n119">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e63" source="n35" target="n74">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e64" source="n36" target="n73">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e65" source="n36" target="n39">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e66" source="n37" target="n73">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e67" source="n38" target="n74">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e68" source="n39" target="n124">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e69" source="n40" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e70" source="n41" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e71" source="n42" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e72" source="n43" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e73" source="n44" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e74" source="n45" target="n49">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e75" source="n46" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e76" source="n47" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e77" source="n48" target="n49">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e78" source="n49" target="n129">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e79" source="n50" target="n56">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e80" source="n50" target="n58">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e81" source="n50" target="n51">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e82" source="n50" target="n52">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e83" source="n50" target="n53">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e84" source="n51" target="n136">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e85" source="n51" target="n53">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e86" source="n51" target="n92">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e87" source="n51" target="n127">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e88" source="n51" target="n127">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e89" source="n53" target="n92">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e90" source="n54" target="n139">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e91" source="n54" target="n140">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e92" source="n54" target="n55">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e93" source="n55" target="n140">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e94" source="n56" target="n57">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e95" source="n56" target="n57">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e96" source="n56" target="n59">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e97" source="n58" target="n59">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e98" source="n60" target="n128">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e99" source="n60" target="n144">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e100" source="n61" target="n81">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e101" source="n62" target="n115">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e102" source="n62" target="n140">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e103" source="n62" target="n94">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e104" source="n63" target="n125">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e105" source="n63" target="n126">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e106" source="n64" target="n72">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e107" source="n64" target="n126">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e108" source="n65" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e109" source="n66" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e110" source="n66" target="n68">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e111" source="n67" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e112" source="n68" target="n81">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e113" source="n68" target="n108">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e114" source="n69" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e115" source="n70" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e116" source="n71" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e117" source="n72" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e118" source="n73" target="n120">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e119" source="n73" target="n117">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e120" source="n74" target="n117">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e121" source="n74" target="n125">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e122" source="n75" target="n140">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e123" source="n75" target="n150">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e124" source="n76" target="n140">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e125" source="n76" target="n77">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e126" source="n77" target="n150">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e127" source="n78" target="n115">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e128" source="n78" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e129" source="n78" target="n94">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e130" source="n79" target="n137">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e131" source="n79" target="n122">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e132" source="n79" target="n84">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e133" source="n80" target="n137">
+      <data key="key20">Shared service operations</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e134" source="n80" target="n151">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e135" source="n81" target="n107">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e136" source="n81" target="n93">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e137" source="n82" target="n83">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e138" source="n82" target="n138">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e139" source="n82" target="n123">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e140" source="n82" target="n84">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e141" source="n85" target="n123">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e142" source="n86" target="n121">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e143" source="n86" target="n122">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e144" source="n86" target="n151">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e145" source="n87" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e146" source="n88" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e147" source="n89" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e148" source="n90" target="n138">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e149" source="n91" target="n140">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e150" source="n91" target="n150">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e151" source="n95" target="n107">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e152" source="n96" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e153" source="n97" target="n100">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e154" source="n97" target="n100">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e155" source="n98" target="n101">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e156" source="n99" target="n102">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e157" source="n99" target="n102">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e158" source="n101" target="n104">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e159" source="n101" target="n104">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">1</data>
+    </edge>
+    <edge id="e160" source="n103" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e161" source="n105" target="n106">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e162" source="n105" target="n108">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e163" source="n106" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e164" source="n107" target="n111">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e165" source="n109" target="n112">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e166" source="n109" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e167" source="n110" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e168" source="n111" target="n112">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e169" source="n113" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e170" source="n114" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e171" source="n115" target="n139">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e172" source="n116" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e173" source="n117" target="n118">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e174" source="n118" target="n139">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e175" source="n121" target="n148">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e176" source="n123" target="n145">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e177" source="n123" target="n139">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e178" source="n123" target="n124">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e179" source="n129" target="n131">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e180" source="n130" target="n143">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e181" source="n131" target="n143">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e182" source="n132" target="n143">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e183" source="n134" target="n135">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e184" source="n135" target="n136">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e185" source="n138" target="n152">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e186" source="n139" target="n146">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e187" source="n139" target="n149">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e188" source="n140" target="n142">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e189" source="n146" target="n147">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e190" source="n148" target="n149">
+      <data key="key20">Operational network managed end-to-end</data>
+      <data key="key37">0</data>
+    </edge>
+
+  </graph>
+</graphml>

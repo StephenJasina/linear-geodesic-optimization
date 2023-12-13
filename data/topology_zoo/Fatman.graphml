@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key10" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key11" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key12" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key13" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key14" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key15" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key16" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key17" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key18" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key19" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key20" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key21" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key22" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key23" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key36" for="node" attr.name="id" attr.type="int" />
+  <key id="key37" for="edge" attr.name="id" attr.type="string" />
+  <key id="key38" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key39" for="node" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="name" attr.type="string" />
+  <key id="key42" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key43" for="node" attr.name="type" attr.type="string" />
+  <key id="key44" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">01</data>
+   <data key="key8">Current</data>
+   <data key="key9">2011</data>
+   <data key="key10">0</data>
+   <data key="key11">Region</data>
+   <data key="key12">Fife and Tayside, UK</data>
+   <data key="key13">0</data>
+   <data key="key15">21/01/11</data>
+   <data key="key16">2011_09_01</data>
+   <data key="key18">IP</data>
+   <data key="key21">FatMan</data>
+   <data key="key22">2011_01</data>
+   <data key="key23">ATM-based - JANET local provider</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.fatman.net.uk/</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">0</data>
+   <data key="key30">REN</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key40">Fatman</data>
+   <data key="key41">internet_top_pop (Fatman)</data>
+   <data key="key42">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key44">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.0175614045361514, -4.6493847575331646</data>
+      <data key="key35">0</data>
+      <data key="key36">0</data>
+      <data key="key39">Carnegie College</data>
+      <data key="key43">Green Node</data>
+    </node>
+    <node id="n1">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.3018838009748182, -4.5024833990224344</data>
+      <data key="key35">0</data>
+      <data key="key36">1</data>
+      <data key="key39">Adam Smith College</data>
+      <data key="key43">Green Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United Kingdom</data>
+      <data key="key14">1</data>
+      <data key="key17">56.1166699999999999994</data>
+      <data key="key20">-3.16667000000000000001</data>
+      <data key="key32">2.1956221513233261, -4.6476683273859365</data>
+      <data key="key35">0</data>
+      <data key="key36">2</data>
+      <data key="key39">Kirkcaldy</data>
+      <data key="key43">Purple Node</data>
+    </node>
+    <node id="n3">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.109947564320068, -4.4789574493344375</data>
+      <data key="key35">0</data>
+      <data key="key36">3</data>
+      <data key="key39">UoD Fife Campus</data>
+      <data key="key43">Blue Node</data>
+    </node>
+    <node id="n4">
+      <data key="key14">0</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.1647591871331771, -5.4352193853129886</data>
+      <data key="key35">0</data>
+      <data key="key36">4</data>
+      <data key="key39">Janet and Internet</data>
+    </node>
+    <node id="n5">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.3125957491304323, -4.8726997798393024</data>
+      <data key="key35">1</data>
+      <data key="key36">5</data>
+      <data key="key39">None</data>
+    </node>
+    <node id="n6">
+      <data key="key14">0</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.0459324302874187, -5.1231831183183356</data>
+      <data key="key35">0</data>
+      <data key="key36">6</data>
+      <data key="key39">Janet and Internet</data>
+    </node>
+    <node id="n7">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.694678374298483, -5.1449550685996002</data>
+      <data key="key35">0</data>
+      <data key="key36">7</data>
+      <data key="key39">Dundee College</data>
+      <data key="key43">Green Node</data>
+    </node>
+    <node id="n8">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.6064881059179266, -4.8530085291125173</data>
+      <data key="key35">0</data>
+      <data key="key36">8</data>
+      <data key="key39">Angus College</data>
+      <data key="key43">Green Node</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United Kingdom</data>
+      <data key="key14">1</data>
+      <data key="key17">55.8651499999999999989</data>
+      <data key="key20">-4.25763000000000000006</data>
+      <data key="key32">2.2410040034284897, -5.2648408207948654</data>
+      <data key="key35">0</data>
+      <data key="key36">9</data>
+      <data key="key39">Glasgow</data>
+      <data key="key43">Orange Node</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United Kingdom</data>
+      <data key="key14">1</data>
+      <data key="key17">53.7964800000000000005</data>
+      <data key="key20">-1.54784999999999999996</data>
+      <data key="key32">2.2349201979751094, -5.1126705185286614</data>
+      <data key="key35">0</data>
+      <data key="key36">10</data>
+      <data key="key39">Leeds</data>
+      <data key="key43">Orange Node</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United Kingdom</data>
+      <data key="key14">1</data>
+      <data key="key17">56.5</data>
+      <data key="key20">-2.96666999999999999997</data>
+      <data key="key32">2.4949504733093075, -5.0332702256497432</data>
+      <data key="key35">0</data>
+      <data key="key36">11</data>
+      <data key="key39">RNEP1</data>
+      <data key="key43">Purple Node</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United Kingdom</data>
+      <data key="key14">1</data>
+      <data key="key17">56.5</data>
+      <data key="key20">-2.96666999999999999997</data>
+      <data key="key32">2.3738680724975314, -5.0836990813342178</data>
+      <data key="key35">0</data>
+      <data key="key36">12</data>
+      <data key="key39">RNEP2</data>
+      <data key="key43">Purple Node</data>
+    </node>
+    <node id="n13">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.4399261450416607, -4.927159443759602</data>
+      <data key="key35">0</data>
+      <data key="key36">13</data>
+      <data key="key39">University of Abertay Dundee</data>
+      <data key="key43">Blue Node</data>
+    </node>
+    <node id="n14">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.5424939133833235, -5.1664515997460416</data>
+      <data key="key35">0</data>
+      <data key="key36">14</data>
+      <data key="key39">University of Dundee</data>
+      <data key="key43">Blue Node</data>
+    </node>
+    <node id="n15">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.429534530705912, -5.2193401910522921</data>
+      <data key="key35">0</data>
+      <data key="key36">15</data>
+      <data key="key39">University of St Andrews</data>
+      <data key="key43">Blue Node</data>
+    </node>
+    <node id="n16">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key20">0</data>
+      <data key="key32">2.7022202613068353, -4.9810664312111852</data>
+      <data key="key35">0</data>
+      <data key="key36">16</data>
+      <data key="key39">Elmwood College</data>
+      <data key="key43">Green Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n2">
+      <data key="key19">Green Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n2">
+      <data key="key19">Green Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n3">
+      <data key="key19">Blue Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n5">
+      <data key="key19">Purple Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e4" source="n4" target="n9">
+      <data key="key19">Orange Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e5" source="n5" target="n11">
+      <data key="key37">e12</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e6" source="n5" target="n12">
+      <data key="key19">Purple Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e7" source="n6" target="n10">
+      <data key="key19">Orange Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e8" source="n7" target="n11">
+      <data key="key19">Green Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e9" source="n8" target="n11">
+      <data key="key19">Green Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e10" source="n9" target="n12">
+      <data key="key19">Orange/Purple Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e11" source="n9" target="n10">
+      <data key="key19">Orange Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e12" source="n10" target="n11">
+      <data key="key19">Orange/Purple Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e13" source="n11" target="n12">
+      <data key="key19">Purple Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e14" source="n11" target="n13">
+      <data key="key19">Blue Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e15" source="n11" target="n14">
+      <data key="key19">Blue Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e16" source="n11" target="n15">
+      <data key="key19">Blue Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e17" source="n11" target="n16">
+      <data key="key19">Green Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e18" source="n12" target="n13">
+      <data key="key19">Blue Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e19" source="n12" target="n14">
+      <data key="key19">Blue Link</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e20" source="n12" target="n15">
+      <data key="key19">Blue Link</data>
+      <data key="key38">0</data>
+    </edge>
+
+  </graph>
+</graphml>

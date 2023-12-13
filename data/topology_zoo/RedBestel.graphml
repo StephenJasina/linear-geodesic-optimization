@@ -1,0 +1,1354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key22" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key23" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key24" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key28" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key30" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key32" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key34" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key35" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key36" for="graph" attr.name="description" attr.type="string" />
+  <key id="key37" for="node" attr.name="geocode_append" attr.type="string" />
+  <key id="key38" for="node" attr.name="geocode_id" attr.type="string" />
+  <key id="key39" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="id" attr.type="int" />
+  <key id="key41" for="edge" attr.name="id" attr.type="string" />
+  <key id="key42" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key43" for="node" attr.name="label" attr.type="string" />
+  <key id="key44" for="graph" attr.name="label" attr.type="string" />
+  <key id="key45" for="graph" attr.name="name" attr.type="string" />
+  <key id="key46" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key47" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">12</data>
+   <data key="key8">30/10/10</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2006</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Mexico</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">Fibre</data>
+   <data key="key23">Bestel </data>
+   <data key="key24">2006_12</data>
+   <data key="key25">Colo</data>
+   <data key="key26">Primary</data>
+   <data key="key27">http://www.bestel.com.mx/shocked/red_bestel.pdf</data>
+   <data key="key28">e278b1b</data>
+   <data key="key29">0</data>
+   <data key="key30">0.3.34dev-20120328</data>
+   <data key="key31">1</data>
+   <data key="key32">COM</data>
+   <data key="key33">1.0</data>
+   <data key="key35">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key36">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key44">RedBestel</data>
+   <data key="key45">internet_top_pop (RedBestel)</data>
+   <data key="key46">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key47">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">24.7994399999999999996</data>
+      <data key="key22">-107.389719999999999997</data>
+      <data key="key34">7.3490801506645349, 0.28336951817798262</data>
+      <data key="key39">0</data>
+      <data key="key40">0</data>
+      <data key="key43">Culiacan</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">23.2166699999999999997</data>
+      <data key="key22">-106.416669999999999999</data>
+      <data key="key34">7.7532436729055094, 0.16145892420786617</data>
+      <data key="key39">0</data>
+      <data key="key40">1</data>
+      <data key="key43">Mazatlan</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">29.0666700000000000001</data>
+      <data key="key22">-110.966670000000000001</data>
+      <data key="key34">6.1541048052384397, 0.81275378821633781</data>
+      <data key="key39">0</data>
+      <data key="key40">2</data>
+      <data key="key43">Hermosillo</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">27.9333299999999999999</data>
+      <data key="key22">-110.900000000000000001</data>
+      <data key="key34">6.3000406384412591, 0.74154176310966424</data>
+      <data key="key39">0</data>
+      <data key="key40">3</data>
+      <data key="key43">Guaymas</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">21.8833300000000000006</data>
+      <data key="key22">-102.300000000000000003</data>
+      <data key="key34">9.0716356995140188, 0.18100642802502265</data>
+      <data key="key39">0</data>
+      <data key="key40">4</data>
+      <data key="key43">Aguascalientes</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">22.1499999999999999997</data>
+      <data key="key22">-100.983330000000000003</data>
+      <data key="key34">9.2252536172842508, -0.14591517364287726</data>
+      <data key="key39">0</data>
+      <data key="key40">5</data>
+      <data key="key43">San Luis Potosi</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">24.0333300000000000003</data>
+      <data key="key22">-104.666669999999999999</data>
+      <data key="key34">7.9533497971733507, -0.20909538208658032</data>
+      <data key="key39">0</data>
+      <data key="key40">6</data>
+      <data key="key43">Durango</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">21.5</data>
+      <data key="key22">-104.900000000000000001</data>
+      <data key="key34">8.2574096760763727, 0.48838605055399165</data>
+      <data key="key39">0</data>
+      <data key="key40">7</data>
+      <data key="key43">Tepic</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.8166700000000000001</data>
+      <data key="key22">-102.733330000000000003</data>
+      <data key="key34">8.7417573974657703, 0.45860116731859246</data>
+      <data key="key39">0</data>
+      <data key="key40">8</data>
+      <data key="key43">Tepatitlan</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">21.0166700000000000008</data>
+      <data key="key22">-102.349999999999999999</data>
+      <data key="key34">8.8769205513559708, 0.39162843931275038</data>
+      <data key="key39">0</data>
+      <data key="key40">9</data>
+      <data key="key43">San Miguel El Alto</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">21.1166699999999999994</data>
+      <data key="key22">-101.666669999999999999</data>
+      <data key="key34">9.0428530422180415, 0.37251057833001133</data>
+      <data key="key39">0</data>
+      <data key="key40">10</data>
+      <data key="key43">Leon</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.5166700000000000008</data>
+      <data key="key22">-100.81667</data>
+      <data key="key34">9.2782475564659528, 0.41053082490314147</data>
+      <data key="key39">0</data>
+      <data key="key40">11</data>
+      <data key="key43">Celaya</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.9527800000000000002</data>
+      <data key="key22">-99.5347200000000000009</data>
+      <data key="key34">9.4552950124551209, 0.68141865265382129</data>
+      <data key="key39">0</data>
+      <data key="key40">12</data>
+      <data key="key43">Jilotepec</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.3333299999999999996</data>
+      <data key="key22">-102.300000000000000003</data>
+      <data key="key34">8.9007547404296883, 0.62456685568918302</data>
+      <data key="key39">0</data>
+      <data key="key40">13</data>
+      <data key="key43">Yurecuaro</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.7347199999999999998</data>
+      <data key="key22">-98.5902799999999999991</data>
+      <data key="key34">9.9248604015834836, 0.75053144500166169</data>
+      <data key="key39">0</data>
+      <data key="key40">14</data>
+      <data key="key43">Irolo</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.3500000000000000003</data>
+      <data key="key22">-98.6666699999999999987</data>
+      <data key="key34">9.9352342710976149, 0.63237069426423476</data>
+      <data key="key39">0</data>
+      <data key="key40">15</data>
+      <data key="key43">Rio Fro</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7999999999999999993</data>
+      <data key="key22">-99.1666699999999999987</data>
+      <data key="key34">8.6412392285801936, -1.0749047896229873</data>
+      <data key="key39">0</data>
+      <data key="key40">16</data>
+      <data key="key43">Gral Bravo</data>
+    </node>
+    <node id="n17">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key22">0</data>
+      <data key="key34">8.9764158368048363, -2.3687515549920026</data>
+      <data key="key39">0</data>
+      <data key="key40">17</data>
+      <data key="key43">San Miguel</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.6666700000000000004</data>
+      <data key="key22">-100.31667</data>
+      <data key="key34">8.7678014503889568, -0.93928065869450916</data>
+      <data key="key39">0</data>
+      <data key="key40">18</data>
+      <data key="key43">Monterrey</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.4284700000000000002</data>
+      <data key="key22">-99.1276600000000000026</data>
+      <data key="key34">9.7772004075727299, 0.63164387756482498</data>
+      <data key="key39">0</data>
+      <data key="key40">19</data>
+      <data key="key43">Mexico</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7166699999999999997</data>
+      <data key="key22">-102.400000000000000001</data>
+      <data key="key34">8.3927252835756487, -0.66716341239546373</data>
+      <data key="key39">0</data>
+      <data key="key40">20</data>
+      <data key="key43">Talia</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">26.8333299999999999996</data>
+      <data key="key22">-100.666669999999999999</data>
+      <data key="key34">8.8337553083266371, -1.1927849990398975</data>
+      <data key="key39">0</data>
+      <data key="key40">21</data>
+      <data key="key43">Candela</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.8333299999999999996</data>
+      <data key="key22">-101.300000000000000003</data>
+      <data key="key34">8.572769387228055, -0.80253761158207015</data>
+      <data key="key38">3983363</data>
+      <data key="key39">0</data>
+      <data key="key40">22</data>
+      <data key="key43">La Sauceda</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">24.2999999999999999993</data>
+      <data key="key22">-100.866670000000000003</data>
+      <data key="key34">8.9800711307139167, -0.5630802775281295</data>
+      <data key="key39">0</data>
+      <data key="key40">23</data>
+      <data key="key43">El Salado</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.2333299999999999992</data>
+      <data key="key22">-99.7166700000000000015</data>
+      <data key="key34">9.0722867446615147, -0.74931388869001447</data>
+      <data key="key39">0</data>
+      <data key="key40">24</data>
+      <data key="key43">San Rafael</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">23.2833300000000000003</data>
+      <data key="key22">-100.949999999999999997</data>
+      <data key="key34">9.0897862189118843, -0.35122578753147288</data>
+      <data key="key38">4002098</data>
+      <data key="key39">0</data>
+      <data key="key40">25</data>
+      <data key="key43">Laguna Seca</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">23.6499999999999999997</data>
+      <data key="key22">-100.650000000000000001</data>
+      <data key="key34">9.2993091052417878, -0.49757699718077664</data>
+      <data key="key39">0</data>
+      <data key="key40">26</data>
+      <data key="key43">Matehlala</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">22.9333299999999999999</data>
+      <data key="key22">-100.466670000000000001</data>
+      <data key="key34">9.2973279798417181, -0.32075426514625816</data>
+      <data key="key39">0</data>
+      <data key="key40">27</data>
+      <data key="key43">El Huizache</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">24.3999999999999999997</data>
+      <data key="key22">-100.366670000000000003</data>
+      <data key="key34">9.2183198497949892, -0.65077579416467768</data>
+      <data key="key39">0</data>
+      <data key="key40">28</data>
+      <data key="key43">Jesus M Aguirre</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">21.0333300000000000003</data>
+      <data key="key22">-104.300000000000000003</data>
+      <data key="key34">8.4556598436093395, 0.54966538391226027</data>
+      <data key="key38">3986227</data>
+      <data key="key39">0</data>
+      <data key="key40">29</data>
+      <data key="key43">SN Jose De Gracia</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">21.9500000000000000007</data>
+      <data key="key22">-105.150000000000000001</data>
+      <data key="key34">8.0762222861999629, 0.40084293248915542</data>
+      <data key="key37">Nayarit</data>
+      <data key="key39">0</data>
+      <data key="key40">30</data>
+      <data key="key43">Ruiz</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.4166700000000000004</data>
+      <data key="key22">-101</data>
+      <data key="key34">8.8951599177815019, -0.78890471260701855</data>
+      <data key="key39">0</data>
+      <data key="key40">31</data>
+      <data key="key43">Saltillo</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">18.9166700000000000004</data>
+      <data key="key22">-99.25</data>
+      <data key="key34">9.7673429803092766, 0.76008823318697838</data>
+      <data key="key39">0</data>
+      <data key="key40">32</data>
+      <data key="key43">Cuernavaca</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.25</data>
+      <data key="key22">-99.6500000000000000014</data>
+      <data key="key34">9.5860963016518852, 0.48121925665455478</data>
+      <data key="key37">Hidalgo</data>
+      <data key="key39">0</data>
+      <data key="key40">33</data>
+      <data key="key43">Nopala</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">32.5333299999999999985</data>
+      <data key="key22">-117.016669999999999997</data>
+      <data key="key34">9.2554984921485772, -2.9202766241427587</data>
+      <data key="key39">0</data>
+      <data key="key40">34</data>
+      <data key="key43">Tijuana</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">27.1000000000000000003</data>
+      <data key="key22">-109.43333</data>
+      <data key="key34">6.605459570431889, 0.57924106614233484</data>
+      <data key="key39">0</data>
+      <data key="key40">35</data>
+      <data key="key43">Navojoa</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.1833299999999999999</data>
+      <data key="key22">-102.400000000000000001</data>
+      <data key="key34">8.8720425432889467, 0.80120437239470199</data>
+      <data key="key39">0</data>
+      <data key="key40">36</data>
+      <data key="key43">Ixtlan</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.3833300000000000006</data>
+      <data key="key22">-100</data>
+      <data key="key34">9.6064633221282474, 0.34819845167369551</data>
+      <data key="key39">0</data>
+      <data key="key40">37</data>
+      <data key="key43">S Juan Del Rio</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.9527800000000000002</data>
+      <data key="key22">-99.5347200000000000009</data>
+      <data key="key34">9.7139312387057242, 0.49745376076058639</data>
+      <data key="key39">0</data>
+      <data key="key40">38</data>
+      <data key="key43">Jilotepec</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7666700000000000008</data>
+      <data key="key22">-108.966670000000000001</data>
+      <data key="key34">6.6626968771666064, 0.37211585305778533</data>
+      <data key="key39">0</data>
+      <data key="key40">39</data>
+      <data key="key43">Los Mochis</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">26.0833299999999999996</data>
+      <data key="key22">-108.766669999999999997</data>
+      <data key="key34">6.7633093191414702, 0.4685436899159246</data>
+      <data key="key37">Sinaloa</data>
+      <data key="key39">0</data>
+      <data key="key40">40</data>
+      <data key="key43">San Blas</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7333299999999999992</data>
+      <data key="key22">-108.349999999999999999</data>
+      <data key="key34">6.952880515211814, 0.38939333128460768</data>
+      <data key="key39">0</data>
+      <data key="key40">41</data>
+      <data key="key43">Leon Fonseca</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.5666700000000000001</data>
+      <data key="key22">-108.449999999999999997</data>
+      <data key="key34">6.9152727697313612, 0.25937625584842228</data>
+      <data key="key39">0</data>
+      <data key="key40">42</data>
+      <data key="key43">Guasave</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.4666699999999999997</data>
+      <data key="key22">-108.099999999999999999</data>
+      <data key="key34">7.1540794211915779, 0.34113062918062842</data>
+      <data key="key39">0</data>
+      <data key="key40">43</data>
+      <data key="key43">Guamuchil</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">23.9166700000000000004</data>
+      <data key="key22">-106.900000000000000001</data>
+      <data key="key34">7.5457498567949362, 0.22295458653310096</data>
+      <data key="key39">0</data>
+      <data key="key40">44</data>
+      <data key="key43">La Cruz De Elota</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">22.8500000000000000003</data>
+      <data key="key22">-105.800000000000000003</data>
+      <data key="key34">7.9074049302693332, 0.2907674267219359</data>
+      <data key="key39">0</data>
+      <data key="key40">45</data>
+      <data key="key43">Escuinapa</data>
+    </node>
+    <node id="n46">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">28.2800000000000000006</data>
+      <data key="key22">-99.2844799999999999968</data>
+      <data key="key34">8.9914134671694903, -1.8942986851014545</data>
+      <data key="key39">0</data>
+      <data key="key40">46</data>
+      <data key="key43">Artesia Wells</data>
+    </node>
+    <node id="n47">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.0552399999999999992</data>
+      <data key="key22">-99.0103099999999999997</data>
+      <data key="key34">9.0785222384264124, -2.1072439733902275</data>
+      <data key="key39">0</data>
+      <data key="key40">47</data>
+      <data key="key43">Moore</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">25.5499999999999999993</data>
+      <data key="key22">-103.43333</data>
+      <data key="key34">8.2277811468200284, -0.52532690966387674</data>
+      <data key="key39">0</data>
+      <data key="key40">48</data>
+      <data key="key43">Torreon</data>
+    </node>
+    <node id="n49">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">28.4619399999999999999</data>
+      <data key="key22">-98.5491800000000000015</data>
+      <data key="key34">8.8102623856190299, -2.3588187908074594</data>
+      <data key="key39">0</data>
+      <data key="key40">49</data>
+      <data key="key43">Tilden</data>
+    </node>
+    <node id="n50">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">26.7167199999999999994</data>
+      <data key="key22">-98.4538999999999999979</data>
+      <data key="key34">8.4852926573056173, -1.5386063089900515</data>
+      <data key="key39">0</data>
+      <data key="key40">50</data>
+      <data key="key43">San Isidro</data>
+    </node>
+    <node id="n51">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.30671</data>
+      <data key="key22">-98.6783500000000000016</data>
+      <data key="key34">8.626276844870711, -2.1213919608336735</data>
+      <data key="key39">0</data>
+      <data key="key40">51</data>
+      <data key="key43">Hebbronville</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">21.4666699999999999997</data>
+      <data key="key22">-100.866670000000000003</data>
+      <data key="key34">9.3465570049036089, 0.079034036481492431</data>
+      <data key="key39">0</data>
+      <data key="key40">52</data>
+      <data key="key43">San Diego Del Union</data>
+    </node>
+    <node id="n53">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">27.4833299999999999992</data>
+      <data key="key22">-109.93333</data>
+      <data key="key34">6.449901150019083, 0.6654758614640548</data>
+      <data key="key39">0</data>
+      <data key="key40">53</data>
+      <data key="key43">CD Obregon</data>
+    </node>
+    <node id="n54">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">24.73778</data>
+      <data key="key22">-103.843059999999999997</data>
+      <data key="key34">8.0817995635224698, -0.37361849100443978</data>
+      <data key="key39">0</data>
+      <data key="key40">54</data>
+      <data key="key43">Yerbanis</data>
+    </node>
+    <node id="n55">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.6833299999999999999</data>
+      <data key="key22">-101.349999999999999999</data>
+      <data key="key34">9.1263775047633597, 0.5000072119018889</data>
+      <data key="key39">0</data>
+      <data key="key40">55</data>
+      <data key="key43">Irapuato</data>
+    </node>
+    <node id="n56">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">30.1666700000000000004</data>
+      <data key="key22">-111.099999999999999999</data>
+      <data key="key34">6.0167796122042416, 0.87819586255488991</data>
+      <data key="key39">0</data>
+      <data key="key40">56</data>
+      <data key="key43">Benjamin Hill</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.5333300000000000003</data>
+      <data key="key22">-96.9166699999999999987</data>
+      <data key="key34">10.223927352534428, 0.75954212422760103</data>
+      <data key="key39">0</data>
+      <data key="key40">57</data>
+      <data key="key43">Jalapa</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.0499999999999999993</data>
+      <data key="key22">-98.1999999999999999972</data>
+      <data key="key34">10.058400147221313, 0.70169033443264539</data>
+      <data key="key39">0</data>
+      <data key="key40">58</data>
+      <data key="key43">Puebla</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.2883299999999999995</data>
+      <data key="key22">-99.6672200000000000006</data>
+      <data key="key34">9.6420192619237532, 0.64020277852080609</data>
+      <data key="key39">0</data>
+      <data key="key40">59</data>
+      <data key="key43">Toluca</data>
+    </node>
+    <node id="n60">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.6000000000000000003</data>
+      <data key="key22">-100.383329999999999997</data>
+      <data key="key34">9.4275455150764049, 0.32165376170268345</data>
+      <data key="key39">0</data>
+      <data key="key40">60</data>
+      <data key="key43">Queretaro</data>
+    </node>
+    <node id="n61">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">27.5</data>
+      <data key="key22">-99.5166699999999999973</data>
+      <data key="key34">8.870704565703063, -1.4432841729958026</data>
+      <data key="key39">0</data>
+      <data key="key40">61</data>
+      <data key="key43">Nuevo Laredo</data>
+    </node>
+    <node id="n62">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">26.2034100000000000005</data>
+      <data key="key22">-98.2300099999999999992</data>
+      <data key="key34">8.4756537689423102, -1.3747058054706616</data>
+      <data key="key39">0</data>
+      <data key="key40">62</data>
+      <data key="key43">Hidalgo</data>
+    </node>
+    <node id="n63">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">26.0833299999999999996</data>
+      <data key="key22">-98.2833299999999999985</data>
+      <data key="key34">8.5364195933762126, -1.2172477332313476</data>
+      <data key="key39">0</data>
+      <data key="key40">63</data>
+      <data key="key43">Reynosa</data>
+    </node>
+    <node id="n64">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.2000000000000000007</data>
+      <data key="key22">-96.1333299999999999971</data>
+      <data key="key34">10.36133509652667, 0.81141076906124754</data>
+      <data key="key39">0</data>
+      <data key="key40">64</data>
+      <data key="key43">Veracruz</data>
+    </node>
+    <node id="n65">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">22.6333300000000000006</data>
+      <data key="key22">-101.716670000000000001</data>
+      <data key="key34">9.1316715134238358, 0.006985375227142248</data>
+      <data key="key39">0</data>
+      <data key="key40">65</data>
+      <data key="key43">Saljnas</data>
+    </node>
+    <node id="n66">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.2166699999999999997</data>
+      <data key="key22">-100.883329999999999997</data>
+      <data key="key34">9.2771892892929451, 0.62833315137779089</data>
+      <data key="key39">0</data>
+      <data key="key40">66</data>
+      <data key="key43">Salvatierra</data>
+    </node>
+    <node id="n67">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.4397500000000000003</data>
+      <data key="key22">-99.0011400000000000021</data>
+      <data key="key34">8.6450404545633894, -1.953646105137373</data>
+      <data key="key39">0</data>
+      <data key="key40">67</data>
+      <data key="key43">MA</data>
+    </node>
+    <node id="n68">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key22">0</data>
+      <data key="key34">8.7042107384698522, -1.7817943058310444</data>
+      <data key="key39">1</data>
+      <data key="key40">68</data>
+      <data key="key43">None</data>
+    </node>
+    <node id="n69">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">27.5</data>
+      <data key="key22">-99.5166699999999999973</data>
+      <data key="key34">8.8761675778489124, -1.6926581047819345</data>
+      <data key="key39">0</data>
+      <data key="key40">69</data>
+      <data key="key43">Laredo</data>
+    </node>
+    <node id="n70">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.4397500000000000003</data>
+      <data key="key22">-99.0011400000000000021</data>
+      <data key="key34">8.5693442747769044, -1.6757823770392697</data>
+      <data key="key39">0</data>
+      <data key="key40">70</data>
+      <data key="key43">Mirando City</data>
+    </node>
+    <node id="n71">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">23.7333299999999999992</data>
+      <data key="key22">-105.516669999999999997</data>
+      <data key="key34">7.8432352290724783, -0.030664603712502889</data>
+      <data key="key38">4000373</data>
+      <data key="key39">0</data>
+      <data key="key40">71</data>
+      <data key="key43">Las Adjuntas</data>
+    </node>
+    <node id="n72">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.7522500000000000003</data>
+      <data key="key22">-98.0697199999999999973</data>
+      <data key="key34">8.6808118223638804, -2.2704769107108946</data>
+      <data key="key39">0</data>
+      <data key="key40">72</data>
+      <data key="key43">Alice</data>
+    </node>
+    <node id="n73">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">31.7333299999999999992</data>
+      <data key="key22">-106.483330000000000003</data>
+      <data key="key34">9.4517345883448822, -2.272078056384129</data>
+      <data key="key39">0</data>
+      <data key="key40">73</data>
+      <data key="key43">CD Juarez</data>
+    </node>
+    <node id="n74">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">31.7333299999999999992</data>
+      <data key="key22">-106.483330000000000003</data>
+      <data key="key34">9.3061838934419665, -2.2957543497767801</data>
+      <data key="key39">0</data>
+      <data key="key40">74</data>
+      <data key="key43">El Paso</data>
+    </node>
+    <node id="n75">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.6666700000000000004</data>
+      <data key="key22">-103.333330000000000001</data>
+      <data key="key34">8.6744210738389356, 0.58299269140373755</data>
+      <data key="key39">0</data>
+      <data key="key40">75</data>
+      <data key="key43">Guadalajara</data>
+    </node>
+    <node id="n76">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7830599999999999991</data>
+      <data key="key22">-96.8066699999999999982</data>
+      <data key="key34">9.3503284699811502, -2.5849473642206329</data>
+      <data key="key39">0</data>
+      <data key="key40">76</data>
+      <data key="key43">Dallas</data>
+    </node>
+    <node id="n77">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.4241200000000000005</data>
+      <data key="key22">-98.4936299999999999993</data>
+      <data key="key34">9.2134056462813874, -2.5436202152804746</data>
+      <data key="key39">0</data>
+      <data key="key40">77</data>
+      <data key="key43">San Antonio Taylor</data>
+    </node>
+    <node id="n78">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.4241200000000000005</data>
+      <data key="key22">-98.4936299999999999993</data>
+      <data key="key34">9.1442532317733534, -2.3289901208000723</data>
+      <data key="key39">0</data>
+      <data key="key40">78</data>
+      <data key="key43">San Antonio Rotary</data>
+    </node>
+    <node id="n79">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7153300000000000006</data>
+      <data key="key22">-117.157259999999999997</data>
+      <data key="key34">9.2268940277916816, -2.7413552181154182</data>
+      <data key="key39">0</data>
+      <data key="key40">79</data>
+      <data key="key43">San Diego</data>
+    </node>
+    <node id="n80">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.9833299999999999992</data>
+      <data key="key22">-102.266669999999999997</data>
+      <data key="key34">8.8446191756143762, 0.95009158501496604</data>
+      <data key="key39">0</data>
+      <data key="key40">80</data>
+      <data key="key43">Zamora</data>
+    </node>
+    <node id="n81">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">31.8666699999999999994</data>
+      <data key="key22">-116.616670000000000003</data>
+      <data key="key34">9.3693843942457562, -3.0132624929141181</data>
+      <data key="key39">0</data>
+      <data key="key40">81</data>
+      <data key="key43">Ensenada</data>
+    </node>
+    <node id="n82">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">32.6519399999999999987</data>
+      <data key="key22">-115.468330000000000003</data>
+      <data key="key34">9.1811150446954652, -3.0491208509500107</data>
+      <data key="key39">0</data>
+      <data key="key40">82</data>
+      <data key="key43">Mexicali</data>
+    </node>
+    <node id="n83">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">31.3333299999999999996</data>
+      <data key="key22">-110.93333</data>
+      <data key="key34">5.8937779837131945, 0.93563841595499708</data>
+      <data key="key39">0</data>
+      <data key="key40">83</data>
+      <data key="key43">Nogales</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n43">
+      <data key="key41">e15</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n44">
+      <data key="key41">e14</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n44">
+      <data key="key41">e18</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n45">
+      <data key="key41">e17</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e4" source="n1" target="n71">
+      <data key="key41">e16</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n56">
+      <data key="key41">e12</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n3">
+      <data key="key41">e11</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e7" source="n3" target="n53">
+      <data key="key41">e13</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n65">
+      <data key="key41">e23</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n10">
+      <data key="key41">e24</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e10" source="n5" target="n65">
+      <data key="key41">e25</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e11" source="n5" target="n27">
+      <data key="key41">e27</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e12" source="n5" target="n52">
+      <data key="key41">e28</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e13" source="n5" target="n25">
+      <data key="key41">e26</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e14" source="n6" target="n54">
+      <data key="key41">e20</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e15" source="n6" target="n71">
+      <data key="key41">e19</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e16" source="n7" target="n29">
+      <data key="key41">e21</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e17" source="n7" target="n30">
+      <data key="key41">e22</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e18" source="n8" target="n9">
+      <data key="key41">e83</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e19" source="n8" target="n75">
+      <data key="key41">e84</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e20" source="n9" target="n10">
+      <data key="key41">e29</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e21" source="n10" target="n55">
+      <data key="key41">e31</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e22" source="n10" target="n55">
+      <data key="key41">e30</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e23" source="n11" target="n60">
+      <data key="key41">e33</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e24" source="n11" target="n60">
+      <data key="key41">e32</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e25" source="n11" target="n55">
+      <data key="key41">e35</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e26" source="n11" target="n55">
+      <data key="key41">e34</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e27" source="n12" target="n66">
+      <data key="key41">e74</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e28" source="n12" target="n59">
+      <data key="key41">e40</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e29" source="n13" target="n75">
+      <data key="key41">e81</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e30" source="n13" target="n36">
+      <data key="key20">Microwave</data>
+      <data key="key21">Microwave</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e31" source="n13" target="n55">
+      <data key="key41">e53</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e32" source="n14" target="n58">
+      <data key="key41">e43</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e33" source="n14" target="n19">
+      <data key="key41">e77</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e34" source="n15" target="n58">
+      <data key="key41">e44</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e35" source="n15" target="n58">
+      <data key="key20">Via TeleReunion</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e36" source="n15" target="n19">
+      <data key="key20">Via TeleReunion</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e37" source="n15" target="n19">
+      <data key="key41">e78</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e38" source="n16" target="n18">
+      <data key="key41">e66</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e39" source="n16" target="n63">
+      <data key="key41">e49</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e40" source="n17" target="n49">
+      <data key="key41">e67</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e41" source="n17" target="n78">
+      <data key="key41">e5</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e42" source="n18" target="n21">
+      <data key="key41">e58</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e43" source="n18" target="n22">
+      <data key="key41">e59</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e44" source="n18" target="n31">
+      <data key="key41">e97</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e45" source="n18" target="n31">
+      <data key="key41">e96</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e46" source="n19" target="n32">
+      <data key="key41">e95</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e47" source="n19" target="n32">
+      <data key="key41">e94</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e48" source="n19" target="n33">
+      <data key="key41">e93</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e49" source="n19" target="n38">
+      <data key="key41">e76</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e50" source="n19" target="n59">
+      <data key="key41">e42</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e51" source="n19" target="n59">
+      <data key="key41">e41</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e52" source="n20" target="n48">
+      <data key="key41">e57</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e53" source="n20" target="n22">
+      <data key="key41">e56</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e54" source="n21" target="n61">
+      <data key="key41">e52</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e55" source="n23" target="n25">
+      <data key="key41">e60</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e56" source="n23" target="n31">
+      <data key="key41">e61</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e57" source="n24" target="n28">
+      <data key="key41">e63</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e58" source="n24" target="n31">
+      <data key="key41">e62</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e59" source="n26" target="n27">
+      <data key="key41">e64</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e60" source="n26" target="n28">
+      <data key="key41">e65</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e61" source="n29" target="n75">
+      <data key="key41">e85</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e62" source="n30" target="n45">
+      <data key="key41">e86</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e63" source="n33" target="n60">
+      <data key="key41">e37</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e64" source="n34" target="n81">
+      <data key="key20">Microwave</data>
+      <data key="key21">Microwave</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e65" source="n34" target="n82">
+      <data key="key20">Microwave</data>
+      <data key="key21">Microwave</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e66" source="n34" target="n79">
+      <data key="key41">e6</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e67" source="n35" target="n40">
+      <data key="key41">e91</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e68" source="n35" target="n53">
+      <data key="key41">e92</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e69" source="n36" target="n80">
+      <data key="key20">Microwave</data>
+      <data key="key21">Microwave</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e70" source="n37" target="n60">
+      <data key="key41">e36</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e71" source="n37" target="n38">
+      <data key="key41">e75</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e72" source="n38" target="n59">
+      <data key="key41">e39</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e73" source="n39" target="n40">
+      <data key="key41">e90</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e74" source="n40" target="n41">
+      <data key="key41">e89</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e75" source="n41" target="n42">
+      <data key="key20">Microwave</data>
+      <data key="key21">Microwave</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e76" source="n41" target="n43">
+      <data key="key41">e87</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e77" source="n46" target="n69">
+      <data key="key41">e69</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e78" source="n46" target="n47">
+      <data key="key41">e68</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e79" source="n47" target="n78">
+      <data key="key41">e3</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e80" source="n48" target="n54">
+      <data key="key41">e55</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e81" source="n49" target="n72">
+      <data key="key41">e70</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e82" source="n50" target="n62">
+      <data key="key41">e50</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e83" source="n50" target="n70">
+      <data key="key41">e73</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e84" source="n51" target="n72">
+      <data key="key41">e71</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e85" source="n51" target="n67">
+      <data key="key41">e72</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e86" source="n52" target="n60">
+      <data key="key41">e38</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e87" source="n55" target="n66">
+      <data key="key41">e54</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e88" source="n56" target="n83">
+      <data key="key41">e9</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e89" source="n57" target="n64">
+      <data key="key20">Via TeleReunion</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e90" source="n57" target="n58">
+      <data key="key20">Via TeleReunion</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e91" source="n61" target="n69">
+      <data key="key41">e51</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e92" source="n62" target="n63">
+      <data key="key41">e48</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e93" source="n67" target="n68">
+      <data key="key41">e98</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e94" source="n68" target="n69">
+      <data key="key41">e100</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e95" source="n68" target="n70">
+      <data key="key41">e99</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e96" source="n73" target="n74">
+      <data key="key20">Microwave</data>
+      <data key="key21">Microwave</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e97" source="n74" target="n78">
+      <data key="key20">Via Broadwing</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e98" source="n76" target="n77">
+      <data key="key20">Via Time Warner and QWest</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e99" source="n77" target="n78">
+      <data key="key41">e1</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e100" source="n77" target="n79">
+      <data key="key20">Via Global Crossing</data>
+      <data key="key42">0</data>
+    </edge>
+
+  </graph>
+</graphml>

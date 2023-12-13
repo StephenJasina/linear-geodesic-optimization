@@ -1,0 +1,1439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key27" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key29" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key31" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key33" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key34" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key35" for="graph" attr.name="description" attr.type="string" />
+  <key id="key36" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key37" for="node" attr.name="id" attr.type="int" />
+  <key id="key38" for="edge" attr.name="id" attr.type="string" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">18/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Continent</data>
+   <data key="key13">Europe</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">Simplified Fibre</data>
+   <data key="key22">OTEGlobe </data>
+   <data key="key23">2010_08</data>
+   <data key="key24">Does managed CPE count?</data>
+   <data key="key25">Primary</data>
+   <data key="key26">http://www.oteglobe.gr/map.pdf</data>
+   <data key="key27">e278b1b</data>
+   <data key="key28">0</data>
+   <data key="key29">0.3.34dev-20120328</data>
+   <data key="key30">1</data>
+   <data key="key31">COM</data>
+   <data key="key32">1.0</data>
+   <data key="key34">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key35">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Oteglobe</data>
+   <data key="key42">internet_top_pop (Oteglobe)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key44">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Croatia</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6480700000000000002</data>
+      <data key="key21">18.0921600000000000006</data>
+      <data key="key33">-5.0432493023491034, 0.72293109381777665</data>
+      <data key="key36">0</data>
+      <data key="key37">0</data>
+      <data key="key40">Dubrovnik</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Albania</data>
+      <data key="key15">1</data>
+      <data key="key18">41.3230599999999999999</data>
+      <data key="key21">19.4413899999999999994</data>
+      <data key="key33">-5.1341004778542567, 0.77207662842880698</data>
+      <data key="key36">0</data>
+      <data key="key37">1</data>
+      <data key="key40">Durres</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">43.8563899999999999985</data>
+      <data key="key21">25.9708300000000000003</data>
+      <data key="key33">-4.654521954404542, 0.15851328229486852</data>
+      <data key="key36">0</data>
+      <data key="key37">2</data>
+      <data key="key40">Russe</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">43.4166699999999999987</data>
+      <data key="key21">24.6166699999999999994</data>
+      <data key="key33">-4.7730323927244562, 0.16115253890880221</data>
+      <data key="key36">0</data>
+      <data key="key37">3</data>
+      <data key="key40">Pleven</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6975100000000000015</data>
+      <data key="key21">23.3241500000000000006</data>
+      <data key="key33">-4.8202284205950408, 0.28974953004565229</data>
+      <data key="key36">0</data>
+      <data key="key37">4</data>
+      <data key="key40">Sofia</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">42.4327800000000000015</data>
+      <data key="key21">25.6419400000000000002</data>
+      <data key="key33">-4.7225801772322988, 0.23244559720051083</data>
+      <data key="key36">0</data>
+      <data key="key37">5</data>
+      <data key="key40">Stara Zagora</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">43.2166700000000000015</data>
+      <data key="key21">27.9166700000000000004</data>
+      <data key="key33">-5.1728308420338767, 1.8217589580096694</data>
+      <data key="key36">0</data>
+      <data key="key37">6</data>
+      <data key="key40">Varna</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Russia</data>
+      <data key="key15">1</data>
+      <data key="key18">44.7238899999999999987</data>
+      <data key="key21">37.7708300000000000013</data>
+      <data key="key33">-5.1100671037136056, 1.8801829310314913</data>
+      <data key="key36">0</data>
+      <data key="key37">7</data>
+      <data key="key40">Novorossiysk</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0138400000000000016</data>
+      <data key="key21">28.9496600000000000007</data>
+      <data key="key33">-5.3966129511125116, 1.803845041439383</data>
+      <data key="key36">0</data>
+      <data key="key37">8</data>
+      <data key="key40">Istanbul</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Macedonia</data>
+      <data key="key15">1</data>
+      <data key="key18">42</data>
+      <data key="key21">21.4333299999999999999</data>
+      <data key="key33">-4.0891600436001205, 0.77258136572778235</data>
+      <data key="key36">0</data>
+      <data key="key37">9</data>
+      <data key="key40">Skopje</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.1596200000000000015</data>
+      <data key="key21">18.2594299999999999991</data>
+      <data key="key33">-5.312991682503224, 0.82180119309345667</data>
+      <data key="key36">0</data>
+      <data key="key37">10</data>
+      <data key="key40">Otranto</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Macedonia</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0311099999999999988</data>
+      <data key="key21">21.3402799999999999991</data>
+      <data key="key33">-5.5807054623392878, 0.61372379267913002</data>
+      <data key="key36">0</data>
+      <data key="key37">11</data>
+      <data key="key40">Bitola</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Lebanon</data>
+      <data key="key15">1</data>
+      <data key="key18">33.888940000000000001</data>
+      <data key="key21">35.4944199999999999984</data>
+      <data key="key33">-5.8005836099003361, 1.0386526190171392</data>
+      <data key="key36">0</data>
+      <data key="key37">12</data>
+      <data key="key40">Beirut</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Montenegro</data>
+      <data key="key15">1</data>
+      <data key="key18">42.0930600000000000004</data>
+      <data key="key21">19.1002799999999999993</data>
+      <data key="key33">-5.2073137149957596, 0.95214474666076465</data>
+      <data key="key36">0</data>
+      <data key="key37">13</data>
+      <data key="key40">Bar</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">41.6771900000000000003</data>
+      <data key="key21">26.5559700000000000007</data>
+      <data key="key33">-4.9438893280930563, 0.45765775566350242</data>
+      <data key="key36">0</data>
+      <data key="key37">14</data>
+      <data key="key40">Edirne</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2613900000000000008</data>
+      <data key="key21">21.2958299999999999992</data>
+      <data key="key33">-5.0430830600565368, 0.45807106589111607</data>
+      <data key="key36">0</data>
+      <data key="key37">15</data>
+      <data key="key40">Kastanies</data>
+    </node>
+    <node id="n16">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-5.4787383190088681, 0.68330790284393683</data>
+      <data key="key36">0</data>
+      <data key="key37">16</data>
+      <data key="key40">OPTEGLOBE TBN</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">41.7666700000000000008</data>
+      <data key="key21">26.2000000000000000007</data>
+      <data key="key33">-4.9217191497510093, 0.37646081300409234</data>
+      <data key="key36">0</data>
+      <data key="key37">17</data>
+      <data key="key40">Svilengrad</data>
+    </node>
+    <node id="n18">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-4.4229121922480861, 1.7879695699671965</data>
+      <data key="key36">1</data>
+      <data key="key37">18</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n19">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-5.4147950600509409, 1.090305785762999</data>
+      <data key="key36">1</data>
+      <data key="key37">19</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4063200000000000006</data>
+      <data key="key21">8.93385999999999999999</data>
+      <data key="key33">-4.8595368001339834, 1.0645727970772298</data>
+      <data key="key36">0</data>
+      <data key="key37">20</data>
+      <data key="key40">Genova</data>
+    </node>
+    <node id="n21">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">43.2969499999999999987</data>
+      <data key="key21">5.38106999999999999987</data>
+      <data key="key33">-4.8097760294368364, 1.1747131553375196</data>
+      <data key="key36">0</data>
+      <data key="key37">21</data>
+      <data key="key40">Marseille</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key21">9.18950999999999999963</data>
+      <data key="key33">-4.7572534037727099, 0.99038662175210379</data>
+      <data key="key36">0</data>
+      <data key="key37">22</data>
+      <data key="key40">Milan</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4386099999999999999</data>
+      <data key="key21">12.3266700000000000003</data>
+      <data key="key33">-4.841153287034671, 0.90973370091253936</data>
+      <data key="key36">0</data>
+      <data key="key37">23</data>
+      <data key="key40">Venice</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8947400000000000006</data>
+      <data key="key21">12.4839000000000000003</data>
+      <data key="key33">-4.9846427205802897, 1.0095764898748751</data>
+      <data key="key36">0</data>
+      <data key="key37">24</data>
+      <data key="key40">Rome</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1177300000000000013</data>
+      <data key="key21">16.8511800000000000008</data>
+      <data key="key33">-5.0899729390517532, 0.90632487549117025</data>
+      <data key="key36">0</data>
+      <data key="key37">25</data>
+      <data key="key40">Bari</data>
+    </node>
+    <node id="n26">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">45.75</data>
+      <data key="key21">4.84999999999999999991</data>
+      <data key="key33">-4.7401746628500492, 1.2619815857001873</data>
+      <data key="key36">0</data>
+      <data key="key37">26</data>
+      <data key="key40">Lyon</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4938099999999999989</data>
+      <data key="key21">11.3387499999999999999</data>
+      <data key="key33">-4.957948612038666, 0.88944876302694598</data>
+      <data key="key36">0</data>
+      <data key="key37">27</data>
+      <data key="key40">Bologna</data>
+    </node>
+    <node id="n28">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1186100000000000002</data>
+      <data key="key21">-5.53714999999999999986</data>
+      <data key="key33">-4.537806445483163, 1.6418982147234706</data>
+      <data key="key36">0</data>
+      <data key="key37">28</data>
+      <data key="key40">Cornwall Stations</data>
+    </node>
+    <node id="n29">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">49.7333299999999999992</data>
+      <data key="key21">1.71666999999999999997</data>
+      <data key="key33">-4.5421846722431711, 1.7836227481511415</data>
+      <data key="key36">0</data>
+      <data key="key37">29</data>
+      <data key="key40">Valery</data>
+    </node>
+    <node id="n30">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-4.4265663488360856, 1.6653774077991799</data>
+      <data key="key36">0</data>
+      <data key="key37">30</data>
+      <data key="key40">USA</data>
+    </node>
+    <node id="n31">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-4.8981238483019061, 1.6050743273590791</data>
+      <data key="key36">1</data>
+      <data key="key37">31</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Libya</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7670399999999999996</data>
+      <data key="key21">22.6366900000000000007</data>
+      <data key="key33">-5.2845974100042552, 1.2201666063081302</data>
+      <data key="key36">0</data>
+      <data key="key37">32</data>
+      <data key="key40">Derna</data>
+    </node>
+    <node id="n33">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-5.2494645338568731, 1.3795018453884458</data>
+      <data key="key36">1</data>
+      <data key="key37">33</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Albania</data>
+      <data key="key15">1</data>
+      <data key="key18">41.3274999999999999994</data>
+      <data key="key21">19.8188899999999999998</data>
+      <data key="key33">-5.583281747390628, 0.72341424069011362</data>
+      <data key="key36">0</data>
+      <data key="key37">34</data>
+      <data key="key40">Tirana</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2233899999999999983</data>
+      <data key="key21">2.91184999999999999994</data>
+      <data key="key33">-4.308567034505761, 1.8121776230260578</data>
+      <data key="key36">0</data>
+      <data key="key37">35</data>
+      <data key="key40">Ostend</data>
+    </node>
+    <node id="n36">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-4.3281876204324332, 2.1440217880107357</data>
+      <data key="key36">0</data>
+      <data key="key37">36</data>
+      <data key="key40">To USA</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Denmark</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7666700000000000008</data>
+      <data key="key21">8.60000000000000000035</data>
+      <data key="key33">-4.3654777055539791, 2.0462363187030328</data>
+      <data key="key36">0</data>
+      <data key="key37">37</data>
+      <data key="key40">Blaabjerg</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Cyprus</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1666699999999999987</data>
+      <data key="key21">33.3666699999999999994</data>
+      <data key="key33">-4.1867175960143204, 1.3860047065704892</data>
+      <data key="key36">0</data>
+      <data key="key37">38</data>
+      <data key="key40">Nicosia</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Ireland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.1719399999999999991</data>
+      <data key="key21">-6.58610999999999999991</data>
+      <data key="key33">-4.4631883604966909, 1.5723581134008464</data>
+      <data key="key36">0</data>
+      <data key="key37">39</data>
+      <data key="key40">Kilmore Quay</data>
+    </node>
+    <node id="n40">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">47.8166700000000000001</data>
+      <data key="key21">-4.33332999999999999999</data>
+      <data key="key33">-4.6618550797679266, 1.6959305560205098</data>
+      <data key="key36">0</data>
+      <data key="key37">40</data>
+      <data key="key40">Penmarch</data>
+    </node>
+    <node id="n41">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-5.4480167182848627, 1.4739579861041816</data>
+      <data key="key36">1</data>
+      <data key="key37">41</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n42">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-5.3320690489272495, 1.4889155748813399</data>
+      <data key="key36">1</data>
+      <data key="key37">42</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.9919399999999999988</data>
+      <data key="key21">22.8708299999999999999</data>
+      <data key="key33">-5.4028487525766202, 0.58592133577410399</data>
+      <data key="key36">0</data>
+      <data key="key37">43</data>
+      <data key="key40">Kilkis</data>
+    </node>
+    <node id="n44">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-5.2605846492872352, 0.5091199364083453</data>
+      <data key="key36">1</data>
+      <data key="key37">44</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">41.9402800000000000012</data>
+      <data key="key21">25.56944</data>
+      <data key="key33">-5.3339169150708035, 0.31377857278974464</data>
+      <data key="key36">0</data>
+      <data key="key37">45</data>
+      <data key="key40">Haskavo</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1227800000000000002</data>
+      <data key="key21">25.3963899999999999993</data>
+      <data key="key33">-5.2751197708851558, 0.42045180697674844</data>
+      <data key="key36">0</data>
+      <data key="key37">46</data>
+      <data key="key40">Komotini</data>
+    </node>
+    <node id="n47">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">-5.4025888007059102, 1.0051624092859115</data>
+      <data key="key36">1</data>
+      <data key="key37">47</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Macedonia</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1391699999999999986</data>
+      <data key="key21">22.5025000000000000005</data>
+      <data key="key33">-5.4799187973560048, 0.49530198088832095</data>
+      <data key="key36">0</data>
+      <data key="key37">48</data>
+      <data key="key40">Gevgelija</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">41.4000000000000000014</data>
+      <data key="key21">23.2166699999999999997</data>
+      <data key="key33">-4.99007840140023, 0.28903960773108189</data>
+      <data key="key36">0</data>
+      <data key="key37">49</data>
+      <data key="key40">Petrich</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">41.3666699999999999994</data>
+      <data key="key21">23.3666699999999999994</data>
+      <data key="key33">-5.1396076013175476, 0.37068188927336854</data>
+      <data key="key36">0</data>
+      <data key="key37">50</data>
+      <data key="key40">Promachonas</data>
+    </node>
+    <node id="n51">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.8474999999999999999</data>
+      <data key="key21">25.8744400000000000003</data>
+      <data key="key33">-5.1931392181093825, 0.54220268429752139</data>
+      <data key="key36">0</data>
+      <data key="key37">51</data>
+      <data key="key40">Alexandroupolis</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">40.8558300000000000005</data>
+      <data key="key21">26.63028</data>
+      <data key="key33">-5.107410793945979, 0.56746458490076035</data>
+      <data key="key36">0</data>
+      <data key="key37">52</data>
+      <data key="key40">Kesan</data>
+    </node>
+    <node id="n53">
+      <data key="key3">Israel</data>
+      <data key="key15">1</data>
+      <data key="key18">33.0058299999999999984</data>
+      <data key="key21">35.0947199999999999986</data>
+      <data key="key33">-4.1224351941691539, 1.1819181965665355</data>
+      <data key="key36">0</data>
+      <data key="key37">53</data>
+      <data key="key40">Nahariya</data>
+    </node>
+    <node id="n54">
+      <data key="key3">Israel</data>
+      <data key="key15">1</data>
+      <data key="key18">32.0666700000000000001</data>
+      <data key="key21">34.7666700000000000008</data>
+      <data key="key33">-5.5810272775908514, 1.2933896658427273</data>
+      <data key="key36">0</data>
+      <data key="key37">54</data>
+      <data key="key40">Tel Aviv</data>
+    </node>
+    <node id="n55">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6402799999999999984</data>
+      <data key="key21">22.9438899999999999998</data>
+      <data key="key33">-5.3116982077549535, 0.69636289062628887</data>
+      <data key="key36">0</data>
+      <data key="key37">55</data>
+      <data key="key40">Thessaloniki</data>
+    </node>
+    <node id="n56">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.619999999999999999</data>
+      <data key="key21">19.9197199999999999993</data>
+      <data key="key33">-5.216953460163162, 0.84863105846392117</data>
+      <data key="key36">0</data>
+      <data key="key37">56</data>
+      <data key="key40">Corfu</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.5122200000000000017</data>
+      <data key="key21">24.0155599999999999992</data>
+      <data key="key33">-5.3788759859428836, 1.1956414545816247</data>
+      <data key="key36">0</data>
+      <data key="key37">57</data>
+      <data key="key40">Chania</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.9794500000000000012</data>
+      <data key="key21">23.7162200000000000007</data>
+      <data key="key33">-5.337077389921201, 0.94182804901726191</data>
+      <data key="key36">0</data>
+      <data key="key37">58</data>
+      <data key="key40">Athens</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Cyprus</data>
+      <data key="key15">1</data>
+      <data key="key18">34.7666700000000000008</data>
+      <data key="key21">32.4666700000000000015</data>
+      <data key="key33">-5.4117871161238416, 1.3469287364672557</data>
+      <data key="key36">0</data>
+      <data key="key37">59</data>
+      <data key="key40">Yeroskipos</data>
+    </node>
+    <node id="n60">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">36.8549999999999999996</data>
+      <data key="key21">28.2741700000000000005</data>
+      <data key="key33">-5.3433354992011344, 1.5980504205635995</data>
+      <data key="key36">0</data>
+      <data key="key37">60</data>
+      <data key="key40">Marmaris</data>
+    </node>
+    <node id="n61">
+      <data key="key3">Israel</data>
+      <data key="key15">1</data>
+      <data key="key18">32.8155600000000000002</data>
+      <data key="key21">34.9891700000000000007</data>
+      <data key="key33">-5.4789510581449603, 1.2649999131216618</data>
+      <data key="key36">0</data>
+      <data key="key37">61</data>
+      <data key="key40">Haifa</data>
+    </node>
+    <node id="n62">
+      <data key="key3">Egypt</data>
+      <data key="key15">1</data>
+      <data key="key18">29.9666699999999999997</data>
+      <data key="key21">32.5499999999999999993</data>
+      <data key="key33">-5.5378666174922166, 1.5498090851356652</data>
+      <data key="key36">0</data>
+      <data key="key37">62</data>
+      <data key="key40">Suez</data>
+    </node>
+    <node id="n63">
+      <data key="key3">Morocco</data>
+      <data key="key15">1</data>
+      <data key="key18">35.7805799999999999995</data>
+      <data key="key21">-5.81364999999999999998</data>
+      <data key="key33">-4.7179995014815086, 1.6071527075549814</data>
+      <data key="key36">0</data>
+      <data key="key37">63</data>
+      <data key="key40">Conil</data>
+    </node>
+    <node id="n64">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4445099999999999989</data>
+      <data key="key21">-9.10149000000000000035</data>
+      <data key="key33">-4.7912524075084235, 1.6837046605360559</data>
+      <data key="key36">0</data>
+      <data key="key37">64</data>
+      <data key="key40">Sesimbra</data>
+    </node>
+    <node id="n65">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">37.6641400000000000012</data>
+      <data key="key21">12.5880400000000000002</data>
+      <data key="key33">-5.0752505565495456, 1.4948683829139933</data>
+      <data key="key36">0</data>
+      <data key="key37">65</data>
+      <data key="key40">Mazara</data>
+    </node>
+    <node id="n66">
+      <data key="key3">Spain</data>
+      <data key="key15">1</data>
+      <data key="key18">36.4276399999999999993</data>
+      <data key="key21">-5.14589000000000000015</data>
+      <data key="key33">-4.9157539947970825, 1.7201418678048719</data>
+      <data key="key36">0</data>
+      <data key="key37">66</data>
+      <data key="key40">Estepona</data>
+    </node>
+    <node id="n67">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5021299999999999999</data>
+      <data key="key21">15.0871900000000000001</data>
+      <data key="key33">-5.5450191105043523, 1.2005472290415651</data>
+      <data key="key36">0</data>
+      <data key="key37">67</data>
+      <data key="key40">Catania</data>
+    </node>
+    <node id="n68">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1158199999999999993</data>
+      <data key="key21">13.3597599999999999999</data>
+      <data key="key33">-4.9933918483582493, 1.6378127204883752</data>
+      <data key="key36">0</data>
+      <data key="key37">68</data>
+      <data key="key40">Palermo</data>
+    </node>
+    <node id="n69">
+      <data key="key3">Syria</data>
+      <data key="key15">1</data>
+      <data key="key18">34.8890200000000000012</data>
+      <data key="key21">35.8865899999999999996</data>
+      <data key="key33">-5.7586194600290037, 0.86291975808760168</data>
+      <data key="key36">0</data>
+      <data key="key37">69</data>
+      <data key="key40">Tartus</data>
+    </node>
+    <node id="n70">
+      <data key="key3">Malta</data>
+      <data key="key15">1</data>
+      <data key="key18">35.909169999999999999</data>
+      <data key="key21">14.4255599999999999999</data>
+      <data key="key33">-5.6645713498645263, 1.2022229075840878</data>
+      <data key="key36">0</data>
+      <data key="key37">70</data>
+      <data key="key40">Malta</data>
+    </node>
+    <node id="n71">
+      <data key="key3">Cyprus</data>
+      <data key="key15">1</data>
+      <data key="key18">34.9821299999999999995</data>
+      <data key="key21">34.0018299999999999983</data>
+      <data key="key33">-4.0837798132922645, 1.1044006808180014</data>
+      <data key="key36">0</data>
+      <data key="key37">71</data>
+      <data key="key40">Agia Napa</data>
+    </node>
+    <node id="n72">
+      <data key="key3">Cyprus</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1666699999999999987</data>
+      <data key="key21">33.3666699999999999994</data>
+      <data key="key33">-5.7736184964552395, 0.95351158167542727</data>
+      <data key="key36">0</data>
+      <data key="key37">72</data>
+      <data key="key40">Pentaskinos</data>
+    </node>
+    <node id="n73">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4322499999999999988</data>
+      <data key="key21">26.1062600000000000003</data>
+      <data key="key33">-4.5410554971199062, 0.20222239004878637</data>
+      <data key="key36">0</data>
+      <data key="key37">73</data>
+      <data key="key40">Bucharest</data>
+    </node>
+    <node id="n74">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.9500000000000000007</data>
+      <data key="key21">23.5166700000000000008</data>
+      <data key="key33">-4.4932073182983627, 0.31468287092013597</data>
+      <data key="key36">0</data>
+      <data key="key37">74</data>
+      <data key="key40">Tg Carbunesti</data>
+    </node>
+    <node id="n75">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.9166699999999999987</data>
+      <data key="key21">17.1666700000000000004</data>
+      <data key="key33">-4.3485913426503187, 0.68186254752264719</data>
+      <data key="key36">0</data>
+      <data key="key37">75</data>
+      <data key="key40">Hegyeshantom</data>
+    </node>
+    <node id="n76">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">48.14816</data>
+      <data key="key21">17.1067399999999999998</data>
+      <data key="key33">-4.447481058139549, 0.71185256907414662</data>
+      <data key="key36">0</data>
+      <data key="key37">76</data>
+      <data key="key40">Bratislava</data>
+    </node>
+    <node id="n77">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">53.5999999999999999986</data>
+      <data key="key21">7.19999999999999999983</data>
+      <data key="key33">-4.4130343198288235, 1.9296152997562672</data>
+      <data key="key36">0</data>
+      <data key="key37">77</data>
+      <data key="key40">Norden</data>
+    </node>
+    <node id="n78">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.1941699999999999988</data>
+      <data key="key21">4.42221999999999999982</data>
+      <data key="key33">-4.5111373087170943, 1.8993069017303106</data>
+      <data key="key36">0</data>
+      <data key="key37">78</data>
+      <data key="key40">Katwijk</data>
+    </node>
+    <node id="n79">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.6319400000000000017</data>
+      <data key="key21">22.6561100000000000005</data>
+      <data key="key33">-4.6654111349475098, 0.37064408418913092</data>
+      <data key="key36">0</data>
+      <data key="key37">79</data>
+      <data key="key40">Drobeta Turnu Sevenin</data>
+    </node>
+    <node id="n80">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7494399999999999985</data>
+      <data key="key21">21.2272200000000000001</data>
+      <data key="key33">-4.5150448385295077, 0.44462719828346425</data>
+      <data key="key36">0</data>
+      <data key="key37">80</data>
+      <data key="key40">Timisoara</data>
+    </node>
+    <node id="n81">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9833299999999999992</data>
+      <data key="key21">18.9333299999999999999</data>
+      <data key="key33">-4.3966777185179993, 0.54120761105306492</data>
+      <data key="key36">0</data>
+      <data key="key37">81</data>
+      <data key="key40">Dunaujvaros</data>
+    </node>
+    <node id="n82">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.4980100000000000013</data>
+      <data key="key21">19.0399099999999999993</data>
+      <data key="key33">-4.4948003316085794, 0.57957400173861606</data>
+      <data key="key36">0</data>
+      <data key="key37">82</data>
+      <data key="key40">Budapest</data>
+    </node>
+    <node id="n83">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">48.7823200000000000015</data>
+      <data key="key21">9.17702000000000000027</data>
+      <data key="key33">-4.5130298108518661, 1.014080243528851</data>
+      <data key="key36">0</data>
+      <data key="key37">83</data>
+      <data key="key40">Stuttgart</data>
+    </node>
+    <node id="n84">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">47.3666699999999999994</data>
+      <data key="key21">8.55000000000000000017</data>
+      <data key="key33">-4.6301991369781348, 0.99463438457049047</data>
+      <data key="key36">0</data>
+      <data key="key37">84</data>
+      <data key="key40">Zurich</data>
+    </node>
+    <node id="n85">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5085299999999999994</data>
+      <data key="key21">-0.125740000000000000003</data>
+      <data key="key33">-4.4803376915651949, 1.4335965090151803</data>
+      <data key="key36">0</data>
+      <data key="key37">85</data>
+      <data key="key40">London</data>
+    </node>
+    <node id="n86">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3740300000000000014</data>
+      <data key="key21">4.88968999999999999993</data>
+      <data key="key33">-4.4268120593384479, 1.2346686853330258</data>
+      <data key="key36">0</data>
+      <data key="key37">86</data>
+      <data key="key40">Amsterdam</data>
+    </node>
+    <node id="n87">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1166699999999999994</data>
+      <data key="key21">8.6833299999999999999</data>
+      <data key="key33">-4.3998864621280456, 1.0317404957098788</data>
+      <data key="key36">0</data>
+      <data key="key37">87</data>
+      <data key="key40">Frankfurt</data>
+    </node>
+    <node id="n88">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8534099999999999984</data>
+      <data key="key21">2.34880000000000000002</data>
+      <data key="key33">-4.6531902184733456, 1.3250033080025447</data>
+      <data key="key36">0</data>
+      <data key="key37">88</data>
+      <data key="key40">Paris</data>
+    </node>
+    <node id="n89">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6333300000000000006</data>
+      <data key="key21">3.0666700000000000001</data>
+      <data key="key33">-4.5597581048208919, 1.3761311941892764</data>
+      <data key="key36">0</data>
+      <data key="key37">89</data>
+      <data key="key40">Lille</data>
+    </node>
+    <node id="n90">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">48.2084900000000000017</data>
+      <data key="key21">16.3720799999999999993</data>
+      <data key="key33">-4.3777663464053322, 0.83726104879642849</data>
+      <data key="key36">0</data>
+      <data key="key37">90</data>
+      <data key="key40">Vienna</data>
+    </node>
+    <node id="n91">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">47.7738900000000000015</data>
+      <data key="key21">12.9575000000000000004</data>
+      <data key="key33">-4.2845323015886327, 0.88953170776402013</data>
+      <data key="key36">0</data>
+      <data key="key37">91</data>
+      <data key="key40">Walserberg</data>
+    </node>
+    <node id="n92">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4477800000000000009</data>
+      <data key="key21">11.0683300000000000001</data>
+      <data key="key33">-4.2994651525187102, 0.9870988683527826</data>
+      <data key="key36">0</data>
+      <data key="key37">92</data>
+      <data key="key40">Nuremberg</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">Adria-1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n56">
+      <data key="key20">Adria-1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n73">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n3">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n5">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n3" target="n4">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n49">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n79">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n5">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n17">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n7">
+      <data key="key20">BSFOCS</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n10" target="n56">
+      <data key="key38">e55</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n11" target="n16">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n12" target="n72">
+      <data key="key20">CADMOS</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n13" target="n56">
+      <data key="key38">e56</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n14" target="n17">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n14" target="n15">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n15" target="n17">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n15" target="n51">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n16" target="n34">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n16" target="n55">
+      <data key="key38">e60</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n18" target="n35">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n18" target="n28">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n18" target="n77">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n19" target="n57">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n19" target="n47">
+      <data key="key38">e93</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n19" target="n47">
+      <data key="key20">GWEN</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e27" source="n20" target="n24">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e28" source="n20" target="n21">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e29" source="n20" target="n22">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e30" source="n21" target="n26">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e31" source="n22" target="n84">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e32" source="n22" target="n23">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e33" source="n23" target="n27">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e34" source="n24" target="n25">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e35" source="n25" target="n56">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e36" source="n25" target="n56">
+      <data key="key20">GWEN</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e37" source="n25" target="n27">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e38" source="n26" target="n88">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e39" source="n28" target="n39">
+      <data key="key20">Celtic</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e40" source="n28" target="n40">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e41" source="n28" target="n85">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e42" source="n28" target="n29">
+      <data key="key20">TAT-14</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e43" source="n28" target="n30">
+      <data key="key20">TAT-14</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e44" source="n28" target="n63">
+      <data key="key20">FLAG Europe-Asia</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e45" source="n29" target="n78">
+      <data key="key20">TAT-14</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e46" source="n31" target="n64">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e47" source="n31" target="n65">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e48" source="n31" target="n66">
+      <data key="key38">e83</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e49" source="n31" target="n68">
+      <data key="key20">FLAG Europe-Asia</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e50" source="n31" target="n63">
+      <data key="key20">FLAG Europe-Asia</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e51" source="n32" target="n57">
+      <data key="key20">Silphium</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e52" source="n33" target="n65">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e53" source="n33" target="n42">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e54" source="n33" target="n57">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e55" source="n36" target="n37">
+      <data key="key20">TAT-14</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e56" source="n37" target="n77">
+      <data key="key20">TAT-14</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e57" source="n40" target="n64">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e58" source="n41" target="n42">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e59" source="n41" target="n59">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e60" source="n41" target="n62">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e61" source="n42" target="n60">
+      <data key="key20">SeaMeWe-3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e62" source="n43" target="n48">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e63" source="n43" target="n55">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e64" source="n44" target="n50">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e65" source="n44" target="n46">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e66" source="n44" target="n55">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e67" source="n45" target="n46">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e68" source="n46" target="n51">
+      <data key="key38">e99</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e69" source="n47" target="n58">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e70" source="n47" target="n58">
+      <data key="key20">GWEN</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e71" source="n49" target="n50">
+      <data key="key38">e95</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e72" source="n51" target="n55">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e73" source="n51" target="n52">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e74" source="n53" target="n71">
+      <data key="key20">CIOS</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e75" source="n54" target="n67">
+      <data key="key20">MedNautilus</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e76" source="n54" target="n61">
+      <data key="key20">MedNautilus</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e77" source="n55" target="n56">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e78" source="n55" target="n58">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e79" source="n56" target="n58">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e80" source="n57" target="n67">
+      <data key="key20">MedNautilus</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e81" source="n57" target="n58">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e82" source="n57" target="n59">
+      <data key="key20">Aphrodite-2</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e83" source="n57" target="n61">
+      <data key="key20">MedNautilus</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e84" source="n67" target="n70">
+      <data key="key20">Catania-Malta</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e85" source="n69" target="n72">
+      <data key="key20">Ugarit</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e86" source="n73" target="n74">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e87" source="n74" target="n80">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e88" source="n75" target="n81">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e89" source="n75" target="n90">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e90" source="n76" target="n90">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e91" source="n76" target="n82">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e92" source="n77" target="n78">
+      <data key="key20">TAT-14</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e93" source="n79" target="n80">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e94" source="n80" target="n81">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e95" source="n80" target="n82">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e96" source="n83" target="n84">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e97" source="n83" target="n87">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e98" source="n85" target="n89">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e99" source="n85" target="n86">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e100" source="n86" target="n87">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e101" source="n87" target="n90">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e102" source="n87" target="n92">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e103" source="n88" target="n89">
+      <data key="key20">GWEN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e104" source="n90" target="n91">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e105" source="n91" target="n92">
+      <data key="key20">OPTEGLOBE TBN</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

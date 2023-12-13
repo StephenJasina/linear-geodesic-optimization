@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="int" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key25" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key26" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key27" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key30" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key32" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key34" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key36" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key37" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key38" for="graph" attr.name="description" attr.type="string" />
+  <key id="key39" for="node" attr.name="id" attr.type="int" />
+  <key id="key40" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key41" for="node" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="name" attr.type="string" />
+  <key id="key44" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key45" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">10</data>
+   <data key="key8">22/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Morocco</data>
+   <data key="key14">0</data>
+   <data key="key16">21/10/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">ATM</data>
+   <data key="key26">MARWAN</data>
+   <data key="key27">2010_10</data>
+   <data key="key28">Primary</data>
+   <data key="key29">http://www.marwan.ma/forms/network.htm</data>
+   <data key="key30">e278b1b</data>
+   <data key="key31">0</data>
+   <data key="key32">0.3.34dev-20120328</data>
+   <data key="key33">0</data>
+   <data key="key34">REN</data>
+   <data key="key35">1.0</data>
+   <data key="key37">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key38">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key42">Marwan</data>
+   <data key="key43">internet_top_pop (Marwan)</data>
+   <data key="key44">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key45">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Morocco</data>
+      <data key="key15">1</data>
+      <data key="key18">31.6314799999999999996</data>
+      <data key="key25">-8.00828000000000000003</data>
+      <data key="key36">8.0979425088822516, 2.7088182465461301</data>
+      <data key="key39">0</data>
+      <data key="key41">Marrkech</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Morocco</data>
+      <data key="key15">1</data>
+      <data key="key18">34.037149999999999999</data>
+      <data key="key25">-4.99979999999999999991</data>
+      <data key="key36">7.790642966827475, 2.6342327911033254</data>
+      <data key="key39">1</data>
+      <data key="key41">Fes</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Morocco</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0132500000000000014</data>
+      <data key="key25">-6.83255000000000000011</data>
+      <data key="key36">8.2737397053837025, 2.1004030385320482</data>
+      <data key="key39">2</data>
+      <data key="key41">Rabat</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Morocco</data>
+      <data key="key15">1</data>
+      <data key="key18">30.4201799999999999997</data>
+      <data key="key25">-9.59815000000000000027</data>
+      <data key="key36">8.3528335502809821, 2.4950303952467405</data>
+      <data key="key39">3</data>
+      <data key="key41">Agadir</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Morocco</data>
+      <data key="key15">1</data>
+      <data key="key18">35.7805799999999999995</data>
+      <data key="key25">-5.81364999999999999998</data>
+      <data key="key36">7.6690708282525923, 2.3266027368477755</data>
+      <data key="key39">4</data>
+      <data key="key41">Tanger</data>
+    </node>
+    <node id="n5">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">8.6002946452222595, 2.7047532363037416</data>
+      <data key="key39">5</data>
+      <data key="key41">University 2</data>
+    </node>
+    <node id="n6">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">8.0598077612504451, 1.6660675579982742</data>
+      <data key="key39">6</data>
+      <data key="key41">None</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Morocco</data>
+      <data key="key15">1</data>
+      <data key="key18">33.5927800000000000014</data>
+      <data key="key25">-7.61915999999999999986</data>
+      <data key="key36">7.9420804571153321, 2.0334603283365733</data>
+      <data key="key39">7</data>
+      <data key="key41">Casa</data>
+    </node>
+    <node id="n8">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">7.9955982550327382, 1.3334697481582514</data>
+      <data key="key39">8</data>
+      <data key="key41">Institution 1</data>
+    </node>
+    <node id="n9">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">7.7370181548907482, 1.5667113291706938</data>
+      <data key="key39">9</data>
+      <data key="key41">University 3</data>
+    </node>
+    <node id="n10">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">7.353081278367557, 2.378400749253101</data>
+      <data key="key39">10</data>
+      <data key="key41">University 1</data>
+    </node>
+    <node id="n11">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">8.6521188828198419, 1.0349752793273086</data>
+      <data key="key39">11</data>
+      <data key="key41">GEANT</data>
+    </node>
+    <node id="n12">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">8.95839993981917, 1.2843638198370397</data>
+      <data key="key39">12</data>
+      <data key="key41">Internet</data>
+    </node>
+    <node id="n13">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">8.6409702967735864, 1.3608764536568143</data>
+      <data key="key39">13</data>
+      <data key="key41">None</data>
+    </node>
+    <node id="n14">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">8.6776918816924962, 1.7999669521549531</data>
+      <data key="key39">14</data>
+      <data key="key41">University 4</data>
+    </node>
+    <node id="n15">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">8.3705089931729457, 1.7037804534776253</data>
+      <data key="key39">15</data>
+      <data key="key41">None</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">ATM</data>
+      <data key="key22">0</data>
+      <data key="key24">ATM</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key20">ATM</data>
+      <data key="key22">0</data>
+      <data key="key24">ATM</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n4">
+      <data key="key20">ATM</data>
+      <data key="key22">0</data>
+      <data key="key24">ATM</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n7">
+      <data key="key20">ATM</data>
+      <data key="key22">0</data>
+      <data key="key24">ATM</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n3">
+      <data key="key20">ATM</data>
+      <data key="key22">0</data>
+      <data key="key24">ATM</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n15">
+      <data key="key20">155Mb/s</data>
+      <data key="key21">155</data>
+      <data key="key22">155000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e6" source="n3" target="n5">
+      <data key="key20">34Mb/s</data>
+      <data key="key21">34</data>
+      <data key="key22">34000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n10">
+      <data key="key20">34Mb/s</data>
+      <data key="key21">34</data>
+      <data key="key22">34000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n7">
+      <data key="key20">ATM</data>
+      <data key="key22">0</data>
+      <data key="key24">ATM</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e9" source="n6" target="n8">
+      <data key="key20">2Mb/s</data>
+      <data key="key21">2</data>
+      <data key="key22">2000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n9">
+      <data key="key20">2Mb/s</data>
+      <data key="key21">2</data>
+      <data key="key22">2000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e11" source="n6" target="n7">
+      <data key="key20">155Mb/s</data>
+      <data key="key21">155</data>
+      <data key="key22">155000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e12" source="n6" target="n15">
+      <data key="key20">MPLS</data>
+      <data key="key22">0</data>
+      <data key="key24">MPLS</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e13" source="n6" target="n15">
+      <data key="key20">MPLS</data>
+      <data key="key22">0</data>
+      <data key="key24">MPLS</data>
+      <data key="key40">1</data>
+    </edge>
+    <edge id="e14" source="n11" target="n13">
+      <data key="key20">34Mb/s</data>
+      <data key="key21">34</data>
+      <data key="key22">34000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e15" source="n12" target="n13">
+      <data key="key20">34Mb/s</data>
+      <data key="key21">34</data>
+      <data key="key22">34000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e16" source="n13" target="n15">
+      <data key="key20">155 Mb/s</data>
+      <data key="key21">155</data>
+      <data key="key22">155000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e17" source="n14" target="n15">
+      <data key="key20">2Mb/s</data>
+      <data key="key21">2</data>
+      <data key="key22">2000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+
+  </graph>
+</graphml>

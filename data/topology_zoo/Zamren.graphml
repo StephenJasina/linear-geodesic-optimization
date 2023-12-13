@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key23" for="edge" attr.name="LinkSpeedRaw" attr.type="int" />
+  <key id="key24" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key25" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key26" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key27" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key28" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key32" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key34" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key36" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key37" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key38" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key39" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key40" for="graph" attr.name="description" attr.type="string" />
+  <key id="key41" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key42" for="node" attr.name="id" attr.type="int" />
+  <key id="key43" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key44" for="node" attr.name="label" attr.type="string" />
+  <key id="key45" for="graph" attr.name="label" attr.type="string" />
+  <key id="key46" for="graph" attr.name="name" attr.type="string" />
+  <key id="key47" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key48" for="node" attr.name="type" attr.type="string" />
+  <key id="key49" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">0</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">07</data>
+   <data key="key8">14/07/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Zambia</data>
+   <data key="key14">0</data>
+   <data key="key16">14/07/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key27">Zamren</data>
+   <data key="key28">2011_07</data>
+   <data key="key29">Map from slide 6</data>
+   <data key="key30">Primary</data>
+   <data key="key31">https://tnc2011.terena.org/core/presentation/137</data>
+   <data key="key32">e278b1b</data>
+   <data key="key33">0</data>
+   <data key="key34">0.3.34dev-20120328</data>
+   <data key="key35">0</data>
+   <data key="key36">REN</data>
+   <data key="key37">1.0</data>
+   <data key="key39">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key40">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key45">Zamren</data>
+   <data key="key46">internet_top_pop (Zamren)</data>
+   <data key="key47">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key49">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.9837845720606913, 6.0920953464162846</data>
+      <data key="key41">0</data>
+      <data key="key42">0</data>
+      <data key="key44">N/Western Province</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-11</data>
+      <data key="key26">31</data>
+      <data key="key38">3.6660207418936004, 6.5294707352415102</data>
+      <data key="key41">0</data>
+      <data key="key42">1</data>
+      <data key="key44">Northern Province</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-13</data>
+      <data key="key26">32.25</data>
+      <data key="key38">3.5036534327831701, 5.5207351287857183</data>
+      <data key="key41">0</data>
+      <data key="key42">2</data>
+      <data key="key44">Eastern Province</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-11.1997600000000000001</data>
+      <data key="key26">28.8943100000000000008</data>
+      <data key="key38">3.6230205591603593, 6.0199029507847577</data>
+      <data key="key41">0</data>
+      <data key="key42">3</data>
+      <data key="key44">Luapula Province</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n4">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">2.8993162986500649, 4.5938833404618773</data>
+      <data key="key41">0</data>
+      <data key="key42">4</data>
+      <data key="key44">NRDC</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n5">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.3233098648601702, 5.2176523074824326</data>
+      <data key="key41">0</data>
+      <data key="key42">5</data>
+      <data key="key44">UNZA Research</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-12.1688000000000000004</data>
+      <data key="key26">26.3893800000000000004</data>
+      <data key="key38">3.6014975169068424, 6.3389099573345282</data>
+      <data key="key41">0</data>
+      <data key="key42">6</data>
+      <data key="key44">Solwezi</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-17.8419399999999999992</data>
+      <data key="key26">25.8542500000000000007</data>
+      <data key="key38">3.9317101518806168, 4.9528548604170295</data>
+      <data key="key41">0</data>
+      <data key="key42">7</data>
+      <data key="key44">Livingstone</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n8">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">2.9079525842263045, 4.9075493236857017</data>
+      <data key="key41">0</data>
+      <data key="key42">8</data>
+      <data key="key44">NIPA</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n9">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.0442607166388664, 4.5173302805232636</data>
+      <data key="key41">0</data>
+      <data key="key42">9</data>
+      <data key="key44">ZICAS</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n10">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.9885596522617615, 7.1820441659242436</data>
+      <data key="key41">0</data>
+      <data key="key42">10</data>
+      <data key="key44">Gateway Router</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n11">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.8578066125943065, 7.077904219468099</data>
+      <data key="key41">0</data>
+      <data key="key42">11</data>
+      <data key="key44">Gateway Router</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n12">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.2689829044102785, 7.0575292895481825</data>
+      <data key="key41">0</data>
+      <data key="key42">12</data>
+      <data key="key44">Gateway Router</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n13">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.6739622560030898, 5.4583426965658166</data>
+      <data key="key41">1</data>
+      <data key="key42">13</data>
+      <data key="key44">None</data>
+    </node>
+    <node id="n14">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.7369461416986045, 4.9845983466482711</data>
+      <data key="key41">1</data>
+      <data key="key42">14</data>
+      <data key="key44">None</data>
+    </node>
+    <node id="n15">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.8091748671713028, 6.0572658760023632</data>
+      <data key="key41">1</data>
+      <data key="key42">15</data>
+      <data key="key44">None</data>
+    </node>
+    <node id="n16">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.2794482263554476, 6.8873169121577797</data>
+      <data key="key41">0</data>
+      <data key="key42">16</data>
+      <data key="key44">ZESCO TS</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n17">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.1368475129059012, 6.7822307687371879</data>
+      <data key="key41">0</data>
+      <data key="key42">17</data>
+      <data key="key44">ZAMTEL TS</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-10.0166699999999999999</data>
+      <data key="key26">33.2833299999999999985</data>
+      <data key="key38">3.0808875986440389, 4.9447099717832197</data>
+      <data key="key41">0</data>
+      <data key="key42">18</data>
+      <data key="key44">Chainama</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n19">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">2.844504221516349, 4.750229783235266</data>
+      <data key="key41">0</data>
+      <data key="key42">19</data>
+      <data key="key44">NISR</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n20">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.2660373078578506, 4.7318752887357887</data>
+      <data key="key41">0</data>
+      <data key="key42">20</data>
+      <data key="key44">Mt Makulu</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-15.4166699999999999996</data>
+      <data key="key26">28.2833300000000000003</data>
+      <data key="key38">3.2101789207037861, 4.5586306860747365</data>
+      <data key="key41">0</data>
+      <data key="key42">21</data>
+      <data key="key44">Evelyn Hone College</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n22">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.1545741317910965, 7.1747312086018358</data>
+      <data key="key41">0</data>
+      <data key="key42">22</data>
+      <data key="key44">KTC</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n23">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.8732047742650346, 6.9016240790457033</data>
+      <data key="key41">0</data>
+      <data key="key42">23</data>
+      <data key="key44">COSETCO</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n24">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.4962484569916095, 5.5813687357805888</data>
+      <data key="key41">0</data>
+      <data key="key42">24</data>
+      <data key="key44">KABWE TRADES</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n25">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.5004676775820549, 5.8154422475219727</data>
+      <data key="key41">0</data>
+      <data key="key42">25</data>
+      <data key="key44">NKRUMAH</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n26">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.091680772732623, 5.7083492036602212</data>
+      <data key="key41">0</data>
+      <data key="key42">26</data>
+      <data key="key44">Gateway Router</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-16.5</data>
+      <data key="key26">27</data>
+      <data key="key38">3.7743433481069251, 4.7885045433797506</data>
+      <data key="key41">0</data>
+      <data key="key42">27</data>
+      <data key="key44">Southern Province</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-15.4080899999999999996</data>
+      <data key="key26">28.28636</data>
+      <data key="key38">3.078391327747533, 4.7499415352420327</data>
+      <data key="key41">0</data>
+      <data key="key42">28</data>
+      <data key="key44">University of Zambia</data>
+      <data key="key48">University</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-14.4432200000000000003</data>
+      <data key="key26">28.4517399999999999992</data>
+      <data key="key38">4.3389537526266855, 5.7020769836749565</data>
+      <data key="key41">0</data>
+      <data key="key42">29</data>
+      <data key="key44">Mulungushi University</data>
+      <data key="key48">University</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-12.7961399999999999996</data>
+      <data key="key26">28.2476699999999999995</data>
+      <data key="key38">4.0581596736709997, 6.9580863887142952</data>
+      <data key="key41">0</data>
+      <data key="key42">30</data>
+      <data key="key44">Copperbelt University</data>
+      <data key="key48">University</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-12.7961399999999999996</data>
+      <data key="key26">28.2476699999999999995</data>
+      <data key="key38">3.7954899993112292, 6.379546344520687</data>
+      <data key="key41">0</data>
+      <data key="key42">31</data>
+      <data key="key44">Kitwe</data>
+      <data key="key48">Possible switch?</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-14.4432200000000000003</data>
+      <data key="key26">28.4517399999999999992</data>
+      <data key="key38">3.8371283460706538, 5.7365398978948523</data>
+      <data key="key41">0</data>
+      <data key="key42">32</data>
+      <data key="key44">Kabwe</data>
+      <data key="key48">Possible switch?</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Zambia</data>
+      <data key="key15">1</data>
+      <data key="key18">-15.4080899999999999996</data>
+      <data key="key26">28.28636</data>
+      <data key="key38">3.5641840556474049, 5.1587138840986668</data>
+      <data key="key41">0</data>
+      <data key="key42">33</data>
+      <data key="key44">Lusaka</data>
+      <data key="key48">Possible switch?</data>
+    </node>
+    <node id="n34">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.9265573989039577, 6.6593517272619103</data>
+      <data key="key41">0</data>
+      <data key="key42">34</data>
+      <data key="key44">Gateway Router</data>
+      <data key="key48">Router</data>
+    </node>
+    <node id="n35">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">3.3259661554379596, 4.9669420363935686</data>
+      <data key="key41">0</data>
+      <data key="key42">35</data>
+      <data key="key44">Gateway Router</data>
+      <data key="key48">Gateway Router</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n15">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n31">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n13">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n15">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e4" source="n4" target="n28">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e5" source="n6" target="n31">
+      <data key="key20">ZESCO FIBRE</data>
+      <data key="key21">ZESCO </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e6" source="n7" target="n14">
+      <data key="key20">ZESCO FIBRE</data>
+      <data key="key21">ZESCO </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e7" source="n8" target="n28">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e8" source="n9" target="n28">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e9" source="n10" target="n30">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e10" source="n11" target="n30">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e11" source="n12" target="n30">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e12" source="n13" target="n32">
+      <data key="key20">ZESCO FIBRE</data>
+      <data key="key21">ZESCO </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e13" source="n13" target="n33">
+      <data key="key20">ZESCO FIBRE</data>
+      <data key="key21">ZESCO </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e14" source="n14" target="n33">
+      <data key="key20">ZESCO FIBRE</data>
+      <data key="key21">ZESCO </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e15" source="n14" target="n27">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e16" source="n15" target="n32">
+      <data key="key20">ZESCO FIBRE</data>
+      <data key="key21">ZESCO </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e17" source="n15" target="n31">
+      <data key="key20">ZESCO FIBRE</data>
+      <data key="key21">ZESCO </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e18" source="n16" target="n30">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e19" source="n17" target="n30">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e20" source="n18" target="n28">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e21" source="n19" target="n28">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e22" source="n20" target="n28">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e23" source="n21" target="n28">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e24" source="n22" target="n30">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e25" source="n23" target="n30">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e26" source="n24" target="n29">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e27" source="n25" target="n29">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e28" source="n26" target="n32">
+      <data key="key20">ZAMREN FIBRE (100 MB)</data>
+      <data key="key21">ZAREN FIRE ( )</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e29" source="n26" target="n29">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e30" source="n28" target="n35">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e31" source="n30" target="n34">
+      <data key="key20">ZAMREN FIBRE</data>
+      <data key="key21">ZAMREN </data>
+      <data key="key23">0</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e32" source="n31" target="n34">
+      <data key="key20">ZAMREN FIBRE (100 MB)</data>
+      <data key="key21">ZAREN FIRE ( )</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e33" source="n33" target="n35">
+      <data key="key20">ZAMREN FIBRE (100 MB)</data>
+      <data key="key21">ZAREN FIRE ( )</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key25">FIBRE</data>
+      <data key="key43">0</data>
+    </edge>
+
+  </graph>
+</graphml>

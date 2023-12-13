@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key10" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key11" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key12" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key13" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key14" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key15" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key16" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key17" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key18" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key19" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key20" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key21" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key22" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key23" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key24" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key26" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key28" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key30" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key31" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key32" for="graph" attr.name="description" attr.type="string" />
+  <key id="key33" for="node" attr.name="id" attr.type="int" />
+  <key id="key34" for="edge" attr.name="id" attr.type="string" />
+  <key id="key35" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key36" for="node" attr.name="label" attr.type="string" />
+  <key id="key37" for="graph" attr.name="label" attr.type="string" />
+  <key id="key38" for="graph" attr.name="name" attr.type="string" />
+  <key id="key39" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key40" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">Current</data>
+   <data key="key9">2010</data>
+   <data key="key10">0</data>
+   <data key="key11">Country</data>
+   <data key="key12">Australia</data>
+   <data key="key13">0</data>
+   <data key="key15">3/08/10</data>
+   <data key="key16">2011_09_01</data>
+   <data key="key18">Fibre</data>
+   <data key="key20">Nextgen </data>
+   <data key="key21">2010_08</data>
+   <data key="key22">Primary</data>
+   <data key="key23">http://www.nextgennetworks.com.au/network.htm</data>
+   <data key="key24">e278b1b</data>
+   <data key="key25">0</data>
+   <data key="key26">0.3.34dev-20120328</data>
+   <data key="key27">1</data>
+   <data key="key28">COM</data>
+   <data key="key29">1.0</data>
+   <data key="key31">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key32">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key37">Nextgen</data>
+   <data key="key38">internet_top_pop (Nextgen)</data>
+   <data key="key39">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key40">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-32.25</data>
+      <data key="key19">148.616669999999999996</data>
+      <data key="key30">-3.3393256988649958, -8.4994781966697168</data>
+      <data key="key33">0</data>
+      <data key="key36">Dubbo</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-29.4666699999999999997</data>
+      <data key="key19">149.850000000000000006</data>
+      <data key="key30">-3.4173528806827931, -8.7040765814427541</data>
+      <data key="key33">1</data>
+      <data key="key36">Moree</data>
+    </node>
+    <node id="n2">
+      <data key="key14">1</data>
+      <data key="key17">0</data>
+      <data key="key19">0</data>
+      <data key="key30">-3.5307624082461717, -8.0705621984069893</data>
+      <data key="key33">2</data>
+      <data key="key36">None</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-33.1333300000000000006</data>
+      <data key="key19">148.183330000000000007</data>
+      <data key="key30">-3.3882967264858488, -8.2709602214722988</data>
+      <data key="key33">3</data>
+      <data key="key36">Parkes</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-36.0833300000000000013</data>
+      <data key="key19">146.916669999999999999</data>
+      <data key="key30">-3.7906611315742915, -7.8417960393901547</data>
+      <data key="key33">4</data>
+      <data key="key36">Albury</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-32.9271499999999999984</data>
+      <data key="key19">151.776469999999999994</data>
+      <data key="key30">-3.9163367262852544, -8.5245321089708632</data>
+      <data key="key33">5</data>
+      <data key="key36">Newcastle</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-30.2999999999999999993</data>
+      <data key="key19">153.133330000000000004</data>
+      <data key="key30">-3.8153279568309642, -8.7206393427727438</data>
+      <data key="key33">6</data>
+      <data key="key36">Coff&apos;s Harbour</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-38.1471100000000000012</data>
+      <data key="key19">144.360689999999999997</data>
+      <data key="key30">-3.6811786374777347, -7.3815290356251291</data>
+      <data key="key33">7</data>
+      <data key="key36">Geelong</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-36.3833300000000000006</data>
+      <data key="key19">145.399999999999999994</data>
+      <data key="key30">-3.5282048864620608, -7.8321434583179652</data>
+      <data key="key33">8</data>
+      <data key="key36">Shepparton</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-31.9333299999999999999</data>
+      <data key="key19">115.833330000000000001</data>
+      <data key="key30">-3.8135276810738259, -7.0031837267258004</data>
+      <data key="key33">9</data>
+      <data key="key36">Perth</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-34.9333299999999999999</data>
+      <data key="key19">138.600000000000000006</data>
+      <data key="key30">-3.6912262594274758, -7.1821205419840046</data>
+      <data key="key33">10</data>
+      <data key="key36">Adelaide</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-37.8140000000000000013</data>
+      <data key="key19">144.963319999999999996</data>
+      <data key="key30">-3.6687447167623919, -7.6416234425937573</data>
+      <data key="key33">11</data>
+      <data key="key36">Melbourne</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-33.8678499999999999999</data>
+      <data key="key19">151.207320000000000004</data>
+      <data key="key30">-3.8904439656663281, -8.2926288401864809</data>
+      <data key="key33">12</data>
+      <data key="key36">Sydney</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-35.2834600000000000002</data>
+      <data key="key19">149.128070000000000003</data>
+      <data key="key30">-3.7670767186739402, -8.0784620412042329</data>
+      <data key="key33">13</data>
+      <data key="key36">Canberra</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-27.46794</data>
+      <data key="key19">153.028090000000000004</data>
+      <data key="key30">-3.6146265499538348, -8.7968203451215725</data>
+      <data key="key33">14</data>
+      <data key="key36">Brisbane</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-30.75</data>
+      <data key="key19">121.466670000000000001</data>
+      <data key="key30">-3.7076973123497488, -6.8445963581521418</data>
+      <data key="key33">15</data>
+      <data key="key36">Kalgoorlie</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Australia</data>
+      <data key="key14">1</data>
+      <data key="key17">-32.5</data>
+      <data key="key19">137.766670000000000004</data>
+      <data key="key30">-3.5881826133944941, -6.9910675200724803</data>
+      <data key="key33">16</data>
+      <data key="key36">Port Augusta</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key34">e18</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key34">e17</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n14">
+      <data key="key34">e12</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n8">
+      <data key="key34">e15</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n3">
+      <data key="key34">e16</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n13">
+      <data key="key34">e11</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n11">
+      <data key="key34">e5</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n13">
+      <data key="key34">e10</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e8" source="n5" target="n12">
+      <data key="key34">e9</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e9" source="n5" target="n6">
+      <data key="key34">e19</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n14">
+      <data key="key34">e13</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e11" source="n7" target="n10">
+      <data key="key34">e3</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e12" source="n7" target="n10">
+      <data key="key34">e2</data>
+      <data key="key35">1</data>
+    </edge>
+    <edge id="e13" source="n7" target="n11">
+      <data key="key34">e7</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e14" source="n8" target="n11">
+      <data key="key34">e6</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e15" source="n9" target="n10">
+      <data key="key34">e0</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e16" source="n9" target="n15">
+      <data key="key34">e1</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e17" source="n10" target="n16">
+      <data key="key34">e4</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e18" source="n12" target="n13">
+      <data key="key34">e8</data>
+      <data key="key35">0</data>
+    </edge>
+    <edge id="e19" source="n15" target="n16">
+      <data key="key34">e14</data>
+      <data key="key35">0</data>
+    </edge>
+
+  </graph>
+</graphml>

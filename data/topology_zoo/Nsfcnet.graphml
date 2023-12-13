@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key5" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key6" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key10" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key11" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key12" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key13" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key14" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key15" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key16" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key17" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key18" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key19" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key21" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key22" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key23" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="id" attr.type="int" />
+  <key id="key36" for="edge" attr.name="id" attr.type="string" />
+  <key id="key37" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key38" for="node" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="name" attr.type="string" />
+  <key id="key41" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key42" for="node" attr.name="type" attr.type="string" />
+  <key id="key43" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key3">Topology Zoo Toolset</data>
+   <data key="key4">0</data>
+   <data key="key5">=</data>
+   <data key="key6">10</data>
+   <data key="key7">22/10/10</data>
+   <data key="key8">Current</data>
+   <data key="key9">2010</data>
+   <data key="key10">0</data>
+   <data key="key11">Metro</data>
+   <data key="key12">Beijing, China</data>
+   <data key="key13">0</data>
+   <data key="key15">7/10/10</data>
+   <data key="key16">2011_09_01</data>
+   <data key="key17">IP</data>
+   <data key="key21">NSFCNET</data>
+   <data key="key22">2010_10</data>
+   <data key="key23">Hard to tell if multiple POS OC-48 links</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.cn.apan.net/nsfcmap.htm</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">1</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">0</data>
+   <data key="key30">REN</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key39">Nsfcnet</data>
+   <data key="key40">internet_top_pop (Nsfcnet)</data>
+   <data key="key41">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key43">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key14">1</data>
+      <data key="key32">4.8537467407902053, -2.5861802230871471</data>
+      <data key="key35">0</data>
+      <data key="key38">Peking University</data>
+      <data key="key42">Router</data>
+    </node>
+    <node id="n1">
+      <data key="key14">0</data>
+      <data key="key32">3.9717037841927705, -1.9794820586282287</data>
+      <data key="key35">1</data>
+      <data key="key38">CERNET</data>
+    </node>
+    <node id="n2">
+      <data key="key14">0</data>
+      <data key="key32">4.5082364189076962, -2.6345810025950493</data>
+      <data key="key35">2</data>
+      <data key="key38">APAN/STAR</data>
+    </node>
+    <node id="n3">
+      <data key="key14">0</data>
+      <data key="key32">4.3513368245256414, -2.3508031383658317</data>
+      <data key="key35">3</data>
+      <data key="key38">CERNET</data>
+    </node>
+    <node id="n4">
+      <data key="key14">1</data>
+      <data key="key32">4.6807194556898883, -2.3251744562337699</data>
+      <data key="key35">4</data>
+      <data key="key38">Tsinghua Unviersity</data>
+      <data key="key42">Router</data>
+    </node>
+    <node id="n5">
+      <data key="key14">1</data>
+      <data key="key32">4.5441692873030606, -1.9979619512521338</data>
+      <data key="key35">5</data>
+      <data key="key38">Natural Science Foundation of China</data>
+      <data key="key42">Router</data>
+    </node>
+    <node id="n6">
+      <data key="key14">1</data>
+      <data key="key32">4.694261442907103, -1.7492416320370214</data>
+      <data key="key35">6</data>
+      <data key="key38">Beijing University of Posts and Telecommunications</data>
+      <data key="key42">Router</data>
+    </node>
+    <node id="n7">
+      <data key="key14">1</data>
+      <data key="key32">4.8325809289291275, -2.0017215417040291</data>
+      <data key="key35">7</data>
+      <data key="key38">Beijing University of Aeronautics and Astronautics</data>
+      <data key="key42">Router</data>
+    </node>
+    <node id="n8">
+      <data key="key14">1</data>
+      <data key="key32">5.0302456104319457, -2.4062271523401617</data>
+      <data key="key35">8</data>
+      <data key="key38">China Academy of Sciences</data>
+      <data key="key42">Router</data>
+    </node>
+    <node id="n9">
+      <data key="key14">0</data>
+      <data key="key32">5.3317980989399434, -2.4311388088364518</data>
+      <data key="key35">9</data>
+      <data key="key38">CSTNET</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n8">
+      <data key="key18">POS OC-48</data>
+      <data key="key19">POS </data>
+      <data key="key20">OC-48</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n4">
+      <data key="key18">POS OC-48</data>
+      <data key="key19">POS </data>
+      <data key="key20">OC-48</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n4">
+      <data key="key36">e0</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n4">
+      <data key="key18">GE</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e4" source="n4" target="n5">
+      <data key="key18">DPT ring</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n7">
+      <data key="key18">DPT Ring</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n8">
+      <data key="key18">POS OC-48</data>
+      <data key="key19">POS </data>
+      <data key="key20">OC-48</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e7" source="n5" target="n6">
+      <data key="key18">DPT Ring</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e8" source="n6" target="n7">
+      <data key="key18">DPT Ring</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e9" source="n8" target="n9">
+      <data key="key18">GE</data>
+      <data key="key37">0</data>
+    </edge>
+
+  </graph>
+</graphml>

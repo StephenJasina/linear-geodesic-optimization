@@ -37,7 +37,7 @@ def minimize_id_removal(rtt_violation_list):
     return ids_to_remove
 
 def get_graph(
-    probes_filename, latencies_filename, epsilon,
+    probes_filename, latencies_filename, epsilon=np.inf,
     clustering_distance=None, clustering_min_samples=None
 ):
     """
@@ -153,16 +153,18 @@ if __name__ == '__main__':
     parser.add_argument('--ip-type', '-i', type=str, required=True,
                         dest='ip_type', metavar='<ipv4/ipv6>',
                         help='Type of IP (e.g., ipv4, ipv6).')
-    parser.add_argument('--epsilon', '-e', type=float, required=True,
+    parser.add_argument('--epsilon', '-e', type=float, required=False,
                         dest='epsilon', metavar='<epsilon>',
                         help='Residual threshold')
     parser.add_argument('--output', '-o', metavar='<filename>',
                         dest='output_filename', required=True)
     args = parser.parse_args()
+    probes_filename = args.probes_filename
     latencies_filename = args.latencies_filename
     ip_type = args.ip_type
-    probes_filename = args.probes_filename
     epsilon = args.epsilon
+    if epsilon is None:
+        epsilon = np.inf
     output_filename = args.output_filename
 
     graph = get_graph(probes_filename, latencies_filename, epsilon,

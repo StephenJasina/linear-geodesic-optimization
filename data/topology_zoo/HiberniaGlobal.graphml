@@ -1,0 +1,1025 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key27" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key29" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key31" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key33" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key34" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key35" for="graph" attr.name="description" attr.type="string" />
+  <key id="key36" for="node" attr.name="geocode_append" attr.type="string" />
+  <key id="key37" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="node" attr.name="type" attr.type="string" />
+  <key id="key45" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">03</data>
+   <data key="key8">23/03/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">0</data>
+   <data key="key12">Continent+</data>
+   <data key="key13">North America, Europe</data>
+   <data key="key14">0</data>
+   <data key="key16">23/03/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">Hibernia Atlantic </data>
+   <data key="key23">2011_03</data>
+   <data key="key24">Links unclear around Washington DC. Londonderry and Portrush have no node shown, only label. Missing Portrush node added in.</data>
+   <data key="key25">Primary</data>
+   <data key="key26">http://www.hiberniaatlantic.com/documents/HA_NetworkPCard_0110.pdf</data>
+   <data key="key27">e278b1b</data>
+   <data key="key28">0</data>
+   <data key="key29">0.3.34dev-20120328</data>
+   <data key="key30">1</data>
+   <data key="key31">COM</data>
+   <data key="key32">1.0</data>
+   <data key="key34">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key35">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">HiberniaGlobal</data>
+   <data key="key42">internet_top_pop (HiberniaGlobal)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key45">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">35.7721000000000000016</data>
+      <data key="key21">-78.6386099999999999971</data>
+      <data key="key33">5.9289391962216049, -5.6729345664522386</data>
+      <data key="key37">0</data>
+      <data key="key38">0</data>
+      <data key="key40">Raleigh</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7742699999999999999</data>
+      <data key="key21">-80.1936599999999999988</data>
+      <data key="key33">5.6468647962050573, -5.8865946615991467</data>
+      <data key="key37">0</data>
+      <data key="key38">1</data>
+      <data key="key40">Miami</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.7489999999999999991</data>
+      <data key="key21">-84.3879799999999999985</data>
+      <data key="key33">5.6908662012208886, -5.5706983186639079</data>
+      <data key="key37">0</data>
+      <data key="key38">2</data>
+      <data key="key40">Atlanta</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">35.2270900000000000002</data>
+      <data key="key21">-80.8431299999999999975</data>
+      <data key="key33">5.7662191791200543, -5.7559792254443192</data>
+      <data key="key36">Atlanta</data>
+      <data key="key37">0</data>
+      <data key="key38">3</data>
+      <data key="key40">Charlotte</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.8864499999999999984</data>
+      <data key="key21">-78.878369999999999998</data>
+      <data key="key33">6.1664693837911164, -4.8022015918694541</data>
+      <data key="key37">0</data>
+      <data key="key38">4</data>
+      <data key="key40">Buffalo</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.4994999999999999996</data>
+      <data key="key21">-81.6954100000000000004</data>
+      <data key="key33">6.0081249020499747, -4.9937427322096486</data>
+      <data key="key37">0</data>
+      <data key="key38">5</data>
+      <data key="key40">Cleveland</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8500300000000000009</data>
+      <data key="key21">-87.6500500000000000028</data>
+      <data key="key33">5.7613978222093927, -4.9916488025243098</data>
+      <data key="key37">0</data>
+      <data key="key38">6</data>
+      <data key="key40">Chicago</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7001099999999999997</data>
+      <data key="key21">-79.4163000000000000034</data>
+      <data key="key33">6.3320403849631024, -4.7169502701905381</data>
+      <data key="key37">0</data>
+      <data key="key38">7</data>
+      <data key="key40">Toronto</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5088400000000000006</data>
+      <data key="key21">-73.5878099999999999992</data>
+      <data key="key33">6.2892066448650388, -4.5505854215835964</data>
+      <data key="key37">0</data>
+      <data key="key38">8</data>
+      <data key="key40">Montreal</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6525800000000000003</data>
+      <data key="key21">-73.7562299999999999994</data>
+      <data key="key33">6.0571981049525476, -4.6146630825298809</data>
+      <data key="key37">0</data>
+      <data key="key38">9</data>
+      <data key="key40">Albany</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n10">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">5.9669126523234031, -3.3314526015449171</data>
+      <data key="key37">1</data>
+      <data key="key38">10</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n11">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">6.0392781399321418, -3.10974543411458</data>
+      <data key="key37">1</data>
+      <data key="key38">11</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5537599999999999988</data>
+      <data key="key21">-77.4602600000000000025</data>
+      <data key="key33">6.1007759218676085, -5.6940355920523666</data>
+      <data key="key37">0</data>
+      <data key="key38">12</data>
+      <data key="key40">Richmond</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7142699999999999987</data>
+      <data key="key21">-74.0059700000000000031</data>
+      <data key="key33">5.8008423581163591, -4.7529522410604503</data>
+      <data key="key37">0</data>
+      <data key="key38">13</data>
+      <data key="key40">New York</data>
+      <data key="key44">Yellow Node</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3740300000000000014</data>
+      <data key="key21">4.88968999999999999993</data>
+      <data key="key33">6.1008075426847004, -2.882676079411489</data>
+      <data key="key37">0</data>
+      <data key="key38">14</data>
+      <data key="key40">Amsterdam</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2217200000000000004</data>
+      <data key="key21">6.77616000000000000009</data>
+      <data key="key33">6.1852616422253472, -2.6874159701133036</data>
+      <data key="key37">0</data>
+      <data key="key38">15</data>
+      <data key="key40">Dusseldorf</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">53.6477900000000000012</data>
+      <data key="key21">-3.00648000000000000008</data>
+      <data key="key33">5.8936781888491856, -3.5974960395353635</data>
+      <data key="key37">0</data>
+      <data key="key38">16</data>
+      <data key="key40">Southport</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">53.480949999999999999</data>
+      <data key="key21">-2.23742999999999999999</data>
+      <data key="key33">5.7706652642365732, -3.4204839748234006</data>
+      <data key="key37">0</data>
+      <data key="key38">17</data>
+      <data key="key40">Manchester</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4562499999999999993</data>
+      <data key="key21">-0.971130000000000000008</data>
+      <data key="key33">5.734766819381413, -3.2122889036156628</data>
+      <data key="key37">0</data>
+      <data key="key38">18</data>
+      <data key="key40">Reading</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5085299999999999994</data>
+      <data key="key21">-0.125740000000000000003</data>
+      <data key="key33">5.8813899320139296, -3.1598156513475608</data>
+      <data key="key37">0</data>
+      <data key="key38">19</data>
+      <data key="key40">London</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4315799999999999984</data>
+      <data key="key21">-0.552389999999999999991</data>
+      <data key="key33">5.7586173627589998, -3.0176830585180885</data>
+      <data key="key37">0</data>
+      <data key="key38">20</data>
+      <data key="key40">Egham</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n21">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">50.3086899999999999991</data>
+      <data key="key21">2.94777000000000000005</data>
+      <data key="key33">5.7727327519097393, -2.790210504034587</data>
+      <data key="key37">0</data>
+      <data key="key38">21</data>
+      <data key="key40">Biache</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n22">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8534099999999999984</data>
+      <data key="key21">2.34880000000000000002</data>
+      <data key="key33">5.7636998789156531, -2.5819536309765203</data>
+      <data key="key37">0</data>
+      <data key="key38">22</data>
+      <data key="key40">Paris</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8504500000000000011</data>
+      <data key="key21">4.34878000000000000018</data>
+      <data key="key33">5.9461394239606475, -2.8032562886426229</data>
+      <data key="key37">0</data>
+      <data key="key38">23</data>
+      <data key="key40">Brussels</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">55.1959200000000000004</data>
+      <data key="key21">-6.64929999999999999999</data>
+      <data key="key33">5.945527193550971, -3.8149232460207441</data>
+      <data key="key37">0</data>
+      <data key="key38">24</data>
+      <data key="key40">Portrush</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n25">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2903799999999999992</data>
+      <data key="key21">-76.6121899999999999981</data>
+      <data key="key33">5.9082856524636691, -5.4591028204220136</data>
+      <data key="key37">0</data>
+      <data key="key38">25</data>
+      <data key="key40">Baltimore</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n26">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8951099999999999994</data>
+      <data key="key21">-77.0363699999999999996</data>
+      <data key="key33">6.0815886770638201, -5.5218522290563934</data>
+      <data key="key37">0</data>
+      <data key="key38">26</data>
+      <data key="key40">Washington Dc</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4883300000000000002</data>
+      <data key="key21">8.46472000000000000027</data>
+      <data key="key33">6.0314191661457839, -2.3754116527291358</data>
+      <data key="key37">0</data>
+      <data key="key38">27</data>
+      <data key="key40">Mannheim</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1166699999999999994</data>
+      <data key="key21">8.6833299999999999999</data>
+      <data key="key33">6.1675118336491019, -2.4940378094627897</data>
+      <data key="key37">0</data>
+      <data key="key38">28</data>
+      <data key="key40">Frankfurt</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n29">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7356600000000000014</data>
+      <data key="key21">-74.1723700000000000024</data>
+      <data key="key33">5.9536520542200018, -4.8542320812484565</data>
+      <data key="key37">0</data>
+      <data key="key38">29</data>
+      <data key="key40">Newark</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n30">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.5834200000000000011</data>
+      <data key="key21">7.74296000000000000018</data>
+      <data key="key33">5.8600691045433555, -2.4182194988379679</data>
+      <data key="key37">0</data>
+      <data key="key38">30</data>
+      <data key="key40">Strasbourg</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n31">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.4406200000000000012</data>
+      <data key="key21">-79.9958899999999999975</data>
+      <data key="key33">5.8955988386908107, -5.1905876173511754</data>
+      <data key="key37">0</data>
+      <data key="key38">31</data>
+      <data key="key40">Pittsburgh</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n32">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.0437199999999999984</data>
+      <data key="key21">-77.4874899999999999997</data>
+      <data key="key33">6.0003529631722605, -5.1066980589975826</data>
+      <data key="key37">0</data>
+      <data key="key38">32</data>
+      <data key="key40">Ashburn</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n33">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.9342799999999999994</data>
+      <data key="key21">-77.1774799999999999989</data>
+      <data key="key33">6.047010822622731, -5.344128870017042</data>
+      <data key="key37">0</data>
+      <data key="key38">33</data>
+      <data key="key40">McClean</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n34">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.952339999999999999</data>
+      <data key="key21">-75.1637899999999999981</data>
+      <data key="key33">5.8829375813152245, -4.9380346720463182</data>
+      <data key="key37">0</data>
+      <data key="key38">34</data>
+      <data key="key40">Philadelphia</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Ireland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.3439900000000000006</data>
+      <data key="key21">-6.26718999999999999998</data>
+      <data key="key33">5.8530217790930612, -3.867832026313097</data>
+      <data key="key37">0</data>
+      <data key="key38">35</data>
+      <data key="key40">Dublin</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n36">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">54.5833300000000000013</data>
+      <data key="key21">-5.9333299999999999999</data>
+      <data key="key33">5.7657986398403764, -3.7773020679571068</data>
+      <data key="key37">0</data>
+      <data key="key38">36</data>
+      <data key="key40">Belfast</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">46.7561499999999999992</data>
+      <data key="key21">-71.2954299999999999982</data>
+      <data key="key33">6.4383560646937594, -4.4061083799042811</data>
+      <data key="key36">Canada</data>
+      <data key="key37">0</data>
+      <data key="key38">37</data>
+      <data key="key40">Sainte-Foy</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n38">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.3584299999999999986</data>
+      <data key="key21">-71.0597699999999999967</data>
+      <data key="key33">5.9066246270502072, -4.4414386237459276</data>
+      <data key="key37">0</data>
+      <data key="key38">38</data>
+      <data key="key40">Boston</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n39">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0534299999999999983</data>
+      <data key="key21">-73.5387300000000000005</data>
+      <data key="key33">5.8111528839448905, -4.5659668518508907</data>
+      <data key="key37">0</data>
+      <data key="key38">39</data>
+      <data key="key40">Stamford</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n40">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0339899999999999994</data>
+      <data key="key21">-73.7629099999999999979</data>
+      <data key="key33">5.9195902094658379, -4.6746955519498679</data>
+      <data key="key37">0</data>
+      <data key="key38">40</data>
+      <data key="key40">White Plains</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">44.6460000000000000013</data>
+      <data key="key21">-63.5733299999999999993</data>
+      <data key="key33">5.9472821064962318, -4.0870846442293249</data>
+      <data key="key37">0</data>
+      <data key="key38">41</data>
+      <data key="key40">Halifax</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">45.366849999999999999</data>
+      <data key="key21">-63.2653800000000000013</data>
+      <data key="key33">6.1597479948174412, -4.0694064080714272</data>
+      <data key="key36">Canada</data>
+      <data key="key37">0</data>
+      <data key="key38">42</data>
+      <data key="key40">Truro</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1159400000000000014</data>
+      <data key="key21">-64.8018600000000000033</data>
+      <data key="key33">6.3517566238285008, -4.0986038843588286</data>
+      <data key="key37">0</data>
+      <data key="key38">43</data>
+      <data key="key40">Moncton</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">47.3737000000000000009</data>
+      <data key="key21">-68.3251199999999999993</data>
+      <data key="key33">6.476390155681055, -4.2270475301012249</data>
+      <data key="key37">0</data>
+      <data key="key38">44</data>
+      <data key="key40">Edmundston</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n45">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.7632800000000000001</data>
+      <data key="key21">-95.3632700000000000026</data>
+      <data key="key33">5.5650452632181446, -5.3628198692886002</data>
+      <data key="key37">0</data>
+      <data key="key38">45</data>
+      <data key="key40">Houston</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n46">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.9475199999999999994</data>
+      <data key="key21">-82.4584299999999999972</data>
+      <data key="key33">5.5762200579275838, -5.7430936410883833</data>
+      <data key="key37">0</data>
+      <data key="key38">46</data>
+      <data key="key40">Tampa</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n47">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6062099999999999989</data>
+      <data key="key21">-122.332069999999999997</data>
+      <data key="key33">5.4416428263227292, -4.6580344862121894</data>
+      <data key="key37">0</data>
+      <data key="key38">47</data>
+      <data key="key40">Seattle</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n48">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.7391500000000000015</data>
+      <data key="key21">-104.984699999999999999</data>
+      <data key="key33">5.5734062321264899, -4.8065928494354635</data>
+      <data key="key37">0</data>
+      <data key="key38">48</data>
+      <data key="key40">Denver</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n49">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7749300000000000008</data>
+      <data key="key21">-122.419420000000000001</data>
+      <data key="key33">5.4155236616596305, -4.7902185267808512</data>
+      <data key="key37">0</data>
+      <data key="key38">49</data>
+      <data key="key40">San Francisco</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n50">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0522299999999999986</data>
+      <data key="key21">-118.243680000000000001</data>
+      <data key="key33">5.4901718413090732, -4.9375866980603424</data>
+      <data key="key37">0</data>
+      <data key="key38">50</data>
+      <data key="key40">Los Angeles</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n51">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7153300000000000006</data>
+      <data key="key21">-117.157259999999999997</data>
+      <data key="key33">5.3450068824930641, -5.0757314333158154</data>
+      <data key="key37">0</data>
+      <data key="key38">51</data>
+      <data key="key40">San Diego</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n52">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.1749700000000000005</data>
+      <data key="key21">-115.137220000000000002</data>
+      <data key="key33">5.2695044934214357, -4.9162905027093116</data>
+      <data key="key37">0</data>
+      <data key="key38">52</data>
+      <data key="key40">Las Vegas</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n53">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.4483800000000000008</data>
+      <data key="key21">-112.074040000000000002</data>
+      <data key="key33">5.45251726233366, -5.1723826607242209</data>
+      <data key="key37">0</data>
+      <data key="key38">53</data>
+      <data key="key40">Phoenix</data>
+      <data key="key44">Red Node</data>
+    </node>
+    <node id="n54">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7830599999999999991</data>
+      <data key="key21">-96.8066699999999999982</data>
+      <data key="key33">5.6536262238568886, -5.1955021917274085</data>
+      <data key="key37">0</data>
+      <data key="key38">54</data>
+      <data key="key40">Dallas</data>
+      <data key="key44">Red Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n25">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n12">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n3">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n1" target="n46">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n25">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n3">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n2" target="n45">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n2" target="n46">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n9">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n4" target="n5">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n4" target="n7">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n5" target="n6">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n5" target="n31">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n6" target="n48">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n6" target="n31">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n6" target="n54">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n6" target="n13">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n7" target="n8">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n8" target="n9">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n8" target="n37">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n9" target="n13">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n9" target="n38">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n10" target="n16">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n10" target="n11">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n10" target="n19">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n11" target="n19">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e27" source="n11" target="n14">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e28" source="n12" target="n26">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e29" source="n13" target="n34">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e30" source="n13" target="n38">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e31" source="n13" target="n39">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e32" source="n13" target="n50">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e33" source="n13" target="n29">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e34" source="n14" target="n23">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e35" source="n14" target="n15">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e36" source="n15" target="n28">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e37" source="n16" target="n24">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e38" source="n16" target="n17">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e39" source="n16" target="n35">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e40" source="n17" target="n18">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e41" source="n18" target="n19">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e42" source="n18" target="n20">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e43" source="n19" target="n20">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e44" source="n20" target="n21">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e45" source="n21" target="n22">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e46" source="n21" target="n23">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e47" source="n22" target="n30">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e48" source="n24" target="n41">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e49" source="n24" target="n36">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e50" source="n25" target="n33">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e51" source="n25" target="n26">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e52" source="n25" target="n31">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e53" source="n26" target="n33">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e54" source="n27" target="n28">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e55" source="n27" target="n30">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e56" source="n29" target="n40">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e57" source="n29" target="n32">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e58" source="n29" target="n34">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e59" source="n31" target="n32">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e60" source="n32" target="n33">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e61" source="n32" target="n34">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e62" source="n35" target="n41">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e63" source="n35" target="n36">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e64" source="n37" target="n44">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e65" source="n38" target="n41">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e66" source="n38" target="n39">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e67" source="n39" target="n40">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e68" source="n41" target="n42">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e69" source="n42" target="n43">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e70" source="n43" target="n44">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e71" source="n45" target="n53">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e72" source="n45" target="n54">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e73" source="n47" target="n48">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e74" source="n47" target="n49">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e75" source="n48" target="n49">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e76" source="n49" target="n50">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e77" source="n50" target="n51">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e78" source="n50" target="n52">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e79" source="n50" target="n53">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e80" source="n51" target="n53">
+      <data key="key20">Green Link</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

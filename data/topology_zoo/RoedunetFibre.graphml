@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key27" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key29" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key31" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key33" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key34" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key35" for="graph" attr.name="description" attr.type="string" />
+  <key id="key36" for="node" attr.name="geocode_id" attr.type="string" />
+  <key id="key37" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="id" attr.type="string" />
+  <key id="key40" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key41" for="node" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="name" attr.type="string" />
+  <key id="key44" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key45" for="node" attr.name="type" attr.type="string" />
+  <key id="key46" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">09</data>
+   <data key="key8">6/07/11</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Romania</data>
+   <data key="key14">0</data>
+   <data key="key16">6/07/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">Simplified Fibre</data>
+   <data key="key22">RoEduNet</data>
+   <data key="key23">2010_09</data>
+   <data key="key24">Taken from slide 8 of presentation. Names from https://admin.roedu.net/weathermap/ Geant Peering at Bucharest from slide 4</data>
+   <data key="key25">Primary</data>
+   <data key="key26">http://www.ces.net/events/2010/cef/p/rusu.pdf</data>
+   <data key="key27">e278b1b</data>
+   <data key="key28">0</data>
+   <data key="key29">0.3.34dev-20120328</data>
+   <data key="key30">0</data>
+   <data key="key31">REN</data>
+   <data key="key32">1.0</data>
+   <data key="key34">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key35">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key42">RoedunetFibre</data>
+   <data key="key43">internet_top_pop (RoedunetFibre)</data>
+   <data key="key44">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key46">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.3166700000000000001</data>
+      <data key="key21">23.7999999999999999993</data>
+      <data key="key33">10.224250138286344, 12.838070434691966</data>
+      <data key="key37">0</data>
+      <data key="key38">0</data>
+      <data key="key41">Dolj</data>
+      <data key="key45">NOC</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4333299999999999999</data>
+      <data key="key21">24.3666699999999999994</data>
+      <data key="key33">10.412241445618079, 12.907818250335076</data>
+      <data key="key37">0</data>
+      <data key="key38">1</data>
+      <data key="key41">Olt</data>
+      <data key="key45">Blue dashed node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.0499999999999999993</data>
+      <data key="key21">23.2833300000000000003</data>
+      <data key="key33">10.022245909168371, 12.550035850323916</data>
+      <data key="key37">0</data>
+      <data key="key38">2</data>
+      <data key="key41">Gorj</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.0999999999999999986</data>
+      <data key="key21">24.3666699999999999994</data>
+      <data key="key33">10.285810958581143, 12.639389806712897</data>
+      <data key="key37">0</data>
+      <data key="key38">3</data>
+      <data key="key41">Valcea</data>
+      <data key="key45">Blue dashed node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4322499999999999988</data>
+      <data key="key21">26.1062600000000000003</data>
+      <data key="key33">10.147891925762282, 13.220227876762211</data>
+      <data key="key37">0</data>
+      <data key="key38">4</data>
+      <data key="key41">Bucaresti</data>
+      <data key="key45">NOC</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.7166700000000000015</data>
+      <data key="key21">26.6333300000000000006</data>
+      <data key="key33">10.291220595978716, 13.675202557319791</data>
+      <data key="key37">0</data>
+      <data key="key38">5</data>
+      <data key="key41">Ialomita</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">43.9833299999999999992</data>
+      <data key="key21">25.3333299999999999996</data>
+      <data key="key33">10.197465615726234, 13.393120010907872</data>
+      <data key="key37">0</data>
+      <data key="key38">6</data>
+      <data key="key41">Teleorman</data>
+      <data key="key45">Blue dashed node</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">43.8833300000000000006</data>
+      <data key="key21">25.9666699999999999997</data>
+      <data key="key33">10.332292967476068, 13.185288303848546</data>
+      <data key="key37">0</data>
+      <data key="key38">7</data>
+      <data key="key41">Giurgiu</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.2000000000000000007</data>
+      <data key="key21">27.3333299999999999996</data>
+      <data key="key33">10.604520488395625, 13.441315212101715</data>
+      <data key="key36">683022</data>
+      <data key="key37">0</data>
+      <data key="key38">8</data>
+      <data key="key41">Calarasi</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.1833299999999999999</data>
+      <data key="key21">28.6499999999999999997</data>
+      <data key="key33">10.474126299183926, 13.701723474231279</data>
+      <data key="key37">0</data>
+      <data key="key38">9</data>
+      <data key="key41">Constanta</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2999999999999999993</data>
+      <data key="key21">25.2999999999999999993</data>
+      <data key="key33">9.9534731162265437, 12.77326237634689</data>
+      <data key="key37">0</data>
+      <data key="key38">10</data>
+      <data key="key41">Harghita</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.8499999999999999986</data>
+      <data key="key21">26.1833299999999999999</data>
+      <data key="key33">9.8448482126769186, 12.89299731915593</data>
+      <data key="key37">0</data>
+      <data key="key38">11</data>
+      <data key="key41">Covasna</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.0666700000000000001</data>
+      <data key="key21">23.5833299999999999996</data>
+      <data key="key33">9.5807105907353645, 12.441684606950002</data>
+      <data key="key37">0</data>
+      <data key="key38">12</data>
+      <data key="key41">Alba</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.648609999999999999</data>
+      <data key="key21">25.6061300000000000004</data>
+      <data key="key33">9.6909467376943272, 12.96650896837566</data>
+      <data key="key37">0</data>
+      <data key="key38">13</data>
+      <data key="key41">Brasov</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.8499999999999999986</data>
+      <data key="key21">24.8666699999999999994</data>
+      <data key="key33">9.3820657808620336, 13.006706668927183</data>
+      <data key="key37">0</data>
+      <data key="key38">14</data>
+      <data key="key41">Arges</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.9333299999999999999</data>
+      <data key="key21">25.4500000000000000007</data>
+      <data key="key33">9.5500101402976494, 13.148047104036971</data>
+      <data key="key37">0</data>
+      <data key="key38">15</data>
+      <data key="key41">Dambovita</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.9500000000000000007</data>
+      <data key="key21">26.0166700000000000008</data>
+      <data key="key33">9.7598500026677844, 13.204978391872327</data>
+      <data key="key37">0</data>
+      <data key="key38">16</data>
+      <data key="key41">Prahova</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.1500000000000000014</data>
+      <data key="key21">26.8333299999999999996</data>
+      <data key="key33">9.4616362775063578, 13.31893828053669</data>
+      <data key="key37">0</data>
+      <data key="key38">17</data>
+      <data key="key41">Buzau</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7000000000000000007</data>
+      <data key="key21">27.1833299999999999999</data>
+      <data key="key33">9.1799225605422841, 13.297882458959084</data>
+      <data key="key37">0</data>
+      <data key="key38">18</data>
+      <data key="key41">Vrancea</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5666700000000000001</data>
+      <data key="key21">26.8999999999999999997</data>
+      <data key="key33">8.9393235084824543, 13.177337043009013</data>
+      <data key="key37">0</data>
+      <data key="key38">19</data>
+      <data key="key41">Bacau</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n20">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">11.373775488200375, 14.300711521334629</data>
+      <data key="key37">0</data>
+      <data key="key38">20</data>
+      <data key="key41">Chisinau RENAM</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7999999999999999993</data>
+      <data key="key21">24.1499999999999999997</data>
+      <data key="key33">9.322644614488615, 12.799796475099701</data>
+      <data key="key37">0</data>
+      <data key="key38">21</data>
+      <data key="key41">Sibiu</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n22">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">8.8593468489718408, 12.451414333298803</data>
+      <data key="key37">1</data>
+      <data key="key38">22</data>
+      <data key="key41">None</data>
+    </node>
+    <node id="n23">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">8.7580430557642384, 12.982251254768824</data>
+      <data key="key37">1</data>
+      <data key="key38">23</data>
+      <data key="key41">None</data>
+    </node>
+    <node id="n24">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">9.54699438242646, 12.762492810388217</data>
+      <data key="key37">1</data>
+      <data key="key38">24</data>
+      <data key="key41">None</data>
+    </node>
+    <node id="n25">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">9.3799913057456976, 12.580726120576537</data>
+      <data key="key37">1</data>
+      <data key="key38">25</data>
+      <data key="key41">None</data>
+    </node>
+    <node id="n26">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">10.00993929523219, 13.363317484011363</data>
+      <data key="key37">0</data>
+      <data key="key38">26</data>
+      <data key="key41">GEANT</data>
+    </node>
+    <node id="n27">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key33">10.420795910809263, 13.511880464462894</data>
+      <data key="key37">1</data>
+      <data key="key38">27</data>
+      <data key="key41">None</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5424500000000000016</data>
+      <data key="key21">24.5574700000000000003</data>
+      <data key="key33">9.0426833471731829, 12.547438765396679</data>
+      <data key="key37">0</data>
+      <data key="key38">28</data>
+      <data key="key41">Mures</data>
+      <data key="key45">NOC</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1331600000000000006</data>
+      <data key="key21">24.5001100000000000007</data>
+      <data key="key33">9.0108897896757458, 12.272788748994451</data>
+      <data key="key37">0</data>
+      <data key="key38">29</data>
+      <data key="key41">Bistrita-Nasaud</data>
+      <data key="key45">Blue dashed node</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.6333300000000000006</data>
+      <data key="key21">27.7333299999999999992</data>
+      <data key="key33">11.03960936744766, 14.089028742659854</data>
+      <data key="key37">0</data>
+      <data key="key38">30</data>
+      <data key="key41">Vaslui</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4500000000000000007</data>
+      <data key="key21">28.0499999999999999993</data>
+      <data key="key33">10.897177552008678, 13.882743488906311</data>
+      <data key="key37">0</data>
+      <data key="key38">31</data>
+      <data key="key41">Galati</data>
+      <data key="key45">NOC</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.1666699999999999987</data>
+      <data key="key21">28.7999999999999999993</data>
+      <data key="key33">11.0695127852598, 13.811952582975399</data>
+      <data key="key37">0</data>
+      <data key="key38">32</data>
+      <data key="key41">Tulcea</data>
+      <data key="key45">Blue dashed node</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.2666700000000000008</data>
+      <data key="key21">27.9833299999999999992</data>
+      <data key="key33">10.68081302402158, 13.706063555642338</data>
+      <data key="key37">0</data>
+      <data key="key38">33</data>
+      <data key="key41">Braila</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9166699999999999987</data>
+      <data key="key21">26.3333299999999999996</data>
+      <data key="key33">11.181356554188339, 14.458797686847902</data>
+      <data key="key37">0</data>
+      <data key="key38">34</data>
+      <data key="key41">Neamt</data>
+      <data key="key45">Blue dashed node</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6333300000000000006</data>
+      <data key="key21">26.25</data>
+      <data key="key33">8.7598148860109983, 12.713051184608869</data>
+      <data key="key37">0</data>
+      <data key="key38">35</data>
+      <data key="key41">Suceava</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.75</data>
+      <data key="key21">26.6666700000000000004</data>
+      <data key="key33">8.5742168715793525, 13.058602887166595</data>
+      <data key="key37">0</data>
+      <data key="key38">36</data>
+      <data key="key41">Botosani</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1666699999999999987</data>
+      <data key="key21">27.6000000000000000003</data>
+      <data key="key33">11.187072681010928, 14.270659802549952</data>
+      <data key="key37">0</data>
+      <data key="key38">37</data>
+      <data key="key41">Iasi</data>
+      <data key="key45">NOC</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.3008300000000000002</data>
+      <data key="key21">21.8891700000000000003</data>
+      <data key="key33">9.6681613464434335, 11.699374043397038</data>
+      <data key="key37">0</data>
+      <data key="key38">38</data>
+      <data key="key41">Caras-Severin</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.6319400000000000017</data>
+      <data key="key21">22.6561100000000000005</data>
+      <data key="key33">10.435717793451886, 12.728645834269351</data>
+      <data key="key37">0</data>
+      <data key="key38">39</data>
+      <data key="key41">Mehedinti</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.7999999999999999993</data>
+      <data key="key21">22.8833300000000000006</data>
+      <data key="key33">9.020304529172952, 12.066351454402152</data>
+      <data key="key37">0</data>
+      <data key="key38">40</data>
+      <data key="key41">Satu Mare</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6572899999999999993</data>
+      <data key="key21">23.5680799999999999999</data>
+      <data key="key33">8.832305178758693, 12.20528576708988</data>
+      <data key="key37">0</data>
+      <data key="key38">41</data>
+      <data key="key41">Maramures</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.7666700000000000008</data>
+      <data key="key21">23.6000000000000000003</data>
+      <data key="key33">9.1408083263787194, 12.394260745873162</data>
+      <data key="key37">0</data>
+      <data key="key38">42</data>
+      <data key="key41">Cluj</data>
+      <data key="key45">NOC</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.2000000000000000007</data>
+      <data key="key21">23.0499999999999999993</data>
+      <data key="key33">9.2808581196489826, 12.316166388056846</data>
+      <data key="key37">0</data>
+      <data key="key38">43</data>
+      <data key="key41">Salaj</data>
+      <data key="key45">Blue dashed node</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.0666700000000000001</data>
+      <data key="key21">21.9333299999999999999</data>
+      <data key="key33">9.2605508139615562, 12.137362307609839</data>
+      <data key="key37">0</data>
+      <data key="key38">44</data>
+      <data key="key41">Bihor</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1833299999999999999</data>
+      <data key="key21">21.3166700000000000001</data>
+      <data key="key33">9.5595112764570338, 12.117303287323258</data>
+      <data key="key37">0</data>
+      <data key="key38">45</data>
+      <data key="key41">Arad</data>
+      <data key="key45">Node</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7494399999999999985</data>
+      <data key="key21">21.2272200000000000001</data>
+      <data key="key33">9.6230316540831993, 11.887010950591767</data>
+      <data key="key37">0</data>
+      <data key="key38">46</data>
+      <data key="key41">Timis</data>
+      <data key="key45">NOC</data>
+    </node>
+    <node id="n47">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.75</data>
+      <data key="key21">22.8999999999999999997</data>
+      <data key="key33">9.770647897446965, 12.338012750594427</data>
+      <data key="key37">0</data>
+      <data key="key38">47</data>
+      <data key="key41">Hunedora</data>
+      <data key="key45">Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">Blue Dashed</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n2">
+      <data key="key39">e16</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n3">
+      <data key="key20">Blue Dashed</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n4">
+      <data key="key39">e18</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e4" source="n0" target="n39">
+      <data key="key39">e15</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n47">
+      <data key="key39">e13</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n6">
+      <data key="key20">Blue Dashed</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n7">
+      <data key="key39">e21</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n16">
+      <data key="key39">e22</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n26">
+      <data key="key39">e24</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e10" source="n4" target="n27">
+      <data key="key39">e23</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e11" source="n5" target="n27">
+      <data key="key39">e25</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e12" source="n8" target="n27">
+      <data key="key39">e26</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e13" source="n9" target="n27">
+      <data key="key39">e27</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e14" source="n10" target="n11">
+      <data key="key39">e49</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e15" source="n11" target="n13">
+      <data key="key39">e41</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e16" source="n12" target="n25">
+      <data key="key39">e38</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e17" source="n12" target="n47">
+      <data key="key39">e14</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e18" source="n13" target="n24">
+      <data key="key39">e40</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e19" source="n13" target="n16">
+      <data key="key39">e39</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e20" source="n14" target="n21">
+      <data key="key39">e42</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e21" source="n14" target="n15">
+      <data key="key39">e43</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e22" source="n15" target="n16">
+      <data key="key39">e44</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e23" source="n16" target="n17">
+      <data key="key39">e45</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e24" source="n17" target="n18">
+      <data key="key39">e46</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e25" source="n18" target="n19">
+      <data key="key39">e47</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e26" source="n19" target="n23">
+      <data key="key39">e48</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e27" source="n20" target="n37">
+      <data key="key39">e33</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e28" source="n21" target="n25">
+      <data key="key39">e50</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e29" source="n22" target="n41">
+      <data key="key39">e2</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e30" source="n22" target="n42">
+      <data key="key39">e5</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e31" source="n22" target="n35">
+      <data key="key39">e37</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e32" source="n23" target="n35">
+      <data key="key39">e36</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e33" source="n23" target="n36">
+      <data key="key39">e35</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e34" source="n24" target="n25">
+      <data key="key39">e51</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e35" source="n25" target="n42">
+      <data key="key39">e6</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e36" source="n27" target="n33">
+      <data key="key39">e28</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e37" source="n28" target="n42">
+      <data key="key39">e8</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e38" source="n29" target="n42">
+      <data key="key20">Blue Dashed</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e39" source="n30" target="n37">
+      <data key="key39">e32</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e40" source="n30" target="n31">
+      <data key="key39">e31</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e41" source="n31" target="n32">
+      <data key="key20">Blue Dashed</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e42" source="n31" target="n33">
+      <data key="key39">e29</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e43" source="n34" target="n37">
+      <data key="key20">Blue Dashed</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e44" source="n38" target="n46">
+      <data key="key39">e12</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e45" source="n40" target="n41">
+      <data key="key39">e0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e46" source="n40" target="n44">
+      <data key="key39">e1</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e47" source="n42" target="n43">
+      <data key="key20">Blue Dashed</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e48" source="n42" target="n44">
+      <data key="key39">e4</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e49" source="n44" target="n45">
+      <data key="key39">e9</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e50" source="n45" target="n46">
+      <data key="key39">e10</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e51" source="n45" target="n47">
+      <data key="key39">e11</data>
+      <data key="key40">0</data>
+    </edge>
+
+  </graph>
+</graphml>

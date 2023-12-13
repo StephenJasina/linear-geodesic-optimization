@@ -1,0 +1,2496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="geocode_append" attr.type="string" />
+  <key id="key36" for="node" attr.name="geocode_id" attr.type="string" />
+  <key id="key37" for="node" attr.name="hyperedge" attr.type="boolean" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="node" attr.name="type" attr.type="string" />
+  <key id="key45" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">10</data>
+   <data key="key8">22/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Continent</data>
+   <data key="key13">Europe</data>
+   <data key="key14">0</data>
+   <data key="key16">22/10/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">GTS CE</data>
+   <data key="key23">2010_10</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.gtsce.com/en/map/index.shtml</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">1</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">GtsCe</data>
+   <data key="key42">internet_top_pop (GtsCe)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key45">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.7367900000000000005</data>
+      <data key="key21">15.2287799999999999999</data>
+      <data key="key32">1.5640565876814851, 20.656995574671576</data>
+      <data key="key37">0</data>
+      <data key="key38">0</data>
+      <data key="key40">Gorzow</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">51.935479999999999999</data>
+      <data key="key21">15.50643</data>
+      <data key="key32">1.3448405915071018, 20.632551985165207</data>
+      <data key="key37">0</data>
+      <data key="key38">1</data>
+      <data key="key40">Zeilona Gora</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Denmark</data>
+      <data key="key15">1</data>
+      <data key="key18">55.6759399999999999992</data>
+      <data key="key21">12.5655299999999999997</data>
+      <data key="key32">1.0843398346395952, 20.838299452805337</data>
+      <data key="key37">0</data>
+      <data key="key38">2</data>
+      <data key="key40">Kobenhavn</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">53.5499999999999999993</data>
+      <data key="key21">10</data>
+      <data key="key32">1.0597729695538434, 20.704159244220893</data>
+      <data key="key37">0</data>
+      <data key="key38">3</data>
+      <data key="key40">Hamburg</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">54.3520499999999999984</data>
+      <data key="key21">18.6463700000000000001</data>
+      <data key="key32">1.8571081082666179, 20.91773846265648</data>
+      <data key="key37">0</data>
+      <data key="key38">4</data>
+      <data key="key40">Gdansk</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">54.5188900000000000005</data>
+      <data key="key21">18.5318800000000000004</data>
+      <data key="key32">1.8889859812369967, 20.846834677435307</data>
+      <data key="key37">0</data>
+      <data key="key38">5</data>
+      <data key="key40">Gdynia</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">54.4640500000000000007</data>
+      <data key="key21">17.0287200000000000007</data>
+      <data key="key32">1.873289414576905, 20.774798269688432</data>
+      <data key="key37">0</data>
+      <data key="key38">6</data>
+      <data key="key40">Slupsk</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">54.1943800000000000007</data>
+      <data key="key21">16.1722199999999999998</data>
+      <data key="key32">1.8158226418079695, 20.72596995428453</data>
+      <data key="key37">0</data>
+      <data key="key38">7</data>
+      <data key="key40">Koszalin</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">54.1756500000000000006</data>
+      <data key="key21">15.5834200000000000002</data>
+      <data key="key32">1.7357329578371075, 20.705261657931921</data>
+      <data key="key37">0</data>
+      <data key="key38">8</data>
+      <data key="key40">Kolobrzeg</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.4289399999999999984</data>
+      <data key="key21">14.5530200000000000003</data>
+      <data key="key32">1.6454525965132758, 20.707133456816962</data>
+      <data key="key37">0</data>
+      <data key="key38">9</data>
+      <data key="key40">Szczecin</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">54.3797099999999999989</data>
+      <data key="key21">19.8195900000000000008</data>
+      <data key="key32">1.8648164237186067, 21.028894237651684</data>
+      <data key="key37">0</data>
+      <data key="key38">10</data>
+      <data key="key40">Braniewo</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n11">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">1.6023272657887608, 21.019731039316909</data>
+      <data key="key37">1</data>
+      <data key="key38">11</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n12">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">0.34347790099769876, 19.503882139075504</data>
+      <data key="key37">0</data>
+      <data key="key38">12</data>
+      <data key="key40">Poti, Georgia</data>
+    </node>
+    <node id="n13">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">-0.0072836298261068555, 19.517870162760723</data>
+      <data key="key37">0</data>
+      <data key="key38">13</data>
+      <data key="key40">Georgia, Armenia, Iran, Iraq, Syria</data>
+    </node>
+    <node id="n14">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">1.5448637902690823, 20.7221231461283</data>
+      <data key="key37">1</data>
+      <data key="key38">14</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n15">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">1.0127444614259105, 20.48237894428399</data>
+      <data key="key37">0</data>
+      <data key="key38">15</data>
+      <data key="key40">Amsterdam, London</data>
+    </node>
+    <node id="n16">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">1.7986015824659753, 20.978254710704206</data>
+      <data key="key37">1</data>
+      <data key="key38">16</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n17">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">1.3134036927094153, 20.688746573017234</data>
+      <data key="key37">1</data>
+      <data key="key38">17</data>
+      <data key="key40">None</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.1071399999999999991</data>
+      <data key="key21">19.9452499999999999999</data>
+      <data key="key32">1.4052532749891347, 21.042575959468877</data>
+      <data key="key37">0</data>
+      <data key="key38">18</data>
+      <data key="key40">Lowicz</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4866699999999999984</data>
+      <data key="key21">25.7802799999999999996</data>
+      <data key="key32">0.63625556350338075, 19.446033496588178</data>
+      <data key="key36">664295</data>
+      <data key="key37">0</data>
+      <data key="key38">19</data>
+      <data key="key40">Ulmi</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Serbia</data>
+      <data key="key15">1</data>
+      <data key="key18">44.804009999999999999</data>
+      <data key="key21">20.46513</data>
+      <data key="key32">0.72421759816506459, 19.958596775199311</data>
+      <data key="key37">0</data>
+      <data key="key38">20</data>
+      <data key="key40">Beograd</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.7975000000000000006</data>
+      <data key="key21">22.6802799999999999993</data>
+      <data key="key32">0.69417117965206454, 19.625986985795429</data>
+      <data key="key37">0</data>
+      <data key="key38">21</data>
+      <data key="key40">Balvanesti</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">43.9833299999999999992</data>
+      <data key="key21">25.3333299999999999996</data>
+      <data key="key32">0.60335412689486323, 19.520544180183158</data>
+      <data key="key37">0</data>
+      <data key="key38">22</data>
+      <data key="key40">Alexandria</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.3166700000000000001</data>
+      <data key="key21">23.7999999999999999993</data>
+      <data key="key32">0.65945276640869255, 19.562985212024934</data>
+      <data key="key37">0</data>
+      <data key="key38">23</data>
+      <data key="key40">Craiova</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1833299999999999999</data>
+      <data key="key21">21.3166700000000000001</data>
+      <data key="key32">0.80630104768534061, 19.786821742384728</data>
+      <data key="key37">0</data>
+      <data key="key38">24</data>
+      <data key="key40">Arad</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.0666700000000000001</data>
+      <data key="key21">21.9333299999999999999</data>
+      <data key="key32">0.89134343469001864, 19.71773631829824</data>
+      <data key="key37">0</data>
+      <data key="key38">25</data>
+      <data key="key40">Oradea</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4166699999999999987</data>
+      <data key="key21">22.2166699999999999997</data>
+      <data key="key32">0.70563116312704699, 19.700047917440852</data>
+      <data key="key37">0</data>
+      <data key="key38">26</data>
+      <data key="key40">Caransebes</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7494399999999999985</data>
+      <data key="key21">21.2272200000000000001</data>
+      <data key="key32">0.70699098320990617, 19.779621854721888</data>
+      <data key="key37">0</data>
+      <data key="key38">27</data>
+      <data key="key40">Timisoara</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.9500000000000000007</data>
+      <data key="key21">26.0166700000000000008</data>
+      <data key="key32">0.53499890597169564, 19.39634318527175</data>
+      <data key="key37">0</data>
+      <data key="key38">28</data>
+      <data key="key40">Ploiesti</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">43.8833300000000000006</data>
+      <data key="key21">25.9666699999999999997</data>
+      <data key="key32">0.51879102684454248, 19.61336569688839</data>
+      <data key="key37">0</data>
+      <data key="key38">29</data>
+      <data key="key40">Giurgiu</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n30">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key21">0</data>
+      <data key="key32">0.92746763845784075, 21.305392659734999</data>
+      <data key="key37">0</data>
+      <data key="key38">30</data>
+      <data key="key40">Kazakhstan</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.2308799999999999984</data>
+      <data key="key21">16.6215500000000000001</data>
+      <data key="key32">1.0755424269776046, 20.318823036777982</data>
+      <data key="key37">0</data>
+      <data key="key38">31</data>
+      <data key="key40">Szombathely</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1899500000000000008</data>
+      <data key="key21">18.4103399999999999999</data>
+      <data key="key32">1.0973428930100262, 20.051931489543335</data>
+      <data key="key37">0</data>
+      <data key="key38">32</data>
+      <data key="key40">Szekesfehervar</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.5666700000000000001</data>
+      <data key="key21">18.4166700000000000004</data>
+      <data key="key32">0.9739601744995271, 20.173186950452205</data>
+      <data key="key37">0</data>
+      <data key="key38">33</data>
+      <data key="key40">Tatabanya</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.7666700000000000008</data>
+      <data key="key21">17.25</data>
+      <data key="key32">1.1453142615380216, 20.207871857403909</data>
+      <data key="key37">0</data>
+      <data key="key38">34</data>
+      <data key="key40">Keszthely</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.0932699999999999987</data>
+      <data key="key21">17.9114899999999999999</data>
+      <data key="key32">1.1678552090893495, 20.080485652622361</data>
+      <data key="key37">0</data>
+      <data key="key38">35</data>
+      <data key="key40">Veszprem</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.66817</data>
+      <data key="key21">12.5518799999999999999</data>
+      <data key="key32">0.68867064829515134, 20.726574584159977</data>
+      <data key="key35">Czech Republic</data>
+      <data key="key37">0</data>
+      <data key="key38">36</data>
+      <data key="key40">Rozvadov</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.2327100000000000002</data>
+      <data key="key21">12.8711699999999999999</data>
+      <data key="key32">0.59957994665376313, 20.841205950021823</data>
+      <data key="key37">0</data>
+      <data key="key38">37</data>
+      <data key="key40">Karlovy Vary</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.7671100000000000002</data>
+      <data key="key21">15.0561900000000000004</data>
+      <data key="key32">0.79884978873494794, 20.812559603612311</data>
+      <data key="key37">0</data>
+      <data key="key38">38</data>
+      <data key="key40">Liberec</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.747469999999999999</data>
+      <data key="key21">13.3775900000000000003</data>
+      <data key="key32">0.77464847271723158, 20.688668722237274</data>
+      <data key="key37">0</data>
+      <data key="key38">39</data>
+      <data key="key40">Plzen</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4016899999999999984</data>
+      <data key="key21">30.4497000000000000008</data>
+      <data key="key32">1.103579623422511, 21.389170988314039</data>
+      <data key="key37">0</data>
+      <data key="key38">40</data>
+      <data key="key40">Kyiv</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.2297699999999999985</data>
+      <data key="key21">21.0117800000000000005</data>
+      <data key="key32">1.3959762668782369, 21.12297585395774</data>
+      <data key="key37">0</data>
+      <data key="key38">41</data>
+      <data key="key40">Warszawa</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Albania</data>
+      <data key="key15">1</data>
+      <data key="key18">41.3274999999999999994</data>
+      <data key="key21">19.8188899999999999998</data>
+      <data key="key32">0.53445884898798501, 19.962552470315046</data>
+      <data key="key37">0</data>
+      <data key="key38">42</data>
+      <data key="key40">Tirane</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.9794500000000000012</data>
+      <data key="key21">23.7162200000000000007</data>
+      <data key="key32">0.46016154681461691, 19.958937809616799</data>
+      <data key="key37">0</data>
+      <data key="key38">43</data>
+      <data key="key40">Athina</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.6891599999999999983</data>
+      <data key="key21">25.2798000000000000001</data>
+      <data key="key32">1.301651208896057, 21.058975893140811</data>
+      <data key="key37">0</data>
+      <data key="key38">44</data>
+      <data key="key40">Vilnius</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Estonia</data>
+      <data key="key15">1</data>
+      <data key="key18">59.4369600000000000012</data>
+      <data key="key21">24.7535300000000000002</data>
+      <data key="key32">1.2057527017825986, 21.011056794771942</data>
+      <data key="key37">0</data>
+      <data key="key38">45</data>
+      <data key="key40">Tallinn</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Russia</data>
+      <data key="key15">1</data>
+      <data key="key18">54.7099999999999999992</data>
+      <data key="key21">20.5</data>
+      <data key="key32">1.9205300780231922, 21.067807653063781</data>
+      <data key="key37">0</data>
+      <data key="key38">46</data>
+      <data key="key40">Kaliningrad</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n47">
+      <data key="key3">Belarus</data>
+      <data key="key15">1</data>
+      <data key="key18">53.9000000000000000014</data>
+      <data key="key21">27.5666700000000000001</data>
+      <data key="key32">1.4589858468879218, 21.173073144872646</data>
+      <data key="key37">0</data>
+      <data key="key38">47</data>
+      <data key="key40">Minsk</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.9460000000000000006</data>
+      <data key="key21">24.1058899999999999997</data>
+      <data key="key32">1.2646396484358273, 21.014393431437053</data>
+      <data key="key37">0</data>
+      <data key="key38">48</data>
+      <data key="key40">Riga</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Finland</data>
+      <data key="key15">1</data>
+      <data key="key18">60.1695200000000000005</data>
+      <data key="key21">24.9354500000000000003</data>
+      <data key="key32">1.0406055696528971, 21.076082869219416</data>
+      <data key="key37">0</data>
+      <data key="key38">49</data>
+      <data key="key40">Helsinki</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9166699999999999987</data>
+      <data key="key21">22.8999999999999999997</data>
+      <data key="key32">0.89066550877483086, 19.618809106600256</data>
+      <data key="key36">670213</data>
+      <data key="key37">0</data>
+      <data key="key38">50</data>
+      <data key="key40">Poieni</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n51">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6858299999999999987</data>
+      <data key="key21">26.3291700000000000008</data>
+      <data key="key32">0.42767402691181133, 19.645503245540354</data>
+      <data key="key37">0</data>
+      <data key="key38">51</data>
+      <data key="key40">Sliven</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1666699999999999987</data>
+      <data key="key21">27.6000000000000000003</data>
+      <data key="key32">0.40371513353744715, 19.289517025263617</data>
+      <data key="key37">0</data>
+      <data key="key38">52</data>
+      <data key="key40">Iasi</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n53">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4500000000000000007</data>
+      <data key="key21">28.0499999999999999993</data>
+      <data key="key32">0.41410326434225603, 19.376358757589141</data>
+      <data key="key37">0</data>
+      <data key="key38">53</data>
+      <data key="key40">Galati</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n54">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.648609999999999999</data>
+      <data key="key21">25.6061300000000000004</data>
+      <data key="key32">0.51790628165841623, 19.3156234935302</data>
+      <data key="key37">0</data>
+      <data key="key38">54</data>
+      <data key="key40">Brasov</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n55">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5666700000000000001</data>
+      <data key="key21">26.8999999999999999997</data>
+      <data key="key32">0.46855446784597021, 19.266767812433731</data>
+      <data key="key37">0</data>
+      <data key="key38">55</data>
+      <data key="key40">Bacau</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n56">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1666699999999999987</data>
+      <data key="key21">24.3500000000000000003</data>
+      <data key="key32">0.80914092161042939, 19.467491895790946</data>
+      <data key="key37">0</data>
+      <data key="key38">56</data>
+      <data key="key40">Medias</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">46.7666700000000000008</data>
+      <data key="key21">23.6000000000000000003</data>
+      <data key="key32">0.86558178062456037, 19.533061869548092</data>
+      <data key="key37">0</data>
+      <data key="key38">57</data>
+      <data key="key40">Cluj</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.1833299999999999999</data>
+      <data key="key21">28.6499999999999999997</data>
+      <data key="key32">0.44421390556963875, 19.46916344316281</data>
+      <data key="key37">0</data>
+      <data key="key38">58</data>
+      <data key="key40">Constanta</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7666700000000000008</data>
+      <data key="key21">25.4333299999999999999</data>
+      <data key="key32">0.72856309753342596, 19.43695921967263</data>
+      <data key="key36">678689</data>
+      <data key="key37">0</data>
+      <data key="key38">59</data>
+      <data key="key40">Dumbravita</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n60">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">47.7635599999999999991</data>
+      <data key="key21">18.1226299999999999994</data>
+      <data key="key32">0.84959656795243432, 20.483416886953815</data>
+      <data key="key37">0</data>
+      <data key="key38">60</data>
+      <data key="key40">Komarno</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n61">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6833299999999999999</data>
+      <data key="key21">17.6351200000000000005</data>
+      <data key="key32">0.93661941431487572, 20.310735774090045</data>
+      <data key="key37">0</data>
+      <data key="key38">61</data>
+      <data key="key40">Gyor</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n62">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6833299999999999999</data>
+      <data key="key21">16.6000000000000000003</data>
+      <data key="key32">1.0080611724530337, 20.347150402689088</data>
+      <data key="key37">0</data>
+      <data key="key38">62</data>
+      <data key="key40">Sopron</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n63">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">46.4774699999999999986</data>
+      <data key="key21">30.7326200000000000004</data>
+      <data key="key32">1.1218558075136145, 21.459646770863035</data>
+      <data key="key37">0</data>
+      <data key="key38">63</data>
+      <data key="key40">Odesa</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n64">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">50</data>
+      <data key="key21">36.25</data>
+      <data key="key32">1.033342439260571, 21.351758380814772</data>
+      <data key="key37">0</data>
+      <data key="key38">64</data>
+      <data key="key40">Kharkiv</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n65">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">48.4500000000000000007</data>
+      <data key="key21">34.9833299999999999992</data>
+      <data key="key32">1.0438913301328308, 21.414297621479651</data>
+      <data key="key37">0</data>
+      <data key="key38">65</data>
+      <data key="key40">Dnipropetrovsk</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n66">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8382600000000000016</data>
+      <data key="key21">24.0232400000000000002</data>
+      <data key="key32">1.1708913568187314, 21.326634294635838</data>
+      <data key="key37">0</data>
+      <data key="key38">66</data>
+      <data key="key40">Lviv</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n67">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0138099999999999994</data>
+      <data key="key21">20.9869799999999999997</data>
+      <data key="key32">1.1748018553437898, 21.162046223946472</data>
+      <data key="key37">0</data>
+      <data key="key38">67</data>
+      <data key="key40">Tarnow</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n68">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">48.7333299999999999992</data>
+      <data key="key21">19.1499999999999999997</data>
+      <data key="key32">0.79590306797822807, 20.455289325490451</data>
+      <data key="key37">0</data>
+      <data key="key38">68</data>
+      <data key="key40">Banska Bystrica</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n69">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">47.98544</data>
+      <data key="key21">18.1619500000000000002</data>
+      <data key="key32">0.88809184812470277, 20.378457910341247</data>
+      <data key="key37">0</data>
+      <data key="key38">69</data>
+      <data key="key40">Nove Zamky</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n70">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0880400000000000002</data>
+      <data key="key21">14.4207600000000000003</data>
+      <data key="key32">0.88086923038768261, 20.639038622382202</data>
+      <data key="key37">0</data>
+      <data key="key38">70</data>
+      <data key="key40">Praha</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n71">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1833299999999999999</data>
+      <data key="key21">20.2000000000000000007</data>
+      <data key="key32">1.0458618398194273, 19.93369104988215</data>
+      <data key="key37">0</data>
+      <data key="key38">71</data>
+      <data key="key40">Szolnok</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n72">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.8400000000000000001</data>
+      <data key="key21">16.8438899999999999995</data>
+      <data key="key32">1.0735964419842297, 20.257854177862235</data>
+      <data key="key37">0</data>
+      <data key="key38">72</data>
+      <data key="key40">Zalaegerszeg</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n73">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.8833300000000000006</data>
+      <data key="key21">17.4333299999999999999</data>
+      <data key="key32">1.1880034823351642, 20.145794412210371</data>
+      <data key="key37">0</data>
+      <data key="key38">73</data>
+      <data key="key40">Tapolca</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n74">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">40.9780100000000000009</data>
+      <data key="key21">27.5085199999999999998</data>
+      <data key="key32">0.19414393453841652, 19.664166516321195</data>
+      <data key="key37">0</data>
+      <data key="key38">74</data>
+      <data key="key40">Tekirdag</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n75">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0796299999999999994</data>
+      <data key="key21">12.3739199999999999998</data>
+      <data key="key32">0.62241649637950369, 20.773920631203833</data>
+      <data key="key37">0</data>
+      <data key="key38">75</data>
+      <data key="key40">Cheb</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n76">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6606999999999999991</data>
+      <data key="key21">14.0322700000000000001</data>
+      <data key="key32">0.72696388258040723, 20.863395816583441</data>
+      <data key="key37">0</data>
+      <data key="key38">76</data>
+      <data key="key40">Usti nad Labem</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n77">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.2092299999999999993</data>
+      <data key="key21">15.8327699999999999998</data>
+      <data key="key32">0.86858514631525841, 20.740965832117386</data>
+      <data key="key37">0</data>
+      <data key="key38">77</data>
+      <data key="key40">Hradec Kralove</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n78">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9833299999999999992</data>
+      <data key="key21">18.9333299999999999999</data>
+      <data key="key32">0.99342238911383096, 19.971990973656901</data>
+      <data key="key37">0</data>
+      <data key="key38">78</data>
+      <data key="key40">Dunaujvaros</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n79">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.4313899999999999992</data>
+      <data key="key21">19.4874999999999999993</data>
+      <data key="key32">0.85327555632481134, 19.957868957232293</data>
+      <data key="key37">0</data>
+      <data key="key38">79</data>
+      <data key="key40">Kiskunhalas</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n80">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2177800000000000014</data>
+      <data key="key21">19.5422200000000000006</data>
+      <data key="key32">0.78809523101353562, 19.963461779572906</data>
+      <data key="key35">Hungary</data>
+      <data key="key37">0</data>
+      <data key="key38">80</data>
+      <data key="key40">Tompa</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n81">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2529999999999999992</data>
+      <data key="key21">20.1482400000000000002</data>
+      <data key="key32">0.80695015990451291, 19.887416661862929</data>
+      <data key="key37">0</data>
+      <data key="key38">81</data>
+      <data key="key40">Szeged</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n82">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.6500000000000000014</data>
+      <data key="key21">20.2666700000000000008</data>
+      <data key="key32">0.88513136531837033, 19.877656257093978</data>
+      <data key="key37">0</data>
+      <data key="key38">82</data>
+      <data key="key40">Szentes</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n83">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">49.2231500000000000011</data>
+      <data key="key21">18.7394099999999999995</data>
+      <data key="key32">0.80199389052301973, 20.41160419678074</data>
+      <data key="key37">0</data>
+      <data key="key38">83</data>
+      <data key="key40">Zilina</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n84">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">48.7166700000000000015</data>
+      <data key="key21">21.25</data>
+      <data key="key32">0.82780498880722675, 20.374076423014465</data>
+      <data key="key37">0</data>
+      <data key="key38">84</data>
+      <data key="key40">Kosice</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n85">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9061799999999999994</data>
+      <data key="key21">19.6912800000000000004</data>
+      <data key="key32">0.95267708633010595, 19.908734548052511</data>
+      <data key="key37">0</data>
+      <data key="key38">85</data>
+      <data key="key40">Kecskemet</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n86">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.6333300000000000006</data>
+      <data key="key21">18.8666699999999999994</data>
+      <data key="key32">0.92758389323262647, 20.009640058834709</data>
+      <data key="key37">0</data>
+      <data key="key38">86</data>
+      <data key="key40">Paks</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n87">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">42.5060599999999999994</data>
+      <data key="key21">27.4678100000000000001</data>
+      <data key="key32">0.32121024686813521, 19.612770455248487</data>
+      <data key="key37">0</data>
+      <data key="key38">87</data>
+      <data key="key40">Burgas</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n88">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.5333299999999999985</data>
+      <data key="key21">21.6333300000000000006</data>
+      <data key="key32">1.0316088574409032, 19.836485358826916</data>
+      <data key="key37">0</data>
+      <data key="key38">88</data>
+      <data key="key40">Debrecen</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n89">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">47.1166699999999999994</data>
+      <data key="key21">21.8166700000000000001</data>
+      <data key="key32">0.97545988045260978, 19.761358026673886</data>
+      <data key="key37">0</data>
+      <data key="key38">89</data>
+      <data key="key40">Bors</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n90">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">41.9402800000000000012</data>
+      <data key="key21">25.56944</data>
+      <data key="key32">0.38782081645411903, 19.745490517851717</data>
+      <data key="key37">0</data>
+      <data key="key38">90</data>
+      <data key="key40">Haskovo</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n91">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0999999999999999986</data>
+      <data key="key21">17.0333300000000000003</data>
+      <data key="key32">1.2791868584770829, 20.835386585322166</data>
+      <data key="key37">0</data>
+      <data key="key38">91</data>
+      <data key="key40">Wroclaw</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n92">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">51.8403400000000000002</data>
+      <data key="key21">16.5749399999999999997</data>
+      <data key="key32">1.3607046603966391, 20.80026287962459</data>
+      <data key="key37">0</data>
+      <data key="key38">92</data>
+      <data key="key40">Leszno</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n93">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.7988600000000000007</data>
+      <data key="key21">18.26388</data>
+      <data key="key32">1.5451988285723293, 20.855506129829287</data>
+      <data key="key37">0</data>
+      <data key="key38">93</data>
+      <data key="key40">Inowroclaw</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n94">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.4166699999999999987</data>
+      <data key="key21">16.9666699999999999997</data>
+      <data key="key32">1.4423810970971898, 20.775878344585418</data>
+      <data key="key37">0</data>
+      <data key="key38">94</data>
+      <data key="key40">Poznan</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n95">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">54.0924199999999999987</data>
+      <data key="key21">18.7778700000000000007</data>
+      <data key="key32">1.6929083043155202, 20.973799483385733</data>
+      <data key="key37">0</data>
+      <data key="key38">95</data>
+      <data key="key40">Tczew</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n96">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.1234999999999999987</data>
+      <data key="key21">18.00762</data>
+      <data key="key32">1.6342720865096825, 20.902323536900969</data>
+      <data key="key37">0</data>
+      <data key="key38">96</data>
+      <data key="key40">Bydgoszcz</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n97">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.6481699999999999996</data>
+      <data key="key21">19.0677999999999999992</data>
+      <data key="key32">1.5154408100653831, 20.966410411508591</data>
+      <data key="key37">0</data>
+      <data key="key38">97</data>
+      <data key="key40">Wloclawek</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n98">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.7833299999999999985</data>
+      <data key="key21">20.4833299999999999992</data>
+      <data key="key32">1.5149791725680688, 21.08808317930341</data>
+      <data key="key37">0</data>
+      <data key="key38">98</data>
+      <data key="key40">Olsztyn</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n99">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.2233799999999999987</data>
+      <data key="key21">18.2512099999999999993</data>
+      <data key="key32">1.4467518841760747, 20.875089856491829</data>
+      <data key="key37">0</data>
+      <data key="key38">99</data>
+      <data key="key40">Konin</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n100">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.0137499999999999983</data>
+      <data key="key21">18.5981399999999999998</data>
+      <data key="key32">1.5713897482193677, 20.941553127720933</data>
+      <data key="key37">0</data>
+      <data key="key38">100</data>
+      <data key="key40">Torun</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n101">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">51.25</data>
+      <data key="key21">22.5666700000000000001</data>
+      <data key="key32">1.3164191863425412, 21.204563377297841</data>
+      <data key="key37">0</data>
+      <data key="key38">101</data>
+      <data key="key40">Lublin</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n102">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0413199999999999991</data>
+      <data key="key21">21.9990100000000000004</data>
+      <data key="key32">1.2222870656295233, 21.244143495983465</data>
+      <data key="key37">0</data>
+      <data key="key38">102</data>
+      <data key="key40">Rzeszow</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n103">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.2306400000000000013</data>
+      <data key="key21">19.3640900000000000004</data>
+      <data key="key32">1.449816597191947, 20.976855197229181</data>
+      <data key="key37">0</data>
+      <data key="key38">103</data>
+      <data key="key40">Kutno</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n104">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.1333300000000000006</data>
+      <data key="key21">23.1499999999999999997</data>
+      <data key="key32">1.4068207459659801, 21.20281737317524</data>
+      <data key="key37">0</data>
+      <data key="key38">104</data>
+      <data key="key40">Bialystok</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n105">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4025299999999999989</data>
+      <data key="key21">21.14714</data>
+      <data key="key32">1.3114145263160979, 21.132516613461814</data>
+      <data key="key37">0</data>
+      <data key="key38">105</data>
+      <data key="key40">Radom</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n106">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">51.75</data>
+      <data key="key21">19.4666699999999999997</data>
+      <data key="key32">1.4498485529753391, 21.062494544810299</data>
+      <data key="key37">0</data>
+      <data key="key38">106</data>
+      <data key="key40">Lodz</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n107">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0833300000000000013</data>
+      <data key="key21">19.9166700000000000004</data>
+      <data key="key32">1.1563065454480157, 21.057793155698675</data>
+      <data key="key37">0</data>
+      <data key="key38">107</data>
+      <data key="key40">Krakow</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n108">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8703299999999999995</data>
+      <data key="key21">20.6275199999999999997</data>
+      <data key="key32">1.228027546434469, 21.107902584165441</data>
+      <data key="key37">0</data>
+      <data key="key38">108</data>
+      <data key="key40">Kielce</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n109">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6666699999999999987</data>
+      <data key="key21">17.9500000000000000007</data>
+      <data key="key32">1.1993583717034602, 20.877621514409693</data>
+      <data key="key37">0</data>
+      <data key="key38">109</data>
+      <data key="key40">Opole</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n110">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">50.2666700000000000008</data>
+      <data key="key21">19.0166700000000000008</data>
+      <data key="key32">1.1193666726263616, 20.926510797818342</data>
+      <data key="key37">0</data>
+      <data key="key38">110</data>
+      <data key="key40">Katowice</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n111">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">41.7666700000000000008</data>
+      <data key="key21">26.2000000000000000007</data>
+      <data key="key32">0.30528426670361086, 19.713187966576736</data>
+      <data key="key37">0</data>
+      <data key="key38">111</data>
+      <data key="key40">Svilengrad</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n112">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">41.6771900000000000003</data>
+      <data key="key21">26.5559700000000000007</data>
+      <data key="key32">0.24372882892079586, 19.651112523478151</data>
+      <data key="key37">0</data>
+      <data key="key38">112</data>
+      <data key="key40">Edirne</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n113">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.5955200000000000007</data>
+      <data key="key21">17.2517499999999999998</data>
+      <data key="key32">0.91821066269152407, 20.664084353016641</data>
+      <data key="key37">0</data>
+      <data key="key38">113</data>
+      <data key="key40">Olomouc</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n114">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8489300000000000006</data>
+      <data key="key21">17.1324400000000000004</data>
+      <data key="key32">0.9246345307982462, 20.535402888464894</data>
+      <data key="key37">0</data>
+      <data key="key38">114</data>
+      <data key="key40">Hodonin</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n115">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.2166700000000000015</data>
+      <data key="key21">17.6666700000000000004</data>
+      <data key="key32">0.96217347804648079, 20.634076108567879</data>
+      <data key="key37">0</data>
+      <data key="key38">115</data>
+      <data key="key40">Zlin</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n116">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8346499999999999996</data>
+      <data key="key21">18.2820400000000000008</data>
+      <data key="key32">0.95494624155984442, 20.737061606564318</data>
+      <data key="key37">0</data>
+      <data key="key38">116</data>
+      <data key="key40">Ostrava</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n117">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">43.2166700000000000015</data>
+      <data key="key21">27.9166700000000000004</data>
+      <data key="key32">0.38955296892526609, 19.5565915204823</data>
+      <data key="key37">0</data>
+      <data key="key38">117</data>
+      <data key="key40">Varna</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n118">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">48.9744699999999999994</data>
+      <data key="key21">14.4743400000000000004</data>
+      <data key="key32">0.81131532895292013, 20.629103872284727</data>
+      <data key="key37">0</data>
+      <data key="key38">118</data>
+      <data key="key40">Ceske Budejovice</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n119">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.3961000000000000007</data>
+      <data key="key21">15.5912399999999999999</data>
+      <data key="key32">0.80343163291972275, 20.57559372486719</data>
+      <data key="key37">0</data>
+      <data key="key38">119</data>
+      <data key="key40">Jihlava</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n120">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.1952200000000000012</data>
+      <data key="key21">16.6079600000000000004</data>
+      <data key="key32">0.87848369810833749, 20.563643767174565</data>
+      <data key="key37">0</data>
+      <data key="key38">120</data>
+      <data key="key40">Brno</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n121">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8166700000000000001</data>
+      <data key="key21">19.0333300000000000003</data>
+      <data key="key32">1.025125250455152, 20.839460181417625</data>
+      <data key="key37">0</data>
+      <data key="key38">121</data>
+      <data key="key40">Bielsko</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n122">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.5030099999999999988</data>
+      <data key="key21">13.6361700000000000002</data>
+      <data key="key32">0.65292941094869228, 20.881817795591839</data>
+      <data key="key37">0</data>
+      <data key="key38">122</data>
+      <data key="key40">Most</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n123">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.0510800000000000004</data>
+      <data key="key21">14.50513</data>
+      <data key="key32">0.98177460036032804, 20.289863816393016</data>
+      <data key="key37">0</data>
+      <data key="key38">123</data>
+      <data key="key40">Ljubljana</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n124">
+      <data key="key3">Croatia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.8144400000000000008</data>
+      <data key="key21">15.9779800000000000004</data>
+      <data key="key32">0.88791176054332199, 20.246203947888336</data>
+      <data key="key37">0</data>
+      <data key="key38">124</data>
+      <data key="key40">Zagreb</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n125">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1166699999999999994</data>
+      <data key="key21">8.6833299999999999999</data>
+      <data key="key32">1.0214533484586723, 20.570614710230824</data>
+      <data key="key37">0</data>
+      <data key="key38">125</data>
+      <data key="key40">Frankfurt am Main</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n126">
+      <data key="key3">Russia</data>
+      <data key="key15">1</data>
+      <data key="key18">55.7522199999999999998</data>
+      <data key="key21">37.6155599999999999995</data>
+      <data key="key32">0.99001073164964282, 21.273501692917542</data>
+      <data key="key37">0</data>
+      <data key="key38">126</data>
+      <data key="key40">Moskva</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n127">
+      <data key="key3">Russia</data>
+      <data key="key15">1</data>
+      <data key="key18">59.8944399999999999989</data>
+      <data key="key21">30.2641700000000000003</data>
+      <data key="key32">1.0053505065282788, 21.176244065699986</data>
+      <data key="key37">0</data>
+      <data key="key38">127</data>
+      <data key="key40">Sankt Peterburg</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n128">
+      <data key="key3">Sweden</data>
+      <data key="key15">1</data>
+      <data key="key18">59.3325800000000000006</data>
+      <data key="key21">18.0648999999999999994</data>
+      <data key="key32">1.0985054142203856, 20.974884225030813</data>
+      <data key="key37">0</data>
+      <data key="key38">128</data>
+      <data key="key40">Stockholm</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n129">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.4980100000000000013</data>
+      <data key="key21">19.0399099999999999993</data>
+      <data key="key32">1.01015942325851, 20.041847186061286</data>
+      <data key="key37">0</data>
+      <data key="key38">129</data>
+      <data key="key40">Budapest</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n130">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">48.14816</data>
+      <data key="key21">17.1067399999999999998</data>
+      <data key="key32">0.88248991716715852, 20.437243697504218</data>
+      <data key="key37">0</data>
+      <data key="key38">130</data>
+      <data key="key40">Bratislava</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n131">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">48.2084900000000000017</data>
+      <data key="key21">16.3720799999999999993</data>
+      <data key="key32">0.96604258751904104, 20.400654778993079</data>
+      <data key="key37">0</data>
+      <data key="key38">131</data>
+      <data key="key40">Wien</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n132">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">52.5243699999999999993</data>
+      <data key="key21">13.41053</data>
+      <data key="key32">1.1712190981957629, 20.625899138725615</data>
+      <data key="key37">0</data>
+      <data key="key38">132</data>
+      <data key="key40">Berlin</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n133">
+      <data key="key3">Kosovo</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6727199999999999985</data>
+      <data key="key21">21.1668800000000000006</data>
+      <data key="key32">0.68842275257336127, 20.015134064188484</data>
+      <data key="key37">0</data>
+      <data key="key38">133</data>
+      <data key="key40">Pristina</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n134">
+      <data key="key3">Montenegro</data>
+      <data key="key15">1</data>
+      <data key="key18">42.4411099999999999986</data>
+      <data key="key21">19.2636100000000000006</data>
+      <data key="key32">0.74469631551807358, 20.037298799276353</data>
+      <data key="key37">0</data>
+      <data key="key38">134</data>
+      <data key="key40">Podgorica</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n135">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">39.6491700000000000005</data>
+      <data key="key21">27.8861100000000000001</data>
+      <data key="key32">0.14365613521506571, 19.626504183131161</data>
+      <data key="key37">0</data>
+      <data key="key38">135</data>
+      <data key="key40">Balikesir</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n136">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4127299999999999996</data>
+      <data key="key21">27.1383799999999999995</data>
+      <data key="key32">0.069591519226933685, 19.612111499646904</data>
+      <data key="key37">0</data>
+      <data key="key38">136</data>
+      <data key="key40">Izmir</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n137">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6402799999999999984</data>
+      <data key="key21">22.9438899999999999998</data>
+      <data key="key32">0.420681246853427, 19.905011688671603</data>
+      <data key="key37">0</data>
+      <data key="key38">137</data>
+      <data key="key40">Thessaloniki</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n138">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">41.4000000000000000014</data>
+      <data key="key21">23.2166699999999999997</data>
+      <data key="key32">0.44093311553242753, 19.833943822981706</data>
+      <data key="key37">0</data>
+      <data key="key38">138</data>
+      <data key="key40">Petrich</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n139">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">43.4166699999999999987</data>
+      <data key="key21">24.6166699999999999994</data>
+      <data key="key32">0.5680374643973205, 19.72323169893162</data>
+      <data key="key37">0</data>
+      <data key="key38">139</data>
+      <data key="key40">Pleven</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n140">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">42.1500000000000000014</data>
+      <data key="key21">24.75</data>
+      <data key="key32">0.48250159834698747, 19.762523328888836</data>
+      <data key="key37">0</data>
+      <data key="key38">140</data>
+      <data key="key40">Plovdiv</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n141">
+      <data key="key3">Bosnia and Herzegovina</data>
+      <data key="key15">1</data>
+      <data key="key18">43.8486399999999999985</data>
+      <data key="key21">18.3564399999999999999</data>
+      <data key="key32">0.77860811093010263, 20.093406367018968</data>
+      <data key="key37">0</data>
+      <data key="key38">141</data>
+      <data key="key40">Sarajevo</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n142">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4322499999999999988</data>
+      <data key="key21">26.1062600000000000003</data>
+      <data key="key32">0.54163565073821263, 19.490470455890932</data>
+      <data key="key37">0</data>
+      <data key="key38">142</data>
+      <data key="key40">Bucuresti</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n143">
+      <data key="key3">Moldova</data>
+      <data key="key15">1</data>
+      <data key="key18">47.005559999999999999</data>
+      <data key="key21">28.8575000000000000001</data>
+      <data key="key32">0.36542377064183706, 19.228307912512467</data>
+      <data key="key37">0</data>
+      <data key="key38">143</data>
+      <data key="key40">Chisinau</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n144">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6975100000000000015</data>
+      <data key="key21">23.3241500000000000006</data>
+      <data key="key32">0.61552887804711931, 19.83533469146181</data>
+      <data key="key37">0</data>
+      <data key="key38">144</data>
+      <data key="key40">Sofia</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n145">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0138400000000000016</data>
+      <data key="key21">28.9496600000000000007</data>
+      <data key="key32">0.22186061821411246, 19.600497687235073</data>
+      <data key="key37">0</data>
+      <data key="key38">145</data>
+      <data key="key40">Istanbul</data>
+      <data key="key44">GTS major Hubs and Colocation Centers</data>
+    </node>
+    <node id="n146">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0138400000000000016</data>
+      <data key="key21">28.9496600000000000007</data>
+      <data key="key32">0.13674688223580631, 19.567826993571252</data>
+      <data key="key37">0</data>
+      <data key="key38">146</data>
+      <data key="key40">Istanbul</data>
+      <data key="key44">GTS major Pops</data>
+    </node>
+    <node id="n147">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">39.9198700000000000002</data>
+      <data key="key21">32.8542700000000000016</data>
+      <data key="key32">0.055807931673375111, 19.550208035356953</data>
+      <data key="key37">0</data>
+      <data key="key38">147</data>
+      <data key="key40">Ankara</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+    <node id="n148">
+      <data key="key3">Macedonia</data>
+      <data key="key15">1</data>
+      <data key="key18">42</data>
+      <data key="key21">21.4333299999999999999</data>
+      <data key="key32">0.61397518185559941, 19.939648779731606</data>
+      <data key="key37">0</data>
+      <data key="key38">148</data>
+      <data key="key40">Skopje</data>
+      <data key="key44">Partnet Hubs</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n14">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n17">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n128">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n3">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n3" target="n125">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n16">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n5">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n5" target="n6">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n6" target="n7">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n7" target="n8">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n8" target="n9">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n9" target="n14">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n10" target="n16">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n10" target="n46">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n11" target="n98">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n11" target="n100">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n11" target="n95">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n12" target="n117">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n13" target="n147">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n14" target="n94">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n15" target="n131">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n15" target="n125">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n16" target="n95">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n17" target="n132">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n17" target="n94">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n18" target="n41">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n18" target="n103">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e27" source="n19" target="n59">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e28" source="n19" target="n142">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e29" source="n20" target="n144">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e30" source="n20" target="n133">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e31" source="n20" target="n134">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e32" source="n20" target="n141">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e33" source="n20" target="n80">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e34" source="n20" target="n81">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e35" source="n21" target="n26">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e36" source="n21" target="n23">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e37" source="n22" target="n142">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e38" source="n22" target="n23">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e39" source="n24" target="n81">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e40" source="n24" target="n27">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e41" source="n24" target="n25">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e42" source="n25" target="n89">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e43" source="n25" target="n50">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e44" source="n26" target="n27">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e45" source="n27" target="n144">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e46" source="n28" target="n54">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e47" source="n28" target="n142">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e48" source="n29" target="n51">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e49" source="n29" target="n139">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e50" source="n29" target="n142">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e51" source="n30" target="n126">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e52" source="n31" target="n72">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e53" source="n31" target="n62">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e54" source="n32" target="n129">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e55" source="n32" target="n35">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e56" source="n33" target="n129">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e57" source="n33" target="n61">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e58" source="n34" target="n72">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e59" source="n34" target="n73">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e60" source="n35" target="n73">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e61" source="n36" target="n75">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e62" source="n36" target="n39">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e63" source="n37" target="n122">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e64" source="n37" target="n75">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e65" source="n38" target="n76">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e66" source="n38" target="n77">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e67" source="n39" target="n70">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e68" source="n40" target="n64">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e69" source="n40" target="n65">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e70" source="n40" target="n66">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e71" source="n40" target="n63">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e72" source="n41" target="n98">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e73" source="n41" target="n101">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e74" source="n41" target="n104">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e75" source="n41" target="n105">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e76" source="n41" target="n106">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e77" source="n41" target="n44">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e78" source="n41" target="n47">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e79" source="n42" target="n43">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e80" source="n42" target="n148">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e81" source="n43" target="n137">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e82" source="n44" target="n48">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e83" source="n44" target="n45">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e84" source="n45" target="n48">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e85" source="n45" target="n128">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e86" source="n49" target="n128">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e87" source="n49" target="n127">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e88" source="n50" target="n57">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e89" source="n51" target="n87">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e90" source="n51" target="n140">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e91" source="n51" target="n117">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e92" source="n52" target="n55">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e93" source="n52" target="n53">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e94" source="n52" target="n143">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e95" source="n53" target="n58">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e96" source="n54" target="n55">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e97" source="n56" target="n57">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e98" source="n56" target="n59">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e99" source="n58" target="n142">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e100" source="n58" target="n117">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e101" source="n60" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e102" source="n61" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e103" source="n61" target="n62">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e104" source="n62" target="n131">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e105" source="n64" target="n65">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e106" source="n64" target="n126">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e107" source="n66" target="n102">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e108" source="n67" target="n107">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e109" source="n67" target="n102">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e110" source="n68" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e111" source="n68" target="n83">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e112" source="n69" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e113" source="n70" target="n120">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e114" source="n70" target="n125">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e115" source="n70" target="n77">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e116" source="n70" target="n118">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e117" source="n71" target="n88">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e118" source="n71" target="n129">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e119" source="n72" target="n123">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e120" source="n74" target="n112">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e121" source="n74" target="n145">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e122" source="n76" target="n122">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e123" source="n77" target="n116">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e124" source="n78" target="n129">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e125" source="n78" target="n85">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e126" source="n79" target="n80">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e127" source="n79" target="n81">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e128" source="n79" target="n86">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e129" source="n81" target="n82">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e130" source="n82" target="n85">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e131" source="n83" target="n84">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e132" source="n83" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e133" source="n84" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e134" source="n86" target="n129">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e135" source="n87" target="n112">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e136" source="n87" target="n145">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e137" source="n87" target="n117">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e138" source="n88" target="n89">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e139" source="n90" target="n140">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e140" source="n90" target="n111">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e141" source="n91" target="n92">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e142" source="n91" target="n109">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e143" source="n92" target="n94">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e144" source="n93" target="n96">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e145" source="n93" target="n100">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e146" source="n93" target="n94">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e147" source="n94" target="n99">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e148" source="n95" target="n96">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e149" source="n97" target="n100">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e150" source="n97" target="n103">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e151" source="n99" target="n103">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e152" source="n101" target="n102">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e153" source="n103" target="n106">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e154" source="n105" target="n108">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e155" source="n107" target="n108">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e156" source="n107" target="n110">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e157" source="n109" target="n110">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e158" source="n110" target="n121">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e159" source="n111" target="n112">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e160" source="n112" target="n145">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e161" source="n112" target="n135">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e162" source="n113" target="n120">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e163" source="n113" target="n116">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e164" source="n114" target="n120">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e165" source="n114" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e166" source="n114" target="n115">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e167" source="n115" target="n116">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e168" source="n116" target="n121">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e169" source="n118" target="n119">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e170" source="n119" target="n120">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e171" source="n120" target="n130">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e172" source="n123" target="n131">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e173" source="n123" target="n124">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e174" source="n124" target="n131">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e175" source="n124" target="n141">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e176" source="n125" target="n132">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e177" source="n125" target="n131">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e178" source="n126" target="n127">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e179" source="n130" target="n131">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e180" source="n133" target="n148">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e181" source="n133" target="n141">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e182" source="n134" target="n141">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e183" source="n135" target="n136">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e184" source="n135" target="n146">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e185" source="n136" target="n147">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e186" source="n137" target="n138">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e187" source="n138" target="n140">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e188" source="n139" target="n144">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e189" source="n140" target="n144">
+      <data key="key20">GTS CE own Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e190" source="n144" target="n148">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e191" source="n145" target="n146">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e192" source="n146" target="n147">
+      <data key="key20">GTS PCE Partner&apos;s Network</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>
