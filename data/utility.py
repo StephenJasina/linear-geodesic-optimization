@@ -1,5 +1,4 @@
 import numpy as np
-from math import radians, sin, cos, sqrt, atan2, acos
 
 def get_sphere_point(latlong):
     """Convert spherical coordinates to Cartesian coordinates."""
@@ -33,6 +32,10 @@ def get_GCD_latency(latlong_a, latlong_b):
     # Convert spherical coordinates to Cartesian coordinates
     p_a = get_sphere_point(latlong_a)
     p_b = get_sphere_point(latlong_b)
+
+    # Special case for slightly improved numerical stability
+    if np.all(p_a == p_b):
+        return 0.
 
     # Compute the latency, which is the travel time at the rate of two
     # thirds the speed of light
