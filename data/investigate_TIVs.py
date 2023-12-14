@@ -31,17 +31,41 @@ def compute_triangles(graph: nx.Graph, weight: str = 'rtt') \
 
     return triangles
 
+def get_long_edges(
+    graph: nx.Graph,
+    triangles: typing.Dict[typing.Tuple[str, str, str],
+                           typing.Tuple[float, float, float]]
+) -> typing.Set[typing.Tuple[str, str]]:
+    long_edges = set()
+    for u, v, w in tivs:
+        weight_uv = graph.edges[u,v]['rtt']
+        weight_uw = graph.edges[u,w]['rtt']
+        weight_vw = graph.edges[v,w]['rtt']
+
+        if weight_uv > weight_uw:
+            if weight_uv > weight_vw:
+                long_edges.add((u, v))
+            else:
+                long_edges.add((v, w))
+        else:
+            if weight_uw > weight_vw:
+                long_edges.add((u, w))
+            else:
+                long_edges.add((v, w))
+    return long_edges
+
+
 def compute_goodnesses(
     triangles: typing.Dict[typing.Tuple[str, str, str],
                            typing.Tuple[float, float, float]],
-    strategy: str = 'r'
+    use_r: bool = True
 ) -> typing.Dict[typing.Tuple[str, str, str], float]:
     goodnesses: typing.Dict[typing.Tuple[str, str, str], float] = {}
     for triangle, (weight_uv, weight_uw, weight_vw) in triangles.items():
         weight_max = max(weight_uv, weight_uw, weight_vw)
         weight_sum = weight_uv + weight_uw + weight_vw
         goodness = weight_max / (weight_sum - weight_max)
-        if strategy == 'r':
+        if use_r:
             goodness *= (1 + 2 * weight_max - weight_sum)
         goodnesses[triangle] = goodness
 
@@ -52,6 +76,7 @@ def plot_goodnesses(goodnesses):
     ax_1, ax_2 = fig.subplots(1, 2, sharey=True)
     if goodnesses:
         ax_1.ecdf(goodnesses.values())
+    ax_1.plot([1, 1], [0, 1], 'r-.')
     ax_1.set_title('Goodness (All Triangles)')
     ax_1.set_xlabel('Goodness (lower = better)')
     ax_1.set_ylabel('CDF')
@@ -126,13 +151,15 @@ if __name__ == '__main__':
     )
 
     triangles = compute_triangles(graph)
-    goodnesses = compute_goodnesses(triangles)
+    goodnesses = compute_goodnesses(triangles, use_r=False)
 
     tivs = [
         triangle
         for triangle, goodness in goodnesses.items()
         if goodness > 1.
     ]
+
+    long_edges = get_long_edges(graph, tivs)
 
     tiv_edge_sets = collections.defaultdict(set)
     for i, (u, v, w) in enumerate(tivs):
@@ -149,10 +176,11 @@ if __name__ == '__main__':
     tiv_vertex_set_cover = compute_greedy_set_cover(tiv_vertex_sets)
 
     print(f'Proportion of TIVs (triangles): {(len(tivs) / len(goodnesses)):.4f}')
+    print(f'Proportion of long edges: {len(long_edges) / len(graph.edges):.4f}')
     print('Approximate proportion of TIVs (edges): '
-          + f'{(len(tiv_edge_set_cover) / len(graph.edges)):.4f}')
+          + f'{len(tiv_edge_set_cover) / len(graph.edges):.4f}')
     print('Approximate proportion of TIVs (vertices): '
-          + f'{(len(tiv_vertex_set_cover) / len(graph.nodes)):.4f}')
+          + f'{len(tiv_vertex_set_cover) / len(graph.nodes):.4f}')
     print(f'Worst goodness: {max(goodnesses.values()):.4f}')
 
     plot_goodnesses(goodnesses)
