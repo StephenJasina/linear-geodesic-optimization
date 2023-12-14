@@ -1,153 +1,85 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key id="d10" for="edge" attr.name="ricciCurvature" attr.type="double" />
-  <key id="d9" for="edge" attr.name="rtt" attr.type="double" />
-  <key id="d8" for="node" attr.name="ricciCurvature" attr.type="double" />
-  <key id="d7" for="node" attr.name="long" attr.type="double" />
-  <key id="d6" for="node" attr.name="lat" attr.type="double" />
-  <key id="d5" for="node" attr.name="country" attr.type="string" />
-  <key id="d4" for="node" attr.name="city" attr.type="string" />
-  <key id="d3" for="graph" attr.name="long_max" attr.type="double" />
-  <key id="d2" for="graph" attr.name="long_min" attr.type="double" />
-  <key id="d1" for="graph" attr.name="lat_max" attr.type="double" />
-  <key id="d0" for="graph" attr.name="lat_min" attr.type="double" />
+  <key id="d6" for="edge" attr.name="ricciCurvature" attr.type="double" />
+  <key id="d5" for="edge" attr.name="rtt" attr.type="float" />
+  <key id="d4" for="node" attr.name="ricciCurvature" attr.type="double" />
+  <key id="d3" for="node" attr.name="long" attr.type="double" />
+  <key id="d2" for="node" attr.name="lat" attr.type="double" />
+  <key id="d1" for="node" attr.name="country" attr.type="string" />
+  <key id="d0" for="node" attr.name="city" attr.type="string" />
   <graph edgedefault="undirected">
     <node id="0">
-      <data key="d4">Trondheim</data>
-      <data key="d5">Norway</data>
-      <data key="d6">63.43049</data>
-      <data key="d7">10.39506</data>
-      <data key="d8">0.8333333333333334</data>
+      <data key="d0">Trondheim</data>
+      <data key="d1">Norway</data>
+      <data key="d2">63.43049</data>
+      <data key="d3">10.39506</data>
+      <data key="d4">0.0</data>
     </node>
     <node id="1">
-      <data key="d4">Stockholm</data>
-      <data key="d5">Sweden</data>
-      <data key="d6">59.33258</data>
-      <data key="d7">18.0649</data>
-      <data key="d8">0.8333333333333334</data>
+      <data key="d0">Stockholm</data>
+      <data key="d1">Sweden</data>
+      <data key="d2">59.33258</data>
+      <data key="d3">18.0649</data>
+      <data key="d4">-0.12000000000000002</data>
     </node>
     <node id="2">
-      <data key="d4">Helsinki</data>
-      <data key="d5">Finland</data>
-      <data key="d6">60.16952</data>
-      <data key="d7">24.93545</data>
-      <data key="d8">0.8333333333333334</data>
+      <data key="d0">Helsinki</data>
+      <data key="d1">Finland</data>
+      <data key="d2">60.16952</data>
+      <data key="d3">24.93545</data>
+      <data key="d4">0.0</data>
     </node>
     <node id="3">
-      <data key="d4">Copenhagen</data>
-      <data key="d5">Denmark</data>
-      <data key="d6">55.67594</data>
-      <data key="d7">12.56553</data>
-      <data key="d8">0.8333333333333334</data>
+      <data key="d0">Copenhagen</data>
+      <data key="d1">Denmark</data>
+      <data key="d2">55.67594</data>
+      <data key="d3">12.56553</data>
+      <data key="d4">-0.30000000000000004</data>
     </node>
     <node id="4">
-      <data key="d4">Reykjavik</data>
-      <data key="d5">Iceland</data>
-      <data key="d6">64.13548</data>
-      <data key="d7">-21.89541</data>
-      <data key="d8">0.8333333333333334</data>
+      <data key="d0">Reykjavik</data>
+      <data key="d1">Iceland</data>
+      <data key="d2">64.13548</data>
+      <data key="d3">-21.89541</data>
+      <data key="d4">0.0</data>
     </node>
     <node id="5">
-      <data key="d4">EUROPE</data>
-      <data key="d5" />
-      <data key="d6">0.0</data>
-      <data key="d7">0.0</data>
-      <data key="d8">0.8333333333333334</data>
+      <data key="d0">EUROPE</data>
+      <data key="d1" />
+      <data key="d2">0.0</data>
+      <data key="d3">0.0</data>
+      <data key="d4">0.0</data>
     </node>
     <node id="6">
-      <data key="d4">USA</data>
-      <data key="d5" />
-      <data key="d6">0.0</data>
-      <data key="d7">0.0</data>
-      <data key="d8">0.8333333333333334</data>
+      <data key="d0">USA</data>
+      <data key="d1" />
+      <data key="d2">0.0</data>
+      <data key="d3">0.0</data>
+      <data key="d4">0.0</data>
     </node>
     <edge source="0" target="1">
-      <data key="d9">6.122699543164966</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="0" target="2">
-      <data key="d9">8.447317382227086</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="0" target="3">
-      <data key="d9">8.72347591719247</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="0" target="4">
-      <data key="d9">15.739275518825487</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="0" target="5">
-      <data key="d9">71.18220117081961</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="0" target="6">
-      <data key="d9">71.18220117081961</data>
-      <data key="d10">0.8333333333333334</data>
+      <data key="d5">6.122699543164966</data>
+      <data key="d6">0.0</data>
     </edge>
     <edge source="1" target="2">
-      <data key="d9">3.964660907141576</data>
-      <data key="d10">0.8333333333333334</data>
+      <data key="d5">3.964660907141576</data>
+      <data key="d6">0.0</data>
     </edge>
     <edge source="1" target="3">
-      <data key="d9">5.233295930816202</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="1" target="4">
-      <data key="d9">21.358184515645092</data>
-      <data key="d10">0.8333333333333334</data>
+      <data key="d5">5.233295930816202</data>
+      <data key="d6">-0.6000000000000001</data>
     </edge>
     <edge source="1" target="5">
-      <data key="d9">67.94448304570435</data>
-      <data key="d10">0.8333333333333334</data>
+      <data key="d5">67.94448304570435</data>
+      <data key="d6">0.0</data>
     </edge>
     <edge source="1" target="6">
-      <data key="d9">67.94448304570435</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="2" target="3">
-      <data key="d9">8.844317039387084</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="2" target="4">
-      <data key="d9">24.18459616220144</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="2" target="5">
-      <data key="d9">70.38912910057736</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="2" target="6">
-      <data key="d9">70.38912910057736</data>
-      <data key="d10">0.8333333333333334</data>
+      <data key="d5">67.94448304570435</data>
+      <data key="d6">0.0</data>
     </edge>
     <edge source="3" target="4">
-      <data key="d9">21.08014372085529</data>
-      <data key="d10">0.8333333333333334</data>
+      <data key="d5">21.08014372085529</data>
+      <data key="d6">0.0</data>
     </edge>
-    <edge source="3" target="5">
-      <data key="d9">63.05915213258406</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="3" target="6">
-      <data key="d9">63.05915213258406</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="4" target="5">
-      <data key="d9">73.65859822203562</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="4" target="6">
-      <data key="d9">73.65859822203562</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <edge source="5" target="6">
-      <data key="d9">0.0</data>
-      <data key="d10">0.8333333333333334</data>
-    </edge>
-    <data key="d0">0.0</data>
-    <data key="d1">64.13548</data>
-    <data key="d2">-21.89541</data>
-    <data key="d3">24.93545</data>
   </graph>
 </graphml>
