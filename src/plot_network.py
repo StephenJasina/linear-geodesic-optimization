@@ -16,6 +16,7 @@ if __name__ == '__main__':
     output_filename = args.output_filename
 
     network_plot = get_network_plot(nx.graphml.read_graphml(input_filename))
-    if output_filename is not None:
-        network_plot.savefig('network.png', dpi=1000, bbox_inches='tight')
-    plt.show()
+    if output_filename is None:
+        plt.show()
+    else:
+        network_plot.savefig(output_filename, dpi=1000, bbox_inches='tight')
