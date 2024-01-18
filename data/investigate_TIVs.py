@@ -37,7 +37,7 @@ def get_long_edges(
                            typing.Tuple[float, float, float]]
 ) -> typing.Set[typing.Tuple[str, str]]:
     long_edges = set()
-    for u, v, w in tivs:
+    for u, v, w in triangles:
         weight_uv = graph.edges[u,v]['rtt']
         weight_uw = graph.edges[u,w]['rtt']
         weight_vw = graph.edges[v,w]['rtt']
@@ -58,7 +58,7 @@ def get_long_edges(
 def compute_goodnesses(
     triangles: typing.Dict[typing.Tuple[str, str, str],
                            typing.Tuple[float, float, float]],
-    use_r: bool = True
+    use_r: bool = False
 ) -> typing.Dict[typing.Tuple[str, str, str], float]:
     goodnesses: typing.Dict[typing.Tuple[str, str, str], float] = {}
     for triangle, (weight_uv, weight_uw, weight_vw) in triangles.items():
@@ -184,3 +184,37 @@ if __name__ == '__main__':
     print(f'Worst goodness: {max(goodnesses.values()):.4f}')
 
     plot_goodnesses(goodnesses)
+
+    thresholds = list(sorted(
+        threshold
+        for _, _, d in graph.edges(data=True)
+        for threshold in (d['rtt'] - d['gcl'],)
+    ))
+    edge_counts = []
+    long_edge_counts = []
+    for i in range(0, len(thresholds), len(thresholds) // 100):
+        threshold = thresholds[i]
+        graph = csv_to_graphml.get_graph(
+            probes_filename, latencies_filename, threshold, 500000, 2
+        )
+
+        triangles = compute_triangles(graph)
+        goodnesses = compute_goodnesses(triangles, use_r=False)
+
+        tivs = [
+            triangle
+            for triangle, goodness in goodnesses.items()
+            if goodness > 1.05
+        ]
+
+        long_edges = get_long_edges(graph, tivs)
+
+        edge_counts.append(len(graph.edges))
+        long_edge_counts.append(len(long_edges))
+        print(len(graph.edges), len(long_edges), len(graph.edges) / max(1, len(long_edges)))
+
+    plt.plot(edge_counts, long_edge_counts)
+    plt.xlabel('Number of Total Edges')
+    plt.ylabel('Number of Violating Edges')
+    plt.title('Proportion of Violating Edges across Thresholds')
+    plt.show()
