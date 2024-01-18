@@ -8,7 +8,9 @@ import networkx as nx
 import numpy as np
 
 import cluster_probes
+import investigate_TIVs
 import utility
+
 
 def minimize_id_removal(rtt_violation_list):
     """Approximately solve the min vertex cover problem."""
@@ -36,21 +38,7 @@ def minimize_id_removal(rtt_violation_list):
 
     return ids_to_remove
 
-def get_graph(
-    probes_filename, latencies_filename, epsilon=np.inf,
-    clustering_distance=None, clustering_min_samples=None
-):
-    """
-    Generate a NetworkX graph representing a delay space.
-
-    As input, take two CSV files (for nodes and edges), and a special
-    cutoff parameter `epsilon` that determines when an edge should be
-    included in the graph.
-
-    Additionally take the two parameters for the DBSCAN algorithm. The
-    first parameter is treated in meters (think roughly how closely two
-    cities should be in order to be in the same cluster).
-    """
+def get_base_graph(probes_filename, latencies_filename):
     # Create the graph
     graph = nx.Graph()
 
@@ -99,39 +87,92 @@ def get_graph(
             rtt = float(rtt)
 
             # Check how often the difference is larger than 0
-            gcd_latency = utility.get_GCD_latency(
+            gcl = utility.get_GCL(
                 [lat_source, long_source],
                 [lat_target, long_target]
             )
-            if rtt - gcd_latency < 0:
+            if rtt - gcl < 0:
                 rtt_violation_list.append((id_source, id_target))
 
-            # Only add edges satisfying the cutoff requirement
-            if (
-                rtt - utility.get_GCD_latency(
-                    [lat_source, long_source],
-                    [lat_target, long_target]
+            # If there is multiple sets of RTT data for a single
+            # edge, only pay attention to the minimal one
+            if ((id_source, id_target) not in graph.edges
+                    or graph.edges[id_source,id_target]['rtt'] > rtt):
+                graph.add_edge(
+                    id_source, id_target,
+                    weight=1., rtt=rtt, gcl=gcl
                 )
-            ) < epsilon:
-                # If there is multiple sets of RTT data for a single
-                # edge, only pay attention to the minimal one
-                if ((id_source, id_target) not in graph.edges
-                        or graph.edges[id_source,id_target]['rtt'] > rtt):
-                    graph.add_edge(id_source, id_target, weight=1., rtt=rtt)
 
     # Delete nodes with inconsistent geolocation
     for node in minimize_id_removal(rtt_violation_list):
         graph.remove_node(node)
 
-    # Simplify the graph by clustering
-    if clustering_distance is not None and clustering_min_samples is not None:
-        circumference_earth = 40075016.68557849
-        graph = cluster_probes.cluster_graph(graph,
-                              clustering_distance / circumference_earth,
-                              clustering_min_samples)
+    return graph
 
-    # Compute the curvatures. This adds attributes called
-    # `ricciCurvature` to the vertices and edges of the graph
+def threshold_graph(graph, epsilon=np.inf):
+    edges_to_delete = []
+    for u, v, d in graph.edges(data=True):
+        rtt = d['rtt']
+        gcl = d['gcl']
+
+        if rtt - gcl > epsilon:
+            edges_to_delete.append((u, v))
+
+    for u, v in edges_to_delete:
+        graph.remove_edge(u, v)
+
+    return graph
+
+def cluster_graph(graph, distance, min_samples):
+    circumference_earth = 40075016.68557849
+    graph = cluster_probes.cluster_graph(
+        graph,
+        distance / circumference_earth,
+        min_samples
+    )
+    return graph
+
+def remove_tivs(graph):
+    triangles = investigate_TIVs.compute_triangles(graph)
+    goodnesses = investigate_TIVs.compute_goodnesses(triangles)
+    tivs = [
+        triangle
+        for triangle, goodness in goodnesses.items()
+        if goodness > 1.
+    ]
+    long_edges = investigate_TIVs.get_long_edges(graph, tivs)
+
+    for u, v in long_edges:
+        graph.remove_edge(u, v)
+
+    return graph
+
+def get_graph(
+    probes_filename, latencies_filename, epsilon=np.inf,
+    clustering_distance=None, clustering_min_samples=None,
+    should_remove_tivs=False
+):
+    """
+    Generate a NetworkX graph representing a delay space.
+
+    As input, take two CSV files (for nodes and edges), and a special
+    cutoff parameter `epsilon` that determines when an edge should be
+    included in the graph.
+
+    Additionally take the two parameters for the DBSCAN algorithm. The
+    first parameter is treated in meters (think roughly how closely two
+    cities should be in order to be in the same cluster).
+    """
+    graph = get_base_graph(probes_filename, latencies_filename)
+    graph = threshold_graph(graph, epsilon)
+    if clustering_distance is not None and clustering_min_samples is not None:
+        graph = cluster_graph(graph, clustering_distance,
+                              clustering_min_samples)
+    if should_remove_tivs:
+        graph = remove_tivs(graph)
+    return graph
+
+def compute_ricci_curvatures(graph):
     orc = OllivierRicci(graph, weight='weight', alpha=0.)
     graph = orc.compute_ricci_curvature()
 
@@ -150,23 +191,25 @@ if __name__ == '__main__':
     parser.add_argument('--latencies-file', '-l', type=str, required=True,
                         dest='latencies_filename', metavar='<filename>',
                         help='Input file containing latency information')
-    parser.add_argument('--ip-type', '-i', type=str, required=True,
-                        dest='ip_type', metavar='<ipv4/ipv6>',
-                        help='Type of IP (e.g., ipv4, ipv6).')
     parser.add_argument('--epsilon', '-e', type=float, required=False,
                         dest='epsilon', metavar='<epsilon>',
                         help='Residual threshold')
+    parser.add_argument('--no-tivs', '-t', action='store_true',
+                        dest='should_remove_tivs')
     parser.add_argument('--output', '-o', metavar='<filename>',
                         dest='output_filename', required=True)
     args = parser.parse_args()
     probes_filename = args.probes_filename
     latencies_filename = args.latencies_filename
-    ip_type = args.ip_type
     epsilon = args.epsilon
     if epsilon is None:
         epsilon = np.inf
+    should_remove_tivs = args.should_remove_tivs
     output_filename = args.output_filename
 
     graph = get_graph(probes_filename, latencies_filename, epsilon,
-                      500000, 2)
+                      500000, 2, should_remove_tivs)
+    if should_remove_tivs:
+        graph = remove_tivs(graph)
+    graph = compute_ricci_curvatures(graph)
     nx.write_graphml(graph, f'{output_filename}')
