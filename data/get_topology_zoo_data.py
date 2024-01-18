@@ -100,7 +100,7 @@ with open(os.path.join(directory, 'dataset_names.txt'), 'r') as f_in:
         for source_id, target_id, data in graph.edges(data=True):
             source = graph.nodes[source_id]
             target = graph.nodes[target_id]
-            data['rtt'] = utility.get_GCD_latency(
+            data['rtt'] = utility.get_GCL(
                 (source['lat'], source['long']),
                 (target['lat'], target['long'])
             )
