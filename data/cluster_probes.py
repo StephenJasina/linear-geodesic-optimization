@@ -79,8 +79,18 @@ def cluster_graph(graph, eps, min_samples):
                 if (node_i, node_j) in graph.edges
             ], default=np.inf)
             if rtt != np.inf:
-                new_graph.add_edge(cluster_centers[i], cluster_centers[j],
-                                   rtt=rtt)
+                id_source = cluster_centers[i]
+                id_target = cluster_centers[j]
+                lat_source = graph.nodes[id_source]['lat']
+                long_source = graph.nodes[id_source]['long']
+                lat_target = graph.nodes[id_target]['lat']
+                long_target = graph.nodes[id_target]['long']
+                gcl = utility.get_GCL(
+                    [lat_source, long_source],
+                    [lat_target, long_target]
+                )
+                new_graph.add_edge(id_source, id_target,
+                                   rtt=rtt, gcl=gcl)
 
     # Copy other attributes
     new_graph.graph = dict(graph.graph)
