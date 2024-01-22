@@ -6,7 +6,6 @@ import typing
 
 import networkx as nx
 import numpy as np
-from utils import *
 
 from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization.mesh.mesh import Mesh
@@ -186,7 +185,7 @@ def get_mesh_output_from_directory(
 def get_mesh_output(
         z: typing.List[np.float64],
         width: int,
-        height: height,
+        height: int,
         network,
         postprocessed: bool = False,
         z_0: typing.Optional[typing.List[np.float64]] = None,
