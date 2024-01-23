@@ -147,7 +147,7 @@ if __name__ == '__main__':
         epsilon = float('inf')
 
     graph = csv_to_graphml.get_graph(
-        probes_filename, latencies_filename, epsilon, 500000, 2
+        probes_filename, latencies_filename, epsilon, 500000
     )
 
     triangles = compute_triangles(graph)
@@ -195,7 +195,7 @@ if __name__ == '__main__':
     for i in range(0, len(thresholds), len(thresholds) // 100):
         threshold = thresholds[i]
         graph = csv_to_graphml.get_graph(
-            probes_filename, latencies_filename, threshold, 500000, 2
+            probes_filename, latencies_filename, threshold, 500000
         )
 
         triangles = compute_triangles(graph)

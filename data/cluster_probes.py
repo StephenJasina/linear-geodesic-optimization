@@ -18,16 +18,16 @@ def get_cluster_center(cluster):
 
     return cluster[center_index]
 
-def cluster_graph(graph, eps, min_samples):
+def cluster_graph(graph, distance_threshold):
     """
-    Simplify a graph using the DBSCAN algorithm.
+    Simplify a graph using agglomerative clustering with single linkage.
 
     As input, take a graph whose vertices have `lat` (latitude) and
     `long` (longitude) attributes. The edges must also have associated
     `rtt` (round trip time, or RTT) attributes.
 
     For the given graph, cluster the vertices according to the input
-    parameters. Then, for each cluster, pick a representative node.
+    parameter. Then, for each cluster, pick a representative node.
     Generate a new graph on these representative nodes, where an edge
     exists between two representative nodes if there is an edge between
     their corresponding clusters. If there are multiple such edges
@@ -35,27 +35,23 @@ def cluster_graph(graph, eps, min_samples):
     """
     nodes = list(graph.nodes(data=True))
 
-    if 'cluster' in nodes[0][1]:
-        cluster_labels = [data['cluster'] for _, data in nodes]
-        cluster_count = max(cluster_labels) + 1
-    else:
-        # Compute clusters. Ensure that each cluster has a unique label.
-        # In particular, nodes that are labeled as "noise" by the
-        # algorithm are instead treated as clusters of size 1
-        clustering = sklearn.cluster.DBSCAN(
-            eps=eps, min_samples=min_samples,
-            metric=utility.get_spherical_distance
-        )
-        clustering.fit([
-            utility.get_sphere_point((data['lat'], data['long']))
-            for _, data in nodes
-        ])
-        cluster_labels = list(clustering.labels_)
-        cluster_count = max(cluster_labels) + 1
-        for i in range(len(cluster_labels)):
-            if cluster_labels[i] == -1:
-                cluster_labels[i] = cluster_count
-                cluster_count += 1
+    clustering = sklearn.cluster.AgglomerativeClustering(
+        n_clusters=None, distance_threshold=distance_threshold,
+        linkage='single', metric='precomputed'
+    )
+    sphere_points = [
+        utility.get_sphere_point((data['lat'], data['long']))
+        for _, data in nodes
+    ]
+    spherical_distances = [
+        [
+            utility.get_spherical_distance(a, b)
+            for a in sphere_points
+        ]
+        for b in sphere_points
+    ]
+    cluster_labels = clustering.fit_predict(spherical_distances)
+    cluster_count = max(cluster_labels) + 1
 
     new_graph = nx.Graph()
 

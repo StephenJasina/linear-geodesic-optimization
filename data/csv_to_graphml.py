@@ -123,13 +123,15 @@ def threshold_graph(graph, epsilon=np.inf):
 
     return graph
 
-def cluster_graph(graph, distance, min_samples):
+def cluster_graph(graph, distance):
     circumference_earth = 40075016.68557849
-    graph = cluster_probes.cluster_graph(
-        graph,
-        distance / circumference_earth,
-        min_samples
-    )
+
+    if distance != 0.:
+        graph = cluster_probes.cluster_graph(
+            graph,
+            distance / circumference_earth
+        )
+
     return graph
 
 def remove_tivs(graph):
@@ -147,31 +149,6 @@ def remove_tivs(graph):
 
     return graph
 
-def get_graph(
-    probes_filename, latencies_filename, epsilon=np.inf,
-    clustering_distance=None, clustering_min_samples=None,
-    should_remove_tivs=False
-):
-    """
-    Generate a NetworkX graph representing a delay space.
-
-    As input, take two CSV files (for nodes and edges), and a special
-    cutoff parameter `epsilon` that determines when an edge should be
-    included in the graph.
-
-    Additionally take the two parameters for the DBSCAN algorithm. The
-    first parameter is treated in meters (think roughly how closely two
-    cities should be in order to be in the same cluster).
-    """
-    graph = get_base_graph(probes_filename, latencies_filename)
-    graph = threshold_graph(graph, epsilon)
-    if clustering_distance is not None and clustering_min_samples is not None:
-        graph = cluster_graph(graph, clustering_distance,
-                              clustering_min_samples)
-    if should_remove_tivs:
-        graph = remove_tivs(graph)
-    return graph
-
 def compute_ricci_curvatures(graph):
     orc = OllivierRicci(graph, weight='weight', alpha=0.)
     graph = orc.compute_ricci_curvature()
@@ -180,6 +157,35 @@ def compute_ricci_curvatures(graph):
     for _, _, d in graph.edges(data=True):
         del d['weight']
 
+    return graph
+
+def get_graph(
+    probes_filename, latencies_filename, epsilon=np.inf,
+    clustering_distance=None, should_remove_tivs=False
+):
+    """
+    Generate a NetworkX graph representing a delay space.
+
+    As input, take two CSV files (for nodes and edges), and a special
+    cutoff parameter `epsilon` that determines when an edge should be
+    included in the graph.
+
+    Additionally take a parameter for the clustering algorithm. The
+    parameter is treated in meters (think roughly how closely two cities
+    should be in order to be in the same cluster).
+
+    Finally, take in a flag determining whether triangle inequality
+    violations (TIVs) should be removed. This simply removes the edges
+    that contribute to a TIV in a conservative fashion (i.e., the edges
+    that are too long for any triangle in the graph).
+    """
+    graph = get_base_graph(probes_filename, latencies_filename)
+    if should_remove_tivs:
+        graph = remove_tivs(graph)
+    if clustering_distance is not None:
+        graph = cluster_graph(graph, clustering_distance)
+    graph = threshold_graph(graph, epsilon)
+    graph = compute_ricci_curvatures(graph)
     return graph
 
 if __name__ == '__main__':
@@ -208,8 +214,5 @@ if __name__ == '__main__':
     output_filename = args.output_filename
 
     graph = get_graph(probes_filename, latencies_filename, epsilon,
-                      500000, 2, should_remove_tivs)
-    if should_remove_tivs:
-        graph = remove_tivs(graph)
-    graph = compute_ricci_curvatures(graph)
+                      500000, should_remove_tivs)
     nx.write_graphml(graph, f'{output_filename}')
