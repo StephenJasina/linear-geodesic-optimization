@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from linear_geodesic_optimization import convex_hull
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_network, input_mesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
@@ -20,8 +20,6 @@ def get_geodesics(mesh, network_coordinates, bounding_box, network_edges,
         np.array(network_coordinates), np.float64(0.8), bounding_box)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
                               for network_vertex in network_vertices]
-    network_convex_hulls = convex_hull.compute_connected_convex_hulls(
-        network_vertices, network_edges)
 
     valid_edges = network_edges
     if compute_all_vertex_pairs:
@@ -38,11 +36,6 @@ def get_geodesics(mesh, network_coordinates, bounding_box, network_edges,
     for i, j in valid_edges:
         mesh_i = nearest_vertex_indices[i]
         mesh_j = nearest_vertex_indices[j]
-
-        # Diagnostic information
-        # label_i = labels[i]
-        # label_j = labels[j]
-        # print(label_i, label_j)
 
         geodesic_forward = Geodesic(mesh, mesh_i, mesh_j)
         geodesic_forward.forward()
@@ -75,7 +68,6 @@ if __name__ == '__main__':
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        data_file_name = os.path.join('..', 'data', parameters['data_file_name'])
         width = parameters['width']
         height = parameters['height']
 
@@ -91,38 +83,21 @@ if __name__ == '__main__':
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
-    mesh = RectangleMesh(width, height)
-
-    network_coordinates, bounding_box, network_edges, _, _, labels, _ \
-        = data.read_graphml(data_file_name, with_labels=True)
-    network_vertices = mesh.map_coordinates_to_support(
-        np.array(network_coordinates), np.float64(0.8), bounding_box)
-    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
-                              for network_vertex in network_vertices]
-    network_convex_hulls = convex_hull.compute_connected_convex_hulls(
-        network_vertices, network_edges)
-
-    if use_postprocessing:
-        # TODO: Make this a call into linear_geodesic_optimization.data
-        vertices = mesh.get_coordinates()
-        x = list(sorted(set(vertices[:,0])))
-        y = list(sorted(set(vertices[:,1])))
-        distances = np.array([
-            convex_hull.distance_to_convex_hulls(
-                np.array([px, py]),
-                network_vertices,
-                network_convex_hulls
-            )
-            for px in x
-            for py in y
-        ])
-        z = z - np.array(z_0)
-        z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
-            * np.exp(-1000 * distances**2)
-        z = z - np.amin(z)
-        if np.amax(z) != np.float64(0.):
-            z = 0.15 * z / np.amax(z)
-    mesh.set_parameters(z)
+    probes_file_path = os.path.join('..', 'data', parameters['probes_filename'])
+    latencies_file_path = os.path.join('..', 'data', parameters['latencies_filename'])
+    epsilon = parameters['epsilon']
+    clustering_distance = parameters['clustering_distance']
+    should_remove_tivs = parameters['should_remove_TIVs']
+    network, latencies = input_network.get_graph(
+        probes_file_path, latencies_file_path,
+        epsilon, clustering_distance,
+        should_remove_tivs=should_remove_tivs,
+        should_include_latencies=True
+    )
+    network = input_network.extract_from_graph(network, latencies, with_labels=True)
+    network, (labels, _) = network[:-2], network[-2:]
+    network_coordinates, bounding_box, network_edges, _, _ = network
+    mesh = input_mesh.get_mesh(z, width, height, network, use_postprocessing, z_0)
 
     geodesics = get_geodesics(mesh, network_coordinates, bounding_box,
                               network_edges, labels, True)

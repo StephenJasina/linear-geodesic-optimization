@@ -8,68 +8,11 @@ import typing
 import matplotlib.pyplot as plt
 import networkx as nx
 
-import csv_to_graphml
+sys.path.append(os.path.join('..', 'src'))
+from linear_geodesic_optimization.data \
+    import triangle_inequality_violations as tivs
+from linear_geodesic_optimization.data import input_network
 
-
-def compute_triangles(graph: nx.Graph, weight: str = 'rtt') \
-        -> typing.Dict[typing.Tuple[str, str, str],
-                       typing.Tuple[float, float, float]]:
-    triangles: typing.Dict[typing.Tuple[str, str, str],
-                           typing.Tuple[float, float, float]] = {}
-    for u, v, data in graph.edges(data=True):
-        weight_uv = data[weight]
-        u, v = min(u, v), max(u, v)
-        for w in graph.nodes:
-            if w <= v:
-                continue
-
-            if (u, w) in graph.edges and (v, w) in graph.edges:
-                weight_uw = graph.edges[u,w][weight]
-                weight_vw = graph.edges[v,w][weight]
-
-                triangles[u,v,w] = (weight_vw, weight_uw, weight_uv)
-
-    return triangles
-
-def get_long_edges(
-    graph: nx.Graph,
-    triangles: typing.Dict[typing.Tuple[str, str, str],
-                           typing.Tuple[float, float, float]]
-) -> typing.Set[typing.Tuple[str, str]]:
-    long_edges = set()
-    for u, v, w in triangles:
-        weight_uv = graph.edges[u,v]['rtt']
-        weight_uw = graph.edges[u,w]['rtt']
-        weight_vw = graph.edges[v,w]['rtt']
-
-        if weight_uv > weight_uw:
-            if weight_uv > weight_vw:
-                long_edges.add((u, v))
-            else:
-                long_edges.add((v, w))
-        else:
-            if weight_uw > weight_vw:
-                long_edges.add((u, w))
-            else:
-                long_edges.add((v, w))
-    return long_edges
-
-
-def compute_goodnesses(
-    triangles: typing.Dict[typing.Tuple[str, str, str],
-                           typing.Tuple[float, float, float]],
-    use_r: bool = False
-) -> typing.Dict[typing.Tuple[str, str, str], float]:
-    goodnesses: typing.Dict[typing.Tuple[str, str, str], float] = {}
-    for triangle, (weight_uv, weight_uw, weight_vw) in triangles.items():
-        weight_max = max(weight_uv, weight_uw, weight_vw)
-        weight_sum = weight_uv + weight_uw + weight_vw
-        goodness = weight_max / (weight_sum - weight_max)
-        if use_r:
-            goodness *= (1 + 2 * weight_max - weight_sum)
-        goodnesses[triangle] = goodness
-
-    return goodnesses
 
 def plot_goodnesses(goodnesses):
     fig = plt.figure()
@@ -89,45 +32,6 @@ def plot_goodnesses(goodnesses):
     ax_2.set_ylabel('CDF')
     plt.show()
 
-def compute_greedy_set_cover(sets: typing.Dict[typing.Hashable,
-                                               typing.Set[typing.Any]]) \
-        -> typing.List[typing.Hashable]:
-    current_cover = set()
-    candidate_sets = dict(sets)
-    set_cover: typing.List[typing.Hashable] = []
-    while True:
-        # Find the candidate with the most uncovered elements
-        best_candidate = None
-        best_candidate_set = None
-        best_candidate_size = 0
-        removable_candidates = []
-        for candidate, candidate_set in candidate_sets.items():
-            # Small optimization to avoid unnecessary difference computations
-            if len(candidate_set) <= best_candidate_size:
-                continue
-
-            candidate_size = len(candidate_set.difference(current_cover))
-
-            # Remove sets that are already covered
-            if candidate_size == 0:
-                removable_candidates.append(candidate)
-                continue
-
-            if candidate_size > best_candidate_size:
-                best_candidate = candidate
-                best_candidate_set = candidate_set
-                best_candidate_size = candidate_size
-
-        # We're done if no elements are uncovered
-        if best_candidate is None:
-            return set_cover
-
-        for candidate in removable_candidates:
-            del candidate_sets[candidate]
-
-        set_cover.append(best_candidate)
-        current_cover = current_cover.union(best_candidate_set)
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--probes-file', '-p', type=str, required=True,
@@ -146,36 +50,36 @@ if __name__ == '__main__':
     if epsilon is None:
         epsilon = float('inf')
 
-    graph = csv_to_graphml.get_graph(
+    graph = input_network.get_graph(
         probes_filename, latencies_filename, epsilon, 500000
     )
 
-    triangles = compute_triangles(graph)
-    goodnesses = compute_goodnesses(triangles, use_r=False)
+    triangles = tivs.compute_triangles(graph)
+    goodnesses = tivs.compute_goodnesses(triangles, use_r=False)
 
-    tivs = [
+    violating_triangles = [
         triangle
         for triangle, goodness in goodnesses.items()
         if goodness > 1.
     ]
 
-    long_edges = get_long_edges(graph, tivs)
+    long_edges = tivs.get_long_edges(graph, violating_triangles)
 
     tiv_edge_sets = collections.defaultdict(set)
-    for i, (u, v, w) in enumerate(tivs):
+    for i, (u, v, w) in enumerate(violating_triangles):
         tiv_edge_sets[u,v].add(i)
         tiv_edge_sets[u,w].add(i)
         tiv_edge_sets[v,w].add(i)
-    tiv_edge_set_cover = compute_greedy_set_cover(tiv_edge_sets)
+    tiv_edge_set_cover = tivs.compute_greedy_set_cover(tiv_edge_sets)
 
     tiv_vertex_sets = collections.defaultdict(set)
-    for i, (u, v, w) in enumerate(tivs):
+    for i, (u, v, w) in enumerate(violating_triangles):
         tiv_vertex_sets[u].add(i)
         tiv_vertex_sets[v].add(i)
         tiv_vertex_sets[w].add(i)
-    tiv_vertex_set_cover = compute_greedy_set_cover(tiv_vertex_sets)
+    tiv_vertex_set_cover = tivs.compute_greedy_set_cover(tiv_vertex_sets)
 
-    print(f'Proportion of TIVs (triangles): {(len(tivs) / len(goodnesses)):.4f}')
+    print(f'Proportion of TIVs (triangles): {(len(violating_triangles) / len(goodnesses)):.4f}')
     print(f'Proportion of long edges: {len(long_edges) / len(graph.edges):.4f}')
     print('Approximate proportion of TIVs (edges): '
           + f'{len(tiv_edge_set_cover) / len(graph.edges):.4f}')
@@ -194,20 +98,20 @@ if __name__ == '__main__':
     long_edge_counts = []
     for i in range(0, len(thresholds), len(thresholds) // 100):
         threshold = thresholds[i]
-        graph = csv_to_graphml.get_graph(
+        graph = input_network.get_graph(
             probes_filename, latencies_filename, threshold, 500000
         )
 
-        triangles = compute_triangles(graph)
-        goodnesses = compute_goodnesses(triangles, use_r=False)
+        triangles = tivs.compute_triangles(graph)
+        goodnesses = tivs.compute_goodnesses(triangles, use_r=False)
 
-        tivs = [
+        violating_triangles = [
             triangle
             for triangle, goodness in goodnesses.items()
             if goodness > 1.05
         ]
 
-        long_edges = get_long_edges(graph, tivs)
+        long_edges = tivs.get_long_edges(graph, violating_triangles)
 
         edge_counts.append(len(graph.edges))
         long_edge_counts.append(len(long_edges))

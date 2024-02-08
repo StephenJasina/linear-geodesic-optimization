@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from linear_geodesic_optimization import convex_hull
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
@@ -20,7 +20,7 @@ from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
 
-maxiters = 10000
+maxiters = 5
 
 def get_beta(x, y):
     n = len(x)
@@ -63,8 +63,11 @@ if __name__ == '__main__':
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        data_file_name = parameters['data_file_name']
-        latency_file_name = parameters['latency_file_name']
+        probes_filename = parameters['probes_filename']
+        latencies_filename = parameters['latencies_filename']
+        epsilon = parameters['epsilon']
+        clustering_distance = parameters['clustering_distance']
+        should_remove_tivs = parameters['should_remove_TIVs']
         lambda_curvature = parameters['lambda_curvature']
         lambda_smooth = parameters['lambda_smooth']
         lambda_geodesic = parameters['lambda_geodesic']
@@ -75,16 +78,18 @@ if __name__ == '__main__':
         leaveout_count = parameters['leaveout_count']
         leaveout_seed = parameters['leaveout_seed']
 
-    data_file_path = os.path.join('..', 'data', data_file_name)
-    data_name, _ = os.path.splitext(os.path.basename(data_file_name))
-    latency_file_path = os.path.join('..', 'data', latency_file_name) \
-        if latency_file_name is not None \
-        else None
+    probes_file_path = os.path.join('..', 'data', probes_filename)
+    latencies_file_path = os.path.join('..', 'data', latencies_filename)
 
     mesh = RectangleMesh(width, height, scale)
 
+    network, latencies = input_network.get_graph(
+        probes_file_path, latencies_file_path,
+        epsilon, clustering_distance, should_remove_tivs,
+        should_include_latencies=True
+    )
     network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
-        = data.read_graphml(data_file_path, latency_file_path)
+        = input_network.extract_from_graph(network, latencies)
     network_vertices = mesh.map_coordinates_to_support(
         np.array(network_coordinates), np.float64(0.8), bounding_box)
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(
@@ -95,7 +100,7 @@ if __name__ == '__main__':
         network_latencies = network_latencies[-leaveout_count:]
     # Uncomment the next line to disable latency scatter plot
     network_latencies = []
-    latencies = data.map_latencies_to_mesh(mesh, network_vertices,
+    latencies = mesh.map_latencies_to_mesh(network_vertices,
                                            network_latencies)
     true_latencies = np.array([latency for _, latency in latencies])
     geodesics = [

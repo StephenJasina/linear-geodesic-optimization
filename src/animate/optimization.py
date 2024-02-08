@@ -10,7 +10,7 @@ import numpy as np
 
 sys.path.append('.')
 from linear_geodesic_optimization import convex_hull
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.plot import get_mesh_plot
 
@@ -36,21 +36,30 @@ if __name__ == '__main__':
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        data_file_name = parameters['data_file_name']
+        probes_filename = parameters['probes_filename']
+        latencies_filename = parameters['latencies_filename']
+        epsilon = parameters['epsilon']
+        clustering_distance = parameters['clustering_distance']
+        should_remove_tivs = parameters['should_remove_TIVs']
         width = parameters['width']
         height = parameters['height']
         scale = parameters['scale']
 
-    data_file_path = os.path.join('..', 'data', data_file_name)
-    data_name, _ = os.path.splitext(os.path.basename(data_file_name))
+    probes_file_path = os.path.join('..', 'data', probes_filename)
+    latencies_file_path = os.path.join('..', 'data', latencies_filename)
 
     mesh = RectangleMesh(width, height, scale)
     vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
 
+    network, latencies = input_network.get_graph(
+        probes_file_path, latencies_file_path,
+        epsilon, clustering_distance, should_remove_tivs,
+        should_include_latencies=True
+    )
     network_coordinates, bounding_box, network_edges, _, _ \
-        = data.read_graphml(data_file_path, None)
+        = input_network.extract_from_graph(network, latencies)
     network_vertices = mesh.map_coordinates_to_support(
         np.array(network_coordinates), np.float64(0.8), bounding_box)
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(

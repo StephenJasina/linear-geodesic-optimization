@@ -11,7 +11,7 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 
 sys.path.append('.')
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_network, input_mesh, utility
 from linear_geodesic_optimization.plot import get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
@@ -30,8 +30,7 @@ fps = 24
 # length in seconds
 animation_length = 10
 
-def get_image_data(data_file_path, resolution=100):
-    coordinates, _, _, _, _ = data.read_graphml(data_file_path)
+def get_image_data(coordinates, resolution=100):
     coordinates = np.array(coordinates)
     center = np.mean(coordinates, axis=0)
     scale_factor = 0.8
@@ -53,10 +52,10 @@ def get_image_data(data_file_path, resolution=100):
         coordinates_left = center + (coordinates_left - center) / scale_factor
         coordinates_right = center + (coordinates_right - center) / scale_factor
 
-    left, _ = data.inverse_mercator(coordinates_left, 0.)
-    right, _ = data.inverse_mercator(coordinates_right, 0.)
-    _, bottom = data.inverse_mercator(0., coordinates_bottom)
-    _, top = data.inverse_mercator(0., coordinates_top)
+    left, _ = utility.inverse_mercator(coordinates_left, 0.)
+    right, _ = utility.inverse_mercator(coordinates_right, 0.)
+    _, bottom = utility.inverse_mercator(0., coordinates_bottom)
+    _, top = utility.inverse_mercator(0., coordinates_top)
 
     map = Basemap(llcrnrlon=left, urcrnrlon=right,
                   llcrnrlat=bottom, urcrnrlat=top, epsg=3857)
@@ -93,7 +92,7 @@ if __name__ == '__main__':
             if name.isdigit()
         )
         path = os.path.join(current_directory, str(iteration))
-        mesh = data.get_mesh_output_from_directory(
+        mesh = input_mesh.get_mesh_from_directory(
             current_directory, postprocessed=True,
             initialization_path=initialization_path
         )
@@ -106,10 +105,21 @@ if __name__ == '__main__':
 
     with open(os.path.join(directory, epsilons[0][1], subdirectory_name, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
-        data_file_name = parameters['data_file_name']
-        data_file_path = os.path.join('..', 'data', data_file_name)
+        probes_filename = parameters['probes_filename']
+        probes_file_path = os.path.join('..', 'data', probes_filename)
+        latencies_filename = parameters['latencies_filename']
+        latencies_file_path = os.path.join('..', 'data', latencies_filename)
+        epsilon = parameters['epsilon']
+        clustering_distance = parameters['clustering_distance']
+        should_remove_tivs = parameters['should_remove_TIVs']
+        network, latencies = input_network.get_graph(
+            probes_file_path, latencies_file_path,
+            epsilon, clustering_distance, should_remove_tivs,
+            should_include_latencies=True
+        )
+        coordinates, _, _, _, _, = input_network.extract_from_graph(network, latencies)
     resolution = 500
-    face_colors = get_image_data(data_file_path, resolution)
+    face_colors = get_image_data(coordinates, resolution)
 
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
@@ -137,11 +147,21 @@ if __name__ == '__main__':
         entry_name = epsilons[left_index if lam < 0.5 else right_index][1]
         with open(os.path.join(directory, entry_name, subdirectory_name, 'parameters'), 'rb') as f:
             parameters = pickle.load(f)
-            data_file_name = parameters['data_file_name']
-            data_file_path = os.path.join('..', 'data', data_file_name)
-            coordinates, bounding_box, network_edges, network_curvatures, \
-            network_latencies, network_nodes, network_city \
-                = data.read_graphml(data_file_path, with_labels=True)
+            probes_filename = parameters['probes_filename']
+            probes_file_path = os.path.join('..', 'data', probes_filename)
+            latencies_filename = parameters['latencies_filename']
+            latencies_file_path = os.path.join('..', 'data', latencies_filename)
+            epsilon = parameters['epsilon']
+            clustering_distance = parameters['clustering_distance']
+            should_remove_tivs = parameters['should_remove_TIVs']
+            network, latencies = input_network.get_graph(
+                probes_file_path, latencies_file_path,
+                epsilon, clustering_distance, should_remove_tivs,
+                should_include_latencies=True
+            )
+            coordinates, bounding_box, network_edges, network_curvatures, _, \
+                _, network_city \
+                = input_network.extract_from_graph(network, latencies, with_labels=True)
         coordinates = np.array(coordinates)
         network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8), bounding_box)
 

@@ -1,11 +1,11 @@
 import os
+# TODO: Convert to plain text
 import pickle
 import typing
 
 import numpy as np
 import numpy.typing as npt
 
-from linear_geodesic_optimization import data
 from linear_geodesic_optimization.mesh.mesh import Mesh
 from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
@@ -63,7 +63,7 @@ class Computer:
         """
         self.mesh = mesh
 
-        self.latencies = data.map_latencies_to_mesh(mesh, network_vertices,
+        self.latencies = mesh.map_latencies_to_mesh(network_vertices,
                                                     network_latencies)
 
         self.lambda_curvature = lambda_curvature
@@ -117,7 +117,7 @@ class Computer:
     def to_float_list(array: npt.NDArray[np.float64]):
         return [float(item) for item in array]
 
-    def diagnostics(self, _):
+    def diagnostics(self, x = None, f = None, context = None):
         """
         Save the hierarchy to disk and output some useful information about
         the loss functions.

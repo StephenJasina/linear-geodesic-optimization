@@ -1,0 +1,1 @@
+The files here were a set of simple tests to check that the values of interest (curvature and geodesics) and their gradients were being correctly computed. Currently (2024/02/08), they are extremely out of date and do not run.

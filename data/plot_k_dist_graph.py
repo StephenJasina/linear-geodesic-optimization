@@ -1,11 +1,13 @@
 import csv
 import heapq
 import os
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-import utility
+sys.path.append(os.path.join('..', 'src'))
+from linear_geodesic_optimization.data import utility
 
 def get_k_nearest(points, p, k):
     """Find the k nearest points in points to p."""

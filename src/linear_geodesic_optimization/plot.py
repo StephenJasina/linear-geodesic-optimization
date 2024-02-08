@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import LightSource
 import numpy as np
 
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import utility
 
 
 # Allow TeX to be used in titles, axes, etc.
@@ -79,10 +79,10 @@ def get_network_plot(graph, trim_vertices=False):
     for u, v, d in graph.edges(data=True):
         color = mpl.colormaps['RdBu']((d['ricciCurvature'] + 2) / 4)
 
-        x_u, y_u = data.mercator(graph.nodes[u]['long'],
-                                 graph.nodes[u]['lat'])
-        x_v, y_v = data.mercator(graph.nodes[v]['long'],
-                                 graph.nodes[v]['lat'])
+        x_u, y_u = utility.mercator(graph.nodes[u]['long'],
+                                    graph.nodes[u]['lat'])
+        x_v, y_v = utility.mercator(graph.nodes[v]['long'],
+                                    graph.nodes[v]['lat'])
         ax.plot([x_u, x_v], [y_u, y_v], color=color)
 
     # Plot the vertices
@@ -90,8 +90,8 @@ def get_network_plot(graph, trim_vertices=False):
         # If trim_vertices is set, then only plot the vertices with
         # incident edges
         if not trim_vertices or graph[node]:
-            x, y = data.mercator(graph.nodes[node]['long'],
-                                 graph.nodes[node]['lat'])
+            x, y = utility.mercator(graph.nodes[node]['long'],
+                                    graph.nodes[node]['lat'])
             ax.plot(x, y, '.', ms=4, color='green')
 
     return fig

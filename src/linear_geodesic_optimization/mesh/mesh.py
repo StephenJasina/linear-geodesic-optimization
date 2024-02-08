@@ -94,6 +94,35 @@ class Mesh:
         """
         raise NotImplementedError
 
+    def map_latencies_to_mesh(
+        self,
+        network_vertices: typing.List[typing.Tuple[np.float64, np.float64]],
+        network_latencies: typing.List[typing.Tuple[typing.Tuple[int, int],
+                                                    np.float64]]
+    ) -> typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]]:
+        """
+        Convert latencies from a network to a mesh.
+
+        As input, take a mesh, a list of coordinates, and latencies (as
+        returned by `read_graphml`). Return a list of latencies stored along
+        with the pair of corresponding mesh vertex indices, in the form
+        `((i, j), latency)`.
+
+        This format is used for space efficiency (not many points on the
+        mesh are expected to have measured latencies).
+        """
+        latencies: typing.List[typing.Tuple[typing.Tuple[int, int],
+                                            np.float64]] = []
+
+        # Can't do a dict comprehension since multiple vertices could
+        # map to the same mesh point
+        for (i, j), latency in network_latencies:
+            i_key = self.nearest_vertex(network_vertices[i]).index()
+            j_key = self.nearest_vertex(network_vertices[j]).index()
+            latencies.append(((i_key, j_key), latency))
+
+        return latencies
+
     def get_support_area(self) -> np.float64:
         """
         Return the area of the support of the mesh.

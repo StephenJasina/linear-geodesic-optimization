@@ -2,7 +2,7 @@ import argparse
 import os
 import pickle
 
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_network
 
 def main(directory, max_iterations):
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
@@ -19,12 +19,18 @@ def main(directory, max_iterations):
     with open(os.path.join(directory, str(iteration)), 'rb') as f:
         z = pickle.load(f)['mesh_parameters']
 
-    data_file_path = os.path.join('..', 'data', parameters['data_file_name'])
-    latency_file_name = parameters['latency_file_name']
-    latency_file_path = None
-    if latency_file_name is not None:
-        os.path.join('..', 'data', latency_file_name)
-    network = data.read_graphml(data_file_path, latency_file_path)
+    probes_file_path = os.path.join('..', 'data', parameters['probes_filename'])
+    latencies_file_path = os.path.join('..', 'data', parameters['latencies_filename'])
+    epsilon = parameters['epsilon']
+    clustering_distance = parameters['clustering_distance']
+    should_remove_tivs = parameters['should_remove_TIVs']
+    network, latencies = input_network.get_graph(
+        probes_file_path, latencies_file_path,
+        epsilon, clustering_distance,
+        should_remove_tivs=should_remove_tivs,
+        should_include_latencies=True
+    )
+    network = input_network.extract_from_graph(network, latencies)
 
     with open(os.path.join(directory, 'output'), 'wb') as f:
         pickle.dump({

@@ -16,7 +16,7 @@ from networkx.readwrite import json_graph
 
 # Assume we're running from src/
 sys.path.append('.')
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_mesh, utility
 from linear_geodesic_optimization.mesh.basic import Mesh as BasicMesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
@@ -60,7 +60,6 @@ def unpickle():
         and 'network' in unpickled_data
     ):
         # Get height data
-
         z = unpickled_data['final']
         z_0 = unpickled_data['initial']
 
@@ -70,7 +69,7 @@ def unpickle():
 
         network = unpickled_data['network']
 
-        mesh = data.get_mesh_output(z, width, height, network, True, z_0)
+        mesh = input_mesh.get_mesh(z, width, height, network, True, z_0)
         z = mesh.get_parameters()
         z = np.flip(z.reshape((width, height)), axis=1).T.reshape((-1))
         z = z - np.amin(z)
@@ -92,9 +91,9 @@ def unpickle():
         ]
 
         center_xy = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
-        center = data.inverse_mercator(*center_xy)
-        left, _ = data.inverse_mercator(np.amin(coordinates[:,0]), 0)
-        right, _ = data.inverse_mercator(np.amax(coordinates[:,0]), 0)
+        center = utility.inverse_mercator(*center_xy)
+        left, _ = utility.inverse_mercator(np.amin(coordinates[:,0]), 0)
+        right, _ = utility.inverse_mercator(np.amax(coordinates[:,0]), 0)
         zoom_factor = 0.8 * 360. / (right - left)
 
         to_return = {

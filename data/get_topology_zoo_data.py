@@ -4,12 +4,14 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import urllib.request
 
 from GraphRicciCurvature.OllivierRicci import OllivierRicci
 import networkx as nx
 
-import utility
+sys.path.append(os.path.join('..', 'src'))
+from linear_geodesic_optimization.data import utility
 
 
 url_base = "https://networks.skewed.de/net/internet_top_pop/files"

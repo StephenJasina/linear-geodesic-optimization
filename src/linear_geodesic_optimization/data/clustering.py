@@ -2,7 +2,8 @@ import networkx as nx
 import numpy as np
 import sklearn.cluster
 
-import utility
+from linear_geodesic_optimization.data import utility
+
 
 def get_cluster_center(cluster):
     """Find the point in the cluster nearest to its centroid."""

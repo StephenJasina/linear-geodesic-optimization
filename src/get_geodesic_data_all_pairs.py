@@ -1,7 +1,7 @@
 import argparse
 import csv
 
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_mesh
 from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     input_directory = args.input_directory
     output_filename = args.output_filename
 
-    mesh = data.get_mesh_output_from_directory(input_directory, postprocessed=False)
+    mesh = input_mesh.get_mesh_from_directory(input_directory, postprocessed=False)
     n = mesh.get_topology().n_vertices()
 
     with open(output_filename, 'w') as output_file:
