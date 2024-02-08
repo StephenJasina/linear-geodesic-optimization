@@ -9,11 +9,11 @@ We will define the following: \begin{center}\begin{tabular}{r|l}
 \end{tabular}\end{center}
 
 \subsection{Forward Computation}
-We use the  \begin{align*}
-	\mathcal{L}_{\mathrm{smooth}}\pof{M} &\propto -\pof{\kappa^+}^\intercal L_C^{\text{N}}\kappa^+ - \pof{\kappa^-}^\intercal L_C^{\text{N}}\kappa^-.
+We use \begin{align*}
+	\mathcal{L}_{\mathrm{smooth}}\pof{M} &\propto -\pof{\kappa^+}^\intercal L_C^{\text{D}}\kappa^+ - \pof{\kappa^-}^\intercal L_C^{\text{D}}\kappa^-.
 \end{align*} In terms of scaling, we divide by the surface area of the mesh when \(z = 0\) (that is, the area of a flat plane, a sphere, or similar).
 
 \subsection{Reverse Computation}
 Differentiating, and using matrix symmetry, \begin{align*}
-	\frac{\partial\pof{\mathcal{L}_{\mathrm{smooth}}\pof{M}}}{\partial z_\ell} &\propto -\pof{\kappa^+}^\intercal\pof{\frac{\partial L_C^{\text{N}}}{\partial z_\ell}\kappa^+ + 2L_C^{\text{N}}\frac{\partial\kappa^+}{\partial z_\ell}} - \pof{\kappa^-}^\intercal\pof{\frac{\partial L_C^{\text{N}}}{\partial z_\ell}\kappa^- + 2L_C^{\text{N}}\frac{\partial\kappa^-}{\partial z_\ell}}.
+	\frac{\partial\pof{\mathcal{L}_{\mathrm{smooth}}\pof{M}}}{\partial z_\ell} &\propto -\pof{\kappa^+}^\intercal\pof{\frac{\partial L_C^{\text{D}}}{\partial z_\ell}\kappa^+ + 2L_C^{\text{D}}\frac{\partial\kappa^+}{\partial z_\ell}} - \pof{\kappa^-}^\intercal\pof{\frac{\partial L_C^{\text{D}}}{\partial z_\ell}\kappa^- + 2L_C^{\text{D}}\frac{\partial\kappa^-}{\partial z_\ell}}.
 \end{align*}
