@@ -64,6 +64,7 @@ def get_mesh(
         width: int,
         height: int,
         network,
+        coordinates_scale: float,
         postprocessed: bool = False,
         z_0: typing.Optional[typing.List[np.float64]] = None,
 ) -> RectangleMesh:
@@ -77,7 +78,7 @@ def get_mesh(
 
     coordinates, bounding_box, network_edges, _, _ = network
     coordinates = np.array(coordinates)
-    network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8), bounding_box)
+    network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
                               for network_vertex in network_vertices]
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(

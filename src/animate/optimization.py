@@ -43,12 +43,13 @@ if __name__ == '__main__':
         should_remove_tivs = parameters['should_remove_TIVs']
         width = parameters['width']
         height = parameters['height']
-        scale = parameters['scale']
+        mesh_scale = parameters['mesh_scale']
+        coordinates_scale = parameters['coordinates_scale']
 
     probes_file_path = os.path.join('..', 'data', probes_filename)
     latencies_file_path = os.path.join('..', 'data', latencies_filename)
 
-    mesh = RectangleMesh(width, height, scale)
+    mesh = RectangleMesh(width, height, mesh_scale)
     vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     network_coordinates, bounding_box, network_edges, _, _ \
         = input_network.extract_from_graph(network, latencies)
     network_vertices = mesh.map_coordinates_to_support(
-        np.array(network_coordinates), np.float64(0.8), bounding_box)
+        np.array(network_coordinates), coordinates_scale, bounding_box)
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(
         network_vertices, network_edges)
 

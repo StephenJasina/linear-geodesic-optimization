@@ -74,14 +74,15 @@ if __name__ == '__main__':
         initial_radius = parameters['initial_radius']
         width = parameters['width']
         height = parameters['height']
-        scale = parameters['scale']
+        mesh_scale = parameters['mesh_scale']
+        coordinates_scale = parameters['coordinates_scale']
         leaveout_count = parameters['leaveout_count']
         leaveout_seed = parameters['leaveout_seed']
 
     probes_file_path = os.path.join('..', 'data', probes_filename)
     latencies_file_path = os.path.join('..', 'data', latencies_filename)
 
-    mesh = RectangleMesh(width, height, scale)
+    mesh = RectangleMesh(width, height, mesh_scale)
 
     network, latencies = input_network.get_graph(
         probes_file_path, latencies_file_path,
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
         = input_network.extract_from_graph(network, latencies)
     network_vertices = mesh.map_coordinates_to_support(
-        np.array(network_coordinates), np.float64(0.8), bounding_box)
+        np.array(network_coordinates), coordinates_scale, bounding_box)
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(
         network_vertices, network_edges)
     if leaveout_count > 0:

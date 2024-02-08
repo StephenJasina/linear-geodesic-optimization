@@ -22,7 +22,7 @@ warnings.simplefilter('error')
 
 def main(probes_filename, latencies_filename, epsilon, clustering_distance,
          lambda_curvature, lambda_smooth, lambda_geodesic,
-         initial_radius, sides, scale,
+         initial_radius, sides, mesh_scale,
          leaveout_proportion=0.,
          maxiter=1000, output_dir_name=os.path.join('..', 'out'),
          initialization_file_path=None):
@@ -32,7 +32,7 @@ def main(probes_filename, latencies_filename, epsilon, clustering_distance,
 
     # Construct a mesh
     width = height = sides
-    mesh = RectangleMesh(width, height, scale)
+    mesh = RectangleMesh(width, height, mesh_scale)
 
     network, latencies = input_network.get_graph(
         probes_file_path, latencies_file_path,
@@ -52,7 +52,7 @@ def main(probes_filename, latencies_filename, epsilon, clustering_distance,
     # Setup snapshots
     directory = os.path.join(
         output_dir_name,
-        f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
+        f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{mesh_scale}'
     )
     if os.path.isdir(directory):
         shutil.rmtree(directory)
@@ -70,7 +70,8 @@ def main(probes_filename, latencies_filename, epsilon, clustering_distance,
         'initial_radius': initial_radius,
         'width': width,
         'height': height,
-        'scale': scale,
+        'mesh_scale': mesh_scale,
+        'coordinates_scale': 0.8,
         'leaveout_count': leaveout_count,
         'leaveout_seed': leaveout_seed
     }
@@ -94,7 +95,7 @@ def main(probes_filename, latencies_filename, epsilon, clustering_distance,
 
     computer = optimization.Computer(
         mesh, network_vertices, network_edges, network_curvatures,
-        network_latencies, 1.01 * 2**0.5 * scale / width,
+        network_latencies, 1.01 * 2**0.5 * mesh_scale / width,
         lambda_curvature, lambda_smooth, lambda_geodesic,
         directory)
 
@@ -109,16 +110,12 @@ def main(probes_filename, latencies_filename, epsilon, clustering_distance,
         'options': {'maxiter': maxiter},
     }
     z = scipy.optimize.minimize(f, z_0, **minimizer_kwargs).x
-    # z = scipy.optimize.dual_annealing(f,
-    #                                   scipy.optimize.Bounds(
-    #                                       -4. * np.ones(z_0.shape),
-    #                                       4. * np.ones(z_0.shape)
-    #                                   ),
-    #                                   visit = 1.1,
-    #                                 #   minimizer_kwargs = minimizer_kwargs,
-    #                                   no_local_search = True,
-    #                                   callback=computer.diagnostics,
-    #                                   x0 = z_0
+    # minimizer_kwargs['options']['maxiter'] = 0
+    # z = scipy.optimize.basinhopping(
+    #     f, x0=z_0,
+    #     niter=100, T=0.01,
+    #     callback=computer.diagnostics,
+    #     # take_step=mesh.take_step
     # ).x
     with open(os.path.join(directory, 'output'), 'wb') as f:
         pickle.dump({
@@ -143,14 +140,14 @@ if __name__ == '__main__':
     lambda_geodesics = [0.]
     initial_radii = [20.]
     sides = [50]
-    scales = [1.]
+    mesh_scales = [1.]
 
     leaveout_proportions = [1.]
 
     arguments = list(itertools.product(
         probes_filenames, latency_filenames, epsilons, clustering_distances,
         lambda_curvatures, lambda_smooths, lambda_geodesics,
-        initial_radii, sides, scales,
+        initial_radii, sides, mesh_scales,
         leaveout_proportions,
         [5],
         [os.path.join('..', 'out_test')]

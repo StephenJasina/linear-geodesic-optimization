@@ -30,11 +30,10 @@ fps = 24
 # length in seconds
 animation_length = 10
 
-def get_image_data(coordinates, resolution=100):
+def get_image_data(coordinates, coordinates_scale, resolution=100):
     coordinates = np.array(coordinates)
     center = np.mean(coordinates, axis=0)
-    scale_factor = 0.8
-    coordinates = center + (coordinates - center) / scale_factor
+    coordinates = center + (coordinates - center) / coordinates_scale
 
     coordinates_left = np.amin(coordinates[:,0])
     coordinates_right = np.amax(coordinates[:,0])
@@ -43,14 +42,14 @@ def get_image_data(coordinates, resolution=100):
 
     if coordinates_right - coordinates_left > coordinates_top - coordinates_bottom:
         center = (coordinates_bottom + coordinates_top) / 2.
-        scale_factor = (coordinates_top - coordinates_bottom) / (coordinates_right - coordinates_left)
-        coordinates_bottom = center + (coordinates_bottom - center) / scale_factor
-        coordinates_top = center + (coordinates_top - center) / scale_factor
+        coordinates_scale = (coordinates_top - coordinates_bottom) / (coordinates_right - coordinates_left)
+        coordinates_bottom = center + (coordinates_bottom - center) / coordinates_scale
+        coordinates_top = center + (coordinates_top - center) / coordinates_scale
     else:
         center = (coordinates_left + coordinates_right) / 2.
-        scale_factor = (coordinates_right - coordinates_left) / (coordinates_top - coordinates_bottom)
-        coordinates_left = center + (coordinates_left - center) / scale_factor
-        coordinates_right = center + (coordinates_right - center) / scale_factor
+        coordinates_scale = (coordinates_right - coordinates_left) / (coordinates_top - coordinates_bottom)
+        coordinates_left = center + (coordinates_left - center) / coordinates_scale
+        coordinates_right = center + (coordinates_right - center) / coordinates_scale
 
     left, _ = utility.inverse_mercator(coordinates_left, 0.)
     right, _ = utility.inverse_mercator(coordinates_right, 0.)
@@ -112,6 +111,7 @@ if __name__ == '__main__':
         epsilon = parameters['epsilon']
         clustering_distance = parameters['clustering_distance']
         should_remove_tivs = parameters['should_remove_TIVs']
+        coordinates_scale = parameters['coordinates_scale']
         network, latencies = input_network.get_graph(
             probes_file_path, latencies_file_path,
             epsilon, clustering_distance, should_remove_tivs,
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         )
         coordinates, _, _, _, _, = input_network.extract_from_graph(network, latencies)
     resolution = 500
-    face_colors = get_image_data(coordinates, resolution)
+    face_colors = get_image_data(coordinates, coordinates_scale, resolution)
 
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
@@ -154,6 +154,7 @@ if __name__ == '__main__':
             epsilon = parameters['epsilon']
             clustering_distance = parameters['clustering_distance']
             should_remove_tivs = parameters['should_remove_TIVs']
+            coordinates_scale = parameters['coordinates_scale']
             network, latencies = input_network.get_graph(
                 probes_file_path, latencies_file_path,
                 epsilon, clustering_distance, should_remove_tivs,
@@ -163,7 +164,7 @@ if __name__ == '__main__':
                 _, network_city \
                 = input_network.extract_from_graph(network, latencies, with_labels=True)
         coordinates = np.array(coordinates)
-        network_vertices = mesh.map_coordinates_to_support(coordinates, np.float64(0.8), bounding_box)
+        network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
 
         ax.clear()
 

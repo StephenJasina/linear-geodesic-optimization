@@ -14,10 +14,8 @@ from linear_geodesic_optimization.optimization.geodesic import Computer as Geode
 max_iterations = 10000
 use_postprocessing = False
 
-def get_geodesics(mesh, network_coordinates, bounding_box, network_edges,
+def get_geodesics(mesh, network_vertices, network_edges,
                   labels, compute_all_vertex_pairs=False):
-    network_vertices = mesh.map_coordinates_to_support(
-        np.array(network_coordinates), np.float64(0.8), bounding_box)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
                               for network_vertex in network_vertices]
 
@@ -70,6 +68,12 @@ if __name__ == '__main__':
 
         width = parameters['width']
         height = parameters['height']
+        probes_file_path = os.path.join('..', 'data', parameters['probes_filename'])
+        latencies_file_path = os.path.join('..', 'data', parameters['latencies_filename'])
+        epsilon = parameters['epsilon']
+        clustering_distance = parameters['clustering_distance']
+        should_remove_tivs = parameters['should_remove_TIVs']
+        coordinates_scale = parameters['coordinates_scale']
 
     with open(os.path.join(directory, '0'), 'rb') as f:
         iteration_data = pickle.load(f)
@@ -83,11 +87,6 @@ if __name__ == '__main__':
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
-    probes_file_path = os.path.join('..', 'data', parameters['probes_filename'])
-    latencies_file_path = os.path.join('..', 'data', parameters['latencies_filename'])
-    epsilon = parameters['epsilon']
-    clustering_distance = parameters['clustering_distance']
-    should_remove_tivs = parameters['should_remove_TIVs']
     network, latencies = input_network.get_graph(
         probes_file_path, latencies_file_path,
         epsilon, clustering_distance,
@@ -97,10 +96,11 @@ if __name__ == '__main__':
     network = input_network.extract_from_graph(network, latencies, with_labels=True)
     network, (labels, _) = network[:-2], network[-2:]
     network_coordinates, bounding_box, network_edges, _, _ = network
-    mesh = input_mesh.get_mesh(z, width, height, network, use_postprocessing, z_0)
+    mesh = input_mesh.get_mesh(z, width, height, network, coordinates_scale, use_postprocessing, z_0)
+    network_vertices = mesh.map_coordinates_to_support(
+        np.array(network_coordinates), coordinates_scale, bounding_box)
 
-    geodesics = get_geodesics(mesh, network_coordinates, bounding_box,
-                              network_edges, labels, True)
+    geodesics = get_geodesics(mesh, network_vertices, network_edges, labels, True)
 
     with open(os.path.join(directory, 'geodesics.csv'), 'w') as f:
         writer = csv.writer(f)
