@@ -51,6 +51,7 @@ class Computer:
         """
         if self._forward_updates == self._mesh.get_updates():
             return
+        self._laplacian.forward()
         self._curvature.forward()
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = self._mesh.get_coordinates()
@@ -62,22 +63,20 @@ class Computer:
             u, v = edge.vertices()
             self.loss -= 2 * laplacian_element \
                 * self._curvature.kappa_1[u.index()] \
-                * self._curvature.kappa_1[v.index()] \
-                / self._mesh.get_support_area()
+                * self._curvature.kappa_1[v.index()]
             self.loss -= 2 * laplacian_element \
                 * self._curvature.kappa_2[u.index()] \
-                * self._curvature.kappa_2[v.index()] \
-                / self._mesh.get_support_area()
+                * self._curvature.kappa_2[v.index()]
 
         for vertex, laplacian_element \
                 in zip(self._topology.vertices(),
                        self._laplacian.LC_dirichlet_vertices):
             self.loss -= laplacian_element \
-                * self._curvature.kappa_1[vertex.index()]**2 \
-                / self._mesh.get_support_area()
+                * self._curvature.kappa_1[vertex.index()]**2
             self.loss -= laplacian_element \
-                * self._curvature.kappa_2[vertex.index()]**2 \
-                / self._mesh.get_support_area()
+                * self._curvature.kappa_2[vertex.index()]**2
+
+        self.loss *= sum(self._laplacian.A)
 
     def reverse(self) -> None:
         """
@@ -89,6 +88,7 @@ class Computer:
         if self._reverse_updates == self._mesh.get_updates():
             return
         self.forward()
+        self._laplacian.reverse()
         self._curvature.reverse()
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
@@ -103,12 +103,10 @@ class Computer:
             for index, dif_laplacian_element in dif_laplacian_elements.items():
                 self.dif_loss[index] -= 2 * dif_laplacian_element \
                     * self._curvature.kappa_1[u.index()] \
-                    * self._curvature.kappa_1[v.index()] \
-                    / self._mesh.get_support_area()
+                    * self._curvature.kappa_1[v.index()]
                 self.dif_loss[index] -= 2 * dif_laplacian_element \
                     * self._curvature.kappa_2[u.index()] \
-                    * self._curvature.kappa_2[v.index()] \
-                    / self._mesh.get_support_area()
+                    * self._curvature.kappa_2[v.index()]
 
             dif_kappa_1_elements_u = self._curvature.dif_kappa_1[u.index()]
             dif_kappa_2_elements_u = self._curvature.dif_kappa_2[u.index()]
@@ -117,12 +115,10 @@ class Computer:
                 dif_kappa_2_element_u = dif_kappa_2_elements_u[index]
                 self.dif_loss[index] -= 2 * laplacian_element \
                     * dif_kappa_1_element_u \
-                    * self._curvature.kappa_1[v.index()] \
-                    / self._mesh.get_support_area()
+                    * self._curvature.kappa_1[v.index()]
                 self.dif_loss[index] -= 2 * laplacian_element \
                     * dif_kappa_2_element_u \
-                    * self._curvature.kappa_2[v.index()] \
-                    / self._mesh.get_support_area()
+                    * self._curvature.kappa_2[v.index()]
 
             dif_kappa_1_elements_v = self._curvature.dif_kappa_1[v.index()]
             dif_kappa_2_elements_v = self._curvature.dif_kappa_2[v.index()]
@@ -131,12 +127,10 @@ class Computer:
                 dif_kappa_2_element_v = dif_kappa_2_elements_v[index]
                 self.dif_loss[index] -= 2 * laplacian_element \
                     * self._curvature.kappa_1[u.index()] \
-                    * dif_kappa_1_element_v \
-                    / self._mesh.get_support_area()
+                    * dif_kappa_1_element_v
                 self.dif_loss[index] -= 2 * laplacian_element \
                     * self._curvature.kappa_2[u.index()] \
-                    * dif_kappa_2_element_v \
-                    / self._mesh.get_support_area()
+                    * dif_kappa_2_element_v
 
         for vertex, laplacian_element, kappa_1, kappa_2, \
                 dif_laplacian_elements, \
@@ -150,18 +144,22 @@ class Computer:
                        self._curvature.dif_kappa_2):
             for index, dif_laplacian_element in dif_laplacian_elements.items():
                 self.dif_loss[index] -= dif_laplacian_element \
-                    * self._curvature.kappa_1[vertex.index()]**2 \
-                    / self._mesh.get_support_area()
+                    * self._curvature.kappa_1[vertex.index()]**2
                 self.dif_loss[index] -= dif_laplacian_element \
-                    * self._curvature.kappa_2[vertex.index()]**2 \
-                    / self._mesh.get_support_area()
+                    * self._curvature.kappa_2[vertex.index()]**2
 
             for index in dif_kappa_1_elements:
                 dif_kappa_1_element = dif_kappa_1_elements[index]
                 dif_kappa_2_element = dif_kappa_2_elements[index]
                 self.dif_loss[index] -= 2. * laplacian_element \
-                    * dif_kappa_1_element * kappa_1 \
-                    / self._mesh.get_support_area()
+                    * dif_kappa_1_element * kappa_1
                 self.dif_loss[index] -= 2. * laplacian_element \
-                    * dif_kappa_2_element * kappa_2 \
-                    / self._mesh.get_support_area()
+                    * dif_kappa_2_element * kappa_2
+
+        total_area = sum(self._laplacian.A)
+
+        self.dif_loss *= total_area
+
+        for dif_A_part in self._laplacian.dif_A:
+            for index, dif_A_element in dif_A_part.items():
+                self.dif_loss[index] += self.loss * dif_A_element / total_area

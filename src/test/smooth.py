@@ -14,8 +14,8 @@ from linear_geodesic_optimization.optimization.smooth_loss \
     import Computer as SmoothLoss
 
 
-width = 30
-height = 30
+width = 50
+height = 50
 
 mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)
@@ -47,9 +47,7 @@ loss_z = smooth.loss
 t = time.time()
 smooth.reverse()
 print(f'Time to compute reverse: {time.time() - t}')
-dif_loss = np.float64(0.)
-for j, d in enumerate(smooth.dif_loss):
-    dif_loss += d * dz[j]
+dif_loss = smooth.dif_loss @ dz
 
 # Estimate the partial derivative by adding, evaluating, and subtracting
 mesh.set_parameters(z + h * dz)
