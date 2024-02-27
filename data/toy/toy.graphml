@@ -1,86 +1,111 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
-  <key id="d2" for="edge" attr.name="ricciCurvature" attr.type="double" />
+  <key id="d4" for="edge" attr.name="rtt" attr.type="float" />
+  <key id="d3" for="edge" attr.name="ricciCurvature" attr.type="double" />
+  <key id="d2" for="node" attr.name="ricciCurvature" attr.type="double" />
   <key id="d1" for="node" attr.name="lat" attr.type="double" />
   <key id="d0" for="node" attr.name="long" attr.type="double" />
   <graph edgedefault="undirected">
     <node id="A">
       <data key="d0">-58.96000000000001</data>
       <data key="d1">3.437935153993024</data>
+      <data key="d2">0.3888888888888889</data>
     </node>
     <node id="B">
       <data key="d0">-44.56000000000001</data>
       <data key="d1">17.558533354149347</data>
+      <data key="d2">0.36111111111111116</data>
     </node>
     <node id="C">
       <data key="d0">-33.760000000000005</data>
       <data key="d1">-7.339841870694187</data>
+      <data key="d2">0.36111111111111116</data>
     </node>
     <node id="E">
       <data key="d0">-30.160000000000007</data>
       <data key="d1">3.437935153993024</data>
+      <data key="d2">0.5</data>
     </node>
     <node id="F">
       <data key="d0">-15.760000000000007</data>
       <data key="d1">4.874110529224708</data>
+      <data key="d2">0.04166666666666674</data>
     </node>
     <node id="H">
       <data key="d0">27.439999999999994</data>
       <data key="d1">17.558533354149347</data>
+      <data key="d2">-0.055555555555555435</data>
     </node>
     <node id="G">
       <data key="d0">28.879999999999985</data>
       <data key="d1">-3.757304124861065</data>
+      <data key="d2">0.4444444444444445</data>
     </node>
     <node id="I">
       <data key="d0">41.83999999999999</data>
       <data key="d1">-3.757304124861065</data>
+      <data key="d2">0.4444444444444445</data>
     </node>
     <node id="J">
       <data key="d0">85.03999999999999</data>
       <data key="d1">-30.936942413019736</data>
+      <data key="d2">0.33333333333333337</data>
     </node>
     <edge source="A" target="B">
-      <data key="d2">0.25</data>
+      <data key="d3">0.33333333333333337</data>
+      <data key="d4">22.24335068734214</data>
     </edge>
     <edge source="A" target="C">
-      <data key="d2">0.25</data>
+      <data key="d3">0.33333333333333337</data>
+      <data key="d4">30.478070412446392</data>
     </edge>
     <edge source="A" target="E">
-      <data key="d2">0.5</data>
+      <data key="d3">0.5</data>
+      <data key="d4">32.02322737066057</data>
     </edge>
     <edge source="B" target="E">
-      <data key="d2">0.5</data>
+      <data key="d3">0.5</data>
+      <data key="d4">22.24335068734214</data>
     </edge>
     <edge source="B" target="F">
-      <data key="d2">0.25</data>
+      <data key="d3">0.25</data>
+      <data key="d4">34.41836908682596</data>
     </edge>
     <edge source="C" target="E">
-      <data key="d2">0.5</data>
+      <data key="d3">0.5</data>
+      <data key="d4">12.655507841608227</data>
     </edge>
     <edge source="C" target="F">
-      <data key="d2">0.25</data>
+      <data key="d3">0.25</data>
+      <data key="d4">24.19635601023098</data>
     </edge>
     <edge source="E" target="F">
-      <data key="d2">0.5</data>
+      <data key="d3">0.5</data>
+      <data key="d4">16.078068396991256</data>
     </edge>
     <edge source="F" target="H">
-      <data key="d2">-0.8333</data>
+      <data key="d3">-0.833333333333333</data>
+      <data key="d4">49.12600904584285</data>
     </edge>
     <edge source="H" target="G">
-      <data key="d2">0.0</data>
+      <data key="d3">0.33333333333333337</data>
+      <data key="d4">23.797806515355905</data>
     </edge>
     <edge source="H" target="I">
-      <data key="d2">0.0</data>
+      <data key="d3">0.33333333333333337</data>
+      <data key="d4">28.53678394698391</data>
     </edge>
     <edge source="G" target="I">
-      <data key="d2">0.0</data>
+      <data key="d3">0.6666666666666667</data>
+      <data key="d4">14.405829860465076</data>
     </edge>
     <edge source="G" target="J">
-      <data key="d2">0.0</data>
+      <data key="d3">0.33333333333333337</data>
+      <data key="d4">66.07521965864431</data>
     </edge>
     <edge source="I" target="J">
-      <data key="d2">0.0</data>
+      <data key="d3">0.33333333333333337</data>
+      <data key="d4">54.45339203368673</data>
     </edge>
   </graph>
 </graphml>
