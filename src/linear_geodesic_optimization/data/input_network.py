@@ -227,7 +227,7 @@ def extract_from_graph(
 
     Given a graph, a list of latencies, and an optional boolean, return:
     * A list of (x, y) coordinate pairs representing vertices
-    * An optional bounding box aruond the coordinates
+    * A bounding box aruond the coordinates
     * A list of pairs of indices into the vertex list representing edges
     * A list of (Ollivier-Ricci) curvatures of each of the edges
     * A list of list of pairs representing measured latencies. This is
