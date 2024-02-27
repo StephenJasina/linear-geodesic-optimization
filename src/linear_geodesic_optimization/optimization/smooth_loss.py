@@ -76,7 +76,7 @@ class Computer:
             self.loss -= laplacian_element \
                 * self._curvature.kappa_2[vertex.index()]**2
 
-        self.loss *= sum(self._laplacian.A)
+        self.loss *= np.sum(self._laplacian.A)
 
     def reverse(self) -> None:
         """
@@ -156,7 +156,7 @@ class Computer:
                 self.dif_loss[index] -= 2. * laplacian_element \
                     * dif_kappa_2_element * kappa_2
 
-        total_area = sum(self._laplacian.A)
+        total_area = np.sum(self._laplacian.A)
 
         self.dif_loss *= total_area
 
