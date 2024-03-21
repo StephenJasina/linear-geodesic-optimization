@@ -2,9 +2,9 @@
 
 Here and in the subsequent sections, computations can take serious advantage of vectors and matrices. Therefore, while notationally inelegant, we will assign indices to the vertices in \(V_M\).
 
-On that note, if \(i\) and \(j\) are two indices for which \(\pof{v_i, v_j} \in E_M\), let \(\nxt\pof{i, j}\) be the index such that \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) traces a triangle counterclockwise. Note that this index exists and is unique assuming we have a mesh without boundary. On a mesh with boundary, if no \(\nxt\pof{i, j}\) exists, then the half-edge \(\pof{v_i, v_j}\) lies on the boundary.
+On that note, if \(i\) and \(j\) are two indices for which \(\pof{v_i, v_j} \in E_M\), let \(\nxt\pof{i, j}\) be the index such that \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) traces a triangle counterclockwise. If \(\nxt\pof{i, j}\) does not exist, then the half-edge \(\pof{v_i, v_j}\) lies on the boundary.
 
-We also write \(\partial M\) to represent the boundary of our mesh. Abusing notation, we can write things like \(v_i \in \partial M\) or \(\pof{v_i, v_j} \in \partial M\).
+We also write \(\partial M\) to represent the boundary of our mesh. Abusing notation, we can write \(v_i \in \partial M\) and \(\pof{v_i, v_j} \in \partial M\) to denote that a vertex or an edge is on the boundary, respectively.
 
 We define the following variables: \begin{center}\begin{tabular}{r|l}
 	\(N_{i, j}\) & Outward normal of triangle \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) \\ \hline

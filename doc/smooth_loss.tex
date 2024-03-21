@@ -5,13 +5,13 @@
 \section{Smoothness Loss}
 
 We will define the following: \begin{center}\begin{tabular}{r|l}
-	\(\mathcal{L}_{\mathrm{smooth}}\pof{M}\) & The surface area independent \href{http://graphics.berkeley.edu/papers/Joshi-EMC-2007-06/Joshi-EMC-2007-06.pdf}{\(\text{MVS}_{\text{cross}}\) energy}
+	\(\mathcal{L}_{\mathrm{smooth}}\pof{M}\) & The surface area independent \(\text{MVS}_{\text{cross}}\) energy \cite{Joshi2007EnergyMF}
 \end{tabular}\end{center}
 
 \subsection{Forward Computation}
 We use \begin{align*}
 	\mathcal{L}_{\mathrm{smooth}}\pof{M} &= \pof{-\pof{\kappa^+}^\intercal L_C^{\text{D}}\kappa^+ - \pof{\kappa^-}^\intercal L_C^{\text{D}}\kappa^-} \sum_{\pof{v_i, v_j} \in E_M} A_{i, j}.
-\end{align*} In terms of scaling, we divide by the surface area of the mesh when \(z = 0\) (that is, the area of a flat plane, a sphere, or similar).
+\end{align*}
 
 \subsection{Reverse Computation}
 Differentiating, and using matrix symmetry, \begin{align*}

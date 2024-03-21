@@ -16,12 +16,12 @@ We will define the following: \begin{center}\begin{tabular}{r|l}
 \end{tabular}\end{center}
 
 \subsection{Ollivier-Ricci Curvature}
-We use the \href{https://github.com/saibalmars/GraphRicciCurvature/}{GraphRicciCurvature} library to compute the Ollivier-Ricci curvatures of the edges of the graph \(\pof{V_G, E_G^\epsilon}\). Here, \(E_G^\epsilon \subseteq E_G\) is the set of edges whose RTTs are at most \(\epsilon\) milliseconds higher than their GCLs.
+We use the GraphRicciCurvature library \cite{ni2019community} to compute the Ollivier-Ricci curvatures of the edges of the graph \(\pof{V_G, E_G^\epsilon}\). Here, \(E_G^\epsilon \subseteq E_G\) is the set of edges whose RTTs are at most \(\epsilon\) milliseconds higher than their GCLs.
 
-Note that \(\kappa^\text{R}_e\) is then only defined for edges in \(E_G^\epsilon\), as opposed to being defined for all edges in \(E_G\).
+Note that \(\kappa^\text{R}_e\) is then only defined for edges in \(E_G^\epsilon\), as opposed to being defined for all edges in \(E_G\). We elide the \(\epsilon\) to reduce notational density.
 
 \subsection{Forward Computation}
-For these computations (particularly the mean curvature one), consider \(v\) as a matrix of vertex positions, where each row corresponds to a vertex. We will also use \(e_i\) to denote the \(i\)th standard basis vector. We have \begin{align*}
+For these computations (particularly the mean curvature one), consider \(v\) as a matrix of vertex positions, where each row corresponds to a vertex (so \(v\) is of shape \(\abs{V_M} \times 3\)). We will also use \(e_i\) to denote the \(i\)th standard basis vector. We have \begin{align*}
 	\theta_{i, j} &= \arctan\pof{\frac{1}{\cot\pof{\theta_{i, j}}}} \bmod \pi, \\
 	\widetilde{\kappa^\text{G}}_i &= 2\pi - \sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \theta_{k, c\pof{i, k}}, \\
 	\kappa^\text{G} &= D^{-1}\widetilde{\kappa^\text{G}}, \\
