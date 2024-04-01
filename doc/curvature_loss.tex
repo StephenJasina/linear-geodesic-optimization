@@ -1,11 +1,11 @@
-\section{Curvature Loss}
+\subsection{Curvature Loss}
 
-We will define the following: \begin{center}\begin{tabular}{r|l}
-	\(B_r\pof{e}\) & The ball of radius \(r\) around \(e\) \\ \hline
-	\(\mathcal{L}_{\mathrm{curvature}}\pof{M}\) & Sum of squares of the differences between vertices actual and desired curvatures
-\end{tabular}\end{center}
+We will define the following: \begin{center}\begin{tabular}{r|l|l}
+	\(B_r\pof{e}\) & The ball of radius \(r\) around \(e\) & \(O\pof{\abs{E_G} \cdot \abs{V_M}}\) \\ \hline
+	\(\mathcal{L}_{\mathrm{curvature}}\pof{M}\) & Sum of squares of the differences between vertices actual and desired curvatures & \(O\pof{\abs{E_G} \cdot \abs{V_M}}\)
+\end{tabular}\end{center} Note that, in practice, the runtimes here will be significantly lower than their upper bounds since balls around edges will not typically contain a large proportion of the mesh's vertices. For example, a square mesh (as described in the main paper) with a relatively small \(\epsilon\) will have the runtimes here be closer to \(O\pof{\abs{E_G}\sqrt{\abs{V_M}}}\).
 
-\subsection{Determining the Ball Around an Edge}
+\subsubsection{Determining the Ball Around an Edge}
 
 Before tackling the loss functional, we must determine what it means for a point to be close to an edge. Suppose \(s\) and \(s'\) are vertices in \(V_G\), and let \(e = \cof{s, s'}\). Recall that \(p_s\) (similarly \(p_{s'}\)) is the point in \(\mathbb{R}^2\) corresponding to \(s\). Define \(\pi\pof{e}\) to be the edge connecting \(p_s\) and \(p_{s'}\). We say that \(v \in B_r\pof{e}\) when \(p_v\) is within distance \(r\) of \(\pi\pof{e}\). Figure~\ref{fig:cuvature_loss_edge_ball} shows this setup.
 
@@ -127,12 +127,12 @@ To determine whether a vertex is in the ball, we break the problem into three pa
 % 	\(c > \cos\pof{\epsilon}\) and \(\min\pof{r \cdot u, r \cdot v} \ge c\,\pof{u \cdot v}\).
 % \end{itemize}
 
-\subsection{Forward Computation}
+\subsubsection{Forward Computation}
 We have \begin{align*}
 	\mathcal{L}_{\mathrm{curvature}}\pof{M} &= \frac{1}{\abs{E_G^\epsilon}}\sum_{e \in E_G^\epsilon} \sum_{\substack{k \\ v_k \in B_r\pof{e}}} \pof{\kappa_e^{\text{R}} - \kappa^{\text{G}}_k}^2.
 \end{align*}
 
-\subsection{Reverse Computation}
+\subsubsection{Reverse Computation}
 Differentiating, \begin{align*}
 	\frac{\partial\pof{\mathcal{L}_{\mathrm{curvature}}\pof{M}}}{\partial\rho_\ell} &= \frac{1}{\abs{E_G}}\sum_{e \in E_G} \sum_{\substack{k \\ v_k \in B_\epsilon\pof{e}}} -2\pof{\kappa_e^{\text{R}} - \kappa^G_k}\frac{\partial\kappa^G_k}{\partial z_\ell}.
 \end{align*}

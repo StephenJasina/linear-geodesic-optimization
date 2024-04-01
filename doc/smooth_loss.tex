@@ -2,18 +2,18 @@
 
 % [This](https://www.cad-journal.net/files/vol_4/CAD_4(5)_2007_607-617.pdf) gives a good overview.
 
-\section{Smoothness Loss}
+\subsection{Smoothness Loss}
 
-We will define the following: \begin{center}\begin{tabular}{r|l}
-	\(\mathcal{L}_{\mathrm{smooth}}\pof{M}\) & The surface area independent \(\text{MVS}_{\text{cross}}\) energy \cite{Joshi2007EnergyMF}
+We will define the following: \begin{center}\begin{tabular}{r|l|l}
+	\(\mathcal{L}_{\mathrm{smooth}}\pof{M}\) & The surface area independent \(\text{MVS}_{\text{cross}}\) energy \cite{Joshi2007EnergyMF} & \(O\pof{\abs{V_M}}\)
 \end{tabular}\end{center}
 
-\subsection{Forward Computation}
+\subsubsection{Forward Computation}
 We use \begin{align*}
 	\mathcal{L}_{\mathrm{smooth}}\pof{M} &= \pof{-\pof{\kappa^+}^\intercal L_C^{\text{D}}\kappa^+ - \pof{\kappa^-}^\intercal L_C^{\text{D}}\kappa^-} \sum_{\pof{v_i, v_j} \in E_M} A_{i, j}.
 \end{align*}
 
-\subsection{Reverse Computation}
+\subsubsection{Reverse Computation}
 Differentiating, and using matrix symmetry, \begin{align*}
 	\frac{\partial\pof{\mathcal{L}_{\mathrm{smooth}}\pof{M}}}{\partial z_\ell} &= \pof{-\pof{\kappa^+}^\intercal\pof{\frac{\partial L_C^{\text{D}}}{\partial z_\ell}\kappa^+ + 2L_C^{\text{D}}\frac{\partial\kappa^+}{\partial z_\ell}} - \pof{\kappa^-}^\intercal\pof{\frac{\partial L_C^{\text{D}}}{\partial z_\ell}\kappa^- + 2L_C^{\text{D}}\frac{\partial\kappa^-}{\partial z_\ell}}} \sum_{\pof{v_i, v_j} \in E_M} A_{i, j} \\
 		&\qquad+ \pof{-\pof{\kappa^+}^\intercal L_C^{\text{D}}\kappa^+ - \pof{\kappa^-}^\intercal L_C^{\text{D}}\kappa^-} \sum_{\pof{v_i, v_j} \in E_M} \frac{\partial A_{i, j}}{\partial z_\ell}.

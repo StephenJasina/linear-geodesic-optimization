@@ -1,4 +1,4 @@
-\section{Laplacian}
+\subsection{Laplacian}
 
 Here and in the subsequent sections, computations can take serious advantage of vectors and matrices. Therefore, while notationally inelegant, we will assign indices to the vertices in \(V_M\).
 
@@ -6,17 +6,25 @@ On that note, if \(i\) and \(j\) are two indices for which \(\pof{v_i, v_j} \in 
 
 We also write \(\partial M\) to represent the boundary of our mesh. Abusing notation, we can write \(v_i \in \partial M\) and \(\pof{v_i, v_j} \in \partial M\) to denote that a vertex or an edge is on the boundary, respectively.
 
-We define the following variables: \begin{center}\begin{tabular}{r|l}
-	\(N_{i, j}\) & Outward normal of triangle \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) \\ \hline
-	\(A_{i, j}\) & Area of triangle \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) \\ \hline
-	\(D_{i, j}\) & Vertex triangle areas; diagonal \\ \hline
-	\(\theta_{i, j}\) & Measure of \(\angle v_iv_{\nxt\pof{i, j}}v_j\) \\ \hline
-	\(L_C^{\text{N}}\) & Cotangent operator with zero-Neumann boundary condition \\ \hline
-	\(L_C^{\text{D}}\) & Cotangent operator with zero-Dirichlet boundary condition
-\end{tabular}\end{center}
+In this and the following sections, we will lay out what each variable is before the details of computing it. We also give the (total) runtime in big-\(O\) notation to compute the set of variables and its gradients. For the Laplacian, we have:
 
-\subsection{Forward Computation}
-We have the following (standard) definition of the Laplace-Beltrami operator on a mesh: \begin{align*}
+\begin{figure*}[h!]
+    \centering
+    \begin{tabular}{r|l|l}
+    	\(N_{i, j}\) & Outward normal of triangle \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) & \(O\pof{\abs{V_M}}\) \\ \hline
+    	\(A_{i, j}\) & Area of triangle \(v_i \to v_j \to v_{\nxt\pof{i, j}}\) & \(O\pof{\abs{V_M}}\) \\ \hline
+    	\(D_{i, j}\) & Vertex triangle areas; diagonal & \(O\pof{\abs{V_M}}\) \\ \hline
+    	\(\theta_{i, j}\) & Measure of \(\angle v_iv_{\nxt\pof{i, j}}v_j\) & \(O\pof{\abs{V_M}}\) \\ \hline
+    	\(L_C^{\text{N}}\) & Cotangent operator with zero-Neumann boundary condition & \(O\pof{\abs{V_M}}\) \\ \hline
+    	\(L_C^{\text{D}}\) & Cotangent operator with zero-Dirichlet boundary condition & \(O\pof{\abs{V_M}}\)
+    \end{tabular}
+    \captionsetup{labelformat=empty}\caption{}
+\end{figure*}
+
+\subsubsection{Forward Computation}
+We have the following (standard) definition of the Laplace-Beltrami operator on a mesh:
+
+\begin{align*}
 	N_{i, j} &= \pof{v_i - v_{\nxt\pof{i, j}}} \times \pof{v_j - v_{\nxt\pof{i, j}}}, \\
 	A_{i, j} &= \frac{1}{2}\norm{N_{i, j}}_2, \\
 	D_{i, j} &= \begin{cases}
@@ -38,8 +46,10 @@ We have the following (standard) definition of the Laplace-Beltrami operator on 
 	\end{cases}
 \end{align*}
 
-\subsection{Reverse Computation}
-We compute \begin{align*}
+\subsubsection{Reverse Computation}
+We compute
+
+\begin{align*}
 	\frac{\partial v_i}{\partial z_\ell} &= \begin{cases}
 		e_3 & \text{if \(\ell = i\)}, \\
 		0 & \text{otherwise},
@@ -74,3 +84,5 @@ We compute \begin{align*}
 		0 & \text{otherwise}.
 	\end{cases}
 \end{align*}
+
+Note that a runtime of \(O\pof{\abs{V_M}}\) is achievable for these computations by using an \emph{accumulation} strategy and iterating over vertices, half-edges, or faces where appropriate.

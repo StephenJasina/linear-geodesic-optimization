@@ -2,20 +2,20 @@
 % https://libigl.github.io/libigl-python-bindings/tut-chapter1/
 % http://multires.caltech.edu/pubs/diffGeoOps.pdf
 
-\section{Curvature}
-We will define the following: \begin{center}\begin{tabular}{r|l}
-	\(E_G^\epsilon\) & The set of network edges at threshold \(\epsilon\) \\ \hline
-	\(\kappa^\text{R}_e\) & The Ollivier-Ricci curvature of the edge \(E_G^\epsilon\) \\ \hline
-	\(\widetilde{\kappa^\text{G}}_i\) & The discrete Gaussian curvature at \(v_i\), scaled by vertex area \\ \hline
-	\(\kappa^\text{G}_i\) & The discrete Gaussian curvature at \(v_i\) \\ \hline
-	\(\widetilde{N}_i\) & An outward pointing vector at \(v_i\) \\ \hline
-	\(\widetilde{\kappa^\text{H}}_i\) & The mean curvature normal at \(v_i\) \\ \hline
-	\(\kappa^\text{H}_i\) & The mean curvature at \(v_i\) \\ \hline
-	\(\kappa^+_i\) & The first principal curvature at \(v_i\) \\ \hline
-	\(\kappa^-_i\) & The second principal curvature at \(v_i\)
+\subsection{Curvature}
+We will define the following: \begin{center}\begin{tabular}{r|l|l}
+	\(E_G^\epsilon\) & The set of network edges at threshold \(\epsilon\) & \\ \hline
+	\(\kappa^\text{R}_e\) & The Ollivier-Ricci curvature of the edge \(E_G^\epsilon\) & \\ \hline
+	\(\widetilde{\kappa^\text{G}}_i\) & The discrete Gaussian curvature at \(v_i\), scaled by vertex area & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(\kappa^\text{G}_i\) & The discrete Gaussian curvature at \(v_i\) & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(\widetilde{N}_i\) & An outward pointing vector at \(v_i\) & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(\widetilde{\kappa^\text{H}}_i\) & The mean curvature normal at \(v_i\) & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(\kappa^\text{H}_i\) & The mean curvature at \(v_i\) & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(\kappa^+_i\) & The first principal curvature at \(v_i\) & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(\kappa^-_i\) & The second principal curvature at \(v_i\) & \(O\pof{\abs{V_M}}\)
 \end{tabular}\end{center}
 
-\subsection{Ollivier-Ricci Curvature}
+\subsubsection{Ollivier-Ricci Curvature}
 We use the GraphRicciCurvature library \cite{ni2019community} to compute the Ollivier-Ricci curvatures of the edges of the graph \(\pof{V_G, E_G^\epsilon}\). Here, \(E_G^\epsilon \subseteq E_G\) is the set of edges whose RTTs are at most \(\epsilon\) milliseconds higher than their GCLs.
 
 Note that \(\kappa^\text{R}_e\) is then only defined for edges in \(E_G^\epsilon\), as opposed to being defined for all edges in \(E_G\). We elide the \(\epsilon\) to reduce notational density.
@@ -32,7 +32,7 @@ For these computations (particularly the mean curvature one), consider \(v\) as 
 	\kappa^-_i &= \kappa^{\text{H}}_i - \sqrt{\pof{\kappa^{\text{H}}_i}^2 - \kappa^{\text{G}}_i}.
 \end{align*}
 
-\subsection{Reverse Computation}
+\subsubsection{Reverse Computation}
 Differentiating, \begin{align*}
 	\frac{\partial\theta_{i, j}}{\partial z_\ell} &= -\frac{\partial\cot\pof{\theta_{i, j}}}{\partial z_\ell} \cdot \frac{1}{1 + \cot^2\pof{\theta_{i, j}}}, \\
 	\frac{\partial\widetilde{\kappa^\text{G}}_i}{\partial z_\ell} &= -\sum_{\substack{k \\ \pof{v_i, v_k} \in E_M}} \frac{\partial\theta_{k, c\pof{i, k}}}{\partial z_\ell}, \\
