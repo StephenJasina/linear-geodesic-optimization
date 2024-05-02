@@ -6,9 +6,8 @@ import itertools
 
 import numpy as np
 from scipy import sparse
-from scipy.sparse.linalg import splu, spsolve_triangular
 
-def wolfe(x, d, f, g, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
+def wolfe(f, g, x, d, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
     '''
     Compute a step size satisfying the (weak) Wolfe conditions. We assume that
     f is a scalar-valued function, g is its f's gradient, and d is a descent
@@ -43,7 +42,7 @@ def wolfe(x, d, f, g, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
             if alpha_r - alpha_l < epsilon:
                 return None
 
-def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
+def steepest_descent(f, g, x, max_iterations, diagnostics=None):
     '''
     Implementation of the steepest descent (a.k.a. gradient descent) algorithm,
     where the step size is chosen to satisfy the Wolfe conditions.
@@ -63,12 +62,12 @@ def steepest_descent(x, set_x, f, g, max_iterations, diagnostics=None):
             # We are pretty much stuck, so end here
             break
 
-        x = set_x(x + alpha * d)
+        x = x + alpha * d
 
     if diagnostics is not None:
         diagnostics()
 
-def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
+def lbfgs(f, g, x, max_iterations, diagnostics=None, m=5):
     '''
     Implementation of the Limited-memory BFGS algorithm, where the step size is
     chosen to satisfy the Wolfe conditions.
@@ -107,14 +106,14 @@ def lbfgs(x, set_x, f, g, max_iterations, diagnostics=None, m=5):
             if alpha is None:
                 # We are pretty much stuck, so end here
                 break
-            x = set_x(x + alpha * d)
+            x = x + alpha * d
 
             # Also reset the Hessian estimation
             H_0 = 1
             ss = []
             ys = []
         else:
-            new_x = set_x(x + alpha * d)
+            new_x = x + alpha * d
             new_g_k = g(new_x)
 
             if len(ss) >= m:
