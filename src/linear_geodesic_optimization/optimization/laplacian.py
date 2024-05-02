@@ -128,6 +128,16 @@ class Computer:
         and then vertices (at most distance 1 away).
         """
 
+    @staticmethod
+    def _cross(a, b):
+        # For some reason, this is significantly faster than the
+        # equivalent numpy function
+        return np.array([
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0]
+        ])
+
     def forward(self) -> None:
         """
         Compute the forward direction.
@@ -166,7 +176,7 @@ class Computer:
             pw = self._coordinates[w.index()]
 
             # Set N
-            normal = np.cross(pu - pw, pv - pw)
+            normal = Computer._cross(pu - pw, pv - pw)
             self.N[face.index()] = normal
 
             # Set A
@@ -274,7 +284,7 @@ class Computer:
 
             # Set dif_N
             normal = self.N[halfedge.face().index()]
-            dif_N_u = np.cross(pw - pv, self._partials[u.index()])
+            dif_N_u = Computer._cross(pw - pv, self._partials[u.index()])
             self.dif_N[halfedge.face().index()][u.index()] = dif_N_u
 
             # Set dif_A
