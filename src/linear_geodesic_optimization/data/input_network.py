@@ -185,9 +185,10 @@ def get_graph(
     """
     graph = get_base_graph(probes_file_path, latencies_file_path)
     if should_include_latencies:
-        latencies = []
-        for source_id, target_id, data in graph.edges(data=True):
-            latencies.append(((source_id, target_id), data['rtt']))
+        latencies = [
+            ((source_id, target_id), data['rtt'])
+            for source_id, target_id, data in graph.edges(data=True)
+        ]
     if should_remove_tivs:
         graph = remove_tivs(graph)
     if clustering_distance is not None:
@@ -201,7 +202,8 @@ def get_graph(
 
 def extract_from_graph(
     graph: nx.Graph,
-    latencies: typing.Tuple[typing.Tuple[str, str], float],
+    latencies: typing.Optional[typing.Tuple[typing.Tuple[str, str],
+                                            float]] = None,
     with_labels: bool = False
 ) -> typing.Union[
     typing.Tuple[
@@ -259,6 +261,12 @@ def extract_from_graph(
            for edge in graph.edges.values()]
     network_latencies: typing.List[typing.Tuple[typing.Tuple[int, int],
                                                 np.float64]] = []
+
+    if latencies is None:
+        latencies = [
+            ((source_id, target_id), data['rtt'])
+            for source_id, target_id, data in graph.edges(data=True)
+        ]
 
     for (source_id, target_id), rtt in latencies:
         if source_id in label_to_index and target_id in label_to_index:
