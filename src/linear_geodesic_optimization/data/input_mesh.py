@@ -103,6 +103,7 @@ def get_mesh(
         z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
             * np.exp(-1000 * distances**2)
         z = z - np.amin(z)
+        z = z * 0.15 / np.amax(z)
 
     mesh.set_parameters(z)
     return mesh
