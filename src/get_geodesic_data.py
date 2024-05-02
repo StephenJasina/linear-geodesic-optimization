@@ -11,8 +11,8 @@ from linear_geodesic_optimization.data import input_network, input_mesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
 
-max_iterations = 10000
-use_postprocessing = False
+max_iterations = np.inf
+use_postprocessing = True
 
 def get_geodesics(mesh, network_vertices, network_edges,
                   labels, compute_all_vertex_pairs=False):
@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     geodesics = get_geodesics(mesh, network_vertices, network_edges, labels, True)
 
-    with open(os.path.join(directory, 'geodesics.csv'), 'w') as f:
+    with open(os.path.join(directory, f"geodesics{'_postprocessed' if use_postprocessing else ''}.csv"), 'w') as f:
         writer = csv.writer(f)
         writer.writerow(['source', 'destination', 'geodesic_distance'])
         for (a, b), geodesic in geodesics:
