@@ -37,8 +37,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         self._height: int = height
         self._scale: np.float64 = scale
 
-        self.center = None
-        self.scale_factor = None
+        self._center = None
+        self._scale_factor = None
 
         self._topology: dcelmesh.Mesh = self._get_topology()
         self._coordinates: npt.NDArray[np.float64] = self._get_coordinates()
@@ -251,10 +251,10 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         divisor[np.where(divisor == 0.)] = 1.
         divisor = np.amax(divisor)
 
-        self.center = (coordinates_min + coordinates_max) / 2
-        self.scale_factor = scale_factor / divisor
+        self._center = (coordinates_min + coordinates_max) / 2
+        self._scale_factor = scale_factor / divisor
 
-        return self._scale * self.scale_factor * (coordinates - self.center)
+        return self._scale * self._scale_factor * (coordinates - self._center)
 
     def get_support_area(self) -> np.float64:
         """
