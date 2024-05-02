@@ -77,7 +77,7 @@ class Computer:
         self.curvature_loss = CurvatureLoss(mesh, network_vertices,
                                             network_edges, network_curvatures,
                                             epsilon, self.curvature)
-        self.smooth = SmoothLoss(mesh, self.laplacian, self.curvature)
+        self.smooth_loss = SmoothLoss(mesh, self.laplacian, self.curvature)
         self.geodesics = [
             Geodesic(mesh, u, v)
             for (u, v), _ in self.latencies
@@ -94,23 +94,23 @@ class Computer:
         if z is not None:
             self.mesh.set_parameters(z)
         self.curvature_loss.forward()
-        self.smooth.forward()
+        self.smooth_loss.forward()
         self.geodesic_loss.forward()
         return self.lambda_curvature * self.curvature_loss.loss \
-            + self.lambda_smooth * self.smooth.loss \
+            + self.lambda_smooth * self.smooth_loss.loss \
             + self.lambda_geodesic * self.geodesic_loss.loss
 
     def reverse(self, z: typing.Optional[npt.NDArray[np.float64]] = None):
         if z is not None:
             self.mesh.set_parameters(z)
-        self.smooth.reverse()
+        self.smooth_loss.reverse()
         self.curvature_loss.reverse()
         self.geodesic_loss.reverse()
         dif_geodesic_loss = np.zeros(self.mesh.get_topology().n_vertices())
         for index, loss in self.geodesic_loss.dif_loss.items():
             dif_geodesic_loss[index] = loss
         return self.lambda_curvature * self.curvature_loss.dif_loss \
-            + self.lambda_smooth * self.smooth.dif_loss \
+            + self.lambda_smooth * self.smooth_loss.dif_loss \
             + self.lambda_geodesic * dif_geodesic_loss
 
     @staticmethod
@@ -125,7 +125,7 @@ class Computer:
         loss = self.forward()
         print(f'iteration {self.iterations}:')
         print(f'\tL_curvature: {self.curvature_loss.loss:.6f}')
-        print(f'\tL_smooth: {self.smooth.loss:.6f}')
+        print(f'\tL_smooth: {self.smooth_loss.loss:.6f}')
         print(f'\tL_geodesic: {self.geodesic_loss.loss:.6f}')
         print(f'\tLoss: {loss:.6f}\n')
 
@@ -135,7 +135,7 @@ class Computer:
                 pickle.dump({
                     'mesh_parameters': Computer.to_float_list(self.mesh.get_parameters()),
                     'L_curvature': float(self.curvature_loss.loss),
-                    'L_smooth': float(self.smooth.loss),
+                    'L_smooth': float(self.smooth_loss.loss),
                     'L_geodesic': float(self.geodesic_loss.loss),
                     'beta': (float(self.geodesic_loss.beta[0]),
                              float(self.geodesic_loss.beta[1])),
