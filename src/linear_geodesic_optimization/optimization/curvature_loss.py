@@ -39,8 +39,6 @@ class Computer:
 
         # Forward variables
         self._forward_updates: int = mesh.get_updates() - 1
-        self._coordinates: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
         self.loss: np.float64 = np.float64(0.)
         """
         The curvature loss.
@@ -71,7 +69,6 @@ class Computer:
             return
         self._curvature.forward()
         self._forward_updates = self._mesh.get_updates()
-        self._coordinates = self._mesh.get_coordinates()
 
         self.loss = np.float64(0.)
         for fat_edge, network_curvature, edge_length \

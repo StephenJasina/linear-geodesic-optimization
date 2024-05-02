@@ -204,9 +204,8 @@ class Computer:
         # Compute partials of mean curvature normals
         self.dif_mean_curvature_normal = [
             {
-                near_near.index(): np.zeros(3)
-                for near in vertex.vertices()
-                for near_near in near.vertices()
+                near.index(): np.zeros(3)
+                for near in itertools.chain([vertex], vertex.vertices())
             }
             for vertex in self._topology.vertices()
         ]
