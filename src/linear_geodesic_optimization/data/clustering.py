@@ -64,6 +64,7 @@ def cluster_graph(graph, distance_threshold):
     for cluster in clusters:
         node, data = get_cluster_center(cluster)
         cluster_centers.append(node)
+        data['elements'] = [element for element, _ in cluster]
         new_graph.add_node(node, **data)
 
     # Copy edges to new graph
