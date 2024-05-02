@@ -18,18 +18,9 @@ mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)
 curvature = Curvature(mesh, laplacian)
 
-seed = time.time_ns()
-seed = seed % (2**32 - 1)
-np.random.seed(seed)
-z = mesh.set_parameters(np.random.random(width * height))
-# z = mesh.set_parameters(np.array([
-#     (16.**2
-#      - mesh.get_coordinates()[index][0]**2
-#      - mesh.get_coordinates()[index][1]**2
-#     )**0.5
-#     for index in range(mesh.get_topology().n_vertices())
-# ]))
-dz = np.random.random(width * height)
+rng = np.random.default_rng()
+z = mesh.set_parameters(rng.random(width * height))
+dz = rng.random(width * height)
 dz = 1e-7 * dz / np.linalg.norm(dz)
 
 t = time.time()
