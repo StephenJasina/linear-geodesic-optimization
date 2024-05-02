@@ -70,12 +70,11 @@ def unpickle():
 
         network = unpickled_data['network']
 
-        mesh = input_mesh.get_mesh(z, width, height, network, coordinates_scale, True, z_0)
+        mesh = input_mesh.get_mesh(z, width, height, network, coordinates_scale, False, z_0)
         z = mesh.get_parameters()
         z = np.flip(z.reshape((width, height)), axis=1).T.reshape((-1))
         z = z - np.amin(z)
         z = z * 0.15 / np.amax(z)
-        z = z - np.amax(z)
         z = z.tolist()
 
         # Get map and network data
