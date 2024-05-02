@@ -107,7 +107,7 @@ def get_heat_map(x=None, y=None, z=None, title='',
         im = ax.imshow(z, origin='lower',
                        extent=(np.amin(x), np.amax(x), np.amin(y), np.amax(y)),
                        vmin=v_range[0], vmax=v_range[1],
-                       cmap=mpl.colormaps['gray'])
+                       cmap=mpl.colormaps['PiYG'])
         fig.colorbar(im)
 
     # Plot the edges
@@ -142,7 +142,7 @@ def get_heat_map(x=None, y=None, z=None, title='',
 
     return fig
 
-def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
+def get_mesh_plot(mesh, title = '', face_colors=None, network=None, ax=None):
     vertices = mesh.get_coordinates()
     x, y, z = vertices[:,0], vertices[:,1], vertices[:,2]
 
@@ -152,8 +152,6 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
 
     z_min = np.amin(z)
     z_max = np.amax(z)
-    if z_min != z_max:
-        z = (z - z_min) / (z_max - z_min) / 4.
 
     to_return = None
     if ax is None:
@@ -215,8 +213,8 @@ def get_mesh_plot(mesh, title, face_colors=None, network=None, ax=None):
 
 
     ax.set_title(title)
-    ax.set_xlim([-0.5, 0.5])
-    ax.set_ylim([-0.5, 0.5])
+    ax.set_xlim([-mesh._scale / 2, mesh._scale / 2])
+    ax.set_ylim([-mesh._scale / 2, mesh._scale / 2])
     ax.set_aspect('equal')
     ax.set_axis_off()
 
