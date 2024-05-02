@@ -5,6 +5,7 @@ import pickle
 import sys
 
 from matplotlib import pyplot as plt
+import networkx as nx
 import numpy as np
 
 from linear_geodesic_optimization import convex_hull
@@ -20,7 +21,7 @@ from linear_geodesic_optimization.plot import get_line_plot, \
     get_scatter_plot, get_heat_map, get_mesh_plot
 
 
-maxiters = 5
+maxiters = 14724
 
 def get_beta(x, y):
     n = len(x)
@@ -52,9 +53,9 @@ if __name__ == '__main__':
 
     directory = sys.argv[1]
 
-    if not os.path.exists(os.path.join(directory, '0')):
-        print('Error: supplied directory must contain file named "0"')
-        sys.exit(0)
+    # if not os.path.exists(os.path.join(directory, '0')):
+    #     print('Error: supplied directory must contain file named "0"')
+    #     sys.exit(0)
 
     if not os.path.exists(os.path.join(directory, 'parameters')):
         print('Error: supplied directory must contain file named "parameters"')
@@ -63,15 +64,22 @@ if __name__ == '__main__':
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        probes_filename = parameters['probes_filename']
-        latencies_filename = parameters['latencies_filename']
+        probes_filename = None
+        latencies_filename = None
+        graphml_filename = None
+        if 'graphml_filename' in parameters:
+            graphml_filename = parameters['graphml_filename']
+        else:
+            probes_filename = parameters['probes_filename']
+            latencies_filename = parameters['latencies_filename']
         epsilon = parameters['epsilon']
         clustering_distance = parameters['clustering_distance']
         should_remove_tivs = parameters['should_remove_TIVs']
         lambda_curvature = parameters['lambda_curvature']
         lambda_smooth = parameters['lambda_smooth']
         lambda_geodesic = parameters['lambda_geodesic']
-        initial_radius = parameters['initial_radius']
+        initial_radius = parameters['initial_radius'] \
+            if 'initial_radius' in parameters else None
         width = parameters['width']
         height = parameters['height']
         mesh_scale = parameters['mesh_scale']
@@ -79,18 +87,26 @@ if __name__ == '__main__':
         leaveout_count = parameters['leaveout_count']
         leaveout_seed = parameters['leaveout_seed']
 
-    probes_file_path = os.path.join('..', 'data', probes_filename)
-    latencies_file_path = os.path.join('..', 'data', latencies_filename)
-
     mesh = RectangleMesh(width, height, mesh_scale)
 
-    network, latencies = input_network.get_graph(
-        probes_file_path, latencies_file_path,
-        epsilon, clustering_distance, should_remove_tivs,
-        should_include_latencies=True
-    )
+    if graphml_filename is None:
+        probes_file_path = os.path.join('..', 'data', probes_filename)
+        latencies_file_path = os.path.join('..', 'data', latencies_filename)
+        network, latencies = input_network.get_graph(
+            probes_file_path, latencies_file_path,
+            epsilon, clustering_distance, should_remove_tivs,
+            should_include_latencies=True
+        )
+    else:
+        graphml_file_path = os.path.join('..', 'data', graphml_filename)
+        network = nx.read_graphml(graphml_file_path)
+        latencies = [
+            ((source_id, target_id), data['rtt'])
+            for source_id, target_id, data in network.edges(data=True)
+        ]
     network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
         = input_network.extract_from_graph(network, latencies)
+
     network_vertices = mesh.map_coordinates_to_support(
         np.array(network_coordinates), coordinates_scale, bounding_box)
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(
@@ -119,6 +135,8 @@ if __name__ == '__main__':
 
     for i in itertools.count():
         path = os.path.join(directory, str(i))
+        if not os.path.exists(path):
+            break
         with open(path, 'rb') as f:
             data = pickle.load(f)
 
@@ -169,10 +187,17 @@ if __name__ == '__main__':
         + '$, $\lambda_{\mathrm{curvature}} = ' + str(lambda_curvature) \
         + '$, $\lambda_{\mathrm{smooth}} = ' + str(lambda_smooth) + '$)'
 
-    figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
-    figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
-    figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters)
-    figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters)
+    if Ls:
+        figures['geodesic_loss'] = get_line_plot(L_geodesics, 'Geodesic Loss' + lambda_string, maxiters)
+        figures['smoothness_loss'] = get_line_plot(L_smooths, 'Smoothness Loss' + lambda_string, maxiters)
+        figures['curvature_loss'] = get_line_plot(L_curvatures, 'Curvature Loss' + lambda_string, maxiters)
+        figures['total_loss'] = get_line_plot(Ls, 'Total Loss' + lambda_string, maxiters)
+
+    with open(os.path.join(directory, 'output'), 'rb') as f:
+        output = pickle.load(f)
+        z_0 = np.array(output['initial'])
+        z = np.array(output['final'])
+        mesh.set_parameters(z)
 
     vertices = mesh.get_coordinates()
     x = list(sorted(set(vertices[:,0])))
@@ -180,23 +205,22 @@ if __name__ == '__main__':
     z = vertices[:,2]
 
     # Smooth using convex hull
-    distances = np.array([
-        convex_hull.distance_to_convex_hulls(
-            np.array([px, py]),
-            network_vertices,
-            network_convex_hulls
-        )
-        for px in x
-        for py in y
-    ])
-    z = z - np.array(z_0)
-    z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
-        * np.exp(-1000 * distances**2)
-    z = z - np.amin(z)
-    if np.amax(z) != np.float64(0.):
-        z = 0.15 * z / np.amax(z)
-
-    mesh.set_parameters(z)
+    # distances = np.array([
+    #     convex_hull.distance_to_convex_hulls(
+    #         np.array([px, py]),
+    #         network_vertices,
+    #         network_convex_hulls
+    #     )
+    #     for px in x
+    #     for py in y
+    # ])
+    # z = z - np.array(z_0)
+    # z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
+    #     * np.exp(-1000 * distances**2)
+    # z = z - np.amin(z)
+    # if np.amax(z) != np.float64(0.):
+    #     z = 0.15 * z / np.amax(z)
+    # mesh.set_parameters(z)
 
     # Transpose z so that the heatmap is correct.
     z = z.reshape((width, height)).T
@@ -217,13 +241,13 @@ if __name__ == '__main__':
     figures['curvature'] = get_heat_map(x, y, kappa, '(Clipped) Curvature' + lambda_string,
                                         network_vertices, network_edges, network_curvatures)
 
-    if sum(len(arr) for arr in before_data) > 0:
+    if before_data and sum(len(arr) for arr in before_data) > 0:
         figures['scatter'] = get_scatter_plot(before_data, after_data,
                                               'Latency Prediction' + lambda_string)
 
     # mesh.set_parameters(z)
-    mesh.set_parameters(vertices[:,2] - np.array(z_0))
-    figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
+    # mesh.set_parameters(vertices[:,2] - np.array(z_0))
+    # figures['mesh_plot'] = get_mesh_plot(mesh, 'Mesh' + lambda_string)
 
     # for filename, figure in figures.items():
     #     figure.savefig(os.path.join(directory, filename + '.png'), dpi=500)
