@@ -1,6 +1,7 @@
 """Module containing utilities to compute geodesic paths."""
 
 import itertools
+# import time
 import typing
 
 import dcelmesh
@@ -47,8 +48,7 @@ class Computer:
 
         # Forward variables
         self._forward_updates: int = self._mesh.get_updates() - 1
-        self._coordinates: npt.NDArray[np.float64] = np.zeros((n, 3))
-        """The geodesic distances, indexed by target vertex."""
+        self._coordinates: typing.List[npt.NDArray[np.float64]] = []
         self._m: np.float64 = m
         self._h: np.float64 = np.float64(0.)
         """The mean spacing between mesh nodes."""
@@ -178,7 +178,7 @@ class Computer:
             return
         self._laplacian.forward()
         self._forward_updates = self._mesh.get_updates()
-        self._coordinates = self._mesh.get_coordinates()
+        self._coordinates = list(self._mesh.get_coordinates())
         n = self._topology.n_vertices()
         f = self._topology.n_faces()
 
@@ -270,17 +270,15 @@ class Computer:
 
         # Compute div_X
         self._div_X = np.zeros(n)
-        for face in self._topology.faces():
-            X = self._X[face.index()]
-            for halfedge in face.halfedges():
-                origin_index = halfedge.origin().index()
-                cot_1 = self._laplacian.cot[halfedge.index()]
-                cot_2 = self._laplacian.cot[halfedge.previous().index()]
-                e_1 = self._coordinates[halfedge.destination().index()] \
-                    - self._coordinates[origin_index]
-                e_2 = self._coordinates[halfedge.next().destination().index()] \
-                    - self._coordinates[origin_index]
-                self._div_X[origin_index] += (cot_1 * e_1 + cot_2 * e_2) @ X
+        for halfedge in self._topology.halfedges():
+            origin_index = halfedge.origin().index()
+            cot_1 = self._laplacian.cot[halfedge.index()]
+            cot_2 = self._laplacian.cot[halfedge.previous().index()]
+            e_1 = self._coordinates[halfedge.destination().index()] \
+                - self._coordinates[origin_index]
+            e_2 = self._coordinates[halfedge.next().destination().index()] \
+                - self._coordinates[origin_index]
+            self._div_X[origin_index] += (cot_1 * e_1 + cot_2 * e_2) @ self._X[halfedge.face().index()]
         self._div_X /= 2.
 
         # Compute LC_inv and phi
@@ -310,6 +308,9 @@ class Computer:
             dif_D_data[near.index()] \
                 = self._laplacian.dif_D[near.index()][vertex.index()]
         dif_D = sparse.diags(dif_D_data, format='csc')
+
+        # t_start = time.time()
+        # print(f'{time.time() - t_start:3.4f}: dif_D computed')
 
         # Compute dif_LC, dif_S, and dif_u_neumann
         dif_LC_data = []
@@ -392,15 +393,18 @@ class Computer:
         # Compute dif_u
         dif_u = (dif_u_neumann + dif_u_dirichlet) / 2.
 
+        # print(f'{time.time() - t_start:3.4f}: dif_u computed')
 
         # Compute dif_ue
-        dif_ue = np.zeros((f, 3))
-        for halfedge in self._topology.halfedges():
-            dif_ue[halfedge.face().index()] \
-                += dif_u[halfedge.next().destination().index()] * (
-                    self._coordinates[halfedge.destination().index()]
-                    - self._coordinates[halfedge.origin().index()]
-                )
+        dif_ue = []
+        for face in self._topology.faces():
+            i, j, k = face.vertices()
+            i, j, k = i.index(), j.index(), k.index()
+            dif_ue.append(
+                dif_u[i] * (self._coordinates[k] - self._coordinates[j])
+                + dif_u[j] * (self._coordinates[i] - self._coordinates[k])
+                + dif_u[k] * (self._coordinates[j] - self._coordinates[i])
+            )
         for halfedge in vertex.halfedges_out():
             dif_ue[halfedge.face().index()] \
                 -= self._u[halfedge.next().destination().index()] \
@@ -409,15 +413,12 @@ class Computer:
             dif_ue[halfedge.face().index()] \
                 += self._u[halfedge.next().destination().index()] \
                     * self._partials[vertex.index()]
+        dif_ue = np.array(dif_ue)
+
+        # print(f'{time.time() - t_start:3.4f}: dif_ue computed')
 
         # Compute dif_grad_u
-        dif_grad_u = np.zeros((f, 3))
-        for face_index, face in enumerate(self._topology.faces()):
-            dif_N = None
-            dif_grad_u[face_index] += Computer._cross(
-                self._laplacian.N[face_index],
-                dif_ue[face_index]
-            )
+        dif_grad_u = np.cross(self._laplacian.N, dif_ue)
         for face in vertex.faces():
             face_index = face.index()
             dif_grad_u[face_index] += Computer._cross(
@@ -431,18 +432,19 @@ class Computer:
                  - dif_grad_u) \
             / np.linalg.norm(self._grad_u, axis=1).reshape((-1, 1))
 
+        # print(f'{time.time() - t_start:3.4f}: dif_X computed')
+
         # Compute dif_div_X
         dif_div_X = np.zeros(n)
-        for face in self._topology.faces():
-            for halfedge in face.halfedges():
-                origin_index = halfedge.origin().index()
-                cot_1 = self._laplacian.cot[halfedge.index()]
-                cot_2 = self._laplacian.cot[halfedge.previous().index()]
-                e_1 = self._coordinates[halfedge.destination().index()] \
-                    - self._coordinates[origin_index]
-                e_2 = self._coordinates[halfedge.next().destination().index()] \
-                    - self._coordinates[origin_index]
-                dif_div_X[origin_index] += (cot_1 * e_1 + cot_2 * e_2) @ dif_X[face.index()]
+        for halfedge in self._topology.halfedges():
+            origin_index = halfedge.origin().index()
+            cot_1 = self._laplacian.cot[halfedge.index()]
+            cot_2 = self._laplacian.cot[halfedge.previous().index()]
+            e_1 = self._coordinates[halfedge.destination().index()] \
+                - self._coordinates[origin_index]
+            e_2 = self._coordinates[halfedge.next().destination().index()] \
+                - self._coordinates[origin_index]
+            dif_div_X[origin_index] += (cot_1 * e_1 + cot_2 * e_2) @ dif_X[halfedge.face().index()]
         for face in vertex.faces():
             for halfedge in face.halfedges():
                 origin_index = halfedge.origin().index()
@@ -463,8 +465,12 @@ class Computer:
             dif_div_X[halfedge.next().destination().index()] += cot_2 * multiplier
         dif_div_X /= 2.
 
+        # print(f'{time.time() - t_start:3.4f}: dif_div_X computed')
+
         dif_phi = self._LC_inv.solve(dif_div_X - np.mean(dif_div_X) - dif_LC @ self._phi)
         dif_phi -= dif_phi[self._source]
+
+        # print(f'{time.time() - t_start:3.4f}: dif_phi computed')
 
         return dif_phi
 
