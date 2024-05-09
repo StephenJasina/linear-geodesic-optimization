@@ -128,7 +128,7 @@ class Computer:
             = [np.zeros(3) for _ in self._topology.vertices()]
         for edge in self._topology.edges():
             u, v = edge.vertices()
-            laplacian = self._laplacian.LC_neumann_edges[edge.index()]
+            laplacian = self._laplacian.LC_edges[edge.index()]
             self.mean_curvature_normal[u.index()] \
                 -= laplacian * self._coordinates[v.index()] \
                 / (2. * self._laplacian.D[u.index()])
@@ -137,7 +137,7 @@ class Computer:
                 / (2. * self._laplacian.D[v.index()])
         for vertex in self._topology.vertices():
             self.mean_curvature_normal[vertex.index()] \
-                -= self._laplacian.LC_neumann_vertices[vertex.index()] \
+                -= self._laplacian.LC_vertices[vertex.index()] \
                 * self._coordinates[vertex.index()] \
                 / (2. * self._laplacian.D[vertex.index()])
 
@@ -211,21 +211,21 @@ class Computer:
         ]
         for edge in self._topology.edges():
             w, x = edge.vertices()
-            laplacian = self._laplacian.LC_neumann_edges[edge.index()]
+            laplacian = self._laplacian.LC_edges[edge.index()]
 
             for u, v in [(w, x), (x, w)]:
                 vertex_area = self._laplacian.D[u.index()]
                 self.dif_mean_curvature_normal[u.index()][v.index()] \
-                    -= self._laplacian.LC_neumann_edges[edge.index()] \
+                    -= self._laplacian.LC_edges[edge.index()] \
                     * self._partials[v.index()] \
                     / (2. * vertex_area)
                 for near in itertools.chain([u], u.vertices()):
                     dif_vertex_area \
                         = self._laplacian.dif_D[u.index()][near.index()]
                     if near.index() \
-                            in self._laplacian.dif_LC_neumann_edges[edge.index()]:
+                            in self._laplacian.dif_LC_edges[edge.index()]:
                         dif_laplacian \
-                            = self._laplacian.dif_LC_neumann_edges[edge.index()][near.index()]
+                            = self._laplacian.dif_LC_edges[edge.index()][near.index()]
                     else:
                         dif_laplacian = np.float64(0.)
                     self.dif_mean_curvature_normal[u.index()][near.index()] \
@@ -236,15 +236,15 @@ class Computer:
         for vertex in self._topology.vertices():
             coordinates = self._coordinates[vertex.index()]
             vertex_area = self._laplacian.D[vertex.index()]
-            laplacian = self._laplacian.LC_neumann_vertices[vertex.index()]
+            laplacian = self._laplacian.LC_vertices[vertex.index()]
             self.dif_mean_curvature_normal[vertex.index()][vertex.index()] \
-                -= self._laplacian.LC_neumann_vertices[vertex.index()] \
+                -= self._laplacian.LC_vertices[vertex.index()] \
                 * self._partials[vertex.index()] \
                 / (2. * vertex_area)
             for near in itertools.chain([vertex], vertex.vertices()):
                 dif_vertex_area = self._laplacian.dif_D[vertex.index()][near.index()]
                 dif_laplacian \
-                    = self._laplacian.dif_LC_neumann_vertices[vertex.index()][near.index()]
+                    = self._laplacian.dif_LC_vertices[vertex.index()][near.index()]
                 self.dif_mean_curvature_normal[vertex.index()][near.index()] \
                     -= ((dif_laplacian
                          - dif_vertex_area * laplacian / vertex_area)
@@ -256,16 +256,17 @@ class Computer:
             if vertex.is_on_boundary():
                 continue
             mean_curvature_normal = self.mean_curvature_normal[vertex.index()]
+            absolute_mean_curvature = np.linalg.norm(mean_curvature_normal)
             vertex_normal = self.vertex_N[vertex.index()]
             kappa_1 = self.kappa_1[vertex.index()]
             kappa_2 = self.kappa_2[vertex.index()]
+            radicand = self.kappa_H[vertex.index()]**2 - self.kappa_G[vertex.index()]
             curvature_difference = kappa_1 - kappa_2
             for near in itertools.chain([vertex], vertex.vertices()):
                 dif_kappa_G = self.dif_kappa_G[vertex.index()][near.index()]
                 dif_mean_curvature_normal \
                     = self.dif_mean_curvature_normal[vertex.index()][near.index()]
-                absolute_mean_curvature = np.linalg.norm(mean_curvature_normal)
-                if absolute_mean_curvature == np.float64(0.):
+                if absolute_mean_curvature <= np.float64(0.):
                     dif_kappa_H = np.float64(0.)
                 else:
                     dif_kappa_H = np.sign(vertex_normal
@@ -274,7 +275,7 @@ class Computer:
                            @ dif_mean_curvature_normal) \
                         / absolute_mean_curvature
                 self.dif_kappa_H[vertex.index()][near.index()] = dif_kappa_H
-                if curvature_difference == np.float64(0.):
+                if radicand < np.float64(0.):
                     self.dif_kappa_1[vertex.index()][near.index()] \
                         = dif_kappa_H
                     self.dif_kappa_2[vertex.index()][near.index()] \

@@ -4,633 +4,509 @@ import itertools
 import typing
 
 import dcelmesh
-import meshutility
 import numpy as np
 import numpy.typing as npt
+import scipy.sparse as sparse
+import scipy.sparse.linalg as sparse_linalg
 
 from linear_geodesic_optimization.mesh.mesh import Mesh
+from linear_geodesic_optimization.optimization.laplacian \
+    import Computer as Laplacian
 
 
 class Computer:
     """
-    Implementation of the fast marching on a mesh.
-
-    This is essentially a wrapper around `meshutility`'s fast marching
-    implementation with a reverse direction.
+    Implementation of the heat method on a triangle mesh.
     """
 
-    def __init__(self, mesh: Mesh, u: int, v: int):
+    def __init__(self, mesh: Mesh, source: int, destinations: typing.List[int],
+                 laplacian: Laplacian,
+                 m: np.float64 = np.float64(1.)):
         """
         Initialize the computer.
 
-        As input, the computer accepts a mesh and the indices of two
-        special vertices for which the geodesic path will be computed.
+        As input, the computer accepts a mesh and the source vertex
+        index to which geodesic distances will be computed.
+        Additionally, a third parameter controls the destination
+        vertices.
+
+        A fourth parameter is a `laplacian.Computer` corresponding to
+        the mesh.
+
+        Finally, an optional parameter `m` controls how smooth the
+        computed approximate geodesic distances are.
         """
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
-        self._faces: typing.List[typing.Tuple[int, ...]] = [
-            tuple(vertex.index() for vertex in face.vertices())
-            for face in self._topology.faces()
-        ]
-        """
-        An explicit representation of our mesh's topology. This is
-        required as input to `meshutility`'s geodesic solver.
-        """
+        n = self._topology.n_vertices()
+        f = self._topology.n_faces()
+        self._laplacian = laplacian
 
-        self._u: int = u
-        self._v: int = v
+        self._source: int = source
+        self._destinations: typing.List[int] = destinations
 
         # Forward variables
         self._forward_updates: int = self._mesh.get_updates() - 1
-        self._coordinates: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
-        self.edge_lengths: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.edges()]
-        """A list of the mesh's edge lengths, indexed by edges."""
-        self.path_vertices: typing.List[dcelmesh.Mesh.Vertex] = []
-        """Vertices through which the path passes."""
-        self.path_halfedges: typing.List[typing.List[dcelmesh.Mesh.Halfedge]] \
-            = []
+        self._coordinates: npt.NDArray[np.float64] = np.zeros((n, 3))
+        """The geodesic distances, indexed by target vertex."""
+        self._m: np.float64 = m
+        self._h: np.float64 = np.float64(0.)
+        """The mean spacing between mesh nodes."""
+        self._t: np.float64 = np.float64(0.)
+        """A smoothing parameter."""
+        self._delta: npt.NDArray[np.float64] = np.zeros(n)
+        """A vector representing the initial heat, indexed by vertex."""
+        self._delta[source] = np.float64(1.)
+        self._epsilon = 1e-10
+        self._LC: sparse.csc_matrix[np.float64] \
+            = sparse.csc_matrix((n, n), dtype=np.float64)
         """
-        A list of lists of halfedges through which the path passes.
-
-        These halfedges are partitioned by `path_vertices`.
+        A sparse symmetric matrix representing the cotan Laplacian.
         """
-        self.path_ratios: typing.List[typing.List[np.float64]] = []
+        self._LC_inv = None
         """
-        Where along each halfedge the geodesic path passes through.
-
-        Along with `path_halfedges` and `path_vertices`, this gives an
-        easy way to reconstruct the actual path: simply linearly
-        interpolate between the two endpoints of each halfedge using the
-        corresponding ratio.
+        A sparse LU decomposition of LC that can be used in place of
+        computing LC's inverse. Note that we subtract a small multiple
+        of the identity from LC so that it has nonzero determinant.
         """
-        self.path_coordinates: typing.List[typing.List[np.float64]] = []
+        self._S: sparse.csc_matrix[np.float64] \
+            = sparse.csc_matrix((n, n), dtype=np.float64)
         """
-        The actual coordinates of the geodesic path.
+        A sparse symmetric matrix representing (id - t * Laplacian).
         """
-        self._start_points: typing.List[npt.NDArray[np.float64]] = []
-        """List of the start locations for each path component."""
-        self._end_points: typing.List[npt.NDArray[np.float64]] = []
-        """List of the end locations for each path component."""
-        self._double_boundary: typing.List[typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]]] = []
+        self._S_inv: typing.Optional[sparse_linalg.SuperLU] = None
         """
-        A list of lists of halfedges that appear on between two saddle
-        vertices. Alternatively, one can think of this as halfedges on
-        the boundary whose twins are also on the boundary. Additionally
-        stored are the positions of the halfedges' origins and
-        destinations.
+        A sparse LU decomposition of S that can be used in place of
+        computing S's inverse.
         """
-        self._boundary: typing.List[typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]]] = []
+        self._u_neumann: npt.NDArray[np.float64] = np.zeros(n)
         """
-        A list of lists of halfedges that appear on the boundary of the
-        sequence of faces, as well as the positions of the vertices of
-        the adjacent face. If a halfedge is (u, v) and the next halfedge
-        is (v, w), then the positions are returned in the order
-        (u, v, w).
+        A vector representing the heat at time t, indexed by vertex.
         """
-        self._interior_shared: typing.List[typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]]] = []
+        self._LC_interior: sparse.csc_matrix[np.float64] \
+            = sparse.csc_matrix((n, n), dtype=np.float64)
         """
-        A list of lists of halfedges that appear between faces such that
-        the previous and next connections are on adjacent sides of the
-        quadrilateral formed by the two faces. Also included are
-        positions of the four vertices making up the two faces in the
-        order (u, v, w, x), where u is the vertex on the halfedge shared
-        by the two connections, v is the vertex on the halfedge unshared
-        by the two connections, w is the other vertex closer to the
-        start, and x is other vertex closer to the end.
+        A sparse symmetric matrix representing the cotan Laplacian.
         """
-        self._interior_unshared: typing.List[typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]]] = []
+        self._S_interior: sparse.csc_matrix[np.float64] \
+            = sparse.csc_matrix((n, n), dtype=np.float64)
         """
-        A list of lists of halfedges that appear between faces such that
-        the previous and next connections are on opposing sides of the
-        quadrilateral formed by the two faces. Also included are
-        positions of the four vertices making up the two faces in the
-        order (u, v, w, x), where u is the vertex on the halfedge closer
-        to the start, v is the vertex on the halfedge closer to the end,
-        w is the other vertex closer to the start, and x is the other
-        vertex closer to the end.
+        A sparse symmetric matrix representing (id - t * Laplacian).
         """
-        self.distance: np.float64 = np.float64(0.)
-        """The geodesic distance itself."""
+        self._S_interior_inv: typing.Optional[sparse_linalg.SuperLU] = None
+        """
+        A sparse LU decomposition of S that can be used in place of
+        computing S's inverse.
+        """
+        self._u_dirichlet: npt.NDArray[np.float64] = np.zeros(n)
+        """
+        A vector representing the heat at time t, indexed by vertex.
+        """
+        self._u: npt.NDArray[np.float64] = np.zeros(n)
+        """
+        A vector representing the heat at time t, indexed by vertex.
+        """
+        self._ue: npt.NDArray[np.float64] = np.zeros((f, 3))
+        """
+        A collection of vectors perpendicular to both the normals of
+        each face and the gradient of u, indexed by face.
+        """
+        self._grad_u: npt.NDArray[np.float64] = np.zeros((f, 3))
+        """
+        A collection of vectors representing the gradient of u, indexed
+        by face.
+        """
+        self._X: npt.NDArray[np.float64] = np.zeros((f, 3))
+        """
+        A collection of vectors representing direction of the gradient
+        of u, indexed by face.
+        """
+        self._div_X: npt.NDArray[np.float64] = np.zeros(n)
+        """
+        A vector representing the divergence of X, indexed by vertex.
+        """
+        self._phi: npt.NDArray[np.float64] = np.zeros(n)
+        """
+        A vector representing distances from the source to all mesh
+        nodes.
+        """
+        self.distances: typing.Dict[np.float64] = {
+            destination: np.float64(0.)
+            for destination in destinations
+        }
+        """A mapping from destinations to distances from the source."""
 
         # Reverse variables
         self._reverse_updates: int = self._mesh.get_updates() - 1
-        self._partials: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
-        self.dif_edge_lengths: typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.edges()]
+        self._partials: npt.NDArray[np.float64] = np.zeros((n, 3))
+        self._dif_h: npt.NDArray[np.float64] = np.zeros(n)
         """
-        A list of the partials of the mesh's edge lengths, indexed by
-        edges, and then by vertices.
+        The partials of the mean spacing between mesh nodes, indexed by
+        vertex.
         """
-        self.dif_distance: typing.Dict[int, np.float64] = {}
+        self._dif_t: npt.NDArray[np.float64] = np.zeros(n)
         """
-        The partials of the geodesic distance, indexed by vertex.
-
-        Note that the only vertices for which this dictionary is
-        populated are those that are incident to the faces through which
-        the geodesic path passes.
+        The partials of the smoothing parameter, indexed by vertex.
+        """
+        self.dif_distances: typing.Dict[int, np.float64] = {
+            destination: np.zeros(n)
+            for destination in destinations
+        }
+        """
+        A mapping from destinations to gradients of the distances from
+        the source.
         """
 
     @staticmethod
-    def _get_next_point(
-        u: npt.NDArray[np.float64],
-        v: npt.NDArray[np.float64],
-        d_u: np.float64,
-        d_v: np.float64
-    ) -> npt.NDArray[np.float64]:
-        """
-        Find a point at a certain distance from two other points.
-
-        Given two two-dimensional input points `u` and `v`, find a point
-        `w` so that the distance from `v` to `w` is `d_u` and the
-        distance from `u` to `w` is `d_v`. Furthermore, ensure that the
-        resulting triangle (`u`, `v`, `w`) is oriented counterclockwise.
-        """
-        d_w = np.linalg.norm(v - u)
-        h = (d_w**2 + d_v**2 - d_u**2) / (2. * d_w)
-        k = np.sqrt(d_v**2 - h**2)
-        rotate = np.array([[0., -1.], [1., 0.]], dtype=np.float64)
-        direction = (v - u) / d_w
-        return u + h * direction + k * (rotate @ direction)
-
-    def _get_point_locations(self,
-                             start: dcelmesh.Mesh.Vertex,
-                             middle: typing.List[dcelmesh.Mesh.Halfedge],
-                             end: dcelmesh.Mesh.Vertex) \
-            -> typing.Tuple[
-                npt.NDArray[np.float64],
-                typing.List[typing.Tuple[
-                    dcelmesh.Mesh.Halfedge,
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64]
-                ]],
-                typing.List[typing.Tuple[
-                    dcelmesh.Mesh.Halfedge,
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64]
-                ]],
-                typing.List[typing.Tuple[
-                    dcelmesh.Mesh.Halfedge,
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64]
-                ]],
-                typing.List[typing.Tuple[
-                    dcelmesh.Mesh.Halfedge,
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64],
-                    npt.NDArray[np.float64]
-                ]],
-                npt.NDArray[np.float64]
-            ]:
-        """
-        Unfold a sequence of faces according to the connecting edges.
-
-        Return six things:
-        * The index and location of the starting vertex.
-        * An appropriate value for an element of `self._boundary`
-        * An appropriate value for an element of `self._double_boundary`
-        * An appropriate value for an element of `self._interior_shared`
-        * An appropriate value for an element of
-          `self._interior_unshared`
-        * The index and location of the ending vertex.
-
-        Notably, this is a two-dimensional representation.
-        """
-        coordinates = self._coordinates
-
-        double_boundary: typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]] = []
-        boundary: typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]] = []
-        interior_shared: typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]] = []
-        interior_unshared: typing.List[typing.Tuple[
-            dcelmesh.Mesh.Halfedge,
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64],
-            npt.NDArray[np.float64]
-        ]] = []
-
-        ps = np.zeros(2)
-
-        # Need to deal with the special case where the path is just a
-        # single segment
-        if not middle:
-            pe = np.array([
-                np.linalg.norm(self._coordinates[start.index()]
-                               - self._coordinates[end.index()]),
-                0.
-            ], dtype=np.float64)
-            halfedge = next(self._topology.get_edge(start.index(),
-                                                    end.index()).halfedges())
-            if halfedge.origin().index() == start.index():
-                return ps, [(halfedge, ps, pe)], [], [], [], pe
-            else:
-                return ps, [(halfedge, pe, ps)], [], [], [], pe
-
-        previous_was_u_side = True
-        u = middle[0].origin()
-        v = middle[0].destination()
-        w = start
-        x = middle[0].previous().origin()
-        pw = ps
-        pu = np.array([
-            np.linalg.norm(coordinates[u.index()]
-                           - coordinates[start.index()]),
-            np.float64(0.)
-        ], dtype=np.float64)
-        pv = self._get_next_point(
-            pu,
-            pw,
-            np.linalg.norm(coordinates[v.index()] - coordinates[w.index()]),
-            np.linalg.norm(coordinates[v.index()] - coordinates[u.index()])
-        )
-        px = self._get_next_point(
-            pu,
-            pv,
-            np.linalg.norm(coordinates[x.index()] - coordinates[v.index()]),
-            np.linalg.norm(coordinates[x.index()] - coordinates[u.index()])
-        )
-
-        # Place the first two boundary edges
-        twin = middle[0].twin()
-        if twin is None:
-            raise dcelmesh.Mesh.IllegalMeshException(
-                f'Halfedge ({middle[0].origin().index()}, '
-                f'{middle[0].destination().index()}) '
-                'has no twin'
-            )
-        boundary.append((twin.next(), pu, pw, pv))
-        boundary.append((twin.previous(), pw, pv, pu))
-
-        # Place the other boundary edges (except one) and the interior
-        # edges
-        for index in range(len(middle)):
-            halfedge = middle[index]
-            is_u_side = index == len(middle) - 1 \
-                or u.index() == middle[index + 1].origin().index()
-
-            if is_u_side:
-                boundary.append((halfedge.next(), pv, px, pu))
-                if previous_was_u_side:
-                    interior_shared.append((halfedge, pu, pv, pw, px))
-                else:
-                    interior_unshared.append((halfedge, pv, pu, pw, px))
-
-                w = v
-                pw = pv
-                v = x
-                pv = px
-            else:
-                boundary.append((halfedge.previous(), px, pu, pv))
-                if previous_was_u_side:
-                    interior_unshared.append((halfedge, pu, pv, pw, px))
-                else:
-                    interior_shared.append((halfedge, pv, pu, pw, px))
-
-                w = u
-                pw = pu
-                u = x
-                pu = px
-
-            if index == len(middle) - 1:
-                break
-
-            x = middle[index + 1].previous().origin()
-            px = self._get_next_point(
-                pu,
-                pv,
-                np.linalg.norm(coordinates[x.index()]
-                               - coordinates[v.index()]),
-                np.linalg.norm(coordinates[x.index()] - coordinates[u.index()])
-            )
-
-            previous_was_u_side = is_u_side
-
-        # Place the last boundary edge
-        boundary.append((middle[-1].previous(), pv, pu, pw))
-
-        pe = px
-
-        return ps, double_boundary, boundary, \
-            interior_shared, interior_unshared, pe
+    def _cross(a, b):
+        # For some reason, this is significantly faster than the
+        # equivalent numpy function
+        return np.array([
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0]
+        ])
 
     def forward(self) -> None:
         """
         Compute the forward direction.
 
-        The computed values will be stored in the variables:
-        * `Computer.path`
-        * `Computer.path_ratios`
-        * `Computer.distance`
+        The computed values will be stored in the variable
+        `Computer.distances`
         """
         if self._forward_updates == self._mesh.get_updates():
             return
+        self._laplacian.forward()
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = self._mesh.get_coordinates()
+        n = self._topology.n_vertices()
+        f = self._topology.n_faces()
 
-        # Compute edge lengths
-        for edge in self._topology.edges():
-            u, v = edge.vertices()
-            self.edge_lengths[edge.index()] \
-                = np.linalg.norm(self._coordinates[u.index()]
-                                 - self._coordinates[v.index()])
+        # Compute h and t
+        self._h = np.mean([
+            np.linalg.norm(
+                self._coordinates[halfedge.origin().index()]
+                - self._coordinates[halfedge.destination().index()]
+            )
+            for halfedge in self._topology.halfedges()
+        ])
+        self._t = self._m * self._h * self._h
 
-        # Call the meshutility solver
-        mu_path, mu_path_ratios = meshutility.pygeodesic.find_path(
-            self._coordinates, self._faces, self._u, self._v
+        # Compute LC, S, and u_neumann
+        LC_data = []
+        LC_row_ind = []
+        LC_col_ind = []
+        for edge, value in zip(self._topology.edges(),
+                               self._laplacian.LC_edges):
+            i, j = edge.vertices()
+            i, j = i.index(), j.index()
+            LC_data.append(value)
+            LC_row_ind.append(i)
+            LC_col_ind.append(j)
+            LC_data.append(value)
+            LC_row_ind.append(j)
+            LC_col_ind.append(i)
+        for vertex_index, value \
+                in enumerate(self._laplacian.LC_vertices):
+            LC_data.append(value)
+            LC_row_ind.append(vertex_index)
+            LC_col_ind.append(vertex_index)
+        self._LC = sparse.csc_matrix(
+            (LC_data, (LC_row_ind, LC_col_ind)), (n, n)
         )
-        self.path_coordinates = [
-            list((1 - ratio) * self._coordinates[i]
-                 + ratio * self._coordinates[j])
-            for (i, j), ratio in zip(mu_path, mu_path_ratios)
-        ]
+        self._S = sparse.diags(self._laplacian.D, format='csc') \
+            - self._t * self._LC
+        self._S_inv = sparse_linalg.splu(self._S)
+        self._u_neumann = self._S_inv.solve(self._delta)
 
-        # Split the path up piecewise, where boundaries are marked by
-        # vertices. Make sure to orient path_edges sensibly: each
-        # halfedge points to the next face the path passes through.
-        previous_vertex_index: typing.Optional[int] = mu_path[0][0]
-        self.path_vertices = [self._topology.get_vertex(previous_vertex_index)]
-        self.path_halfedges = []
-        self.path_ratios = []
-        halfedges_to_add: typing.List[dcelmesh.Mesh.Halfedge] = []
-        ratios_to_add: typing.List[np.float64] = []
-        for index in range(1, len(mu_path)):
-            i, j = mu_path[index]
+        # Compute LC_interior, S_interior, u_dirichlet, and u
+        LC_data = []
+        LC_row_ind = []
+        LC_col_ind = []
+        for edge, value in zip(self._topology.edges(),
+                               self._laplacian.LC_interior_edges):
+            i, j = edge.vertices()
+            i, j = i.index(), j.index()
+            LC_data.append(value)
+            LC_data.append(value)
+            LC_row_ind.append(i)
+            LC_row_ind.append(j)
+            LC_col_ind.append(j)
+            LC_col_ind.append(i)
+        for vertex_index, value \
+                in enumerate(self._laplacian.LC_interior_vertices):
+            LC_data.append(value)
+            LC_row_ind.append(vertex_index)
+            LC_col_ind.append(vertex_index)
+        self._LC_interior = sparse.csc_matrix(
+            (LC_data, (LC_row_ind, LC_col_ind)), (n, n)
+        )
+        self._S_interior = sparse.diags(self._laplacian.D, format='csc') \
+            - self._t * self._LC_interior
+        self._S_interior_inv = sparse_linalg.splu(self._S_interior)
+        self._u_dirichlet = self._S_interior_inv.solve(self._delta)
+        self._u = (self._u_neumann + self._u_dirichlet) / 2.
 
-            # Vertex case
-            if i == j:
-                self.path_vertices.append(self._topology.get_vertex(i))
-                self.path_halfedges.append(halfedges_to_add)
-                self.path_ratios.append(ratios_to_add)
-
-                halfedges_to_add = []
-                ratios_to_add = []
-
-                previous_vertex_index = i
-                continue
-
-            # Guard against some strange floating point quirks that
-            # the meshutility solver has
-            if previous_vertex_index is not None \
-                    and (previous_vertex_index == i
-                         or previous_vertex_index == j):
-                continue
-            previous_vertex_index = None
-
-            # Pick the right direction for the halfedge
-            halfedge_ij = self._topology.get_halfedge(i, j)
-            # This check is legal because, if index == len(mu_path) - 1,
-            # then we fall into the vertex case.
-            if halfedge_ij.previous().origin().index() in mu_path[index + 1]:
-                halfedges_to_add.append(halfedge_ij)
-                ratios_to_add.append(mu_path_ratios[index])
-            else:
-                halfedges_to_add.append(self._topology.get_halfedge(j, i))
-                ratios_to_add.append(1 - mu_path_ratios[index])
-
-        # Compute point locations and the total geodesic distance
-        self._start_points = []
-        self._end_points = []
-        self._double_boundary = []
-        self._boundary = []
-        self._interior_shared = []
-        self._interior_unshared = []
-        self.distance = np.float64(0.)
-        for (start, end), middle in zip(itertools.pairwise(self.path_vertices),
-                                        self.path_halfedges):
-            start_point, double_boundary, boundary, \
-                interior_shared, interior_unshared, end_point \
-                = self._get_point_locations(start, middle, end)
-            self._start_points.append(start_point)
-            self._double_boundary.append(double_boundary)
-            self._boundary.append(boundary)
-            self._interior_shared.append(interior_shared)
-            self._interior_unshared.append(interior_unshared)
-            self._end_points.append(end_point)
-            self.distance += np.linalg.norm(start_point - end_point)
-
-    def _reverse_part(self,
-                      start_point: npt.NDArray[np.float64],
-                      double_boundary: typing.List[typing.Tuple[
-                          dcelmesh.Mesh.Halfedge,
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64]
-                      ]],
-                      boundary: typing.List[typing.Tuple[
-                          dcelmesh.Mesh.Halfedge,
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64]
-                      ]],
-                      interior_shared: typing.List[typing.Tuple[
-                          dcelmesh.Mesh.Halfedge,
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64]
-                      ]],
-                      interior_unshared: typing.List[typing.Tuple[
-                          dcelmesh.Mesh.Halfedge,
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64],
-                          npt.NDArray[np.float64]
-                      ]],
-                      end_point: npt.NDArray[np.float64]) \
-            -> None:
-        """
-        Compute the partials for a geodesic not passing through saddles.
-
-        In other words, the only mesh points the geodesic path should
-        coincide with are the endpoints.
-        """
-        d_geodesic = np.linalg.norm(end_point - start_point)
-
-        for halfedge, pu, pv in double_boundary:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
-            partial_edge = 1.
-
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
-
-        for halfedge, pu, pv, pw in boundary:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
-
-            # Use bad names here and elsewhere to avoid lines becoming
-            # too long and (even more) unreadable
-            sw = start_point - pw
-            ew = end_point - pw
-            uw = pu - pw
-            vw = pv - pw
-            vu = pv - pu
-
-            partial_edge = np.abs(np.linalg.norm(vu) * np.cross(sw, ew)
-                                  / (d_geodesic * np.cross(uw, vw)))
-
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
-
-        for halfedge, pu, pv, pw, px in interior_shared:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
-
-            su = start_point - pu
-            wu = pw - pu
-            wv = pw - pv
-            eu = end_point - pu
-            xu = px - pu
-            xv = px - pv
-            vu = pv - pu
-
-            partial_edge = -np.linalg.norm(vu) * np.cross(eu, su) \
-                * (1. / np.cross(wu, wv) + 1. / np.cross(xv, xu)) \
-                / (d_geodesic * (1. + np.cross(xu, wu) / np.cross(wv, xv)))
-
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
-
-        for halfedge, pu, pv, pw, px in interior_unshared:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
-
-            wu = pw - pu
-            wv = pw - pv
-            su = start_point - pu
-            sv = start_point - pv
-            sw = start_point - pw
-            xu = px - pu
-            xv = px - pv
-            eu = end_point - pu
-            ev = end_point - pv
-            ex = end_point - px
-            vu = pv - pu
-
-            partial_edge = np.linalg.norm(vu) * (
-                (
-                    np.cross(wv, sw) / np.cross(wu, wv)
-                    * (
-                        (1. - sv @ ev / (sv @ sv)) / np.cross(sv, ev)
-                        + (1. - sv @ su / (sv @ sv)) / np.cross(su, sv)
-                    )
-                ) + (
-                    np.cross(xu, ex) / np.cross(xv, xu)
-                    * (
-                        (1. - eu @ su / (eu @ eu)) / np.cross(eu, su)
-                        + (1. - eu @ ev / (eu @ eu)) / np.cross(ev, eu)
-                    )
+        # Compute ue, grad_u and X
+        self._ue = np.zeros((f, 3))
+        self._grad_u = np.zeros((f, 3))
+        for face_index, (face, N) in enumerate(zip(
+            self._topology.faces(), self._laplacian.N
+        )):
+            for halfedge in face.halfedges():
+                origin_index = halfedge.origin().index()
+                destination_index = halfedge.destination().index()
+                opposite_index = halfedge.next().destination().index()
+                self._ue[face_index] += self._u[opposite_index] * (
+                    self._coordinates[destination_index]
+                    - self._coordinates[origin_index]
                 )
-                - 1. / np.cross(su, sv)
-                - 1. / np.cross(ev, eu)
-            ) / (d_geodesic * (
-                1. / np.cross(sv, ev)
-                + 1. / np.cross(eu, su)
-            ))
+            self._grad_u[face_index] = Computer._cross(N, self._ue[face_index])
+        norm_grad_u = np.linalg.norm(self._grad_u, axis=1).reshape((-1, 1))
+        self._X = np.divide(
+            -self._grad_u, norm_grad_u, out=np.zeros_like(self._grad_u),
+            where=norm_grad_u != 0
+        )
 
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
+        # Compute div_X
+        self._div_X = np.zeros(n)
+        for face in self._topology.faces():
+            X = self._X[face.index()]
+            for halfedge in face.halfedges():
+                origin_index = halfedge.origin().index()
+                cot_1 = self._laplacian.cot[halfedge.index()]
+                cot_2 = self._laplacian.cot[halfedge.previous().index()]
+                e_1 = self._coordinates[halfedge.destination().index()] \
+                    - self._coordinates[origin_index]
+                e_2 = self._coordinates[halfedge.next().destination().index()] \
+                    - self._coordinates[origin_index]
+                self._div_X[origin_index] += (cot_1 * e_1 + cot_2 * e_2) @ X
+        self._div_X /= 2.
+
+        # Compute LC_inv and phi
+        self._LC_inv = sparse_linalg.splu(
+            self._LC - self._epsilon * sparse.eye(n, format='csc')
+        )
+        self._phi = self._LC_inv.solve(
+            self._div_X - np.mean(self._div_X)
+        )
+        self._phi -= self._phi[self._source]
+
+        for destination in self._destinations:
+            self.distances[destination] = self._phi[destination]
+
+    def _reverse_part(self, vertex: dcelmesh.Mesh.Vertex) \
+            -> npt.NDArray[np.float64]:
+        """
+        Compute the derivative of phi with respect to one of the
+        coordinates.
+        """
+        n = self._topology.n_vertices()
+        f = self._topology.n_faces()
+
+        # Compute dif_D
+        dif_D_data = np.zeros(n)
+        for near in itertools.chain([vertex], vertex.vertices()):
+            dif_D_data[near.index()] \
+                = self._laplacian.dif_D[near.index()][vertex.index()]
+        dif_D = sparse.diags(dif_D_data, format='csc')
+
+        # Compute dif_LC, dif_S, and dif_u_neumann
+        dif_LC_data = []
+        dif_LC_row_ind = []
+        dif_LC_col_ind = []
+        for edge in vertex.edges():
+            value = self._laplacian.dif_LC_edges[edge.index()][vertex.index()]
+            i, j = edge.vertices()
+            i, j = i.index(), j.index()
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(i)
+            dif_LC_col_ind.append(j)
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(j)
+            dif_LC_col_ind.append(i)
+        for halfedge in vertex.halfedges_out():
+            halfedge_next = halfedge.next()
+            edge = halfedge_next.edge()
+            value = self._laplacian.dif_LC_edges[edge.index()][vertex.index()]
+            i, j = halfedge.destination(), halfedge_next.destination()
+            i, j = i.index(), j.index()
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(i)
+            dif_LC_col_ind.append(j)
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(j)
+            dif_LC_col_ind.append(i)
+        for near in itertools.chain([vertex], vertex.vertices()):
+            dif_LC_data.append(
+                self._laplacian.dif_LC_vertices[near.index()][vertex.index()]
+            )
+            dif_LC_row_ind.append(near.index())
+            dif_LC_col_ind.append(near.index())
+        dif_LC = sparse.csc_matrix(
+            (dif_LC_data, (dif_LC_row_ind, dif_LC_col_ind)), (n, n)
+        )
+        dif_S = dif_D - (self._dif_t[vertex.index()] * self._LC
+                         + self._t * dif_LC)
+        dif_u_neumann = -self._S_inv.solve(dif_S @ self._u_neumann)
+
+        # Compute dif_LC_interior, dif_S_interior, and dif_u_dirichlet
+        dif_LC_data = []
+        dif_LC_row_ind = []
+        dif_LC_col_ind = []
+        for edge in vertex.edges():
+            i, j = edge.vertices()
+            value = self._laplacian.dif_LC_interior_edges[edge.index()][vertex.index()]
+            i, j = i.index(), j.index()
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(i)
+            dif_LC_col_ind.append(j)
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(j)
+            dif_LC_col_ind.append(i)
+        for halfedge in vertex.halfedges_out():
+            halfedge_next = halfedge.next()
+            i, j = halfedge.destination(), halfedge_next.destination()
+            edge = halfedge_next.edge()
+            value = self._laplacian.dif_LC_interior_edges[edge.index()][vertex.index()]
+            i, j = i.index(), j.index()
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(i)
+            dif_LC_col_ind.append(j)
+            dif_LC_data.append(value)
+            dif_LC_row_ind.append(j)
+            dif_LC_col_ind.append(i)
+        for near in itertools.chain([vertex], vertex.vertices()):
+            dif_LC_data.append(
+                self._laplacian.dif_LC_interior_vertices[near.index()][vertex.index()]
+            )
+            dif_LC_row_ind.append(near.index())
+            dif_LC_col_ind.append(near.index())
+        dif_LC_interior = sparse.csc_matrix(
+            (dif_LC_data, (dif_LC_row_ind, dif_LC_col_ind)), (n, n)
+        )
+        dif_S_interior = dif_D - (self._dif_t[vertex.index()] * self._LC_interior
+                         + self._t * dif_LC_interior)
+        dif_u_dirichlet = -self._S_interior_inv.solve(dif_S_interior @ self._u_dirichlet)
+
+        # Compute dif_u
+        dif_u = (dif_u_neumann + dif_u_dirichlet) / 2.
+
+
+        # Compute dif_ue
+        dif_ue = np.zeros((f, 3))
+        for halfedge in self._topology.halfedges():
+            dif_ue[halfedge.face().index()] \
+                += dif_u[halfedge.next().destination().index()] * (
+                    self._coordinates[halfedge.destination().index()]
+                    - self._coordinates[halfedge.origin().index()]
+                )
+        for halfedge in vertex.halfedges_out():
+            dif_ue[halfedge.face().index()] \
+                -= self._u[halfedge.next().destination().index()] \
+                    * self._partials[vertex.index()]
+        for halfedge in vertex.halfedges_in():
+            dif_ue[halfedge.face().index()] \
+                += self._u[halfedge.next().destination().index()] \
+                    * self._partials[vertex.index()]
+
+        # Compute dif_grad_u
+        dif_grad_u = np.zeros((f, 3))
+        for face_index, face in enumerate(self._topology.faces()):
+            dif_N = None
+            dif_grad_u[face_index] += Computer._cross(
+                self._laplacian.N[face_index],
+                dif_ue[face_index]
+            )
+        for face in vertex.faces():
+            face_index = face.index()
+            dif_grad_u[face_index] += Computer._cross(
+                self._laplacian.dif_N[face_index][vertex.index()],
+                self._ue[face_index]
+            )
+
+        # Compute dif_X
+        dif_X = (np.sum(self._X * dif_grad_u, axis=1).reshape((-1, 1))
+                 * self._X
+                 - dif_grad_u) \
+            / np.linalg.norm(self._grad_u, axis=1).reshape((-1, 1))
+
+        # Compute dif_div_X
+        dif_div_X = np.zeros(n)
+        for face in self._topology.faces():
+            for halfedge in face.halfedges():
+                origin_index = halfedge.origin().index()
+                cot_1 = self._laplacian.cot[halfedge.index()]
+                cot_2 = self._laplacian.cot[halfedge.previous().index()]
+                e_1 = self._coordinates[halfedge.destination().index()] \
+                    - self._coordinates[origin_index]
+                e_2 = self._coordinates[halfedge.next().destination().index()] \
+                    - self._coordinates[origin_index]
+                dif_div_X[origin_index] += (cot_1 * e_1 + cot_2 * e_2) @ dif_X[face.index()]
+        for face in vertex.faces():
+            for halfedge in face.halfedges():
+                origin_index = halfedge.origin().index()
+                dif_cot_1 = self._laplacian.dif_cot[halfedge.index()][vertex.index()]
+                dif_cot_2 = self._laplacian.dif_cot[halfedge.previous().index()][vertex.index()]
+                e_1 = self._coordinates[halfedge.destination().index()] \
+                    - self._coordinates[origin_index]
+                e_2 = self._coordinates[halfedge.next().destination().index()] \
+                    - self._coordinates[origin_index]
+                dif_div_X[origin_index] \
+                    += (dif_cot_1 * e_1 + dif_cot_2 * e_2) @ self._X[face.index()]
+        for halfedge in vertex.halfedges_out():
+            cot_1 = self._laplacian.cot[halfedge.index()]
+            cot_2 = self._laplacian.cot[halfedge.previous().index()]
+            multiplier = self._partials[vertex.index()] @ self._X[halfedge.face().index()]
+            dif_div_X[vertex.index()] -= (cot_1 + cot_2) * multiplier
+            dif_div_X[halfedge.destination().index()] += cot_1 * multiplier
+            dif_div_X[halfedge.next().destination().index()] += cot_2 * multiplier
+        dif_div_X /= 2.
+
+        dif_phi = self._LC_inv.solve(dif_div_X - np.mean(dif_div_X) - dif_LC @ self._phi)
+        dif_phi -= dif_phi[self._source]
+
+        return dif_phi
 
     def reverse(self) -> None:
         """
         Compute the reverse direction (that is, partials).
 
         The computed values will be stored in the variable
-        `Computer.dif_distance`.
+        `Computer.dif_distances`.
         """
         self.forward()
         if self._reverse_updates == self._mesh.get_updates():
             return
+        self._laplacian.reverse()
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
 
-        self.dif_edge_lengths = [{} for _ in self._topology.edges()]
-        self.dif_distance = {}
+        n = self._topology.n_vertices()
+        he = self._topology.n_halfedges()
+        f = self._topology.n_faces()
 
-        # Compute the partials of edge lengths first
-        for element in itertools.chain(
-            itertools.chain(*self._double_boundary),
-            itertools.chain(*self._boundary),
-            itertools.chain(*self._interior_shared),
-            itertools.chain(*self._interior_unshared)
-        ):
-            edge = element[0].edge()
-            if self.dif_edge_lengths[edge.index()]:
-                continue
-            u, v = edge.vertices()
-            pu = self._coordinates[u.index()]
-            pv = self._coordinates[v.index()]
-            edge_length = self.edge_lengths[edge.index()]
-            self.dif_edge_lengths[edge.index()][u.index()] \
-                = (pu - pv) @ self._partials[u.index()] / edge_length
-            self.dif_edge_lengths[edge.index()][v.index()] \
-                = (pv - pu) @ self._partials[v.index()] / edge_length
+        # Compute dif_h and dif_t
+        self._dif_h = np.zeros(n)
+        for halfedge in self._topology.halfedges():
+            origin_index = halfedge.origin().index()
+            destination_index = halfedge.destination().index()
+            origin_coordinate = self._coordinates[origin_index]
+            destination_coordinate = self._coordinates[destination_index]
+            halfedge_length = np.linalg.norm(
+                destination_coordinate - origin_coordinate
+            )
+            self._dif_h[origin_index] += (origin_coordinate - destination_coordinate) @ self._partials[origin_index] / halfedge_length
+            self._dif_h[destination_index] += (destination_coordinate - origin_coordinate) @ self._partials[destination_index] / halfedge_length
+        self._dif_h /= he
+        self._dif_t = 2 * self._m * self._h * self._dif_h
 
-            # Set up for accumulation
-            self.dif_distance[u.index()] = np.float64(0.)
-            self.dif_distance[v.index()] = np.float64(0.)
-
-        # Finally, we actually do the accumulation
-        for start_point, double_boundary, boundary, \
-                interior_shared, interior_unshared, end_point \
-                in zip(self._start_points,
-                       self._double_boundary,
-                       self._boundary,
-                       self._interior_shared,
-                       self._interior_unshared,
-                       self._end_points):
-            self._reverse_part(start_point, double_boundary, boundary,
-                               interior_shared, interior_unshared, end_point)
+        self.dif_distances = {
+            destination: np.zeros(n)
+            for destination in self._destinations
+        }
+        for vertex_index, vertex in enumerate(self._topology.vertices()):
+            dif_phi = self._reverse_part(vertex)
+            for destination in self._destinations:
+                self.dif_distances[destination][vertex_index] \
+                    = dif_phi[destination]

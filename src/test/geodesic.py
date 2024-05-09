@@ -1,61 +1,60 @@
 import sys
 import time
 
-import dcelmesh
 import numpy as np
 
 sys.path.append('.')
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
-from linear_geodesic_optimization.optimization.geodesic \
-    import Computer as Geodesic
-
-
-width = 30
-height = 30
-
-mesh = RectangleMesh(width, height, extent=1.)
-geodesic = Geodesic(mesh,
-                    np.random.randint(width * height),
-                    np.random.randint(width * height))
+from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
+from linear_geodesic_optimization.optimization.laplacian import Computer as Laplacian
 
 seed = time.time_ns()
 seed = seed % (2**32 - 1)
-np.random.seed(seed)
 print(f'Seed: {seed}')
-z = mesh.set_parameters(np.random.random(width * height))
-dz = np.random.random(width * height)
-dz = dz / np.linalg.norm(dz)
-h = 1e-7
+rng = np.random.default_rng(seed)
+
+width = 20
+height = 20
+
+mesh = RectangleMesh(width, height)
+topology = mesh.get_topology()
+laplacian = Laplacian(mesh)
+source_index = mesh.nearest_vertex(np.array([0., 0.])).index()
+target_indices = [
+    mesh.nearest_vertex(np.array([0.25, 0.25])).index(),
+    mesh.nearest_vertex(np.array([0.25, -0.25])).index(),
+]
+geodesic = Geodesic(mesh, source_index, target_indices, laplacian, 1000.)
+
+z = mesh.set_parameters(rng.random(width * height))
+dz = rng.random(width * height)
+dz = 1e-7 * dz / np.linalg.norm(dz)
+
+def f(geodesic: Geodesic, z):
+    mesh.set_parameters(z)
+    geodesic.forward()
+    return geodesic.distances[target_indices[0]]
+
+def g(geodesic: Geodesic, z, dz):
+    mesh.set_parameters(z)
+    geodesic.reverse()
+    return geodesic.dif_distances[target_indices[0]] @ dz / np.linalg.norm(dz)
 
 t = time.time()
-geodesic.forward()
+quantity_z = np.array(f(geodesic, z)).flatten()
 print(f'Time to compute forward: {time.time() - t}')
-distance_z = geodesic.distance
-# print(f'Total distance: {distance_z}')
-# print('Path:')
-# print(f'\t{geodesic.path_vertices[0].index()}')
-# for vertex, halfedges in zip(geodesic.path_vertices[1:],
-#                              geodesic.path_halfedges):
-#     for halfedge in halfedges:
-#         print(f'\t({halfedge.origin().index()}, {halfedge.destination().index()}, {halfedge.previous().origin().index()})')
-#     print(f'\t{vertex.index()}')
 
-# Compute the partial derivative in the direction of offset
 t = time.time()
-geodesic.reverse()
+dif_quantity = np.array(g(geodesic, z, dz)).flatten()
 print(f'Time to compute reverse: {time.time() - t}')
-dif_distance = np.float64(0.)
-for j, d in geodesic.dif_distance.items():
-    dif_distance += d * dz[j]
 
-# Estimate the partial derivative by adding, evaluating, and subtracting
-mesh.set_parameters(z + h * dz)
-geodesic.forward()
-distance_z_plus_dz = geodesic.distance
-mesh.set_parameters(z - h * dz)
-geodesic.forward()
-distance_z_minus_dz = geodesic.distance
-estimated_dif_distance = (distance_z_plus_dz - distance_z_minus_dz) / (2. * h)
+quantity_z_dz = np.array(f(geodesic, z + dz)).flatten()
+estimated_dif_quantity = (quantity_z_dz - quantity_z) / np.linalg.norm(dz)
 
-# Should print something close to 1
-print(f'Quotient: {dif_distance / estimated_dif_distance:.6f}')
+quotient = np.linalg.norm(dif_quantity) / np.linalg.norm(estimated_dif_quantity)
+print(f'Quotient of magnitudes: {quotient:.6f}')
+
+angle = np.arccos(dif_quantity @ estimated_dif_quantity
+                  / (np.linalg.norm(dif_quantity)
+                     * np.linalg.norm(estimated_dif_quantity)))
+print(f'Angle between:          {angle:.6f}')

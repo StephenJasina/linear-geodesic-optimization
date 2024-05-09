@@ -17,7 +17,7 @@ from linear_geodesic_optimization.optimization.smooth_loss \
 width = 50
 height = 50
 
-mesh = RectangleMesh(width, height, extent=1.)
+mesh = RectangleMesh(width, height)
 laplacian = Laplacian(mesh)
 curvature = Curvature(mesh, laplacian)
 smooth = SmoothLoss(mesh, laplacian, curvature)
@@ -28,7 +28,7 @@ np.random.seed(seed)
 print(f'Seed: {seed}')
 z = mesh.set_parameters(np.random.random(width * height))
 # z = mesh.set_parameters(np.array([
-#     (16.**2
+#     (20.**2
 #      - mesh.get_coordinates()[index][0]**2
 #      - mesh.get_coordinates()[index][1]**2
 #     )**0.5
@@ -36,7 +36,7 @@ z = mesh.set_parameters(np.random.random(width * height))
 # ]))
 dz = np.random.random(width * height)
 dz = dz / np.linalg.norm(dz)
-h = 1e-7
+h = 1e-9
 
 t = time.time()
 smooth.forward()
