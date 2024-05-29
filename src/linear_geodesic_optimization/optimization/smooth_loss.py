@@ -59,19 +59,19 @@ class Computer:
                                            self._laplacian.LC_interior_edges):
             u, v = edge.vertices()
             self.loss -= 2 * laplacian_element \
-                * self._curvature.kappa_1[u.index()] \
-                * self._curvature.kappa_1[v.index()]
+                * self._curvature.kappa_1[u.index] \
+                * self._curvature.kappa_1[v.index]
             self.loss -= 2 * laplacian_element \
-                * self._curvature.kappa_2[u.index()] \
-                * self._curvature.kappa_2[v.index()]
+                * self._curvature.kappa_2[u.index] \
+                * self._curvature.kappa_2[v.index]
 
         for vertex, laplacian_element \
                 in zip(self._topology.vertices(),
                        self._laplacian.LC_interior_vertices):
             self.loss -= laplacian_element \
-                * self._curvature.kappa_1[vertex.index()]**2
+                * self._curvature.kappa_1[vertex.index]**2
             self.loss -= laplacian_element \
-                * self._curvature.kappa_2[vertex.index()]**2
+                * self._curvature.kappa_2[vertex.index]**2
 
         self.loss *= np.sum(self._laplacian.A)
 
@@ -99,34 +99,34 @@ class Computer:
 
             for index, dif_laplacian_element in dif_laplacian_elements.items():
                 self.dif_loss[index] -= 2 * dif_laplacian_element \
-                    * self._curvature.kappa_1[u.index()] \
-                    * self._curvature.kappa_1[v.index()]
+                    * self._curvature.kappa_1[u.index] \
+                    * self._curvature.kappa_1[v.index]
                 self.dif_loss[index] -= 2 * dif_laplacian_element \
-                    * self._curvature.kappa_2[u.index()] \
-                    * self._curvature.kappa_2[v.index()]
+                    * self._curvature.kappa_2[u.index] \
+                    * self._curvature.kappa_2[v.index]
 
-            dif_kappa_1_elements_u = self._curvature.dif_kappa_1[u.index()]
-            dif_kappa_2_elements_u = self._curvature.dif_kappa_2[u.index()]
+            dif_kappa_1_elements_u = self._curvature.dif_kappa_1[u.index]
+            dif_kappa_2_elements_u = self._curvature.dif_kappa_2[u.index]
             for index in dif_kappa_1_elements_u:
                 dif_kappa_1_element_u = dif_kappa_1_elements_u[index]
                 dif_kappa_2_element_u = dif_kappa_2_elements_u[index]
                 self.dif_loss[index] -= 2 * laplacian_element \
                     * dif_kappa_1_element_u \
-                    * self._curvature.kappa_1[v.index()]
+                    * self._curvature.kappa_1[v.index]
                 self.dif_loss[index] -= 2 * laplacian_element \
                     * dif_kappa_2_element_u \
-                    * self._curvature.kappa_2[v.index()]
+                    * self._curvature.kappa_2[v.index]
 
-            dif_kappa_1_elements_v = self._curvature.dif_kappa_1[v.index()]
-            dif_kappa_2_elements_v = self._curvature.dif_kappa_2[v.index()]
+            dif_kappa_1_elements_v = self._curvature.dif_kappa_1[v.index]
+            dif_kappa_2_elements_v = self._curvature.dif_kappa_2[v.index]
             for index in dif_kappa_1_elements_v:
                 dif_kappa_1_element_v = dif_kappa_1_elements_v[index]
                 dif_kappa_2_element_v = dif_kappa_2_elements_v[index]
                 self.dif_loss[index] -= 2 * laplacian_element \
-                    * self._curvature.kappa_1[u.index()] \
+                    * self._curvature.kappa_1[u.index] \
                     * dif_kappa_1_element_v
                 self.dif_loss[index] -= 2 * laplacian_element \
-                    * self._curvature.kappa_2[u.index()] \
+                    * self._curvature.kappa_2[u.index] \
                     * dif_kappa_2_element_v
 
         for vertex, laplacian_element, kappa_1, kappa_2, \
@@ -141,9 +141,9 @@ class Computer:
                        self._curvature.dif_kappa_2):
             for index, dif_laplacian_element in dif_laplacian_elements.items():
                 self.dif_loss[index] -= dif_laplacian_element \
-                    * self._curvature.kappa_1[vertex.index()]**2
+                    * self._curvature.kappa_1[vertex.index]**2
                 self.dif_loss[index] -= dif_laplacian_element \
-                    * self._curvature.kappa_2[vertex.index()]**2
+                    * self._curvature.kappa_2[vertex.index]**2
 
             for index in dif_kappa_1_elements:
                 dif_kappa_1_element = dif_kappa_1_elements[index]

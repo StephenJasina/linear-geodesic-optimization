@@ -117,8 +117,8 @@ class Mesh:
         # Can't do a dict comprehension since multiple vertices could
         # map to the same mesh point
         for (i, j), latency in network_latencies:
-            i_key = self.nearest_vertex(network_vertices[i]).index()
-            j_key = self.nearest_vertex(network_vertices[j]).index()
+            i_key = self.nearest_vertex(network_vertices[i]).index
+            j_key = self.nearest_vertex(network_vertices[j]).index
             latencies.append(((i_key, j_key), latency))
 
         return latencies

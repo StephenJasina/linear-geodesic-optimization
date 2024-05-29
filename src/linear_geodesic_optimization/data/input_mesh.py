@@ -79,7 +79,7 @@ def get_mesh(
     coordinates, bounding_box, network_edges, _, _ = network
     coordinates = np.array(coordinates)
     network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
-    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
+    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index
                               for network_vertex in network_vertices]
     network_convex_hulls = convex_hull.compute_connected_convex_hulls(
         network_vertices, network_edges)

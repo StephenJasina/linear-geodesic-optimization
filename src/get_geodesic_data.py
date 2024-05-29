@@ -9,14 +9,14 @@ import numpy as np
 from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization.data import input_network, input_mesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
-from linear_geodesic_optimization.optimization.geodesic import Computer as Geodesic
+from linear_geodesic_optimization.optimization.geodesic_exact import Computer as GeodesicExact
 
 max_iterations = np.inf
 use_postprocessing = True
 
 def get_geodesics(mesh, network_vertices, network_edges,
                   labels, compute_all_vertex_pairs=False):
-    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index()
+    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index
                               for network_vertex in network_vertices]
 
     valid_edges = network_edges
@@ -35,7 +35,7 @@ def get_geodesics(mesh, network_vertices, network_edges,
         mesh_i = nearest_vertex_indices[i]
         mesh_j = nearest_vertex_indices[j]
 
-        geodesic_forward = Geodesic(mesh, mesh_i, mesh_j)
+        geodesic_forward = GeodesicExact(mesh, mesh_i, mesh_j)
         geodesic_forward.forward()
         geodesics_unique[mesh_i,mesh_j] = geodesic_forward.distance
         geodesics_unique[mesh_j,mesh_i] = geodesic_forward.distance

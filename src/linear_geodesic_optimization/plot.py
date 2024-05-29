@@ -148,7 +148,7 @@ def get_mesh_plot(mesh, title = '', face_colors=None, network=None, ax=None):
 
     faces = []
     for face in mesh.get_topology().faces():
-        faces.append([v.index() for v in face.vertices()])
+        faces.append([v.index for v in face.vertices()])
 
     z_min = np.amin(z)
     z_max = np.amax(z)

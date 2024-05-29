@@ -23,41 +23,41 @@ class Computer:
         self._coordinates: npt.NDArray[np.float64] \
             = np.zeros((self._topology.n_vertices(), 3))
         self.N: typing.List[npt.NDArray[np.float64]] \
-            = [np.zeros(3) for _ in self._topology.faces()]
+            = [np.zeros(3) for _ in range(self._topology.n_faces())]
         """A list of normals of faces, indexed by faces."""
         self.A: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.faces()]
+            = [np.float64(0.) for _ in range(self._topology.n_faces())]
         """A list of areas of faces, indexed by faces."""
         self.D: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.vertices()]
+            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
         """A list of vertex areas, indexed by vertices."""
         self.cot: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.halfedges()]
+            = [np.float64(0.) for _ in range(self._topology.n_halfedges())]
         """
         A list of cotangents of the opposing angles to halfedges,
         indexed by halfedges.
         """
         self.LC_edges: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.edges()]
+            = [np.float64(0.) for _ in range(self._topology.n_edges())]
         """
         A list of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator, indexed by edges.
         """
         self.LC_vertices: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.vertices()]
+            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
         """
         A list of diagonal entries of the Laplace-Beltrami operator,
         indexed by vertices.
         """
         self.LC_interior_edges: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.edges()]
+            = [np.float64(0.) for _ in range(self._topology.n_edges())]
         """
         A list of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator ignoring the boundary vertices,
         indexed by edges.
         """
         self.LC_interior_vertices: typing.List[np.float64] \
-            = [np.float64(0.) for _ in self._topology.vertices()]
+            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
         """
         A list of diagonal entries of the Laplace-Beltrami operator
         ignoring the boundary vertices, indexed by vertices.
@@ -68,25 +68,25 @@ class Computer:
         self._partials: npt.NDArray[np.float64] \
             = np.zeros((self._topology.n_vertices(), 3))
         self.dif_N: typing.List[typing.Dict[int, npt.NDArray[np.float64]]] \
-            = [{} for _ in self._topology.faces()]
+            = [{} for _ in range(self._topology.n_faces())]
         """
         A list of partials of normals of faces, indexed by faces and
         then by (incident) vertices.
         """
         self.dif_A: typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.faces()]
+            = [{} for _ in range(self._topology.n_faces())]
         """
         A list partials of areas of faces, indexed by faces and then by
         (incident) vertices.
         """
         self.dif_D: typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.vertices()]
+            = [{} for _ in range(self._topology.n_vertices())]
         """
         A list of partials of vertex areas, indexed by vertices and
         then by vertices (at most distance 1 away).
         """
         self.dif_cot: typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.halfedges()]
+            = [{} for _ in range(self._topology.n_halfedges())]
         """
         A list of partials of cotangents of the opposing angles to
         halfedges, indexed by halfedges and then by vertices (of the
@@ -94,7 +94,7 @@ class Computer:
         """
         self.dif_LC_edges: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.edges()]
+            = [{} for _ in range(self._topology.n_edges())]
         """
         A list of partials of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator, indexed by edges and then by vertices
@@ -102,7 +102,7 @@ class Computer:
         """
         self.dif_LC_vertices: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.vertices()]
+            = [{} for _ in range(self._topology.n_vertices())]
         """
         A list of partials of diagonal entries of the Laplace-Beltrami
         operator, indexed by vertices and then vertices (at most
@@ -110,7 +110,7 @@ class Computer:
         """
         self.dif_LC_interior_edges: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.edges()]
+            = [{} for _ in range(self._topology.n_edges())]
         """
         A list of partials of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator ignoring the boundary vertices,
@@ -119,7 +119,7 @@ class Computer:
         """
         self.dif_LC_interior_vertices: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in self._topology.vertices()]
+            = [{} for _ in range(self._topology.n_vertices())]
         """
         A list of partials of diagonal entries of the Laplace-Beltrami
         operator ignoring the boundary vertices, indexed by vertices and
@@ -156,60 +156,60 @@ class Computer:
         self._coordinates = self._mesh.get_coordinates()
 
         # Reset quantities that will be computed via accumulation
-        self.D = [np.float64(0.) for _ in self._topology.vertices()]
-        self.LC_edges = [np.float64(0.) for _ in self._topology.edges()]
-        self.LC_vertices = [np.float64(0.) for _ in self._topology.vertices()]
+        self.D = [np.float64(0.) for _ in range(self._topology.n_vertices())]
+        self.LC_edges = [np.float64(0.) for _ in range(self._topology.n_edges())]
+        self.LC_vertices = [np.float64(0.) for _ in range(self._topology.n_vertices())]
         self.LC_interior_edges \
-            = [np.float64(0.) for _ in self._topology.edges()]
+            = [np.float64(0.) for _ in range(self._topology.n_edges())]
         self.LC_interior_vertices \
-            = [np.float64(0.) for _ in self._topology.vertices()]
+            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
 
         # N and A can be computed by iterating over faces
         for face in self._topology.faces():
             u, v, w = face.vertices()
-            pu = self._coordinates[u.index()]
-            pv = self._coordinates[v.index()]
-            pw = self._coordinates[w.index()]
+            pu = self._coordinates[u.index]
+            pv = self._coordinates[v.index]
+            pw = self._coordinates[w.index]
 
             # Set N
             normal = Computer._cross(pu - pw, pv - pw)
-            self.N[face.index()] = normal
+            self.N[face.index] = normal
 
             # Set A
             area = np.linalg.norm(normal) / 2.
-            self.A[face.index()] = area
+            self.A[face.index] = area
 
         # D, cot, and L_C can be computed by iterating over halfedges
         for halfedge in self._topology.halfedges():
-            u = halfedge.origin()
-            v = halfedge.destination()
-            w = halfedge.previous().origin()
-            pu = self._coordinates[u.index()]
-            pv = self._coordinates[v.index()]
-            pw = self._coordinates[w.index()]
+            u = halfedge.origin
+            v = halfedge.destination
+            w = halfedge.previous.origin
+            pu = self._coordinates[u.index]
+            pv = self._coordinates[v.index]
+            pw = self._coordinates[w.index]
 
-            area = self.A[halfedge.face().index()]
+            area = self.A[halfedge.face.index]
 
             # Set D
-            self.D[u.index()] += area / 3.
+            self.D[u.index] += area / 3.
 
             # Set cot
             cotangent = (pu - pw) @ (pv - pw) / (2. * area)
-            self.cot[halfedge.index()] = cotangent
+            self.cot[halfedge.index] = cotangent
 
             half_cotangent = cotangent / 2.
 
             # Set LC
-            edge = halfedge.edge()
-            self.LC_edges[edge.index()] += half_cotangent
-            self.LC_vertices[u.index()] -= half_cotangent
-            self.LC_vertices[v.index()] -= half_cotangent
+            edge = halfedge.edge
+            self.LC_edges[edge.index] += half_cotangent
+            self.LC_vertices[u.index] -= half_cotangent
+            self.LC_vertices[v.index] -= half_cotangent
 
             # Set LC_interior
             if not u.is_on_boundary() and not v.is_on_boundary():
-                self.LC_interior_edges[edge.index()] += half_cotangent
-                self.LC_interior_vertices[u.index()] -= half_cotangent
-                self.LC_interior_vertices[v.index()] -= half_cotangent
+                self.LC_interior_edges[edge.index] += half_cotangent
+                self.LC_interior_vertices[u.index] -= half_cotangent
+                self.LC_interior_vertices[v.index] -= half_cotangent
 
     def reverse(self) -> None:
         """
@@ -234,14 +234,14 @@ class Computer:
         # Reset quantities that will be computed via accumulation
         self.dif_D = [
             {
-                near.index(): np.float64(0.)
+                near.index: np.float64(0.)
                 for near in itertools.chain([vertex], vertex.vertices())
             }
             for vertex in self._topology.vertices()
         ]
         self.dif_LC_edges = [
             {
-                vertex.index(): np.float64(0.)
+                vertex.index: np.float64(0.)
                 for face in edge.faces()
                 for vertex in face.vertices()
             }
@@ -249,14 +249,14 @@ class Computer:
         ]
         self.dif_LC_vertices = [
             {
-                near.index(): np.float64(0.)
+                near.index: np.float64(0.)
                 for near in itertools.chain([vertex], vertex.vertices())
             }
             for vertex in self._topology.vertices()
         ]
         self.dif_LC_interior_edges = [
             {
-                vertex.index(): np.float64(0.)
+                vertex.index: np.float64(0.)
                 for face in edge.faces()
                 for vertex in face.vertices()
             }
@@ -264,92 +264,92 @@ class Computer:
         ]
         self.dif_LC_interior_vertices = [
             {
-                near.index(): np.float64(0.)
+                near.index: np.float64(0.)
                 for near in itertools.chain([vertex], vertex.vertices())
             }
             for vertex in self._topology.vertices()
         ]
 
         for halfedge in self._topology.halfedges():
-            u = halfedge.origin()
-            v = halfedge.destination()
-            w = halfedge.previous().origin()
-            pu = self._coordinates[u.index()]
-            pv = self._coordinates[v.index()]
-            pw = self._coordinates[w.index()]
+            u = halfedge.origin
+            v = halfedge.destination
+            w = halfedge.previous.origin
+            pu = self._coordinates[u.index]
+            pv = self._coordinates[v.index]
+            pw = self._coordinates[w.index]
 
             # Set dif_N
-            normal = self.N[halfedge.face().index()]
-            dif_N_u = Computer._cross(pw - pv, self._partials[u.index()])
-            self.dif_N[halfedge.face().index()][u.index()] = dif_N_u
+            normal = self.N[halfedge.face.index]
+            dif_N_u = Computer._cross(pw - pv, self._partials[u.index])
+            self.dif_N[halfedge.face.index][u.index] = dif_N_u
 
             # Set dif_A
-            area = self.A[halfedge.face().index()]
+            area = self.A[halfedge.face.index]
             dif_A_u = normal @ (dif_N_u) / (4. * area)
-            self.dif_A[halfedge.face().index()][u.index()] = dif_A_u
+            self.dif_A[halfedge.face.index][u.index] = dif_A_u
 
             # Set dif_D
             third_dif_A_u = dif_A_u / 3.
-            self.dif_D[u.index()][u.index()] += third_dif_A_u
-            self.dif_D[v.index()][u.index()] += third_dif_A_u
-            self.dif_D[w.index()][u.index()] += third_dif_A_u
+            self.dif_D[u.index][u.index] += third_dif_A_u
+            self.dif_D[v.index][u.index] += third_dif_A_u
+            self.dif_D[w.index][u.index] += third_dif_A_u
 
         # Need a separate loop here to ensure dif_A has been computed
         for halfedge in self._topology.halfedges():
-            u = halfedge.origin()
-            v = halfedge.destination()
-            w = halfedge.previous().origin()
-            pu = self._coordinates[u.index()]
-            pv = self._coordinates[v.index()]
-            pw = self._coordinates[w.index()]
+            u = halfedge.origin
+            v = halfedge.destination
+            w = halfedge.previous.origin
+            pu = self._coordinates[u.index]
+            pv = self._coordinates[v.index]
+            pw = self._coordinates[w.index]
 
             # Set dif_cot
-            area = self.A[halfedge.face().index()]
-            cotangent = self.cot[halfedge.index()]
-            dif_A = self.dif_A[halfedge.face().index()]
-            dif_cot_u = ((pv - pw) @ self._partials[u.index()]
-                         - 2. * cotangent * dif_A[u.index()]) / (2. * area)
-            dif_cot_v = ((pu - pw) @ self._partials[v.index()]
-                         - 2. * cotangent * dif_A[v.index()]) / (2. * area)
-            dif_cot_w = ((2. * pw - pu - pv) @ self._partials[w.index()]
-                         - 2. * cotangent * dif_A[w.index()]) / (2. * area)
-            self.dif_cot[halfedge.index()][u.index()] = dif_cot_u
-            self.dif_cot[halfedge.index()][v.index()] = dif_cot_v
-            self.dif_cot[halfedge.index()][w.index()] = dif_cot_w
+            area = self.A[halfedge.face.index]
+            cotangent = self.cot[halfedge.index]
+            dif_A = self.dif_A[halfedge.face.index]
+            dif_cot_u = ((pv - pw) @ self._partials[u.index]
+                         - 2. * cotangent * dif_A[u.index]) / (2. * area)
+            dif_cot_v = ((pu - pw) @ self._partials[v.index]
+                         - 2. * cotangent * dif_A[v.index]) / (2. * area)
+            dif_cot_w = ((2. * pw - pu - pv) @ self._partials[w.index]
+                         - 2. * cotangent * dif_A[w.index]) / (2. * area)
+            self.dif_cot[halfedge.index][u.index] = dif_cot_u
+            self.dif_cot[halfedge.index][v.index] = dif_cot_v
+            self.dif_cot[halfedge.index][w.index] = dif_cot_w
 
             half_dif_cot_u = dif_cot_u / 2.
             half_dif_cot_v = dif_cot_v / 2.
             half_dif_cot_w = dif_cot_w / 2.
 
             # Set dif_LC
-            edge = halfedge.edge()
-            self.dif_LC_edges[edge.index()][u.index()] += half_dif_cot_u
-            self.dif_LC_edges[edge.index()][v.index()] += half_dif_cot_v
-            self.dif_LC_edges[edge.index()][w.index()] += half_dif_cot_w
-            self.dif_LC_vertices[u.index()][u.index()] -= half_dif_cot_u
-            self.dif_LC_vertices[u.index()][v.index()] -= half_dif_cot_v
-            self.dif_LC_vertices[u.index()][w.index()] -= half_dif_cot_w
-            self.dif_LC_vertices[v.index()][u.index()] -= half_dif_cot_u
-            self.dif_LC_vertices[v.index()][v.index()] -= half_dif_cot_v
-            self.dif_LC_vertices[v.index()][w.index()] -= half_dif_cot_w
+            edge = halfedge.edge
+            self.dif_LC_edges[edge.index][u.index] += half_dif_cot_u
+            self.dif_LC_edges[edge.index][v.index] += half_dif_cot_v
+            self.dif_LC_edges[edge.index][w.index] += half_dif_cot_w
+            self.dif_LC_vertices[u.index][u.index] -= half_dif_cot_u
+            self.dif_LC_vertices[u.index][v.index] -= half_dif_cot_v
+            self.dif_LC_vertices[u.index][w.index] -= half_dif_cot_w
+            self.dif_LC_vertices[v.index][u.index] -= half_dif_cot_u
+            self.dif_LC_vertices[v.index][v.index] -= half_dif_cot_v
+            self.dif_LC_vertices[v.index][w.index] -= half_dif_cot_w
 
             # Set dif_LC_interior
             if not u.is_on_boundary() and not v.is_on_boundary():
-                self.dif_LC_interior_edges[edge.index()][u.index()] \
+                self.dif_LC_interior_edges[edge.index][u.index] \
                     += half_dif_cot_u
-                self.dif_LC_interior_edges[edge.index()][v.index()] \
+                self.dif_LC_interior_edges[edge.index][v.index] \
                     += half_dif_cot_v
-                self.dif_LC_interior_edges[edge.index()][w.index()] \
+                self.dif_LC_interior_edges[edge.index][w.index] \
                     += half_dif_cot_w
-                self.dif_LC_interior_vertices[u.index()][u.index()] \
+                self.dif_LC_interior_vertices[u.index][u.index] \
                     -= half_dif_cot_u
-                self.dif_LC_interior_vertices[u.index()][v.index()] \
+                self.dif_LC_interior_vertices[u.index][v.index] \
                     -= half_dif_cot_v
-                self.dif_LC_interior_vertices[u.index()][w.index()] \
+                self.dif_LC_interior_vertices[u.index][w.index] \
                     -= half_dif_cot_w
-                self.dif_LC_interior_vertices[v.index()][u.index()] \
+                self.dif_LC_interior_vertices[v.index][u.index] \
                     -= half_dif_cot_u
-                self.dif_LC_interior_vertices[v.index()][v.index()] \
+                self.dif_LC_interior_vertices[v.index][v.index] \
                     -= half_dif_cot_v
-                self.dif_LC_interior_vertices[v.index()][w.index()] \
+                self.dif_LC_interior_vertices[v.index][w.index] \
                     -= half_dif_cot_w

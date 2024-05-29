@@ -19,10 +19,10 @@ height = 20
 mesh = RectangleMesh(width, height)
 topology = mesh.get_topology()
 laplacian = Laplacian(mesh)
-source_index = mesh.nearest_vertex(np.array([0., 0.])).index()
+source_index = mesh.nearest_vertex(np.array([0., 0.])).index
 target_indices = [
-    mesh.nearest_vertex(np.array([0.25, 0.25])).index(),
-    mesh.nearest_vertex(np.array([0.25, -0.25])).index(),
+    mesh.nearest_vertex(np.array([0.25, 0.25])).index,
+    mesh.nearest_vertex(np.array([0.25, -0.25])).index,
 ]
 geodesic = Geodesic(mesh, source_index, target_indices, laplacian, 1000.)
 

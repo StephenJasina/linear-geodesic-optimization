@@ -29,7 +29,7 @@ class Computer:
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
         self._faces: typing.List[typing.Tuple[int, ...]] = [
-            tuple(vertex.index() for vertex in face.vertices())
+            tuple(vertex.index for vertex in face.vertices())
             for face in self._topology.faces()
         ]
         """
@@ -257,61 +257,61 @@ class Computer:
         # single segment
         if not middle:
             pe = np.array([
-                np.linalg.norm(self._coordinates[start.index()]
-                               - self._coordinates[end.index()]),
+                np.linalg.norm(self._coordinates[start.index]
+                               - self._coordinates[end.index]),
                 0.
             ], dtype=np.float64)
-            halfedge = next(self._topology.get_edge(start.index(),
-                                                    end.index()).halfedges())
-            if halfedge.origin().index() == start.index():
+            halfedge = next(self._topology.get_edge(start.index,
+                                                    end.index).halfedges())
+            if halfedge.origin.index == start.index:
                 return ps, [(halfedge, ps, pe)], [], [], [], pe
             else:
                 return ps, [(halfedge, pe, ps)], [], [], [], pe
 
         previous_was_u_side = True
-        u = middle[0].origin()
-        v = middle[0].destination()
+        u = middle[0].origin
+        v = middle[0].destination
         w = start
-        x = middle[0].previous().origin()
+        x = middle[0].previous.origin
         pw = ps
         pu = np.array([
-            np.linalg.norm(coordinates[u.index()]
-                           - coordinates[start.index()]),
+            np.linalg.norm(coordinates[u.index]
+                           - coordinates[start.index]),
             np.float64(0.)
         ], dtype=np.float64)
         pv = self._get_next_point(
             pu,
             pw,
-            np.linalg.norm(coordinates[v.index()] - coordinates[w.index()]),
-            np.linalg.norm(coordinates[v.index()] - coordinates[u.index()])
+            np.linalg.norm(coordinates[v.index] - coordinates[w.index]),
+            np.linalg.norm(coordinates[v.index] - coordinates[u.index])
         )
         px = self._get_next_point(
             pu,
             pv,
-            np.linalg.norm(coordinates[x.index()] - coordinates[v.index()]),
-            np.linalg.norm(coordinates[x.index()] - coordinates[u.index()])
+            np.linalg.norm(coordinates[x.index] - coordinates[v.index]),
+            np.linalg.norm(coordinates[x.index] - coordinates[u.index])
         )
 
         # Place the first two boundary edges
-        twin = middle[0].twin()
+        twin = middle[0].twin
         if twin is None:
             raise dcelmesh.Mesh.IllegalMeshException(
-                f'Halfedge ({middle[0].origin().index()}, '
-                f'{middle[0].destination().index()}) '
+                f'Halfedge ({middle[0].origin.index}, '
+                f'{middle[0].destination.index}) '
                 'has no twin'
             )
-        boundary.append((twin.next(), pu, pw, pv))
-        boundary.append((twin.previous(), pw, pv, pu))
+        boundary.append((twin.next, pu, pw, pv))
+        boundary.append((twin.previous, pw, pv, pu))
 
         # Place the other boundary edges (except one) and the interior
         # edges
         for index in range(len(middle)):
             halfedge = middle[index]
             is_u_side = index == len(middle) - 1 \
-                or u.index() == middle[index + 1].origin().index()
+                or u.index == middle[index + 1].origin.index
 
             if is_u_side:
-                boundary.append((halfedge.next(), pv, px, pu))
+                boundary.append((halfedge.next, pv, px, pu))
                 if previous_was_u_side:
                     interior_shared.append((halfedge, pu, pv, pw, px))
                 else:
@@ -322,7 +322,7 @@ class Computer:
                 v = x
                 pv = px
             else:
-                boundary.append((halfedge.previous(), px, pu, pv))
+                boundary.append((halfedge.previous, px, pu, pv))
                 if previous_was_u_side:
                     interior_unshared.append((halfedge, pu, pv, pw, px))
                 else:
@@ -336,19 +336,19 @@ class Computer:
             if index == len(middle) - 1:
                 break
 
-            x = middle[index + 1].previous().origin()
+            x = middle[index + 1].previous.origin
             px = self._get_next_point(
                 pu,
                 pv,
-                np.linalg.norm(coordinates[x.index()]
-                               - coordinates[v.index()]),
-                np.linalg.norm(coordinates[x.index()] - coordinates[u.index()])
+                np.linalg.norm(coordinates[x.index]
+                               - coordinates[v.index]),
+                np.linalg.norm(coordinates[x.index] - coordinates[u.index])
             )
 
             previous_was_u_side = is_u_side
 
         # Place the last boundary edge
-        boundary.append((middle[-1].previous(), pv, pu, pw))
+        boundary.append((middle[-1].previous, pv, pu, pw))
 
         pe = px
 
@@ -372,9 +372,9 @@ class Computer:
         # Compute edge lengths
         for edge in self._topology.edges():
             u, v = edge.vertices()
-            self.edge_lengths[edge.index()] \
-                = np.linalg.norm(self._coordinates[u.index()]
-                                 - self._coordinates[v.index()])
+            self.edge_lengths[edge.index] \
+                = np.linalg.norm(self._coordinates[u.index]
+                                 - self._coordinates[v.index])
 
         # Call the meshutility solver
         mu_path, mu_path_ratios = meshutility.pygeodesic.find_path(
@@ -422,7 +422,7 @@ class Computer:
             halfedge_ij = self._topology.get_halfedge(i, j)
             # This check is legal because, if index == len(mu_path) - 1,
             # then we fall into the vertex case.
-            if halfedge_ij.previous().origin().index() in mu_path[index + 1]:
+            if halfedge_ij.previous.origin.index in mu_path[index + 1]:
                 halfedges_to_add.append(halfedge_ij)
                 ratios_to_add.append(mu_path_ratios[index])
             else:
@@ -488,20 +488,20 @@ class Computer:
         d_geodesic = np.linalg.norm(end_point - start_point)
 
         for halfedge, pu, pv in double_boundary:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
+            u = halfedge.origin
+            v = halfedge.destination
+            edge = halfedge.edge
             partial_edge = 1.
 
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
+            self.dif_distance[u.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][u.index]
+            self.dif_distance[v.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][v.index]
 
         for halfedge, pu, pv, pw in boundary:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
+            u = halfedge.origin
+            v = halfedge.destination
+            edge = halfedge.edge
 
             # Use bad names here and elsewhere to avoid lines becoming
             # too long and (even more) unreadable
@@ -514,15 +514,15 @@ class Computer:
             partial_edge = np.abs(np.linalg.norm(vu) * np.cross(sw, ew)
                                   / (d_geodesic * np.cross(uw, vw)))
 
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
+            self.dif_distance[u.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][u.index]
+            self.dif_distance[v.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][v.index]
 
         for halfedge, pu, pv, pw, px in interior_shared:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
+            u = halfedge.origin
+            v = halfedge.destination
+            edge = halfedge.edge
 
             su = start_point - pu
             wu = pw - pu
@@ -536,15 +536,15 @@ class Computer:
                 * (1. / np.cross(wu, wv) + 1. / np.cross(xv, xu)) \
                 / (d_geodesic * (1. + np.cross(xu, wu) / np.cross(wv, xv)))
 
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
+            self.dif_distance[u.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][u.index]
+            self.dif_distance[v.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][v.index]
 
         for halfedge, pu, pv, pw, px in interior_unshared:
-            u = halfedge.origin()
-            v = halfedge.destination()
-            edge = halfedge.edge()
+            u = halfedge.origin
+            v = halfedge.destination
+            edge = halfedge.edge
 
             wu = pw - pu
             wv = pw - pv
@@ -579,10 +579,10 @@ class Computer:
                 + 1. / np.cross(eu, su)
             ))
 
-            self.dif_distance[u.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][u.index()]
-            self.dif_distance[v.index()] += partial_edge \
-                * self.dif_edge_lengths[edge.index()][v.index()]
+            self.dif_distance[u.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][u.index]
+            self.dif_distance[v.index] += partial_edge \
+                * self.dif_edge_lengths[edge.index][v.index]
 
     def reverse(self) -> None:
         """
@@ -607,21 +607,21 @@ class Computer:
             itertools.chain(*self._interior_shared),
             itertools.chain(*self._interior_unshared)
         ):
-            edge = element[0].edge()
-            if self.dif_edge_lengths[edge.index()]:
+            edge = element[0].edge
+            if self.dif_edge_lengths[edge.index]:
                 continue
             u, v = edge.vertices()
-            pu = self._coordinates[u.index()]
-            pv = self._coordinates[v.index()]
-            edge_length = self.edge_lengths[edge.index()]
-            self.dif_edge_lengths[edge.index()][u.index()] \
-                = (pu - pv) @ self._partials[u.index()] / edge_length
-            self.dif_edge_lengths[edge.index()][v.index()] \
-                = (pv - pu) @ self._partials[v.index()] / edge_length
+            pu = self._coordinates[u.index]
+            pv = self._coordinates[v.index]
+            edge_length = self.edge_lengths[edge.index]
+            self.dif_edge_lengths[edge.index][u.index] \
+                = (pu - pv) @ self._partials[u.index] / edge_length
+            self.dif_edge_lengths[edge.index][v.index] \
+                = (pv - pu) @ self._partials[v.index] / edge_length
 
             # Set up for accumulation
-            self.dif_distance[u.index()] = np.float64(0.)
-            self.dif_distance[v.index()] = np.float64(0.)
+            self.dif_distance[u.index] = np.float64(0.)
+            self.dif_distance[v.index] = np.float64(0.)
 
         # Finally, we actually do the accumulation
         for start_point, double_boundary, boundary, \

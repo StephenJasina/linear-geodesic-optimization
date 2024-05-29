@@ -77,10 +77,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         # The vertices are ordered lexicographically as (x, y)
         for i in range(self._width):
             for j in range(self._height):
-                coordinates[i * self._height + j:] = [
-                    (i / (self._width - 1) - 0.5) * self._scale,
-                    (j / (self._height - 1) - 0.5) * self._scale
-                ]
+                coordinates[i * self._height + j, 0] = (i / (self._width - 1) - 0.5) * self._scale
+                coordinates[i * self._height + j, 1] = (j / (self._height - 1) - 0.5) * self._scale
 
         return coordinates
 

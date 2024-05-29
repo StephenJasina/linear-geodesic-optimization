@@ -2,7 +2,6 @@
 
 import typing
 
-import dcelmesh
 import numpy as np
 import numpy.typing as npt
 
@@ -79,7 +78,7 @@ class Computer:
                 continue
             loss_part = np.float64(0.)
             for vertex in fat_edge:
-                loss_part += (self._curvature.kappa_G[vertex.index()]
+                loss_part += (self._curvature.kappa_G[vertex.index]
                               - network_curvature)**2
             self.loss += edge_length * loss_part / len(fat_edge)
         self.loss /= sum(self._network_edge_lengths)
@@ -104,9 +103,9 @@ class Computer:
                        self._network_curvatures,
                        self._network_edge_lengths):
             for vertex in fat_edge:
-                curvature = self._curvature.kappa_G[vertex.index()]
+                curvature = self._curvature.kappa_G[vertex.index]
                 for index, partial \
-                        in self._curvature.dif_kappa_G[vertex.index()].items():
+                        in self._curvature.dif_kappa_G[vertex.index].items():
                     self.dif_loss[index] \
                         += 2 * edge_length * (curvature - network_curvature) \
                         * partial / len(fat_edge)
