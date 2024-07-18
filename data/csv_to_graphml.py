@@ -38,7 +38,7 @@ if __name__ == '__main__':
     should_remove_tivs = args.should_remove_tivs
     output_filename = args.output_filename
 
-    graph = input_network.get_graph(
+    graph = input_network.get_graph_from_paths(
         probes_filename, latencies_filename, epsilon,
         500000, should_remove_tivs
     )

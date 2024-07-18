@@ -37,7 +37,7 @@ def minimize_id_removal(rtt_violation_list):
 
     return ids_to_remove
 
-def get_base_graph(probes_file_path, latencies_file_path):
+def get_base_graph(probes, latencies):
     # Create the graph
     graph = nx.Graph()
 
@@ -49,20 +49,18 @@ def get_base_graph(probes_file_path, latencies_file_path):
     lat_max = -np.inf
     long_min = np.inf
     long_max = -np.inf
-    with open(probes_file_path) as probes_file:
-        probes_reader = csv.DictReader(probes_file)
-        for row in probes_reader:
-            lat = float(row['latitude'])
-            long = float(row['longitude'])
-            graph.add_node(
-                row['id'],
-                city=row['city'], country=row['country'],
-                lat=lat, long=long
-            )
-            lat_min = min(lat_min, lat)
-            lat_max = max(lat_max, lat)
-            long_min = min(long_min, long)
-            long_max = max(long_max, long)
+    for probe in probes:
+        lat = float(probe['latitude'])
+        long = float(probe['longitude'])
+        graph.add_node(
+            probe['id'],
+            city=probe['city'], country=probe['country'],
+            lat=lat, long=long
+        )
+        lat_min = min(lat_min, lat)
+        lat_max = max(lat_max, lat)
+        long_min = min(long_min, long)
+        long_max = max(long_max, long)
 
     # Store graph bounding box
     graph.graph['lat_min'] = lat_min
@@ -71,37 +69,35 @@ def get_base_graph(probes_file_path, latencies_file_path):
     graph.graph['long_max'] = long_max
 
     # Get the edges
-    with open(latencies_file_path) as latencies_file:
-        latencies_reader = csv.DictReader(latencies_file)
-        for row in latencies_reader:
-            id_source = row['source_id']
-            id_target = row['target_id']
-            lat_source = graph.nodes[id_source]['lat']
-            long_source = graph.nodes[id_source]['long']
-            lat_target = graph.nodes[id_target]['lat']
-            long_target = graph.nodes[id_target]['long']
-            rtt = row['rtt']
-            if rtt is None or rtt == '':
-                continue
-            rtt = float(rtt)
+    for latency in latencies:
+        id_source = latency['source_id']
+        id_target = latency['target_id']
+        lat_source = graph.nodes[id_source]['lat']
+        long_source = graph.nodes[id_source]['long']
+        lat_target = graph.nodes[id_target]['lat']
+        long_target = graph.nodes[id_target]['long']
+        rtt = latency['rtt']
+        if rtt is None or rtt == '':
+            continue
+        rtt = float(rtt)
 
-            # Check how often the difference is larger than 0
-            gcl = utility.get_GCL(
-                [lat_source, long_source],
-                [lat_target, long_target]
+        # Check how often the difference is larger than 0
+        gcl = utility.get_GCL(
+            [lat_source, long_source],
+            [lat_target, long_target]
+        )
+        # TODO: Should this be more lenient?
+        if rtt - gcl < 0:
+            rtt_violation_list.append((id_source, id_target))
+
+        # If there is multiple sets of RTT data for a single
+        # edge, only pay attention to the minimal one
+        if ((id_source, id_target) not in graph.edges
+                or graph.edges[id_source,id_target]['rtt'] > rtt):
+            graph.add_edge(
+                id_source, id_target,
+                weight=1., rtt=rtt, gcl=gcl
             )
-            # TODO: Should this be more lenient?
-            if rtt - gcl < 0:
-                rtt_violation_list.append((id_source, id_target))
-
-            # If there is multiple sets of RTT data for a single
-            # edge, only pay attention to the minimal one
-            if ((id_source, id_target) not in graph.edges
-                    or graph.edges[id_source,id_target]['rtt'] > rtt):
-                graph.add_edge(
-                    id_source, id_target,
-                    weight=1., rtt=rtt, gcl=gcl
-                )
 
     # Delete nodes with inconsistent geolocation
     for node in minimize_id_removal(rtt_violation_list):
@@ -109,7 +105,7 @@ def get_base_graph(probes_file_path, latencies_file_path):
 
     return graph
 
-def threshold_graph(graph, epsilon=np.inf):
+def threshold_graph(graph, epsilon):
     edges_to_delete = []
     for u, v, d in graph.edges(data=True):
         rtt = d['rtt']
@@ -126,11 +122,10 @@ def threshold_graph(graph, epsilon=np.inf):
 def cluster_graph(graph, distance):
     circumference_earth = 40075016.68557849
 
-    if distance != 0.:
-        graph = clustering.cluster_graph(
-            graph,
-            distance / circumference_earth
-        )
+    graph = clustering.cluster_graph(
+        graph,
+        distance / circumference_earth
+    )
 
     return graph
 
@@ -160,9 +155,35 @@ def compute_ricci_curvatures(graph):
     return graph
 
 def get_graph(
-    probes_file_path, latencies_file_path, epsilon=np.inf,
+    probes, latencies, epsilon=None,
     clustering_distance=None, should_remove_tivs=False,
-    should_include_latencies=False
+    should_include_latencies=False,
+    should_compute_curvatures=True
+):
+    graph = get_base_graph(probes, latencies)
+    if should_include_latencies:
+        latencies = [
+            ((source_id, target_id), data['rtt'])
+            for source_id, target_id, data in graph.edges(data=True)
+        ]
+    if should_remove_tivs:
+        graph = remove_tivs(graph)
+    if clustering_distance is not None:
+        graph = cluster_graph(graph, clustering_distance)
+    if epsilon is not None:
+        graph = threshold_graph(graph, epsilon)
+    if should_compute_curvatures:
+        graph = compute_ricci_curvatures(graph)
+    if should_include_latencies:
+        return graph, latencies
+    else:
+        return graph
+
+def get_graph_from_paths(
+    probes_file_path, latencies_file_path, epsilon=None,
+    clustering_distance=None, should_remove_tivs=False,
+    should_include_latencies=False,
+    should_compute_curvatures=True
 ):
     """
     Generate a NetworkX graph and optionally a list of latencies.
@@ -183,22 +204,15 @@ def get_graph(
     Finally, take in a flag indicating whether to return latencies in
     the format [((source_id, target_id), rtt), ...].
     """
-    graph = get_base_graph(probes_file_path, latencies_file_path)
-    if should_include_latencies:
-        latencies = [
-            ((source_id, target_id), data['rtt'])
-            for source_id, target_id, data in graph.edges(data=True)
-        ]
-    if should_remove_tivs:
-        graph = remove_tivs(graph)
-    if clustering_distance is not None:
-        graph = cluster_graph(graph, clustering_distance)
-    graph = threshold_graph(graph, epsilon)
-    graph = compute_ricci_curvatures(graph)
-    if should_include_latencies:
-        return graph, latencies
-    else:
-        return graph
+    with open(probes_file_path) as probes_file, open(latencies_file_path) as latencies_file:
+        probes = csv.DictReader(probes_file)
+        latencies = csv.DictReader(latencies_file)
+        return get_graph(
+            probes, latencies, epsilon,
+            clustering_distance, should_remove_tivs,
+            should_include_latencies,
+            should_compute_curvatures
+        )
 
 def extract_from_graph(
     graph: nx.Graph,

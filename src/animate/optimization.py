@@ -54,7 +54,7 @@ if __name__ == '__main__':
     x = list(sorted(set(vertices[:,0])))
     y = list(sorted(set(vertices[:,1])))
 
-    network, latencies = input_network.get_graph(
+    network, latencies = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
         epsilon, clustering_distance, should_remove_tivs,
         should_include_latencies=True

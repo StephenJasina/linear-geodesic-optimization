@@ -3,6 +3,7 @@ import datetime
 import itertools
 import json
 import os
+import pathlib
 # TODO: Convert to plain text
 import pickle
 import shutil
@@ -36,7 +37,7 @@ def main(probes_filename, latencies_filename, epsilon, clustering_distance,
     if graphml_filename is None:
         probes_file_path = os.path.join('..', 'data', probes_filename)
         latencies_file_path = os.path.join('..', 'data', latencies_filename)
-        network, latencies = input_network.get_graph(
+        network, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
             epsilon, clustering_distance,
             should_include_latencies=True
@@ -140,22 +141,20 @@ if __name__ == '__main__':
     #     os.path.join('toy', 'elbow.graphml')
     # ]
     data_dir = os.path.join('..', 'data')
-    input_dir = os.path.join('ipv4', 'graph_US_IEEE')
-    probes_filenames = [
-        os.path.join(input_dir, filename)
-        for filename in os.listdir(os.path.join(data_dir, input_dir))
-        if filename.startswith('probes')
-    ]
+    input_dir = os.path.join('toy', 'animation')
     latencies_filenames = [
-        os.path.join(input_dir, 'latencies' + os.path.basename(probes_filename)[6:])
-        for probes_filename in probes_filenames
+        os.path.join(input_dir, 'latencies', latencies_filename)
+        for latencies_filename in os.listdir(os.path.join(data_dir, input_dir, 'latencies'))
     ]
+    probes_filenames = [
+        os.path.join(input_dir, 'probes.csv')
+    ] * len(latencies_filenames)
 
     count = len(probes_filenames)
 
     epsilon = 10
     epsilons = [epsilon] * count
-    clustering_distances = [500000] * count
+    clustering_distances = [None] * count
 
     lambda_curvatures = [1.] * count
     lambda_smooths = [0.002] * count
@@ -169,8 +168,8 @@ if __name__ == '__main__':
     max_iters = [100000] * count
 
     output_dir_names = [
-        os.path.join('..', f'out_US_IEEE_{epsilon}', os.path.basename(probes_filename)[6:])
-        for probes_filename in probes_filenames
+        os.path.join('..', f'out_animation', pathlib.Path(latencies_filename).stem)
+        for latencies_filename in latencies_filenames
     ]
 
     arguments = list(zip(

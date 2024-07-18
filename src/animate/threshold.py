@@ -112,7 +112,7 @@ if __name__ == '__main__':
         clustering_distance = parameters['clustering_distance']
         should_remove_tivs = parameters['should_remove_TIVs']
         coordinates_scale = parameters['coordinates_scale']
-        network, latencies = input_network.get_graph(
+        network, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
             epsilon, clustering_distance, should_remove_tivs,
             should_include_latencies=True
@@ -155,7 +155,7 @@ if __name__ == '__main__':
             clustering_distance = parameters['clustering_distance']
             should_remove_tivs = parameters['should_remove_TIVs']
             coordinates_scale = parameters['coordinates_scale']
-            network, latencies = input_network.get_graph(
+            network, latencies = input_network.get_graph_from_paths(
                 probes_file_path, latencies_file_path,
                 epsilon, clustering_distance, should_remove_tivs,
                 should_include_latencies=True

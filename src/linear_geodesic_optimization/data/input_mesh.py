@@ -50,7 +50,7 @@ def get_mesh_from_directory(
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
-    network, latencies = input_network.get_graph(
+    network, latencies = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
         epsilon, clustering_distance, should_remove_TIVs,
         should_include_latencies=True

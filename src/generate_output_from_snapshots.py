@@ -24,7 +24,7 @@ def main(directory, max_iterations):
     epsilon = parameters['epsilon']
     clustering_distance = parameters['clustering_distance']
     should_remove_tivs = parameters['should_remove_TIVs']
-    network, latencies = input_network.get_graph(
+    network, latencies = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
         epsilon, clustering_distance,
         should_remove_tivs=should_remove_tivs,

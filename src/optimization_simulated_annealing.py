@@ -115,7 +115,7 @@ def main(probes_filename, latencies_filename, epsilon, clustering_distance,
     if graphml_filename is None:
         probes_file_path = os.path.join('..', 'data', probes_filename)
         latencies_file_path = os.path.join('..', 'data', latencies_filename)
-        network, latencies = input_network.get_graph(
+        network, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
             epsilon, clustering_distance,
             should_include_latencies=True

@@ -23,7 +23,7 @@ if __name__ == '__main__':
         epsilon = parameters['epsilon']
         clustering_distance = parameters['clustering_distance']
 
-        graph = input_network.get_graph(probes_file_path, latencies_file_path, epsilon, clustering_distance)
+        graph = input_network.get_graph_from_paths(probes_file_path, latencies_file_path, epsilon, clustering_distance)
     with open(latencies_file_path) as f:
         reader = csv.DictReader(f)
         for row in reader:
