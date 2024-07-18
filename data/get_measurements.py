@@ -32,7 +32,7 @@ def get_rtt(id_measurement, id_source, id_target, date_start, date_stop):
     return id_source, id_target, None
 
 
-def get_measurements(probes, latencies_filename, date_start, date_stop):
+def write_measurements(probes, latencies_filename, date_start, date_stop):
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = {
             executor.submit(
@@ -101,4 +101,4 @@ if __name__ == '__main__':
     if output_filename is None:
         output_filename = f'{ip_type}/probes_{ip_type}.csv'
 
-    get_measurements(probes, output_filename, time_start, time_end)
+    write_measurements(probes, output_filename, time_start, time_end)

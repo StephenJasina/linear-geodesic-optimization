@@ -15,7 +15,7 @@ def get_countries(continent):
 
     return countries
 
-def write_probes(countries, probes_file):
+def write_probes(probes, ip_type, probes_file):
     csv_writer = csv.DictWriter(
         probes_file,
         [
@@ -25,6 +25,21 @@ def write_probes(countries, probes_file):
         ]
     )
     csv_writer.writeheader()
+    for probe in probes:
+        csv_writer.writerow({
+            'id': probe['id'],
+            'anchor_id': probe['anchor_id'],
+            'city': probe['city'],
+            'country': probe['country'],
+            'latitude': probe['latitude'],
+            'longitude': probe['longitude'],
+            'fqdn': probe['fqdn'],
+            ip_type: probe[ip_type],
+            'measurement_id': probe['measurement_id'],
+        })
+
+def get_probes(countries, ip_type):
+    to_return = []
     for (country_code, country_name) in countries.items():
         print(country_name)
         anchors = {
@@ -86,7 +101,7 @@ def write_probes(countries, probes_file):
             if should_skip:
                 continue
 
-            csv_writer.writerow({
+            to_return.append({
                 'id': probe_id,
                 'anchor_id': anchor['id'],
                 'city': city,
@@ -97,6 +112,8 @@ def write_probes(countries, probes_file):
                 ip_type: address,
                 'measurement_id': measurement_id,
             })
+
+    return to_return
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get probes in a given continent (or the U.S. by default)')
@@ -126,4 +143,4 @@ if __name__ == '__main__':
         probes_filename = f'{ip_type}/probes_{ip_type}.csv'
 
     with open(probes_filename, 'w') as probes_file:
-        write_probes(countries, probes_file)
+        write_probes(countries, ip_type, probes_file)
