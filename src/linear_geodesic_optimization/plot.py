@@ -70,14 +70,18 @@ def get_scatter_plot(before_data, after_data, title):
 
     return fig
 
-def get_network_plot(graph, trim_vertices=False):
+def get_network_plot(
+    graph,
+    weight_label='ricciCurvature', color_min=-2., color_max=2.,
+    trim_vertices=False
+):
     fig, ax = plt.subplots(1, 1, facecolor='#808080')
     ax.set_aspect('equal')
     ax.axis('off')
 
     # Plot the edges
     for u, v, d in graph.edges(data=True):
-        color = mpl.colormaps['RdBu']((d['ricciCurvature'] + 2) / 4)
+        color = mpl.colormaps['RdBu']((d[weight_label] - color_min) / (color_max - color_min))
 
         x_u, y_u = utility.mercator(graph.nodes[u]['long'],
                                     graph.nodes[u]['lat'])
