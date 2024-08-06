@@ -1,4 +1,5 @@
 import os
+import pathlib
 import pickle
 import sys
 
@@ -18,8 +19,7 @@ from linear_geodesic_optimization.plot \
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 lambda_curvature = 1.
-lambda_smooth = 0.004
-lambda_geodesic = 0.
+lambda_smooth = 0.005
 initial_radius = 20.
 width = 50
 height = 50
@@ -27,12 +27,16 @@ scale = 1.
 ip_type = 'ipv4'
 threshold = 10
 
-directory = os.path.join('..', 'out_Europe_hourly', str(threshold))
-subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{lambda_geodesic}_{initial_radius}_{width}_{height}_{scale}'
+directory = pathlib.Path('..', 'outputs', 'animation_smoother')
+subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{scale}'
 
-manifold_count = 24
-fps = 12
+output_filepaths = [
+    output_directory / subdirectory_name / 'output'
+    for output_directory in directory.iterdir()
+]
 
+fps = 24
+animation_length = 4.  # in seconds
 
 include_line_graph = False
 
@@ -62,15 +66,16 @@ def get_image_data(coordinates, coordinates_scale, resolution=100):
     _, bottom = utility.inverse_mercator(0., coordinates_bottom)
     _, top = utility.inverse_mercator(0., coordinates_top)
 
-    map = Basemap(llcrnrlon=left, urcrnrlon=right,
+    m = Basemap(llcrnrlon=left, urcrnrlon=right,
                   llcrnrlat=bottom, urcrnrlat=top, epsg=3857)
     fig, ax = plt.subplots()
-    image_data = map.arcgisimage(service='USA_Topo_Maps', ax=ax,
-                                 xpixels=resolution, y_pixels=resolution).get_array()
+    image_data = m.arcgisimage(
+        server='http://server.arcgisonline.com/ArcGIS', service='World_Imagery',
+        ax=ax, xpixels=resolution, y_pixels=resolution
+    ).get_array()
     image_data = np.flipud(image_data).swapaxes(0, 1) / 255
     plt.close(fig)
     return image_data
-
 
 def investigating_graph(k=3):
     path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/{threshold}/'
@@ -186,61 +191,56 @@ def investigating_graph(k=3):
         name_series.append(probes[probes['id'] == int(edge[0])]['city'].values[0] + '-' + probes[probes['id'] == int(edge[1])]['city'].values[0])
     return time_series, name_series
 
-
 if __name__ == '__main__':
     initialization_path = os.path.join(directory, 'graph_0', subdirectory_name, '0')
 
-    hours = []
-    entry_prefix = 'graph_'
-    with os.scandir(directory) as it:
-        for entry in it:
-            if entry.name.startswith(entry_prefix) and not entry.is_file():
-                hours.append((float(entry.name[len(entry_prefix):]), entry.name))
-    hours = list(sorted(hours))
-    manifold_count = len(hours)
-
-    zs = {}
-    for hour, entry_name in hours:
-        print(f'Reading data from manifold {hour}')
-
-        current_directory = os.path.join(
-            directory, entry_name, subdirectory_name
+    # Assume the first word of each path is a number indicating time
+    paths = list(sorted(
+        (
+            float(output_filepath.parent.parent.name.split(' ')[0]),
+            output_filepath
         )
+        for output_filepath in output_filepaths
+    ))
+    manifold_count = len(paths)
 
-        iteration = max(
-            int(name)
-            for name in os.listdir(current_directory)
-            if name.isdigit()
-        )
-        path = os.path.join(current_directory, str(iteration))
-        mesh = input_mesh.get_mesh_from_directory(
-            current_directory, postprocessed=True,
-            initialization_path=initialization_path
-        )
-
-        zs[hour] = mesh.get_parameters()
-
-    z_max = np.amax(list(zs.values()))
-
-    mesh = RectangleMesh(width, height, scale)
-
-    with open(os.path.join(directory, 'graph_0', subdirectory_name, 'parameters'), 'rb') as f:
-        parameters = pickle.load(f)
+    zs = []
+    with open(output_filepaths[0], 'rb') as f:
+        parameters = pickle.load(f)['parameters']
+        width = parameters['width']
+        height = parameters['height']
         probes_filename = parameters['probes_filename']
         probes_file_path = os.path.join('..', 'data', probes_filename)
-        latencies_filename = parameters['latencies_filename']
+        latencies_filename = parameters['latencies_filenames']
+        if not isinstance(latencies_filename, str):
+            latencies_filename = latencies_filename[0]
         latencies_file_path = os.path.join('..', 'data', latencies_filename)
         epsilon = parameters['epsilon']
         clustering_distance = parameters['clustering_distance']
         should_remove_tivs = parameters['should_remove_TIVs']
-        network, latencies = input_network.get_graph(
+        ricci_curvature_alpha = parameters['ricci_curvature_alpha']
+        coordinates_scale = parameters['coordinates_scale']
+        network, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
             epsilon, clustering_distance, should_remove_tivs,
-            should_include_latencies=True
+            should_include_latencies=True,
+            ricci_curvature_alpha=ricci_curvature_alpha
         )
-        coordinates, _, _, _, _, = input_network.extract_from_graph(network, latencies)
+        network = input_network.extract_from_graph(network, latencies)
+        coordinates = network[0]
+    for output_filepath in output_filepaths:
+        with output_filepath.open('rb') as f:
+            data = pickle.load(f)
+            mesh = input_mesh.get_mesh(data['final'], width, height, network, coordinates_scale, postprocessed=True, z_0=data['initial'])
+            zs.append(mesh.get_parameters())
+
+    z_max = np.amax(zs)
+
+    mesh = RectangleMesh(width, height, scale)
+
     resolution = 500
-    face_colors = get_image_data(coordinates, resolution)
+    # face_colors = get_image_data(coordinates, resolution)
+    face_colors = np.full((width, height, 3), 0.4)
 
     fig = plt.figure()
 
@@ -281,42 +281,44 @@ if __name__ == '__main__':
         ax = fig.add_subplot(projection='3d')
         ax.set_facecolor((0.5, 0.5, 0.5))
 
-    def get_frame(hour):
-        start_time = time.time()
-        ### print time taken for each loop
-        print(f'Computing frame at t={hour}')
+    def get_frame(t):
+        print(f'Computing frame at t={t}')
 
-        for left_index in range(len(hours) + 1):
-            if left_index == len(hours) or hours[left_index][0] > hour:
+        for left_index in range(len(paths) + 1):
+            if left_index == len(paths) or paths[left_index][0] > t:
                 break
         left_index -= 1
-        for right_index in range(len(hours) - 1, -2, -1):
-            if right_index == -1 or hours[right_index][0] < hour:
+        for right_index in range(len(paths) - 1, -2, -1):
+            if right_index == -1 or paths[right_index][0] < t:
                 break
         right_index += 1
 
-        left = hours[left_index][0]
-        right = hours[right_index][0]
+        left = paths[left_index][0]
+        right = paths[right_index][0]
 
-        lam = 0. if right == left else (hour - left) / (right - left)
-        z = (1 - lam) * zs[left] + lam * zs[right]
+        lam = 0. if right == left else (t - left) / (right - left)
+        z = (1 - lam) * zs[left_index] + lam * zs[right_index]
         z = np.reshape(z, (width, height))
 
-        entry_name = hours[left_index if lam < 0.5 else right_index][1]
-        with open(os.path.join(directory, entry_name, subdirectory_name, 'parameters'), 'rb') as f:
+        entry = paths[left_index if lam < 0.5 else right_index][1]
+        with (entry.parent / 'parameters').open('rb') as f:
             parameters = pickle.load(f)
             probes_filename = parameters['probes_filename']
             probes_file_path = os.path.join('..', 'data', probes_filename)
-            latencies_filename = parameters['latencies_filename']
+            latencies_filename = parameters['latencies_filenames']
+            if not isinstance(latencies_filename, str):
+                latencies_filename = latencies_filename[0]
             latencies_file_path = os.path.join('..', 'data', latencies_filename)
             epsilon = parameters['epsilon']
             clustering_distance = parameters['clustering_distance']
             should_remove_tivs = parameters['should_remove_TIVs']
+            ricci_curvature_alpha = parameters['ricci_curvature_alpha']
             coordinates_scale = parameters['coordinates_scale']
-            network, latencies = input_network.get_graph(
+            network, latencies = input_network.get_graph_from_paths(
                 probes_file_path, latencies_file_path,
                 epsilon, clustering_distance, should_remove_tivs,
-                should_include_latencies=True
+                should_include_latencies=True,
+                ricci_curvature_alpha=ricci_curvature_alpha
             )
             coordinates, bounding_box, network_edges, network_curvatures,  _, \
                 _, network_city \
@@ -324,12 +326,11 @@ if __name__ == '__main__':
         coordinates = np.array(coordinates)
         network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
 
-
         if include_line_graph:
             # Update timeseries plot
-            line1, = ax_ts1.plot(ts_data1[:int(hour) + 1], '-o', markersize=3, color='blue', label = name_series[0])
-            line2, = ax_ts2.plot(ts_data2[:int(hour) + 1], '-o', markersize=3, color='red', label= name_series[1])
-            line3, = ax_ts3.plot(ts_data3[:int(hour) + 1], '-o', markersize=3, color='green', label = name_series[2])
+            line1, = ax_ts1.plot(ts_data1[:int(t) + 1], '-o', markersize=3, color='blue', label = name_series[0])
+            line2, = ax_ts2.plot(ts_data2[:int(t) + 1], '-o', markersize=3, color='red', label= name_series[1])
+            line3, = ax_ts3.plot(ts_data3[:int(t) + 1], '-o', markersize=3, color='green', label = name_series[2])
             legend1 = ax_ts1.legend([line1], [name_series[0]], loc='upper right', fontsize=4)
             legend2 = ax_ts2.legend([line2], [name_series[1]], loc='upper right', fontsize=4)
             legend3 = ax_ts3.legend([line3], [name_series[2]], loc='upper right', fontsize= 4)
@@ -355,9 +356,6 @@ if __name__ == '__main__':
             # ax_ts2.set_xticks(np.arange(0, 24, 1))
             # ax_ts1.set_xticks(np.arange(0, 24, 1))
 
-        elapsed_time = time.time() - start_time
-        print(f"Time taken for iteration {hour}: {elapsed_time:.4f} seconds")
-
         ax.clear()
 
         return [
@@ -374,10 +372,9 @@ if __name__ == '__main__':
             else []
         )
 
-
     ani = animation.FuncAnimation(fig, get_frame,
-                                  np.linspace(0, manifold_count - 1,
-                                              (manifold_count - 1) * fps + 1),
+                                  np.linspace(0, paths[-1][0],
+                                              int(round(fps * animation_length)) + 1),
                                   interval=1000/fps,
                                   blit=True)
-    ani.save(os.path.join('..', 'animation_Europe_hourly.mp4'), dpi=300)
+    ani.save(os.path.join('..', 'animation.mp4'), dpi=300)

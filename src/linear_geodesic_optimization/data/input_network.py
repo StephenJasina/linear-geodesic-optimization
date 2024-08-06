@@ -76,16 +76,23 @@ def get_base_graph(probes, latencies):
         long_source = graph.nodes[id_source]['long']
         lat_target = graph.nodes[id_target]['lat']
         long_target = graph.nodes[id_target]['long']
-        rtt = latency['rtt']
-        if rtt is None or rtt == '':
-            continue
-        rtt = float(rtt)
-
-        # Check how often the difference is larger than 0
         gcl = utility.get_GCL(
             [lat_source, long_source],
             [lat_target, long_target]
         )
+
+        if 'rtt' in latency:
+            rtt = latency['rtt']
+            # Skip edges with no measured RTT
+            if rtt == '':
+                continue
+            rtt = float(rtt)
+        else:
+            # If rtt isn't available at all, just add every edge (i.e.,
+            # assume the input contains connectivity information)
+            rtt = gcl
+
+        # Check how often the difference is larger than 0
         # TODO: Should this be more lenient?
         if rtt - gcl < 0:
             rtt_violation_list.append((id_source, id_target))
@@ -144,13 +151,17 @@ def remove_tivs(graph):
 
     return graph
 
-def compute_ricci_curvatures(graph):
-    orc = OllivierRicci(graph, weight='weight', alpha=0., proc=1)
+def compute_ricci_curvatures(graph, alpha=0.):
+    orc = OllivierRicci(
+        graph, weight='weight', alpha=alpha,
+        method='OTD', proc=1
+    )
     graph = orc.compute_ricci_curvature()
 
-    # Delete extraneous edge data
+    # Delete extraneous edge data, and rescale Ricci curvature
     for _, _, d in graph.edges(data=True):
         del d['weight']
+        d['ricciCurvature'] /= (1. - alpha)
 
     return graph
 
@@ -158,7 +169,8 @@ def get_graph(
     probes, latencies, epsilon=None,
     clustering_distance=None, should_remove_tivs=False,
     should_include_latencies=False,
-    should_compute_curvatures=True
+    should_compute_curvatures=True,
+    ricci_curvature_alpha=0.
 ):
     graph = get_base_graph(probes, latencies)
     if should_include_latencies:
@@ -173,7 +185,7 @@ def get_graph(
     if epsilon is not None:
         graph = threshold_graph(graph, epsilon)
     if should_compute_curvatures:
-        graph = compute_ricci_curvatures(graph)
+        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha)
     if should_include_latencies:
         return graph, latencies
     else:
@@ -183,7 +195,8 @@ def get_graph_from_paths(
     probes_file_path, latencies_file_path, epsilon=None,
     clustering_distance=None, should_remove_tivs=False,
     should_include_latencies=False,
-    should_compute_curvatures=True
+    should_compute_curvatures=True,
+    ricci_curvature_alpha=0.
 ):
     """
     Generate a NetworkX graph and optionally a list of latencies.
@@ -211,7 +224,8 @@ def get_graph_from_paths(
             probes, latencies, epsilon,
             clustering_distance, should_remove_tivs,
             should_include_latencies,
-            should_compute_curvatures
+            should_compute_curvatures,
+            ricci_curvature_alpha
         )
 
 def extract_from_graph(

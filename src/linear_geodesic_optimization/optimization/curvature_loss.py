@@ -13,13 +13,15 @@ from linear_geodesic_optimization.optimization.curvature \
 class Computer:
     """Implementation of curvature loss."""
 
-    def __init__(self,
-                 mesh: Mesh,
-                 network_vertices: npt.NDArray[np.float64],
-                 network_edges: typing.List[typing.Tuple[int, int]],
-                 network_curvatures: typing.List[np.float64],
-                 epsilon: np.float64,
-                 curvature: Curvature):
+    def __init__(
+        self,
+        mesh: Mesh,
+        network_vertices: npt.NDArray[np.float64],
+        network_edges: typing.List[typing.Tuple[int, int]],
+        network_curvatures: typing.List[np.float64],
+        epsilon: np.float64,
+        curvature: Curvature
+    ):
         """Initialize the computer."""
         self._mesh = mesh
         self._topology = mesh.get_topology()
@@ -70,10 +72,11 @@ class Computer:
         self._forward_updates = self._mesh.get_updates()
 
         self.loss = np.float64(0.)
-        for fat_edge, network_curvature, edge_length \
-                in zip(self._fat_edges,
-                       self._network_curvatures,
-                       self._network_edge_lengths):
+        for fat_edge, network_curvature, edge_length in zip(
+            self._fat_edges,
+            self._network_curvatures,
+            self._network_edge_lengths
+        ):
             if len(fat_edge) == 0:
                 continue
             loss_part = np.float64(0.)

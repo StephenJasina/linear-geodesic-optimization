@@ -20,15 +20,20 @@ def main(directory, max_iterations):
         z = pickle.load(f)['mesh_parameters']
 
     probes_file_path = os.path.join('..', 'data', parameters['probes_filename'])
-    latencies_file_path = os.path.join('..', 'data', parameters['latencies_filename'])
+    latencies_filename = parameters['latencies_filenames']
+    if not isinstance(latencies_filename, str):
+        latencies_filename = latencies_filename[0]
+    latencies_file_path = os.path.join('..', 'data', latencies_filename)
     epsilon = parameters['epsilon']
     clustering_distance = parameters['clustering_distance']
     should_remove_tivs = parameters['should_remove_TIVs']
+    ricci_curvature_alpha = parameters['ricci_curvature_alpha']
     network, latencies = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
         epsilon, clustering_distance,
         should_remove_tivs=should_remove_tivs,
-        should_include_latencies=True
+        should_include_latencies=True,
+        ricci_curvature_alpha=ricci_curvature_alpha
     )
     network = input_network.extract_from_graph(network, latencies)
 
