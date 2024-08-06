@@ -1,0 +1,1109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="int" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="int" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key27" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key29" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key31" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key33" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key34" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key35" for="graph" attr.name="description" attr.type="string" />
+  <key id="key36" for="node" attr.name="geocode_append" attr.type="string" />
+  <key id="key37" for="node" attr.name="id" attr.type="int" />
+  <key id="key38" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key39" for="node" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="name" attr.type="string" />
+  <key id="key42" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key43" for="node" attr.name="type" attr.type="string" />
+  <key id="key44" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">&lt;</data>
+   <data key="key7">0</data>
+   <data key="key8">22/10/10</data>
+   <data key="key9">Historic</data>
+   <data key="key10">0</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">USA</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">Tecove (level3)</data>
+   <data key="key23">&lt;2005</data>
+   <data key="key24">Now owned by Level3. Has no independent network.</data>
+   <data key="key25">Secondary</data>
+   <data key="key26">http://www.isp-planet.com/img/backbones/Telcove%20IP%20Map.jpg</data>
+   <data key="key27">e278b1b</data>
+   <data key="key28">0</data>
+   <data key="key29">0.3.34dev-20120328</data>
+   <data key="key30">1</data>
+   <data key="key31">COM</data>
+   <data key="key32">1.0</data>
+   <data key="key34">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key35">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key40">Telcove</data>
+   <data key="key41">internet_top_pop (Telcove)</data>
+   <data key="key42">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key44">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.3364299999999999999</data>
+      <data key="key21">-82.5306499999999999967</data>
+      <data key="key33">1.437665230436824, 1.7291496616054509</data>
+      <data key="key37">0</data>
+      <data key="key39">Sarasota</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">26.62168</data>
+      <data key="key21">-81.8405899999999999969</data>
+      <data key="key33">1.4401613697521582, 2.6572989145828814</data>
+      <data key="key37">1</data>
+      <data key="key39">Fort Myers</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.9475199999999999994</data>
+      <data key="key21">-82.4584299999999999972</data>
+      <data key="key33">1.3407108488515733, 2.0376927441285231</data>
+      <data key="key37">2</data>
+      <data key="key39">Tampa</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">27.9658500000000000002</data>
+      <data key="key21">-82.8000999999999999987</data>
+      <data key="key33">1.5866490139403369, 2.0304951008285057</data>
+      <data key="key37">3</data>
+      <data key="key39">Clearwater</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">26.7153400000000000002</data>
+      <data key="key21">-80.0533700000000000008</data>
+      <data key="key33">1.8375033906677281, 1.3727986209810925</data>
+      <data key="key37">4</data>
+      <data key="key39">West Palm Beach</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">28.0836299999999999995</data>
+      <data key="key21">-80.6081099999999999978</data>
+      <data key="key33">2.1720267190676088, 1.6504322408421968</data>
+      <data key="key37">5</data>
+      <data key="key39">Melbourne</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">26.1223100000000000003</data>
+      <data key="key21">-80.1433800000000000005</data>
+      <data key="key33">1.8873370921462127, 1.6576386315022051</data>
+      <data key="key37">6</data>
+      <data key="key39">Fort Lauderdale</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7742699999999999999</data>
+      <data key="key21">-80.1936599999999999988</data>
+      <data key="key33">2.0834704395573063, 1.4133434923252</data>
+      <data key="key37">7</data>
+      <data key="key39">Miami</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.8468100000000000002</data>
+      <data key="key21">-76.2852200000000000013</data>
+      <data key="key33">0.8662408410247403, 4.2007533701579325</data>
+      <data key="key37">8</data>
+      <data key="key39">Norfolk</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.4137499999999999997</data>
+      <data key="key21">-79.1422500000000000014</data>
+      <data key="key33">0.56312506914804594, 4.7144337053351695</data>
+      <data key="key37">9</data>
+      <data key="key39">Lynchburg</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">28.6122200000000000003</data>
+      <data key="key21">-80.807549999999999997</data>
+      <data key="key33">0.53707562653998908, 2.8395371917217069</data>
+      <data key="key37">10</data>
+      <data key="key39">Titusville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">28.5383400000000000008</data>
+      <data key="key21">-81.3792400000000000007</data>
+      <data key="key33">0.81149544446673061, 2.7014497641311905</data>
+      <data key="key37">11</data>
+      <data key="key39">Orlando</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4495700000000000009</data>
+      <data key="key21">-78.8689199999999999979</data>
+      <data key="key33">0.93290697129086009, 4.8754861730619314</data>
+      <data key="key37">12</data>
+      <data key="key39">Harrisonburg</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.0293099999999999992</data>
+      <data key="key21">-78.4766799999999999995</data>
+      <data key="key33">0.84948278775150354, 4.5607316186456872</data>
+      <data key="key37">13</data>
+      <data key="key39">Charlottesville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.1856599999999999986</data>
+      <data key="key21">-78.163330000000000003</data>
+      <data key="key33">1.0832765165040505, 4.0518553076347787</data>
+      <data key="key37">14</data>
+      <data key="key39">Winchester</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.3031800000000000016</data>
+      <data key="key21">-77.460539999999999998</data>
+      <data key="key33">1.7739171812669194, 3.4831736213443927</data>
+      <data key="key37">15</data>
+      <data key="key39">Fredericksburg</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7356600000000000014</data>
+      <data key="key21">-74.1723700000000000024</data>
+      <data key="key33">0.6205524903860028, 3.6743596944801631</data>
+      <data key="key37">16</data>
+      <data key="key39">Newark</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.6598399999999999994</data>
+      <data key="key21">-75.5146400000000000002</data>
+      <data key="key33">0.92550987645082172, 3.5896661081989691</data>
+      <data key="key37">17</data>
+      <data key="key39">Central New Jersey</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.3314299999999999989</data>
+      <data key="key21">-83.045749999999999999</data>
+      <data key="key33">1.5210172839612781, 3.757238936698148</data>
+      <data key="key37">18</data>
+      <data key="key39">Detroit</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.1292200000000000015</data>
+      <data key="key21">-80.0850599999999999967</data>
+      <data key="key33">1.4830481332480878, 3.2679232709492414</data>
+      <data key="key37">19</data>
+      <data key="key39">Erie</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.8864499999999999984</data>
+      <data key="key21">-78.878369999999999998</data>
+      <data key="key33">1.1393694970925812, 3.5402182517987417</data>
+      <data key="key37">20</data>
+      <data key="key39">Buffalo</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">43.0481199999999999996</data>
+      <data key="key21">-76.1474200000000000024</data>
+      <data key="key33">1.9785128120393443, 3.5932879872797523</data>
+      <data key="key37">21</data>
+      <data key="key39">Syracuse</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n22">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">43.1009000000000000001</data>
+      <data key="key21">-75.2326599999999999988</data>
+      <data key="key33">2.2558522064375577, 3.7766526439822945</data>
+      <data key="key37">22</data>
+      <data key="key39">Rome-Utica</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n23">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4758800000000000009</data>
+      <data key="key21">-73.2120700000000000016</data>
+      <data key="key33">1.3308116519729412, 3.6427313865145856</data>
+      <data key="key37">23</data>
+      <data key="key39">Burlington</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6525800000000000003</data>
+      <data key="key21">-73.7562299999999999994</data>
+      <data key="key33">2.303762637120506, 3.545553492991929</data>
+      <data key="key37">24</data>
+      <data key="key39">Albany</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n25">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7142699999999999987</data>
+      <data key="key21">-74.0059700000000000031</data>
+      <data key="key33">1.1203202070745328, 3.728533112383587</data>
+      <data key="key37">25</data>
+      <data key="key39">New York City</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n26">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8951099999999999994</data>
+      <data key="key21">-77.0363699999999999996</data>
+      <data key="key33">1.1394748176052027, 3.1989931542584213</data>
+      <data key="key37">26</data>
+      <data key="key39">Washington, DC</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n27">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.2108100000000000009</data>
+      <data key="key21">-81.0228300000000000031</data>
+      <data key="key33">1.9199922585351952, 2.1703023060649551</data>
+      <data key="key37">27</data>
+      <data key="key39">Daytona Beach</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n28">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.7747899999999999995</data>
+      <data key="key21">-78.0205600000000000019</data>
+      <data key="key33">1.5885751786966684, 3.5508667062321195</data>
+      <data key="key37">28</data>
+      <data key="key39">Coudersport</data>
+      <data key="key43">Network Management Centre</data>
+    </node>
+    <node id="n29">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.2709699999999999991</data>
+      <data key="key21">-79.9414300000000000029</data>
+      <data key="key33">0.58397986070205432, 4.4920278117794306</data>
+      <data key="key37">29</data>
+      <data key="key39">Roanoke</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n30">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.5859700000000000013</data>
+      <data key="key21">-79.3950200000000000031</data>
+      <data key="key33">0.71783386350801293, 4.8559260944323395</data>
+      <data key="key37">30</data>
+      <data key="key39">Danville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n31">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1495800000000000012</data>
+      <data key="key21">-79.0716999999999999998</data>
+      <data key="key33">1.0768866574386982, 4.7067184304051528</data>
+      <data key="key37">31</data>
+      <data key="key39">Staunton</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n32">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.349819999999999999</data>
+      <data key="key21">-81.6326200000000000018</data>
+      <data key="key33">0.26695042714394507, 1.760294674862334</data>
+      <data key="key37">32</data>
+      <data key="key39">Charleston</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n33">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2903799999999999992</data>
+      <data key="key21">-76.6121899999999999981</data>
+      <data key="key33">1.8761343635959762, 3.260828042040528</data>
+      <data key="key37">33</data>
+      <data key="key39">Baltimore</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n34">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">35.0526599999999999985</data>
+      <data key="key21">-78.8783600000000000019</data>
+      <data key="key33">0.80315922353174085, 1.7337237739816489</data>
+      <data key="key37">34</data>
+      <data key="key39">Fayetteville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n35">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">35.2270900000000000002</data>
+      <data key="key21">-80.8431299999999999975</data>
+      <data key="key33">0.63473486730088446, 1.9458053901216863</data>
+      <data key="key37">35</data>
+      <data key="key39">Charlotte</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n36">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.5173600000000000004</data>
+      <data key="key21">-82.3548899999999999971</data>
+      <data key="key33">1.1289932246193823, 2.2468981467601696</data>
+      <data key="key36">Tennessee</data>
+      <data key="key37">36</data>
+      <data key="key39">Tri-Cities</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n37">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">35.7331900000000000014</data>
+      <data key="key21">-81.3412000000000000033</data>
+      <data key="key33">-0.44349491457584511, 2.9826909167050517</data>
+      <data key="key37">37</data>
+      <data key="key39">Hickory</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n38">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.0998600000000000008</data>
+      <data key="key21">-80.2442199999999999996</data>
+      <data key="key33">0.41930433000772926, 1.5925006148765757</data>
+      <data key="key37">38</data>
+      <data key="key39">Winston-Salem</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n39">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.0726399999999999997</data>
+      <data key="key21">-79.7919800000000000034</data>
+      <data key="key33">0.67404482904794971, 1.5533547796998832</data>
+      <data key="key37">39</data>
+      <data key="key39">Greensboro</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n40">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.952339999999999999</data>
+      <data key="key21">-75.1637899999999999981</data>
+      <data key="key33">1.4638090881050743, 3.9639101152295058</data>
+      <data key="key37">40</data>
+      <data key="key39">Philadelphia</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n41">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6084299999999999986</data>
+      <data key="key21">-75.4901799999999999977</data>
+      <data key="key33">1.4932529140170121, 4.2782948813186659</data>
+      <data key="key37">41</data>
+      <data key="key39">Allentown</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n42">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.2736999999999999988</data>
+      <data key="key21">-76.8844199999999999978</data>
+      <data key="key33">1.7642255942998082, 3.9208406911301243</data>
+      <data key="key37">42</data>
+      <data key="key39">Harrisburg</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n43">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.0378800000000000005</data>
+      <data key="key21">-76.3055099999999999968</data>
+      <data key="key33">2.0470499052234601, 4.0940432331315151</data>
+      <data key="key36">Pennsylvania</data>
+      <data key="key37">43</data>
+      <data key="key39">Lancaster</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n44">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.4089700000000000002</data>
+      <data key="key21">-75.6624099999999999988</data>
+      <data key="key33">1.0194268885301461, 3.372731373423453</data>
+      <data key="key37">44</data>
+      <data key="key39">Scranton</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n45">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7934000000000000011</data>
+      <data key="key21">-77.8600000000000000006</data>
+      <data key="key33">1.6740428144556665, 3.3201517097823627</data>
+      <data key="key37">45</data>
+      <data key="key39">State College</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n46">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.4142699999999999994</data>
+      <data key="key21">-77.4105400000000000021</data>
+      <data key="key33">2.1803032860406777, 3.1520582186382526</data>
+      <data key="key37">46</data>
+      <data key="key39">Frederick</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n47">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0007099999999999988</data>
+      <data key="key21">-81.0348100000000000007</data>
+      <data key="key33">1.2368387409655996, 2.7171406671629792</data>
+      <data key="key37">47</data>
+      <data key="key39">Columbia</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n48">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5537599999999999988</data>
+      <data key="key21">-77.4602600000000000025</data>
+      <data key="key33">1.3505590560613483, 3.1322086866039252</data>
+      <data key="key37">48</data>
+      <data key="key39">Richmond</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n49">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.4406200000000000012</data>
+      <data key="key21">-79.9958899999999999975</data>
+      <data key="key33">1.4129589490511314, 3.4583745820589171</data>
+      <data key="key37">49</data>
+      <data key="key39">Pittsburgh</data>
+      <data key="key43">Core Router/PoP</data>
+    </node>
+    <node id="n50">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.9611799999999999997</data>
+      <data key="key21">-82.9987899999999999973</data>
+      <data key="key33">1.7126446228267382, 3.6915157650188424</data>
+      <data key="key37">50</data>
+      <data key="key39">Columbus</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n51">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.8526199999999999994</data>
+      <data key="key21">-82.3940099999999999991</data>
+      <data key="key33">0.2504121721212626, 2.0175752065684458</data>
+      <data key="key37">51</data>
+      <data key="key39">Greenville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n52">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.4709699999999999998</data>
+      <data key="key21">-81.9748399999999999982</data>
+      <data key="key33">0.56105199085162882, 1.718086825811395</data>
+      <data key="key36">Georgia</data>
+      <data key="key37">52</data>
+      <data key="key39">Augusta</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n53">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.0835399999999999997</data>
+      <data key="key21">-81.0998300000000000021</data>
+      <data key="key33">0.44037691938268864, 2.1387469033469526</data>
+      <data key="key37">53</data>
+      <data key="key39">Savannah</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n54">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.3321799999999999996</data>
+      <data key="key21">-81.6556499999999999967</data>
+      <data key="key33">1.6230134984979909, 2.2873852968434836</data>
+      <data key="key37">54</data>
+      <data key="key39">Jacksonville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n55">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.9495700000000000009</data>
+      <data key="key21">-81.9320499999999999965</data>
+      <data key="key33">0.40623073225991368, 1.8919110469207692</data>
+      <data key="key37">55</data>
+      <data key="key39">Spartanburg</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n56">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.9886899999999999994</data>
+      <data key="key21">-84.4777199999999999988</data>
+      <data key="key33">1.6173206624564966, 3.1266559850290014</data>
+      <data key="key37">56</data>
+      <data key="key39">Lexington</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n57">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.2542400000000000007</data>
+      <data key="key21">-85.7594100000000000017</data>
+      <data key="key33">1.2977385445552023, 3.8267293476135888</data>
+      <data key="key37">57</data>
+      <data key="key39">Louisville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n58">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.1658899999999999993</data>
+      <data key="key21">-86.7844399999999999984</data>
+      <data key="key33">1.3536360414769339, 2.2582097527230625</data>
+      <data key="key37">58</data>
+      <data key="key39">Nashville</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n59">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.7489999999999999991</data>
+      <data key="key21">-84.3879799999999999985</data>
+      <data key="key33">1.2015265052229152, 2.4696598730890948</data>
+      <data key="key37">59</data>
+      <data key="key39">Atlanta</data>
+      <data key="key43">Core Router/PoP</data>
+    </node>
+    <node id="n60">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7142699999999999987</data>
+      <data key="key21">-74.0059700000000000031</data>
+      <data key="key33">1.8585999540841585, 4.2412702158431985</data>
+      <data key="key37">60</data>
+      <data key="key39">York</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n61">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">35.7721000000000000016</data>
+      <data key="key21">-78.6386099999999999971</data>
+      <data key="key33">1.2421530109222449, 3.3590944557185369</data>
+      <data key="key37">61</data>
+      <data key="key39">Raleigh</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n62">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.2257300000000000001</data>
+      <data key="key21">-77.9447100000000000011</data>
+      <data key="key33">-0.30989335662144812, 3.5931751315301397</data>
+      <data key="key37">62</data>
+      <data key="key39">Wilmington</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n63">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.4213100000000000005</data>
+      <data key="key21">-87.2169099999999999986</data>
+      <data key="key33">0.43595349023300062, 2.5062624915184322</data>
+      <data key="key37">63</data>
+      <data key="key39">Pensacola</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n64">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.4382600000000000003</data>
+      <data key="key21">-84.2807300000000000004</data>
+      <data key="key33">1.0394299236265507, 2.7069679071360739</data>
+      <data key="key37">64</data>
+      <data key="key39">Tallahassee</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n65">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.6922400000000000012</data>
+      <data key="key21">-97.3375399999999999998</data>
+      <data key="key33">1.1167318353258693, 2.0290839669245893</data>
+      <data key="key37">65</data>
+      <data key="key39">Wichita</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n66">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.1141700000000000007</data>
+      <data key="key21">-94.6274599999999999969</data>
+      <data key="key33">1.1273178020171801, 1.7098118839029421</data>
+      <data key="key37">66</data>
+      <data key="key39">Kansas City</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n67">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.7464800000000000012</data>
+      <data key="key21">-92.2895900000000000002</data>
+      <data key="key33">1.4340032141631998, 2.4494618048143315</data>
+      <data key="key37">67</data>
+      <data key="key39">Little Rock</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n68">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.7632800000000000001</data>
+      <data key="key21">-95.3632700000000000026</data>
+      <data key="key33">1.6557706957664513, 2.5240096357558088</data>
+      <data key="key37">68</data>
+      <data key="key39">Houston</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n69">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.9546500000000000003</data>
+      <data key="key21">-90.0750699999999999978</data>
+      <data key="key33">1.9729410010639972, 2.5250300811629467</data>
+      <data key="key37">69</data>
+      <data key="key39">New Orleans</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n70">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.4507499999999999996</data>
+      <data key="key21">-91.1545499999999999999</data>
+      <data key="key33">0.97691346545369484, 2.4821040601923809</data>
+      <data key="key37">70</data>
+      <data key="key39">Baton Rouge</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n71">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.2987600000000000013</data>
+      <data key="key21">-90.1848100000000000021</data>
+      <data key="key33">0.92969639851800434, 2.2676152321187986</data>
+      <data key="key37">71</data>
+      <data key="key39">Jackson</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+    <node id="n72">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.6943599999999999998</data>
+      <data key="key21">-88.043049999999999998</data>
+      <data key="key33">0.74767908644287528, 2.4647609188035138</data>
+      <data key="key37">72</data>
+      <data key="key39">Mobile</data>
+      <data key="key43">Telcove Markets Served</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n2">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e4" source="n3" target="n6">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n6">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e6" source="n5" target="n6">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e7" source="n6" target="n7">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e8" source="n8" target="n14">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e9" source="n9" target="n13">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e10" source="n10" target="n11">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e11" source="n11" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e12" source="n12" target="n13">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e13" source="n13" target="n14">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e14" source="n13" target="n29">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e15" source="n13" target="n30">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e16" source="n13" target="n31">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e17" source="n14" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e18" source="n15" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e19" source="n16" target="n17">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e20" source="n17" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e21" source="n18" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e22" source="n19" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e23" source="n20" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e24" source="n21" target="n24">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e25" source="n21" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e26" source="n21" target="n22">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e27" source="n23" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e28" source="n25" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e29" source="n26" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e30" source="n27" target="n54">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e31" source="n28" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e32" source="n32" target="n35">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e33" source="n33" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e34" source="n33" target="n46">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e35" source="n34" target="n35">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e36" source="n35" target="n38">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e37" source="n35" target="n39">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e38" source="n35" target="n51">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e39" source="n35" target="n52">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e40" source="n35" target="n53">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e41" source="n35" target="n55">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e42" source="n35" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e43" source="n36" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e44" source="n40" target="n41">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e45" source="n40" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e46" source="n42" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e47" source="n42" target="n43">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e48" source="n42" target="n60">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e49" source="n44" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e50" source="n45" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e51" source="n47" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e52" source="n48" target="n49">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e53" source="n49" target="n50">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e54" source="n49" target="n56">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e55" source="n49" target="n57">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e56" source="n49" target="n59">
+      <data key="key20">Core to Core Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e57" source="n49" target="n61">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e58" source="n54" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e59" source="n58" target="n59">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e60" source="n59" target="n64">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e61" source="n59" target="n70">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e62" source="n59" target="n65">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e63" source="n59" target="n72">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e64" source="n59" target="n71">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e65" source="n59" target="n67">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e66" source="n59" target="n68">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e67" source="n63" target="n72">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e68" source="n65" target="n66">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e69" source="n68" target="n69">
+      <data key="key20">Access Connectivity</data>
+      <data key="key38">0</data>
+    </edge>
+
+  </graph>
+</graphml>

@@ -1,0 +1,1031 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key30" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key32" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key34" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key36" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key37" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key38" for="graph" attr.name="description" attr.type="string" />
+  <key id="key39" for="node" attr.name="id" attr.type="int" />
+  <key id="key40" for="edge" attr.name="id" attr.type="string" />
+  <key id="key41" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key42" for="node" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="label" attr.type="string" />
+  <key id="key44" for="graph" attr.name="name" attr.type="string" />
+  <key id="key45" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key46" for="node" attr.name="type" attr.type="string" />
+  <key id="key47" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">1</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">22/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">Greece</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">FORTHNET</data>
+   <data key="key26">2010_08</data>
+   <data key="key27">No customer services for resale? Web site not clear.</data>
+   <data key="key28">Primary</data>
+   <data key="key29">http://www.forthnet.gr/templates/sc.aspx?c=10006453</data>
+   <data key="key30">e278b1b</data>
+   <data key="key31">0</data>
+   <data key="key32">0.3.34dev-20120328</data>
+   <data key="key33">1</data>
+   <data key="key34">COM</data>
+   <data key="key35">1.0</data>
+   <data key="key37">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key38">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key43">Forthnet</data>
+   <data key="key44">internet_top_pop (Forthnet)</data>
+   <data key="key45">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key47">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1227800000000000002</data>
+      <data key="key24">25.3963899999999999993</data>
+      <data key="key36">8.3003329070351821, 0.94449886199197808</data>
+      <data key="key39">0</data>
+      <data key="key42">Komotini</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.8474999999999999999</data>
+      <data key="key24">25.8744400000000000003</data>
+      <data key="key36">8.4926278263287536, 0.44340313068009818</data>
+      <data key="key39">1</data>
+      <data key="key42">Alexandroypoli</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1413899999999999983</data>
+      <data key="key24">24.8836099999999999996</data>
+      <data key="key36">7.3688494106172202, 0.37385005664788157</data>
+      <data key="key39">2</data>
+      <data key="key42">Xanthi</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.9397199999999999998</data>
+      <data key="key24">24.4019400000000000004</data>
+      <data key="key36">7.7336159736595311, 0.3790787480445732</data>
+      <data key="key39">3</data>
+      <data key="key42">Kavala</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n4">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">9.2766933995018714, 1.4343656303192893</data>
+      <data key="key39">4</data>
+      <data key="key42">Interconnection Greece</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.3677799999999999993</data>
+      <data key="key24">26.1358299999999999993</data>
+      <data key="key36">9.3182837995325389, 1.2063977238320434</data>
+      <data key="key39">5</data>
+      <data key="key42">Chios</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.3107900000000000003</data>
+      <data key="key24">26.2202499999999999996</data>
+      <data key="key36">9.571154198264038, 1.0954416325879763</data>
+      <data key="key39">6</data>
+      <data key="key42">Lesbos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.9794500000000000012</data>
+      <data key="key24">23.7162200000000000007</data>
+      <data key="key36">9.1853854832953186, 1.0248429108987189</data>
+      <data key="key39">7</data>
+      <data key="key42">Athens</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7913899999999999997</data>
+      <data key="key24">20.8952799999999999994</data>
+      <data key="key36">10.176456729219124, 0.96207978431902552</data>
+      <data key="key39">8</data>
+      <data key="key42">Zakynthos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.15889</data>
+      <data key="key24">20.7847200000000000009</data>
+      <data key="key36">10.451772285477853, 1.3370905028756477</data>
+      <data key="key39">9</data>
+      <data key="key42">Pyrgos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7572200000000000007</data>
+      <data key="key24">26.9769399999999999994</data>
+      <data key="key36">8.9809502891703339, 0.66026453384236472</data>
+      <data key="key39">10</data>
+      <data key="key42">Samos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">36.4408299999999999996</data>
+      <data key="key24">28.2224999999999999999</data>
+      <data key="key36">9.2079361061012062, 0.67943682073730605</data>
+      <data key="key39">11</data>
+      <data key="key42">Rhodes</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.6213900000000000014</data>
+      <data key="key24">21.4077800000000000001</data>
+      <data key="key36">10.024147673829422, 1.5387161199274701</data>
+      <data key="key39">12</data>
+      <data key="key42">Agrinio</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.3701900000000000017</data>
+      <data key="key24">21.4295200000000000008</data>
+      <data key="key36">10.241677620423047, 1.2822941835225472</data>
+      <data key="key39">13</data>
+      <data key="key42">Mesologgi</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.9500000000000000007</data>
+      <data key="key24">20.75</data>
+      <data key="key36">9.9419232403598947, 0.23062487848295846</data>
+      <data key="key39">14</data>
+      <data key="key42">Prevezza</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.1605600000000000013</data>
+      <data key="key24">20.9852799999999999996</data>
+      <data key="key36">10.063010186712937, 0.53140925720570698</data>
+      <data key="key39">15</data>
+      <data key="key42">Arta</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.9000000000000000014</data>
+      <data key="key24">22.4333299999999999999</data>
+      <data key="key36">9.0543761945020123, 1.4180968975907153</data>
+      <data key="key39">16</data>
+      <data key="key42">Lamia</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.3166700000000000001</data>
+      <data key="key24">23.6333300000000000006</data>
+      <data key="key36">9.3807438277049151, 0.89979217819377033</data>
+      <data key="key39">17</data>
+      <data key="key42">Inofita</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.3647199999999999991</data>
+      <data key="key24">24.47139</data>
+      <data key="key36">9.5692405877750808, 2.0672585462390214</data>
+      <data key="key39">18</data>
+      <data key="key42">Rethymnon</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.0499999999999999993</data>
+      <data key="key24">24.8666699999999999994</data>
+      <data key="key36">9.307982759015097, 2.10665557222003</data>
+      <data key="key39">19</data>
+      <data key="key42">Moires</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1913900000000000011</data>
+      <data key="key24">25.7133300000000000005</data>
+      <data key="key36">9.7683769554262838, 2.7546314802907661</data>
+      <data key="key39">20</data>
+      <data key="key42">Ag. Nikolaos</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.0099999999999999985</data>
+      <data key="key24">25.7352799999999999996</data>
+      <data key="key36">9.6931566456629739, 3.0594245910941225</data>
+      <data key="key39">21</data>
+      <data key="key42">Ierapetra</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.2000000000000000007</data>
+      <data key="key24">26.0986099999999999997</data>
+      <data key="key36">10.016534482218338, 2.950446974890824</data>
+      <data key="key39">22</data>
+      <data key="key42">Siteia</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.9406799999999999988</data>
+      <data key="key24">22.95734</data>
+      <data key="key36">9.5122280572172908, 1.3254373185608146</data>
+      <data key="key39">23</data>
+      <data key="key42">Corinth</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.4666700000000000015</data>
+      <data key="key24">22.1666700000000000004</data>
+      <data key="key36">8.8348554677736129, 1.0468050106000335</data>
+      <data key="key39">24</data>
+      <data key="key42">Itea</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0016700000000000013</data>
+      <data key="key24">22.2861099999999999997</data>
+      <data key="key36">9.4236974010585897, 0.66858094112993127</data>
+      <data key="key39">25</data>
+      <data key="key42">Livadia</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.5166700000000000008</data>
+      <data key="key24">21.2666700000000000008</data>
+      <data key="key36">9.8429128186083332, -0.029284855776825401</data>
+      <data key="key39">26</data>
+      <data key="key42">Kastoria</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.6372200000000000017</data>
+      <data key="key24">22.4202800000000000008</data>
+      <data key="key36">8.798759146499485, 1.6747714891575813</data>
+      <data key="key39">27</data>
+      <data key="key42">Larissa</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8274999999999999994</data>
+      <data key="key24">20.7019399999999999997</data>
+      <data key="key36">10.402616625625901, 1.0665705349665515</data>
+      <data key="key39">28</data>
+      <data key="key42">Lefkada</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.9225000000000000006</data>
+      <data key="key24">21.8027800000000000005</data>
+      <data key="key36">10.195708543124853, 0.32645129078663382</data>
+      <data key="key39">29</data>
+      <data key="key42">Grevena</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.5038900000000000011</data>
+      <data key="key24">20.2655599999999999992</data>
+      <data key="key36">10.098111801855934, 0.070237164178446568</data>
+      <data key="key39">30</data>
+      <data key="key42">Igoumenitsa</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.181090000000000001</data>
+      <data key="key24">20.4890299999999999994</data>
+      <data key="key36">10.277479721721098, 1.5492701710468462</data>
+      <data key="key39">31</data>
+      <data key="key42">Argostoli</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n32">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">8.6928995998144369, 0.81528185570689748</data>
+      <data key="key39">32</data>
+      <data key="key42">Internet</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.244440000000000001</data>
+      <data key="key24">21.7344400000000000008</data>
+      <data key="key36">9.989976086271156, 1.2211511213062893</data>
+      <data key="key39">33</data>
+      <data key="key42">Patra</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.162270000000000001</data>
+      <data key="key24">23.49089</data>
+      <data key="key36">8.4096961939814854, 1.4220229465052105</data>
+      <data key="key39">34</data>
+      <data key="key42">Sklathos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4636100000000000013</data>
+      <data key="key24">23.5994400000000000006</data>
+      <data key="key36">8.728126027315815, 1.2802771544883904</data>
+      <data key="key39">35</data>
+      <data key="key42">Chalkida</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.3655599999999999995</data>
+      <data key="key24">21.9216699999999999997</data>
+      <data key="key36">8.7052286327690744, 2.0826727211995464</data>
+      <data key="key39">36</data>
+      <data key="key42">Karditsa</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.3666699999999999994</data>
+      <data key="key24">22.9458300000000000006</data>
+      <data key="key36">8.5017357005350966, 1.9790683216254545</data>
+      <data key="key39">37</data>
+      <data key="key42">Volos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">38.9166699999999999987</data>
+      <data key="key24">21.7833300000000000003</data>
+      <data key="key36">8.9120280800525382, 1.9679056560470669</data>
+      <data key="key39">38</data>
+      <data key="key42">Karpenisi</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.5552799999999999993</data>
+      <data key="key24">21.7674999999999999999</data>
+      <data key="key36">8.4552060962907323, 1.7540676897209591</data>
+      <data key="key39">39</data>
+      <data key="key42">Trikana</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.619999999999999999</data>
+      <data key="key24">19.9197199999999999993</data>
+      <data key="key36">9.6417786796340241, 0.11340479142374946</data>
+      <data key="key39">40</data>
+      <data key="key42">Corfu</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">39.6674999999999999996</data>
+      <data key="key24">20.8508299999999999995</data>
+      <data key="key36">9.764901973094446, 0.41514424438529685</data>
+      <data key="key39">41</data>
+      <data key="key42">Ioaninna</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.3090299999999999991</data>
+      <data key="key24">25.3711200000000000002</data>
+      <data key="key36">9.6298110617332959, 2.3341111045610599</data>
+      <data key="key39">42</data>
+      <data key="key42">Hersonlssos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.3278700000000000017</data>
+      <data key="key24">25.1434099999999999993</data>
+      <data key="key36">9.4544234371639924, 1.7853232605048361</data>
+      <data key="key39">43</data>
+      <data key="key42">Heraklion</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.6333300000000000006</data>
+      <data key="key24">22.7333299999999999992</data>
+      <data key="key36">8.8836466171700881, 0.074206630304438609</data>
+      <data key="key39">44</data>
+      <data key="key42">Argos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.4500000000000000007</data>
+      <data key="key24">24.9333299999999999999</data>
+      <data key="key36">8.989065291607865, 0.87537358765547379</data>
+      <data key="key39">45</data>
+      <data key="key42">Syros</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.4452899999999999983</data>
+      <data key="key24">25.32872</data>
+      <data key="key36">9.0060708729661911, 1.2116002299442963</data>
+      <data key="key39">46</data>
+      <data key="key42">Mykonos</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n47">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">36.386130000000000001</data>
+      <data key="key24">25.4295899999999999996</data>
+      <data key="key36">9.5973858009778521, 0.86758141563387803</data>
+      <data key="key39">47</data>
+      <data key="key42">Santorini</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">35.5122200000000000017</data>
+      <data key="key24">24.0155599999999999992</data>
+      <data key="key36">9.779677210277395, 1.924598486598752</data>
+      <data key="key39">48</data>
+      <data key="key42">Chania</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.0733299999999999993</data>
+      <data key="key24">22.4297199999999999995</data>
+      <data key="key36">9.276499555098221, 0.030707255001256321</data>
+      <data key="key39">49</data>
+      <data key="key42">Sparta</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.038890000000000001</data>
+      <data key="key24">22.1141700000000000007</data>
+      <data key="key36">9.0633774239577853, -0.091083916668694281</data>
+      <data key="key39">50</data>
+      <data key="key42">Kalamata</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n51">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5088899999999999986</data>
+      <data key="key24">22.3794399999999999995</data>
+      <data key="key36">9.1138123164341263, 0.33497733127593737</data>
+      <data key="key39">51</data>
+      <data key="key42">Tripoli</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.3744399999999999985</data>
+      <data key="key24">23.4383299999999999991</data>
+      <data key="key36">8.2234528989005273, 0.42168445355042344</data>
+      <data key="key39">52</data>
+      <data key="key42">Polygyros</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n53">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1544400000000000009</data>
+      <data key="key24">24.1394399999999999997</data>
+      <data key="key36">7.5201705964732257, 0.094702501405745862</data>
+      <data key="key39">53</data>
+      <data key="key42">Drama</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n54">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">41.0855600000000000006</data>
+      <data key="key24">23.5497200000000000003</data>
+      <data key="key36">7.833379517398491, 0.67303627002995892</data>
+      <data key="key39">54</data>
+      <data key="key42">Serres</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n55">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6402799999999999984</data>
+      <data key="key24">22.9438899999999999998</data>
+      <data key="key36">8.2930195303840666, 0.67006998368009529</data>
+      <data key="key39">55</data>
+      <data key="key42">Thessaloniki</data>
+      <data key="key46">Main PoP</data>
+    </node>
+    <node id="n56">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.9919399999999999988</data>
+      <data key="key24">22.8708299999999999999</data>
+      <data key="key36">8.3485596049148736, 0.22200033527284965</data>
+      <data key="key39">56</data>
+      <data key="key42">Kilkis</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.8005600000000000008</data>
+      <data key="key24">22.0472199999999999998</data>
+      <data key="key36">8.0576910863309088, 0.75784414017016866</data>
+      <data key="key39">57</data>
+      <data key="key42">Edessa</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7819699999999999984</data>
+      <data key="key24">21.4098100000000000007</data>
+      <data key="key36">7.9893554744511981, 0.48299320162244291</data>
+      <data key="key39">58</data>
+      <data key="key42">Florina</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.52333</data>
+      <data key="key24">22.2036099999999999993</data>
+      <data key="key36">8.0785875766372559, 1.0375532406779102</data>
+      <data key="key39">59</data>
+      <data key="key42">Verola</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n60">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.3011099999999999992</data>
+      <data key="key24">21.7863900000000000005</data>
+      <data key="key36">7.876721561583766, 0.91096467191144159</data>
+      <data key="key39">60</data>
+      <data key="key42">Kozani</data>
+      <data key="key46">PoP</data>
+    </node>
+    <node id="n61">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">40.2719400000000000012</data>
+      <data key="key24">22.5025000000000000005</data>
+      <data key="key36">8.0805455045998116, 0.24244833723498307</data>
+      <data key="key39">61</data>
+      <data key="key42">Katerina</data>
+      <data key="key46">PoP</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n55">
+      <data key="key22">0</data>
+      <data key="key40">e9</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n55">
+      <data key="key22">0</data>
+      <data key="key40">e10</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n3">
+      <data key="key22">0</data>
+      <data key="key40">e14</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n53">
+      <data key="key22">0</data>
+      <data key="key40">e13</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e4" source="n3" target="n55">
+      <data key="key22">0</data>
+      <data key="key40">e8</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n7">
+      <data key="key20">11 Gbps</data>
+      <data key="key21">11</data>
+      <data key="key22">11000000000</data>
+      <data key="key23">G</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e6" source="n5" target="n7">
+      <data key="key22">0</data>
+      <data key="key40">e25</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e7" source="n6" target="n7">
+      <data key="key22">0</data>
+      <data key="key40">e15</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e8" source="n7" target="n32">
+      <data key="key20">28 Gbps</data>
+      <data key="key21">28</data>
+      <data key="key22">28000000000</data>
+      <data key="key23">G</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e9" source="n7" target="n33">
+      <data key="key22">0</data>
+      <data key="key40">e22</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e10" source="n7" target="n35">
+      <data key="key22">0</data>
+      <data key="key40">e21</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e11" source="n7" target="n41">
+      <data key="key22">0</data>
+      <data key="key40">e29</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e12" source="n7" target="n10">
+      <data key="key22">0</data>
+      <data key="key40">e26</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e13" source="n7" target="n11">
+      <data key="key22">0</data>
+      <data key="key40">e27</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e14" source="n7" target="n45">
+      <data key="key22">0</data>
+      <data key="key40">e30</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e15" source="n7" target="n46">
+      <data key="key22">0</data>
+      <data key="key40">e34</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e16" source="n7" target="n47">
+      <data key="key22">0</data>
+      <data key="key40">e28</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e17" source="n7" target="n16">
+      <data key="key22">0</data>
+      <data key="key40">e19</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e18" source="n7" target="n17">
+      <data key="key22">0</data>
+      <data key="key40">e20</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e19" source="n7" target="n51">
+      <data key="key22">0</data>
+      <data key="key40">e31</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e20" source="n7" target="n43">
+      <data key="key22">0</data>
+      <data key="key40">e33</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e21" source="n7" target="n55">
+      <data key="key22">0</data>
+      <data key="key40">e11</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e22" source="n7" target="n24">
+      <data key="key22">0</data>
+      <data key="key40">e17</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e23" source="n7" target="n25">
+      <data key="key22">0</data>
+      <data key="key40">e18</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e24" source="n7" target="n27">
+      <data key="key22">0</data>
+      <data key="key40">e32</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e25" source="n7" target="n23">
+      <data key="key22">0</data>
+      <data key="key40">e16</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e26" source="n8" target="n33">
+      <data key="key22">0</data>
+      <data key="key40">e60</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e27" source="n9" target="n33">
+      <data key="key22">0</data>
+      <data key="key40">e61</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e28" source="n12" target="n33">
+      <data key="key22">0</data>
+      <data key="key40">e56</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e29" source="n13" target="n33">
+      <data key="key22">0</data>
+      <data key="key40">e57</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e30" source="n14" target="n41">
+      <data key="key22">0</data>
+      <data key="key40">e53</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e31" source="n15" target="n41">
+      <data key="key22">0</data>
+      <data key="key40">e54</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e32" source="n18" target="n43">
+      <data key="key22">0</data>
+      <data key="key40">e41</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e33" source="n19" target="n43">
+      <data key="key22">0</data>
+      <data key="key40">e39</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e34" source="n20" target="n42">
+      <data key="key22">0</data>
+      <data key="key40">e42</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e35" source="n20" target="n21">
+      <data key="key22">0</data>
+      <data key="key40">e43</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e36" source="n20" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e44</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e37" source="n26" target="n41">
+      <data key="key22">0</data>
+      <data key="key40">e55</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e38" source="n27" target="n39">
+      <data key="key22">0</data>
+      <data key="key40">e48</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e39" source="n27" target="n36">
+      <data key="key22">0</data>
+      <data key="key40">e47</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e40" source="n27" target="n37">
+      <data key="key22">0</data>
+      <data key="key40">e46</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e41" source="n27" target="n38">
+      <data key="key22">0</data>
+      <data key="key40">e49</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e42" source="n28" target="n33">
+      <data key="key22">0</data>
+      <data key="key40">e58</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e43" source="n29" target="n41">
+      <data key="key22">0</data>
+      <data key="key40">e52</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e44" source="n30" target="n41">
+      <data key="key22">0</data>
+      <data key="key40">e51</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e45" source="n31" target="n33">
+      <data key="key22">0</data>
+      <data key="key40">e59</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e46" source="n32" target="n55">
+      <data key="key20">15 Gbps</data>
+      <data key="key21">15</data>
+      <data key="key22">15000000000</data>
+      <data key="key23">G</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e47" source="n34" target="n35">
+      <data key="key22">0</data>
+      <data key="key40">e45</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e48" source="n40" target="n41">
+      <data key="key22">0</data>
+      <data key="key40">e50</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e49" source="n42" target="n43">
+      <data key="key22">0</data>
+      <data key="key40">e40</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e50" source="n43" target="n48">
+      <data key="key22">0</data>
+      <data key="key40">e38</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e51" source="n44" target="n51">
+      <data key="key22">0</data>
+      <data key="key40">e35</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e52" source="n49" target="n51">
+      <data key="key22">0</data>
+      <data key="key40">e37</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e53" source="n50" target="n51">
+      <data key="key22">0</data>
+      <data key="key40">e36</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e54" source="n52" target="n55">
+      <data key="key22">0</data>
+      <data key="key40">e7</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e55" source="n54" target="n55">
+      <data key="key22">0</data>
+      <data key="key40">e0</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e56" source="n55" target="n56">
+      <data key="key22">0</data>
+      <data key="key40">e1</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e57" source="n55" target="n57">
+      <data key="key22">0</data>
+      <data key="key40">e2</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e58" source="n55" target="n58">
+      <data key="key22">0</data>
+      <data key="key40">e3</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e59" source="n55" target="n59">
+      <data key="key22">0</data>
+      <data key="key40">e4</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e60" source="n55" target="n60">
+      <data key="key22">0</data>
+      <data key="key40">e5</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e61" source="n55" target="n61">
+      <data key="key22">0</data>
+      <data key="key40">e6</data>
+      <data key="key41">0</data>
+    </edge>
+
+  </graph>
+</graphml>

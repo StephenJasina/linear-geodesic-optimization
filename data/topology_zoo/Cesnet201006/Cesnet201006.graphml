@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key30" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key32" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key34" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key36" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key37" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key38" for="graph" attr.name="description" attr.type="string" />
+  <key id="key39" for="node" attr.name="id" attr.type="int" />
+  <key id="key40" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key41" for="node" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="name" attr.type="string" />
+  <key id="key44" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key45" for="node" attr.name="type" attr.type="string" />
+  <key id="key46" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">06</data>
+   <data key="key8">14/02/11</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">Czech Republic</data>
+   <data key="key14">0</data>
+   <data key="key16">14/02/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">CESNET</data>
+   <data key="key26">2010_06</data>
+   <data key="key27">Letohrad found using http://czechlight.cesnet.cz/export/sites/default/publications/network-architecture/2009/sima.pdf</data>
+   <data key="key28">Primary</data>
+   <data key="key29">http://www.cesnet.cz/provoz/img/cesnet2-topo.pdf</data>
+   <data key="key30">e278b1b</data>
+   <data key="key31">1</data>
+   <data key="key32">0.3.34dev-20120328</data>
+   <data key="key33">1</data>
+   <data key="key34">REN</data>
+   <data key="key35">1.0</data>
+   <data key="key37">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key38">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key42">Cesnet201006</data>
+   <data key="key43">internet_top_pop (Cesnet201006)</data>
+   <data key="key44">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key46">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.2092299999999999993</data>
+      <data key="key24">15.8327699999999999998</data>
+      <data key="key36">3.308195614346721, -2.3796934016983977</data>
+      <data key="key39">0</data>
+      <data key="key41">Hradec Kralove</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.9043600000000000007</data>
+      <data key="key24">16.4441300000000000005</data>
+      <data key="key36">4.1449506699318173, -1.8895035262478161</data>
+      <data key="key39">1</data>
+      <data key="key41">Ceska Trebova</data>
+      <data key="key45">Dark Blue Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.1440400000000000014</data>
+      <data key="key24">15.0030099999999999997</data>
+      <data key="key36">3.2387146782432841, -4.1223113794311077</data>
+      <data key="key39">2</data>
+      <data key="key41">Jindrichuv Hradec</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0407500000000000015</data>
+      <data key="key24">15.7765899999999999999</data>
+      <data key="key36">3.0305406775198094, -2.1961346988891437</data>
+      <data key="key39">3</data>
+      <data key="key41">Pardubice</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.2774700000000000014</data>
+      <data key="key24">16.9989700000000000003</data>
+      <data key="key36">4.5793075264688374, -3.8084825613939395</data>
+      <data key="key39">4</data>
+      <data key="key41">Vyskov</data>
+      <data key="key45">Dark Blue Node</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.2166700000000000015</data>
+      <data key="key24">17.6666700000000000004</data>
+      <data key="key36">4.6628793621675619, -3.1529431410486111</data>
+      <data key="key39">5</data>
+      <data key="key41">Zlin</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.5955200000000000007</data>
+      <data key="key24">17.2517499999999999998</data>
+      <data key="key36">4.3108890450687678, -2.8368249717837313</data>
+      <data key="key39">6</data>
+      <data key="key41">Olomouc</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.1952200000000000012</data>
+      <data key="key24">16.6079600000000000004</data>
+      <data key="key36">4.0971666776984481, -3.3787513788989791</data>
+      <data key="key39">7</data>
+      <data key="key41">Brno</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">48.7589699999999999988</data>
+      <data key="key24">16.8820299999999999998</data>
+      <data key="key36">4.0363901943640084, -3.8088816141068214</data>
+      <data key="key39">8</data>
+      <data key="key41">Breclav,Lednice</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8346499999999999996</data>
+      <data key="key24">18.2820400000000000008</data>
+      <data key="key36">4.6257525913275463, -2.758986499679017</data>
+      <data key="key39">9</data>
+      <data key="key41">Ostrava</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.5835599999999999989</data>
+      <data key="key24">15.1518600000000000002</data>
+      <data key="key36">2.4572297949061808, -1.8840210783731406</data>
+      <data key="key39">10</data>
+      <data key="key41">Turnov</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0357999999999999985</data>
+      <data key="key24">16.4987900000000000007</data>
+      <data key="key36">4.0261692284404527, -2.3273326291181249</data>
+      <data key="key39">11</data>
+      <data key="key41">Letohrad</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n12">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">4.9891806537479324, -2.4432409171120923</data>
+      <data key="key39">12</data>
+      <data key="key41">PIONIER</data>
+    </node>
+    <node id="n13">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">4.333873822547158, -3.6245143003962843</data>
+      <data key="key39">13</data>
+      <data key="key41">ACONET</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.9638199999999999996</data>
+      <data key="key24">14.0719999999999999998</data>
+      <data key="key36">2.61261742833761, -2.6759583794640776</data>
+      <data key="key39">14</data>
+      <data key="key41">Beroun</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.9645899999999999995</data>
+      <data key="key24">12.7011800000000000003</data>
+      <data key="key36">2.2997439647318774, -3.2896167350978618</data>
+      <data key="key39">15</data>
+      <data key="key41">Marlanske Lazne</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.5030099999999999988</data>
+      <data key="key24">13.6361700000000000002</data>
+      <data key="key36">1.7943934989612398, -2.8234161926769508</data>
+      <data key="key39">16</data>
+      <data key="key41">Most</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4317199999999999996</data>
+      <data key="key24">15.8140199999999999997</data>
+      <data key="key36">3.5273617208769226, -1.9761228516499205</data>
+      <data key="key39">17</data>
+      <data key="key41">Dvur Kralove</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0896699999999999997</data>
+      <data key="key24">17.70385</data>
+      <data key="key36">4.8015933331047984, -1.8882521544667425</data>
+      <data key="key39">18</data>
+      <data key="key41">Krnov</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.0101800000000000015</data>
+      <data key="key24">17.12253</data>
+      <data key="key36">3.9876423206632032, -3.0515920190713528</data>
+      <data key="key39">19</data>
+      <data key="key41">Kyjov</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.3961000000000000007</data>
+      <data key="key24">15.5912399999999999999</data>
+      <data key="key36">3.7433709817824643, -4.0253192769057131</data>
+      <data key="key39">20</data>
+      <data key="key41">Jihlava</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n21">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">4.6507419010429203, -3.5040082082060588</data>
+      <data key="key39">21</data>
+      <data key="key41">SANET</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8666699999999999994</data>
+      <data key="key24">14.0888999999999999999</data>
+      <data key="key36">2.4047868957255045, -2.9950390279321293</data>
+      <data key="key39">22</data>
+      <data key="key41">Ondrejov</data>
+      <data key="key45">Dark Blue Node</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.5415200000000000014</data>
+      <data key="key24">15.3593199999999999996</data>
+      <data key="key36">3.8083801943188327, -3.5619545643677131</data>
+      <data key="key39">23</data>
+      <data key="key41">Humpolec</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.724309999999999999</data>
+      <data key="key24">15.1710800000000000003</data>
+      <data key="key36">2.216183909537385, -2.0979191109227457</data>
+      <data key="key39">24</data>
+      <data key="key41">Jablonec n N</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8680900000000000005</data>
+      <data key="key24">16.3129799999999999995</data>
+      <data key="key36">3.1761132865504691, -1.7016814729547802</data>
+      <data key="key39">25</data>
+      <data key="key41">Litomysl</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.0697499999999999995</data>
+      <data key="key24">17.4596899999999999997</data>
+      <data key="key36">5.1442320813747857, -3.2768934117779738</data>
+      <data key="key39">26</data>
+      <data key="key41">Uherske Hradiste</data>
+      <data key="key45">Dark Blue Node</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4718800000000000008</data>
+      <data key="key24">17.1118400000000000002</data>
+      <data key="key36">4.3844176871897362, -3.2411799140012936</data>
+      <data key="key39">27</data>
+      <data key="key41">Prostejov</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.1478900000000000006</data>
+      <data key="key24">14.1751300000000000001</data>
+      <data key="key36">2.2797793572232883, -4.0519208248466514</data>
+      <data key="key39">28</data>
+      <data key="key41">Vodnany</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n29">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">2.9292496148266491, -3.53275089369532</data>
+      <data key="key39">29</data>
+      <data key="key41">AMS-IX</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8555</data>
+      <data key="key24">16.0487999999999999996</data>
+      <data key="key36">3.818024768729305, -4.4949010821899007</data>
+      <data key="key39">30</data>
+      <data key="key41">Znojmo</data>
+      <data key="key45">Dark Blue Node</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">48.7896299999999999986</data>
+      <data key="key24">14.7783900000000000003</data>
+      <data key="key36">2.7998188754552911, -4.3561562751155671</data>
+      <data key="key39">31</data>
+      <data key="key41">Nove Hrady</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.18418</data>
+      <data key="key24">15.4527499999999999997</data>
+      <data key="key36">4.2969916975012445, -3.9650506537176069</data>
+      <data key="key39">32</data>
+      <data key="key41">Telc</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.9940300000000000004</data>
+      <data key="key24">14.8592200000000000002</data>
+      <data key="key36">2.6722740414443127, -3.2504890968148921</data>
+      <data key="key39">33</data>
+      <data key="key41">Kostelec n C.L</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.0036400000000000009</data>
+      <data key="key24">14.77065</data>
+      <data key="key36">2.4757233702081347, -4.3290009675061816</data>
+      <data key="key39">34</data>
+      <data key="key41">Trebon</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n35">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">3.2724536748845772, -3.4480377053157336</data>
+      <data key="key39">35</data>
+      <data key="key41">GEANT</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.9386600000000000013</data>
+      <data key="key24">17.9025700000000000008</data>
+      <data key="key36">4.5266920466345919, -2.2552899128683124</data>
+      <data key="key39">36</data>
+      <data key="key41">Opava</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8445199999999999999</data>
+      <data key="key24">18.4916599999999999998</data>
+      <data key="key36">5.1225639041969195, -2.7580335989477667</data>
+      <data key="key39">37</data>
+      <data key="key41">Karvina</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.9483900000000000004</data>
+      <data key="key24">15.2681599999999999999</data>
+      <data key="key36">2.8550606966854923, -1.7168592245178431</data>
+      <data key="key39">38</data>
+      <data key="key41">Kutna Hora</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1773400000000000011</data>
+      <data key="key24">14.3573300000000000001</data>
+      <data key="key36">3.3672705701431442, -3.1236504012096185</data>
+      <data key="key39">39</data>
+      <data key="key41">Rez</data>
+      <data key="key45">Dark Blue Node</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4144100000000000006</data>
+      <data key="key24">14.6578000000000000002</data>
+      <data key="key36">3.0516060271623116, -3.2807915193327921</data>
+      <data key="key39">40</data>
+      <data key="key41">Tabor</data>
+      <data key="key45">Black Node</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.3088000000000000016</data>
+      <data key="key24">14.1475</data>
+      <data key="key36">2.9263705623555665, -2.5964973140718635</data>
+      <data key="key39">41</data>
+      <data key="key41">Pisek</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n42">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">2.6756405434310042, -2.9393815577426579</data>
+      <data key="key39">42</data>
+      <data key="key41">NIX</data>
+    </node>
+    <node id="n43">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">3.1752515016343019, -2.7284836489340214</data>
+      <data key="key39">43</data>
+      <data key="key41">Internet</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0796299999999999994</data>
+      <data key="key24">12.3739199999999999998</data>
+      <data key="key36">1.8121483060304633, -3.2095335520552437</data>
+      <data key="key39">44</data>
+      <data key="key41">Cheb</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">49.747469999999999999</data>
+      <data key="key24">13.3775900000000000003</data>
+      <data key="key36">2.5728091426624835, -3.516789933266395</data>
+      <data key="key39">45</data>
+      <data key="key41">Plzen</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.7821500000000000015</data>
+      <data key="key24">14.2147800000000000004</data>
+      <data key="key36">1.7981038493734083, -2.5088008423034491</data>
+      <data key="key39">46</data>
+      <data key="key41">Decin</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n47">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6606999999999999991</data>
+      <data key="key24">14.0322700000000000001</data>
+      <data key="key36">2.2673708102367933, -2.6611663662931515</data>
+      <data key="key39">47</data>
+      <data key="key41">Usti nad Labem</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0880400000000000002</data>
+      <data key="key24">14.4207600000000000003</data>
+      <data key="key36">2.9596722876305375, -3.0074189239838178</data>
+      <data key="key39">48</data>
+      <data key="key41">Praha</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.7671100000000000002</data>
+      <data key="key24">15.0561900000000000004</data>
+      <data key="key36">2.6527630302968159, -2.3555472907168378</data>
+      <data key="key39">49</data>
+      <data key="key41">Liberec</data>
+      <data key="key45">Orange Node</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1424200000000000015</data>
+      <data key="key24">15.1188099999999999998</data>
+      <data key="key36">3.441979443976154, -2.8204693851825455</data>
+      <data key="key39">50</data>
+      <data key="key41">Podebrady</data>
+      <data key="key45">Light Blue Node</data>
+    </node>
+    <node id="n51">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">48.9744699999999999994</data>
+      <data key="key24">14.4743400000000000004</data>
+      <data key="key36">2.7409981280434597, -3.8747601699961267</data>
+      <data key="key39">51</data>
+      <data key="key41">Ceske Budejovice</data>
+      <data key="key45">Orange Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n48">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n17">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n3">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n11">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e4" source="n0" target="n49">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e5" source="n1" target="n11">
+      <data key="key20">1-2.5 Gb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n51">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e7" source="n2" target="n20">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e8" source="n3" target="n25">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e9" source="n3" target="n38">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e10" source="n3" target="n48">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e11" source="n4" target="n7">
+      <data key="key20">1-2.5 Gb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e12" source="n5" target="n26">
+      <data key="key20">1-2.5 Gb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e13" source="n5" target="n6">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e14" source="n5" target="n7">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e15" source="n6" target="n9">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e16" source="n6" target="n11">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e17" source="n6" target="n7">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e18" source="n7" target="n32">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e19" source="n7" target="n8">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e20" source="n7" target="n9">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e21" source="n7" target="n13">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e22" source="n7" target="n48">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e23" source="n7" target="n19">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e24" source="n7" target="n20">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e25" source="n7" target="n21">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e26" source="n7" target="n23">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e27" source="n7" target="n27">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e28" source="n9" target="n36">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e29" source="n9" target="n12">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e30" source="n9" target="n37">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e31" source="n10" target="n49">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e32" source="n11" target="n36">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e33" source="n14" target="n48">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e34" source="n15" target="n48">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e35" source="n15" target="n44">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e36" source="n15" target="n45">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e37" source="n16" target="n44">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e38" source="n16" target="n46">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e39" source="n16" target="n47">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e40" source="n18" target="n36">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e41" source="n20" target="n30">
+      <data key="key20">1-2.5 Gb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e42" source="n22" target="n48">
+      <data key="key20">10 Gb/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e43" source="n24" target="n49">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e44" source="n28" target="n51">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e45" source="n29" target="n48">
+      <data key="key20">1-2.5 Gb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e46" source="n31" target="n51">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e47" source="n33" target="n48">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e48" source="n34" target="n51">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e49" source="n35" target="n48">
+      <data key="key20">10 Gb/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e50" source="n39" target="n48">
+      <data key="key20">1-2.5 Gb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e51" source="n40" target="n48">
+      <data key="key20">&lt; 100 Mb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e52" source="n41" target="n48">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e53" source="n42" target="n48">
+      <data key="key20">10 Gb/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e54" source="n43" target="n48">
+      <data key="key20">1-2.5 Gb/s</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e55" source="n45" target="n48">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e56" source="n45" target="n51">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e57" source="n46" target="n47">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e58" source="n47" target="n48">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e59" source="n47" target="n49">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e60" source="n48" target="n49">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e61" source="n48" target="n51">
+      <data key="key20">DWDM</data>
+      <data key="key22">0</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e62" source="n48" target="n50">
+      <data key="key20">100 Mb/s</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+
+  </graph>
+</graphml>

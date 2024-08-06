@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="int" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="int" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key30" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key32" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key34" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key36" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key37" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key38" for="graph" attr.name="description" attr.type="string" />
+  <key id="key39" for="node" attr.name="id" attr.type="int" />
+  <key id="key40" for="edge" attr.name="id" attr.type="string" />
+  <key id="key41" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key42" for="node" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="label" attr.type="string" />
+  <key id="key44" for="graph" attr.name="name" attr.type="string" />
+  <key id="key45" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key46" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">0</data>
+   <data key="key8">12/07/11</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2007</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Moldova</data>
+   <data key="key14">0</data>
+   <data key="key16">12/07/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">Renam</data>
+   <data key="key26">2007</data>
+   <data key="key27">Information unclear, only links between main towns recorded.</data>
+   <data key="key28">Primary</data>
+   <data key="key29">http://www.renam.md/index.php?option=com_content&amp;task=view&amp;id=10&amp;Itemid=16</data>
+   <data key="key30">e278b1b</data>
+   <data key="key31">0</data>
+   <data key="key32">0.3.34dev-20120328</data>
+   <data key="key33">0</data>
+   <data key="key34">REN</data>
+   <data key="key35">1.0</data>
+   <data key="key37">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key38">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key43">Renam</data>
+   <data key="key44">internet_top_pop (Renam)</data>
+   <data key="key45">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key46">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Moldova</data>
+      <data key="key15">1</data>
+      <data key="key18">47.005559999999999999</data>
+      <data key="key24">28.8575000000000000001</data>
+      <data key="key36">9.0837480046144243, 7.428274225412979</data>
+      <data key="key39">0</data>
+      <data key="key42">Chisinau</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Moldova</data>
+      <data key="key15">1</data>
+      <data key="key18">47.7616699999999999998</data>
+      <data key="key24">27.9288900000000000004</data>
+      <data key="key36">8.5523124381426836, 6.7478845156295684</data>
+      <data key="key39">1</data>
+      <data key="key42">Balti</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Moldova</data>
+      <data key="key15">1</data>
+      <data key="key18">45.9075000000000000011</data>
+      <data key="key24">28.19444</data>
+      <data key="key36">9.6287885638368707, 8.1064654493354507</data>
+      <data key="key39">2</data>
+      <data key="key42">       Cahul</data>
+    </node>
+    <node id="n3">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">9.7672480012587304, 6.8958169801431168</data>
+      <data key="key39">3</data>
+      <data key="key42">StarNet ISP</data>
+    </node>
+    <node id="n4">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key36">8.4099558100413283, 7.9655522653312234</data>
+      <data key="key39">4</data>
+      <data key="key42">RoEduNet</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">8 Mbps</data>
+      <data key="key21">8</data>
+      <data key="key22">8000000</data>
+      <data key="key23">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n2">
+      <data key="key20">128 Kbps</data>
+      <data key="key21">128</data>
+      <data key="key22">128000</data>
+      <data key="key23">K</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n3">
+      <data key="key22">0</data>
+      <data key="key40">e2</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n4">
+      <data key="key20">32 Mbps</data>
+      <data key="key21">32</data>
+      <data key="key22">32000000</data>
+      <data key="key23">M</data>
+      <data key="key41">0</data>
+    </edge>
+
+  </graph>
+</graphml>

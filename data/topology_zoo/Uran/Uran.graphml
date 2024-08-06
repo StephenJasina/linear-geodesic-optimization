@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="int" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">10</data>
+   <data key="key8">20/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Ukraine</data>
+   <data key="key14">0</data>
+   <data key="key16">21/10/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">URAN</data>
+   <data key="key26">2010_10</data>
+   <data key="key27">Primary</data>
+   <data key="key28">http://www.uran.net.ua/~eng/frames.htm</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">0</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">0</data>
+   <data key="key33">REN</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Uran</data>
+   <data key="key42">internet_top_pop (Uran)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key44">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">46.6333300000000000006</data>
+      <data key="key24">32.5999999999999999986</data>
+      <data key="key35">-5.4852022245484973, 10.726874813230783</data>
+      <data key="key38">0</data>
+      <data key="key40">Kherson</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9666700000000000015</data>
+      <data key="key24">32</data>
+      <data key="key35">-5.6311595367316514, 10.844933539159392</data>
+      <data key="key38">1</data>
+      <data key="key40">Mykolaiv</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">44.5888299999999999992</data>
+      <data key="key24">33.5223999999999999998</data>
+      <data key="key35">-5.226502747621943, 10.554318662055934</data>
+      <data key="key38">2</data>
+      <data key="key40">Sevastopol</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">44.9584400000000000003</data>
+      <data key="key24">34.1055800000000000002</data>
+      <data key="key35">-5.348976345083682, 10.633419688209861</data>
+      <data key="key38">3</data>
+      <data key="key40">Simferopol</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">49.2333299999999999992</data>
+      <data key="key24">28.4833299999999999992</data>
+      <data key="key35">-6.170650007354106, 11.067661083246742</data>
+      <data key="key38">4</data>
+      <data key="key40">Vinnitsa</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4166699999999999987</data>
+      <data key="key24">27</data>
+      <data key="key35">-6.1470761543979222, 11.205715112658051</data>
+      <data key="key38">5</data>
+      <data key="key40">Khmelnitsky</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">46.4774699999999999986</data>
+      <data key="key24">30.7326200000000000004</data>
+      <data key="key35">-5.5036518386891373, 10.960017707711049</data>
+      <data key="key38">6</data>
+      <data key="key40">Odessa</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">48.6666699999999999987</data>
+      <data key="key24">26.5666700000000000001</data>
+      <data key="key35">-6.1332440475404173, 10.720347824198987</data>
+      <data key="key38">7</data>
+      <data key="key40">Kamianets-Podilsky</data>
+    </node>
+    <node id="n8">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">-6.2512853909801427, 10.953072869641893</data>
+      <data key="key38">8</data>
+      <data key="key40">Frankfurt (Internet)</data>
+    </node>
+    <node id="n9">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">-5.952276420772435, 11.247132103672186</data>
+      <data key="key38">9</data>
+      <data key="key40">Poznan (GEANT &amp; Internet)</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">49.4333299999999999999</data>
+      <data key="key24">32.0666700000000000001</data>
+      <data key="key35">-5.8538069070974812, 10.861030824648775</data>
+      <data key="key38">10</data>
+      <data key="key40">Cherkassy</data>
+    </node>
+    <node id="n11">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">-5.3871873476599808, 11.053831807435481</data>
+      <data key="key38">11</data>
+      <data key="key40">Odessa-IX</data>
+    </node>
+    <node id="n12">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">-6.6749606504717027, 11.021059390538021</data>
+      <data key="key38">12</data>
+      <data key="key40">Kharkiv-IX</data>
+    </node>
+    <node id="n13">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">-5.988068053994219, 10.938033245095225</data>
+      <data key="key38">13</data>
+      <data key="key40">UA-IX</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">47.8166700000000000001</data>
+      <data key="key24">35.1833299999999999999</data>
+      <data key="key35">-6.576188551308138, 10.541289734528261</data>
+      <data key="key38">14</data>
+      <data key="key40">Zaporizhia</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">48.4500000000000000007</data>
+      <data key="key24">34.9833299999999999992</data>
+      <data key="key35">-6.5441432950415379, 10.694757822167897</data>
+      <data key="key38">15</data>
+      <data key="key40">Dnipropetrovsk</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8382600000000000016</data>
+      <data key="key24">24.0232400000000000002</data>
+      <data key="key35">-6.042068494388408, 11.106333447524353</data>
+      <data key="key38">16</data>
+      <data key="key40">Lviv</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">50.75</data>
+      <data key="key24">25.3333299999999999996</data>
+      <data key="key35">-5.9559892941473835, 10.55043991215468</data>
+      <data key="key38">17</data>
+      <data key="key40">Lutsk</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">50.25</data>
+      <data key="key24">28.6666700000000000004</data>
+      <data key="key35">-6.0053982161003265, 10.702608924992969</data>
+      <data key="key38">18</data>
+      <data key="key40">Zhitomir</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4546600000000000016</data>
+      <data key="key24">30.5238</data>
+      <data key="key35">-6.1149705232290517, 10.887199237725703</data>
+      <data key="key38">19</data>
+      <data key="key40">Kiev</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0833300000000000013</data>
+      <data key="key24">31.4666699999999999997</data>
+      <data key="key35">-6.234074719452801, 10.794436175484289</data>
+      <data key="key38">20</data>
+      <data key="key40">Pereyaslav</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">49.5833300000000000013</data>
+      <data key="key24">34.5666700000000000001</data>
+      <data key="key35">-6.388910276061635, 10.835851255900197</data>
+      <data key="key38">21</data>
+      <data key="key40">Poltava</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">50</data>
+      <data key="key24">36.25</data>
+      <data key="key35">-6.5454101754822931, 10.937125132929719</data>
+      <data key="key38">22</data>
+      <data key="key40">Kharkiv</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Ukraine</data>
+      <data key="key15">1</data>
+      <data key="key18">48</data>
+      <data key="key24">37.7999999999999999993</data>
+      <data key="key35">-6.7022030328508295, 10.674387668815465</data>
+      <data key="key38">23</data>
+      <data key="key40">Donetsk</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n10">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n6">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n3">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n19">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n5">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n5" target="n16">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n6" target="n11">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n7" target="n19">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n8" target="n19">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n9" target="n16">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n10" target="n19">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n12" target="n22">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n13" target="n19">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n14" target="n15">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n15" target="n21">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n15" target="n23">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n16" target="n19">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n17" target="n18">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n18" target="n19">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n19" target="n20">
+      <data key="key20">100Mbps</data>
+      <data key="key21">100</data>
+      <data key="key22">100000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n19" target="n21">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n21" target="n22">
+      <data key="key20">1Gbps</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

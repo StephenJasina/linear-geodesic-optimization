@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="int" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="id" attr.type="int" />
+  <key id="key36" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key37" for="node" attr.name="label" attr.type="string" />
+  <key id="key38" for="graph" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="name" attr.type="string" />
+  <key id="key40" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key41" for="node" attr.name="type" attr.type="string" />
+  <key id="key42" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">0</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">0</data>
+   <data key="key8">2/01/11</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2005</data>
+   <data key="key11">0</data>
+   <data key="key12">Country+</data>
+   <data key="key13">Serbia, Montenegro</data>
+   <data key="key14">0</data>
+   <data key="key16">2/01/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">TelecomSerbia</data>
+   <data key="key23">2005</data>
+   <data key="key24">Unknown</data>
+   <data key="key25">http://chaisuk.wordpress.com/2008/09/21/internet-technology-nonviolent-struggle-serbia3/</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">0</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key38">Telecomserbia</data>
+   <data key="key39">internet_top_pop (Telecomserbia)</data>
+   <data key="key40">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key42">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Serbia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.2516700000000000013</data>
+      <data key="key21">19.8369399999999999999</data>
+      <data key="key32">-4.7289454664871675, 1.7212752718420197</data>
+      <data key="key35">0</data>
+      <data key="key37">Novi Sad</data>
+      <data key="key41">GSR12410</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Serbia</data>
+      <data key="key15">1</data>
+      <data key="key18">44.804009999999999999</data>
+      <data key="key21">20.46513</data>
+      <data key="key32">-4.5745332307561206, 1.9993853633113883</data>
+      <data key="key35">1</data>
+      <data key="key37">Belgrade</data>
+      <data key="key41">GSR12410</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Serbia</data>
+      <data key="key15">1</data>
+      <data key="key18">44.0166700000000000008</data>
+      <data key="key21">20.9166700000000000004</data>
+      <data key="key32">-4.2495953720739612, 2.0057676359082643</data>
+      <data key="key35">2</data>
+      <data key="key37">Kragujevac</data>
+      <data key="key41">GSR12410</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Serbia</data>
+      <data key="key15">1</data>
+      <data key="key18">43.3247200000000000017</data>
+      <data key="key21">21.9033299999999999993</data>
+      <data key="key32">-4.0875367705395895, 1.7319601691000237</data>
+      <data key="key35">3</data>
+      <data key="key37">Nis</data>
+      <data key="key41">GSR12410</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Serbia</data>
+      <data key="key15">1</data>
+      <data key="key18">43.5800000000000000017</data>
+      <data key="key21">21.3338899999999999993</data>
+      <data key="key32">-4.2463698089965556, 1.4484444488046568</data>
+      <data key="key35">4</data>
+      <data key="key37">Krusevac</data>
+      <data key="key41">GSR12410</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Montenegro</data>
+      <data key="key15">1</data>
+      <data key="key18">42.4411099999999999986</data>
+      <data key="key21">19.2636100000000000006</data>
+      <data key="key32">-4.5647897044706021, 1.4421623335609612</data>
+      <data key="key35">5</data>
+      <data key="key37">Podgorica</data>
+      <data key="key41">GSR12410</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">DTP-Ring 2.5 Gbit/s</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n5">
+      <data key="key20">DTP-Ring 2.5 Gbit/s</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n2">
+      <data key="key20">DTP-Ring 2.5 Gbit/s</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n3">
+      <data key="key20">DTP-Ring 2.5 Gbit/s</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e4" source="n3" target="n4">
+      <data key="key20">DTP-Ring 2.5 Gbit/s</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n5">
+      <data key="key20">DTP-Ring 2.5 Gbit/s</data>
+      <data key="key36">0</data>
+    </edge>
+
+  </graph>
+</graphml>

@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key27" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key29" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key31" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key33" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key34" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key35" for="graph" attr.name="description" attr.type="string" />
+  <key id="key36" for="node" attr.name="id" attr.type="int" />
+  <key id="key37" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key38" for="node" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="name" attr.type="string" />
+  <key id="key41" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key42" for="node" attr.name="type" attr.type="string" />
+  <key id="key43" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">01</data>
+   <data key="key8">21/01/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">0</data>
+   <data key="key12">Country+</data>
+   <data key="key13">USA, Europe</data>
+   <data key="key14">0</data>
+   <data key="key16">21/01/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">Bandcon </data>
+   <data key="key23">2011_01</data>
+   <data key="key24">Now part of highwinds. Gray lines omitted as unclear what they represent - fibre? New York and New Jersey appear to be disconnected from rest of US.</data>
+   <data key="key25">Primary</data>
+   <data key="key26">http://www.bandcon.com/the-system-suite/network/</data>
+   <data key="key27">e278b1b</data>
+   <data key="key28">0</data>
+   <data key="key29">0.3.34dev-20120328</data>
+   <data key="key30">0</data>
+   <data key="key31">COM</data>
+   <data key="key32">1.0</data>
+   <data key="key34">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key35">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key39">Bandcon</data>
+   <data key="key40">internet_top_pop (Bandcon)</data>
+   <data key="key41">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key43">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8534099999999999984</data>
+      <data key="key21">2.34880000000000000002</data>
+      <data key="key33">2.5144479409030307, -6.1161805608258009</data>
+      <data key="key36">0</data>
+      <data key="key38">Paris</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.7489999999999999991</data>
+      <data key="key21">-84.3879799999999999985</data>
+      <data key="key33">0.91826265323257439, -6.1502170968883974</data>
+      <data key="key36">1</data>
+      <data key="key38">Atlanta</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8504500000000000011</data>
+      <data key="key21">4.34878000000000000018</data>
+      <data key="key33">2.1930760144650239, -5.7361175490336533</data>
+      <data key="key36">2</data>
+      <data key="key38">Brussels</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1166699999999999994</data>
+      <data key="key21">8.6833299999999999999</data>
+      <data key="key33">2.5309929327319329, -5.799241882243459</data>
+      <data key="key36">3</data>
+      <data key="key38">Frankfurt</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.4483800000000000008</data>
+      <data key="key21">-112.074040000000000002</data>
+      <data key="key33">0.58878182632424581, -5.3994210199892878</data>
+      <data key="key36">4</data>
+      <data key="key38">Phoenix</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.1749700000000000005</data>
+      <data key="key21">-115.137220000000000002</data>
+      <data key="key33">0.80233337471393784, -4.8233031125465695</data>
+      <data key="key36">5</data>
+      <data key="key38">Las vegas</data>
+      <data key="key42">Coming Soon</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7742699999999999999</data>
+      <data key="key21">-80.1936599999999999988</data>
+      <data key="key33">0.64109143927189383, -6.0623478256739469</data>
+      <data key="key36">6</data>
+      <data key="key38">Miami</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7830599999999999991</data>
+      <data key="key21">-96.8066699999999999982</data>
+      <data key="key33">0.80542906886504961, -5.7316871634609772</data>
+      <data key="key36">7</data>
+      <data key="key38">Dallas</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0522299999999999986</data>
+      <data key="key21">-118.243680000000000001</data>
+      <data key="key33">0.66307154634792842, -5.0741710134120348</data>
+      <data key="key36">8</data>
+      <data key="key38">Los Angeles</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.7632800000000000001</data>
+      <data key="key21">-95.3632700000000000026</data>
+      <data key="key33">0.40606319994306983, -5.7677469817500651</data>
+      <data key="key36">9</data>
+      <data key="key38">Houston</data>
+      <data key="key42">Coming Soon</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.952339999999999999</data>
+      <data key="key21">-75.1637899999999999981</data>
+      <data key="key33">1.2993238949712227, -6.2196628073379578</data>
+      <data key="key36">10</data>
+      <data key="key38">Philadelphia</data>
+      <data key="key42">Coming Soon</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.3584299999999999986</data>
+      <data key="key21">-71.0597699999999999967</data>
+      <data key="key33">1.7137894260190798, -6.3458282893897824</data>
+      <data key="key36">11</data>
+      <data key="key38">Boston</data>
+      <data key="key42">Coming Soon</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5085299999999999994</data>
+      <data key="key21">-0.125740000000000000003</data>
+      <data key="key33">2.1583913946776767, -6.175659473612634</data>
+      <data key="key36">12</data>
+      <data key="key38">London</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3740300000000000014</data>
+      <data key="key21">4.88968999999999999993</data>
+      <data key="key33">1.8174750919335259, -5.9043796466201606</data>
+      <data key="key36">13</data>
+      <data key="key38">Amsterdam</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.3393900000000000007</data>
+      <data key="key21">-121.894959999999999999</data>
+      <data key="key33">1.0023511634687707, -5.1182972663547126</data>
+      <data key="key36">14</data>
+      <data key="key38">San Jose</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7749300000000000008</data>
+      <data key="key21">-122.419420000000000001</data>
+      <data key="key33">1.3032380458253887, -4.9516253784707711</data>
+      <data key="key36">15</data>
+      <data key="key38">San Francisco</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6062099999999999989</data>
+      <data key="key21">-122.332069999999999997</data>
+      <data key="key33">1.3931753057041987, -5.2493522079925334</data>
+      <data key="key36">16</data>
+      <data key="key38">Seattle</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8500300000000000009</data>
+      <data key="key21">-87.6500500000000000028</data>
+      <data key="key33">1.1873406203031693, -5.5673443790997901</data>
+      <data key="key36">17</data>
+      <data key="key38">Chicago</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.4642300000000000003</data>
+      <data key="key21">-80.6009099999999999997</data>
+      <data key="key33">1.4752386156892912, -5.9908088391024377</data>
+      <data key="key36">18</data>
+      <data key="key38">Toronto</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.0437199999999999984</data>
+      <data key="key21">-77.4874899999999999997</data>
+      <data key="key33">1.2236940577866033, -5.895804147571198</data>
+      <data key="key36">19</data>
+      <data key="key38">Ashburn</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7281600000000000017</data>
+      <data key="key21">-74.0776400000000000007</data>
+      <data key="key33">0.99956999813707381, -6.9768554250454935</data>
+      <data key="key36">20</data>
+      <data key="key38">New Jersey</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7142699999999999987</data>
+      <data key="key21">-74.0059700000000000031</data>
+      <data key="key33">2.0244759183773207, -6.4795328757950665</data>
+      <data key="key36">21</data>
+      <data key="key38">New York</data>
+      <data key="key42">BandCon Network Access Xchange (NAX)</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n3">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n12">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n19">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n6">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n3">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n13">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n8">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n7">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e8" source="n5" target="n8">
+      <data key="key20">Light Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e9" source="n5" target="n14">
+      <data key="key20">Light Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n7">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e11" source="n7" target="n9">
+      <data key="key20">Light Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e12" source="n7" target="n19">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e13" source="n7" target="n17">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e14" source="n8" target="n14">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e15" source="n10" target="n18">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e16" source="n10" target="n19">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e17" source="n11" target="n18">
+      <data key="key20">Light Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e18" source="n11" target="n21">
+      <data key="key20">Light Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e19" source="n12" target="n13">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e20" source="n12" target="n21">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e21" source="n13" target="n19">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e22" source="n14" target="n17">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e23" source="n14" target="n15">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e24" source="n15" target="n16">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e25" source="n16" target="n17">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e26" source="n17" target="n18">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e27" source="n17" target="n19">
+      <data key="key20">Blue Line</data>
+      <data key="key37">0</data>
+    </edge>
+
+  </graph>
+</graphml>

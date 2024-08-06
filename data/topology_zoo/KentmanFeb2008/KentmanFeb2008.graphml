@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key23" for="edge" attr.name="LinkSpeedRaw" attr.type="int" />
+  <key id="key24" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key25" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key26" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key27" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key31" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key33" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key35" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key36" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key37" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key38" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key39" for="graph" attr.name="description" attr.type="string" />
+  <key id="key40" for="node" attr.name="geocode_append" attr.type="string" />
+  <key id="key41" for="node" attr.name="id" attr.type="int" />
+  <key id="key42" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key43" for="node" attr.name="label" attr.type="string" />
+  <key id="key44" for="graph" attr.name="label" attr.type="string" />
+  <key id="key45" for="graph" attr.name="name" attr.type="string" />
+  <key id="key46" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key47" for="node" attr.name="type" attr.type="string" />
+  <key id="key48" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">02</data>
+   <data key="key8">31/01/11</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2008</data>
+   <data key="key11">1</data>
+   <data key="key12">Region</data>
+   <data key="key13">Kent, UK</data>
+   <data key="key14">0</data>
+   <data key="key16">31/01/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key26">KentMan</data>
+   <data key="key27">2008_02</data>
+   <data key="key28">JANET local provider</data>
+   <data key="key29">Secondary</data>
+   <data key="key30">http://replay.waybackmachine.org/20090629222920/http://www.kentman.ac.uk/kman/map.html</data>
+   <data key="key31">e278b1b</data>
+   <data key="key32">0</data>
+   <data key="key33">0.3.34dev-20120328</data>
+   <data key="key34">0</data>
+   <data key="key35">REN</data>
+   <data key="key36">1.0</data>
+   <data key="key38">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key39">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key44">KentmanFeb2008</data>
+   <data key="key45">internet_top_pop (KentmanFeb2008)</data>
+   <data key="key46">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key48">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2753700000000000002</data>
+      <data key="key25">1.09078000000000000002</data>
+      <data key="key37">13.91657942501314, 16.606452769850574</data>
+      <data key="key41">0</data>
+      <data key="key43">UCCA-C</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2740199999999999997</data>
+      <data key="key25">1.08781999999999999995</data>
+      <data key="key37">13.660786389630742, 17.155422589636071</data>
+      <data key="key41">1</data>
+      <data key="key43">Canterbury College</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.3863299999999999998</data>
+      <data key="key25">0.546269999999999999985</data>
+      <data key="key37">15.378613735902695, 15.673236501109306</data>
+      <data key="key41">2</data>
+      <data key="key43">Medway ACL</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.3948499999999999996</data>
+      <data key="key25">0.546079999999999999975</data>
+      <data key="key37">15.276432079081717, 16.398198303487202</data>
+      <data key="key41">3</data>
+      <data key="key43">Mid Kent College</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.1395899999999999988</data>
+      <data key="key25">0.861010000000000000006</data>
+      <data key="key37">12.205962073141059, 15.083931583638449</data>
+      <data key="key41">4</data>
+      <data key="key43">South Kent College - Ashford</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2711499999999999987</data>
+      <data key="key25">0.497990000000000000013</data>
+      <data key="key37">14.317155379027739, 14.195905161855391</data>
+      <data key="key41">5</data>
+      <data key="key43">KIAD-O</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.3542599999999999985</data>
+      <data key="key25">1.43483000000000000004</data>
+      <data key="key37">12.193825650668366, 17.419403139710258</data>
+      <data key="key41">6</data>
+      <data key="key43">Thanet College</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.361059999999999999</data>
+      <data key="key25">1.43006</data>
+      <data key="key37">11.785442480697364, 16.746527009186831</data>
+      <data key="key41">7</data>
+      <data key="key43">Hilderstone College</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2763100000000000001</data>
+      <data key="key25">0.521910000000000000005</data>
+      <data key="key37">14.769505307191345, 15.025715761006248</data>
+      <data key="key41">8</data>
+      <data key="key43">Kent ACL</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2166700000000000015</data>
+      <data key="key25">0.333329999999999999991</data>
+      <data key="key37">13.216345415861344, 13.115980145057973</data>
+      <data key="key41">9</data>
+      <data key="key43">Hadlow College</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0815299999999999983</data>
+      <data key="key25">1.18218000000000000003</data>
+      <data key="key37">12.601569297316923, 14.499425072687625</data>
+      <data key="key41">10</data>
+      <data key="key43">University College Folkestone</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n11">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key37">13.669654112434335, 15.508089063996989</data>
+      <data key="key41">11</data>
+      <data key="key43">Kent Community Network (Schools, etc)</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2976199999999999991</data>
+      <data key="key25">1.06120999999999999998</data>
+      <data key="key37">13.39324527812906, 16.213164088710922</data>
+      <data key="key41">12</data>
+      <data key="key43">UoK-C</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.1878699999999999988</data>
+      <data key="key25">0.264700000000000000013</data>
+      <data key="key37">14.02039118671518, 13.012786021094957</data>
+      <data key="key41">13</data>
+      <data key="key43">West Kent College</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4422400000000000012</data>
+      <data key="key25">0.02978</data>
+      <data key="key37">16.555925953522561, 16.4927658668962</data>
+      <data key="key41">14</data>
+      <data key="key43">Hadlow College Mottingham</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2776600000000000006</data>
+      <data key="key25">1.08381999999999999998</data>
+      <data key="key37">12.694194550878445, 16.000481590379156</data>
+      <data key="key41">15</data>
+      <data key="key43">IFS School of Finance</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4500000000000000007</data>
+      <data key="key25">0.216670000000000000006</data>
+      <data key="key37">16.706341533445467, 15.673266795906967</data>
+      <data key="key41">16</data>
+      <data key="key43">NW Kent College - Dartford</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.3799200000000000008</data>
+      <data key="key25">0.514379999999999999987</data>
+      <data key="key37">14.691459859906965, 16.438000819775123</data>
+      <data key="key41">17</data>
+      <data key="key43">KIAD-R</data>
+      <data key="key47">Connected Site</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4462799999999999996</data>
+      <data key="key25">0.0770300000000000000011</data>
+      <data key="key37">15.962266112094008, 15.957651181613421</data>
+      <data key="key41">18</data>
+      <data key="key43">UoG-AH</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.4462799999999999996</data>
+      <data key="key25">0.0770300000000000000011</data>
+      <data key="key37">14.727649933574877, 15.710546294045205</data>
+      <data key="key40">Medway</data>
+      <data key="key41">19</data>
+      <data key="key43">University of Greenwich</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2793400000000000015</data>
+      <data key="key25">1.08935999999999999998</data>
+      <data key="key37">13.11745363969832, 16.957445183304614</data>
+      <data key="key41">20</data>
+      <data key="key43">CCCU-C</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.1824899999999999994</data>
+      <data key="key25">0.936780000000000000009</data>
+      <data key="key37">13.019689918162136, 15.173219216870018</data>
+      <data key="key41">21</data>
+      <data key="key43">IC-Wye</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n22">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2566499999999999997</data>
+      <data key="key25">0.549530000000000000025</data>
+      <data key="key37">13.908737086041894, 14.812881193960379</data>
+      <data key="key41">22</data>
+      <data key="key43">EIS-Maidstone</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n23">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.1522200000000000011</data>
+      <data key="key25">0.243069999999999999997</data>
+      <data key="key37">13.706744931472329, 13.717468555676017</data>
+      <data key="key41">23</data>
+      <data key="key43">CCCU-S</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.3589500000000000017</data>
+      <data key="key25">1.40615999999999999998</data>
+      <data key="key37">12.589707399393966, 16.682303479607111</data>
+      <data key="key41">24</data>
+      <data key="key43">CCCU-T</data>
+      <data key="key47">PoP Site</data>
+    </node>
+    <node id="n25">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2855399999999999987</data>
+      <data key="key25">0.219279999999999999994</data>
+      <data key="key37">15.397301164259881, 15.046423769821946</data>
+      <data key="key41">25</data>
+      <data key="key43">Dorton College</data>
+      <data key="key47">Connected Site</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n12">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n12">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n19">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n19">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e4" source="n4" target="n21">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e5" source="n5" target="n22">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e6" source="n6" target="n24">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e7" source="n7" target="n24">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e8" source="n8" target="n19">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e9" source="n9" target="n23">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e10" source="n10" target="n21">
+      <data key="key20">LES/EES/WSES 100 Mbps</data>
+      <data key="key21">LES/EES/WSES  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e11" source="n11" target="n12">
+      <data key="key20">WaveStream 2 Gbps</data>
+      <data key="key21">WaveStream  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e12" source="n11" target="n22">
+      <data key="key20">WaveStream 2 Gbps</data>
+      <data key="key21">WaveStream  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e13" source="n12" target="n15">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e14" source="n12" target="n19">
+      <data key="key20">WaveStream 2 Gbps</data>
+      <data key="key21">WaveStream  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e15" source="n12" target="n20">
+      <data key="key20">LES/EES/WSES 100 Mbps</data>
+      <data key="key21">LES/EES/WSES  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e16" source="n12" target="n21">
+      <data key="key20">WaveStream 2 Gbps</data>
+      <data key="key21">WaveStream  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e17" source="n12" target="n24">
+      <data key="key20">Back-up link via KCN2</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e18" source="n12" target="n24">
+      <data key="key20">Microwave 155 Mbps ATM</data>
+      <data key="key21">icrowave   AT</data>
+      <data key="key22">155</data>
+      <data key="key23">155000000</data>
+      <data key="key24">M</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e19" source="n13" target="n23">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e20" source="n14" target="n18">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e21" source="n16" target="n18">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e22" source="n17" target="n19">
+      <data key="key20">LES 10 Mbps</data>
+      <data key="key21">LES  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e23" source="n18" target="n19">
+      <data key="key20">WaveStream 2 Gbps</data>
+      <data key="key21">WaveStream  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e24" source="n19" target="n22">
+      <data key="key20">WaveStream 2 Gbps</data>
+      <data key="key21">WaveStream  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e25" source="n19" target="n25">
+      <data key="key20">Megastream 2Mbps</data>
+      <data key="key21">egastream </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e26" source="n21" target="n22">
+      <data key="key20">WaveStream 2 Gbps</data>
+      <data key="key21">WaveStream  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e27" source="n22" target="n23">
+      <data key="key20">LES/EES/WSES 100 Mbps</data>
+      <data key="key21">LES/EES/WSES  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+
+  </graph>
+</graphml>

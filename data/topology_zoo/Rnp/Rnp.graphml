@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="float" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">22/10/10</data>
+   <data key="key9">Dynamic</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Brazil</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">RNP</data>
+   <data key="key26">2010_08</data>
+   <data key="key27">Primary</data>
+   <data key="key28">http://www.rnp.br/backbone/</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">0</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">0</data>
+   <data key="key33">REN</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Rnp</data>
+   <data key="key42">internet_top_pop (Rnp)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key44">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-8.0538900000000000004</data>
+      <data key="key24">-34.8811100000000000008</data>
+      <data key="key35">3.7264058682227179, 5.4976078783855264</data>
+      <data key="key38">0</data>
+      <data key="key40">Revife</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-9.66582999999999999997</data>
+      <data key="key24">-35.7352799999999999996</data>
+      <data key="key35">3.1303092562461718, 4.7885196703999657</data>
+      <data key="key38">1</data>
+      <data key="key40">Maceio</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.23056000000000000019</data>
+      <data key="key24">-35.8811100000000000008</data>
+      <data key="key35">3.8499516050887488, 5.4063943573559179</data>
+      <data key="key38">2</data>
+      <data key="key40">Campina Grande</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.11499999999999999979</data>
+      <data key="key24">-34.8630600000000000008</data>
+      <data key="key35">3.8633070455023484, 5.2427455000806331</data>
+      <data key="key38">3</data>
+      <data key="key40">Jobo Passoa</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-15.7797199999999999999</data>
+      <data key="key24">-47.9297200000000000013</data>
+      <data key="key35">3.8533225980583143, 4.5917393803880442</data>
+      <data key="key38">4</data>
+      <data key="key40">Brasilia</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-19.9208299999999999992</data>
+      <data key="key24">-43.937779999999999999</data>
+      <data key="key35">3.65345616503495, 4.6381872193210629</data>
+      <data key="key38">5</data>
+      <data key="key40">Belo Horizonte</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-10.9111099999999999997</data>
+      <data key="key24">-37.0716700000000000011</data>
+      <data key="key35">3.2784019133241737, 4.7462050142735954</data>
+      <data key="key38">6</data>
+      <data key="key40">Aracaju</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-12.9711100000000000001</data>
+      <data key="key24">-38.5108299999999999993</data>
+      <data key="key35">3.4581953193608217, 4.6877466375479893</data>
+      <data key="key38">7</data>
+      <data key="key40">Salvador</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-20.31944</data>
+      <data key="key24">-40.3377800000000000004</data>
+      <data key="key35">3.5340725815669849, 4.569323706299774</data>
+      <data key="key38">8</data>
+      <data key="key40">Vitoria</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-22.9027799999999999991</data>
+      <data key="key24">-43.2075000000000000004</data>
+      <data key="key35">3.6906115855143575, 4.4887371532631413</data>
+      <data key="key38">9</data>
+      <data key="key40">Rio de Janeiro</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-3.10194000000000000001</data>
+      <data key="key24">-60.0250000000000000014</data>
+      <data key="key35">3.9318650395651926, 4.731430757143829</data>
+      <data key="key38">10</data>
+      <data key="key40">Manaus</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-16.6786099999999999997</data>
+      <data key="key24">-49.2538900000000000011</data>
+      <data key="key35">3.52759909526642, 3.5142679262324079</data>
+      <data key="key38">11</data>
+      <data key="key40">Goiania</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-15.5961100000000000001</data>
+      <data key="key24">-56.096669999999999999</data>
+      <data key="key35">3.6478205986891852, 3.6363431510399638</data>
+      <data key="key38">12</data>
+      <data key="key40">Cuiaba</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-25.4277800000000000005</data>
+      <data key="key24">-49.2730600000000000006</data>
+      <data key="key35">3.6597603046727754, 4.0697419336560978</data>
+      <data key="key38">13</data>
+      <data key="key40">Curitiba</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-30.0330600000000000008</data>
+      <data key="key24">-51.2299999999999999996</data>
+      <data key="key35">3.8011837238062278, 4.0871418238258963</data>
+      <data key="key38">14</data>
+      <data key="key40">Porto Alegro</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-27.5966700000000000007</data>
+      <data key="key24">-48.5491699999999999984</data>
+      <data key="key35">3.7574174216564784, 4.2278172474118811</data>
+      <data key="key38">15</data>
+      <data key="key40">Florianopolis</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-23.5475000000000000006</data>
+      <data key="key24">-46.6361099999999999983</data>
+      <data key="key35">3.6133264376940759, 4.3346662294196117</data>
+      <data key="key38">16</data>
+      <data key="key40">Sao Paulo</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-8.76194000000000000009</data>
+      <data key="key24">-63.903889999999999999</data>
+      <data key="key35">3.7655733959498114, 3.5057872486606936</data>
+      <data key="key38">17</data>
+      <data key="key40">Porto Velho</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-9.97471999999999999961</data>
+      <data key="key24">-67.8099999999999999978</data>
+      <data key="key35">3.855032759883104, 3.3875967055165339</data>
+      <data key="key38">18</data>
+      <data key="key40">Rio Branco</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-10.2127800000000000004</data>
+      <data key="key24">-48.3602799999999999996</data>
+      <data key="key35">3.4309665207204638, 3.3970380344852558</data>
+      <data key="key38">19</data>
+      <data key="key40">Palmas</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-20.44278</data>
+      <data key="key24">-54.6463899999999999993</data>
+      <data key="key35">3.6510275644828551, 3.8446220418429098</data>
+      <data key="key38">20</data>
+      <data key="key40">Campo Grande</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-5.08917000000000000013</data>
+      <data key="key24">-42.8019400000000000001</data>
+      <data key="key35">3.5880012262690344, 5.4272718941181006</data>
+      <data key="key38">21</data>
+      <data key="key40">Teresina</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-5.79500000000000000007</data>
+      <data key="key24">-35.2094400000000000012</data>
+      <data key="key35">3.79481711096803, 5.072281887805123</data>
+      <data key="key38">22</data>
+      <data key="key40">Natal</data>
+    </node>
+    <node id="n23">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">3.4356296521224934, 4.2541798945952589</data>
+      <data key="key38">23</data>
+      <data key="key40">RedCLARA</data>
+    </node>
+    <node id="n24">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">3.4583566008820497, 4.3856671656027872</data>
+      <data key="key38">24</data>
+      <data key="key40">Inetnet Comercial</data>
+    </node>
+    <node id="n25">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">3.5566435570203505, 4.1959737386400731</data>
+      <data key="key38">25</data>
+      <data key="key40">Americas Light</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">2.81972000000000000007</data>
+      <data key="key24">-60.6733300000000000014</data>
+      <data key="key35">3.9734345013088901, 4.4781040895269983</data>
+      <data key="key38">26</data>
+      <data key="key40">Boa Vista</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">0.0388900000000000000016</data>
+      <data key="key24">-51.0663900000000000011</data>
+      <data key="key35">4.0332205403136125, 4.6178994922505021</data>
+      <data key="key38">27</data>
+      <data key="key40">Macapa</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-1.45583000000000000005</data>
+      <data key="key24">-48.5044399999999999995</data>
+      <data key="key35">3.5468479686702867, 5.267266692173231</data>
+      <data key="key38">28</data>
+      <data key="key40">Belem</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-2.52972000000000000011</data>
+      <data key="key24">-44.3027800000000000005</data>
+      <data key="key35">3.5847079541117983, 5.0890391568925963</data>
+      <data key="key38">29</data>
+      <data key="key40">Sao Luis</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-3.71722000000000000011</data>
+      <data key="key24">-38.5430600000000000011</data>
+      <data key="key35">3.6751488862789157, 4.905886892409467</data>
+      <data key="key38">30</data>
+      <data key="key40">Fortaleza</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n2">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n21">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n6">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n3">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n3" target="n22">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n9">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n26">
+      <data key="key20">20Mbps</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n27">
+      <data key="key20">20Mbps</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n10">
+      <data key="key20">200Mbps</data>
+      <data key="key21">200</data>
+      <data key="key22">200000000</data>
+      <data key="key23">M</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n5">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n5" target="n16">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n5" target="n30">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n5" target="n7">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n6" target="n7">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n7" target="n8">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n8" target="n9">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n9" target="n16">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n11" target="n19">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n11" target="n12">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n12" target="n17">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n12" target="n20">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n13" target="n16">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n13" target="n20">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n13" target="n14">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n14" target="n15">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n15" target="n16">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n16" target="n23">
+      <data key="key20">1.45Gbps</data>
+      <data key="key21">1.45</data>
+      <data key="key22">1450000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e27" source="n16" target="n24">
+      <data key="key20">3.5Gbps</data>
+      <data key="key21">3.5</data>
+      <data key="key22">3500000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e28" source="n16" target="n25">
+      <data key="key20">20Gbps</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e29" source="n17" target="n18">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e30" source="n21" target="n28">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e31" source="n22" target="n30">
+      <data key="key20">10Gbps</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e32" source="n28" target="n29">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e33" source="n29" target="n30">
+      <data key="key20">3Gbps</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

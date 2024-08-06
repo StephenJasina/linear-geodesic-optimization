@@ -1,0 +1,741 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key21" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key22" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key23" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="geocode_country" attr.type="string" />
+  <key id="key36" for="node" attr.name="id" attr.type="int" />
+  <key id="key37" for="edge" attr.name="id" attr.type="string" />
+  <key id="key38" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key39" for="node" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="name" attr.type="string" />
+  <key id="key42" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key43" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">16/11/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Continent</data>
+   <data key="key13">Latin America</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key21">BT Latin America</data>
+   <data key="key22">2010_08</data>
+   <data key="key23">Excluded from NUS as disconnected (two components)</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.bt.net/info/latin_america.shtml</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">1</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">1</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key40">BtLatinAmerica</data>
+   <data key="key41">internet_top_pop (BtLatinAmerica)</data>
+   <data key="key42">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key43">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Uruguay</data>
+      <data key="key15">1</data>
+      <data key="key18">-34.8334599999999999995</data>
+      <data key="key20">-56.1673499999999999988</data>
+      <data key="key32">-1.1664697123573662, -0.40150067679177925</data>
+      <data key="key36">0</data>
+      <data key="key39">Montevideo</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Argentina</data>
+      <data key="key15">1</data>
+      <data key="key18">-32.9511100000000000006</data>
+      <data key="key20">-60.6663899999999999997</data>
+      <data key="key32">-1.3625544256870101, -0.54954793755620601</data>
+      <data key="key36">1</data>
+      <data key="key39">Rosario</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-25.4277800000000000005</data>
+      <data key="key20">-49.2730600000000000006</data>
+      <data key="key32">-1.0837603408550931, -0.091853452845118408</data>
+      <data key="key36">2</data>
+      <data key="key39">Curitba</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-30.0330600000000000008</data>
+      <data key="key20">-51.2299999999999999996</data>
+      <data key="key32">-0.99394165579512272, -0.20441294838300936</data>
+      <data key="key36">3</data>
+      <data key="key39">Port Alegre</data>
+    </node>
+    <node id="n4">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.1826644718931136, -0.86453220580244361</data>
+      <data key="key36">4</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Bolivia</data>
+      <data key="key15">1</data>
+      <data key="key18">-16.5</data>
+      <data key="key20">-68.1500000000000000014</data>
+      <data key="key32">-1.0851484076760334, -0.96416397392889241</data>
+      <data key="key36">5</data>
+      <data key="key39">La Paz</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Chile</data>
+      <data key="key15">1</data>
+      <data key="key18">-33.4262799999999999992</data>
+      <data key="key20">-70.5665600000000000011</data>
+      <data key="key32">-1.6257986839644716, -0.40418102658771593</data>
+      <data key="key36">6</data>
+      <data key="key39">Santiago</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Bolivia</data>
+      <data key="key15">1</data>
+      <data key="key18">-17.7999999999999999993</data>
+      <data key="key20">-63.1666699999999999987</data>
+      <data key="key32">-1.310699308409166, -0.75693603799913978</data>
+      <data key="key36">7</data>
+      <data key="key39">Santa Cruz</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Peru</data>
+      <data key="key15">1</data>
+      <data key="key18">-12.0431799999999999996</data>
+      <data key="key20">-77.0282400000000000012</data>
+      <data key="key32">-1.5147236774655413, -0.4047937641871584</data>
+      <data key="key36">8</data>
+      <data key="key39">Lima</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Ecuador</data>
+      <data key="key15">1</data>
+      <data key="key18">-2.88332999999999999995</data>
+      <data key="key20">-78.9833300000000000027</data>
+      <data key="key32">-2.0721820802291586, 0.75939969959936204</data>
+      <data key="key36">9</data>
+      <data key="key39">Cuenca</data>
+    </node>
+    <node id="n10">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.2001330013344687, 0.38166235502738527</data>
+      <data key="key36">10</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">24.0333300000000000003</data>
+      <data key="key20">-104.666669999999999999</data>
+      <data key="key32">-0.49963313931853204, 0.62477047518544826</data>
+      <data key="key36">11</data>
+      <data key="key39">Durango</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">20.6666700000000000004</data>
+      <data key="key20">-103.333330000000000001</data>
+      <data key="key32">-0.61001153595894964, 0.23454571898661128</data>
+      <data key="key36">12</data>
+      <data key="key39">Guadajajara</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Costa Rica</data>
+      <data key="key15">1</data>
+      <data key="key18">10</data>
+      <data key="key20">-84</data>
+      <data key="key32">-0.99849805255898527, 0.46549826112002174</data>
+      <data key="key35">Costa Rica</data>
+      <data key="key36">13</data>
+      <data key="key39">Costa Rica</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Nicaragua</data>
+      <data key="key15">1</data>
+      <data key="key18">12.1328199999999999997</data>
+      <data key="key20">-86.2503999999999999976</data>
+      <data key="key32">-1.9276403300277116, 0.02844024131634746</data>
+      <data key="key36">14</data>
+      <data key="key39">Nicaragua</data>
+    </node>
+    <node id="n15">
+      <data key="key3">El Salvador</data>
+      <data key="key15">1</data>
+      <data key="key18">13.8333300000000000004</data>
+      <data key="key20">-88.9166699999999999987</data>
+      <data key="key32">-0.41701195294130133, -0.0736360285983991</data>
+      <data key="key35">El Salvador</data>
+      <data key="key36">15</data>
+      <data key="key39">El Salvador</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Guatemala</data>
+      <data key="key15">1</data>
+      <data key="key18">14.6407199999999999996</data>
+      <data key="key20">-90.5132699999999999971</data>
+      <data key="key32">-1.4230038512935099, 0.80416590857517323</data>
+      <data key="key36">16</data>
+      <data key="key39">Guatemala</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">19.4284700000000000002</data>
+      <data key="key20">-99.1276600000000000026</data>
+      <data key="key32">-0.33774284653248271, 0.35346340640102675</data>
+      <data key="key36">17</data>
+      <data key="key39">Mexico City</data>
+    </node>
+    <node id="n18">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-0.48510946048195142, 0.35464223196837458</data>
+      <data key="key36">18</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n19">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-0.6693949803134025, 0.35570133974365659</data>
+      <data key="key36">19</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n20">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-0.58746489994797946, 0.50973663168035743</data>
+      <data key="key36">20</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Ecuador</data>
+      <data key="key15">1</data>
+      <data key="key18">-2.16667000000000000001</data>
+      <data key="key20">-79.9000000000000000014</data>
+      <data key="key32">-1.9540626379243431, 0.6982582970974166</data>
+      <data key="key36">21</data>
+      <data key="key39">Guayaquil</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Argentina</data>
+      <data key="key15">1</data>
+      <data key="key18">-32.8833300000000000006</data>
+      <data key="key20">-68.8166700000000000001</data>
+      <data key="key32">-1.5550775956698257, -0.56094234568653711</data>
+      <data key="key36">22</data>
+      <data key="key39">Mendoza</data>
+    </node>
+    <node id="n23">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.1533556737249857, 0.25456560806661743</data>
+      <data key="key36">23</data>
+      <data key="key39">Miami</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Mexico</data>
+      <data key="key15">1</data>
+      <data key="key18">26.2333299999999999992</data>
+      <data key="key20">-98.9166699999999999987</data>
+      <data key="key32">-0.89561564831255069, 0.29145624970349931</data>
+      <data key="key36">24</data>
+      <data key="key39">Monterey</data>
+    </node>
+    <node id="n25">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-0.90427916514797513, 1.1198624191995947</data>
+      <data key="key36">25</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n26">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-0.83972413589054828, 1.2326532345640666</data>
+      <data key="key36">26</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n27">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.0251154752383655, 0.83680137914600516</data>
+      <data key="key36">27</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n28">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-0.96693213544629941, 0.98691975293160938</data>
+      <data key="key36">28</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-23.5475000000000000006</data>
+      <data key="key20">-46.6361099999999999983</data>
+      <data key="key32">-1.2513201588555414, -0.038374980078713324</data>
+      <data key="key36">29</data>
+      <data key="key39">Sao Paulo</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Venezuela</data>
+      <data key="key15">1</data>
+      <data key="key18">10.5</data>
+      <data key="key20">-66.9166699999999999987</data>
+      <data key="key32">-1.0799324272957331, 0.6699612893912269</data>
+      <data key="key36">30</data>
+      <data key="key39">Caracas</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Honduras</data>
+      <data key="key15">1</data>
+      <data key="key18">14.0818000000000000003</data>
+      <data key="key20">-87.2068100000000000008</data>
+      <data key="key32">-1.0420117221851268, 0.33377729563715752</data>
+      <data key="key36">31</data>
+      <data key="key39">Honduras</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Jamaica</data>
+      <data key="key15">1</data>
+      <data key="key18">17.99702</data>
+      <data key="key20">-76.7935800000000000007</data>
+      <data key="key32">-0.55361200756205031, -0.39390289139982354</data>
+      <data key="key36">32</data>
+      <data key="key39">Jamaica</data>
+    </node>
+    <node id="n33">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.5429341738413092, 0.43970419051192111</data>
+      <data key="key36">33</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Colombia</data>
+      <data key="key15">1</data>
+      <data key="key18">3.43721999999999999992</data>
+      <data key="key20">-76.5224999999999999992</data>
+      <data key="key32">-1.6726190183782972, 0.42494881122916983</data>
+      <data key="key36">34</data>
+      <data key="key39">Cali</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Colombia</data>
+      <data key="key15">1</data>
+      <data key="key18">4.60970999999999999979</data>
+      <data key="key20">-74.0817500000000000032</data>
+      <data key="key32">-1.6895135961330319, 0.5386392393118099</data>
+      <data key="key36">35</data>
+      <data key="key39">Bogota</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Ecuador</data>
+      <data key="key15">1</data>
+      <data key="key18">-0.229850000000000000003</data>
+      <data key="key20">-78.52495</data>
+      <data key="key32">-1.8255757627748168, 0.62614870391826516</data>
+      <data key="key36">36</data>
+      <data key="key39">Quito</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Puerto Rico</data>
+      <data key="key15">1</data>
+      <data key="key18">18.4663299999999999997</data>
+      <data key="key20">-66.1057200000000000015</data>
+      <data key="key32">-1.1230268207592518, 0.47476278447077658</data>
+      <data key="key36">37</data>
+      <data key="key39">Puerto Rico</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Trinidad and Tobago</data>
+      <data key="key15">1</data>
+      <data key="key18">10.66617</data>
+      <data key="key20">-61.5165700000000000014</data>
+      <data key="key32">-0.64351205519716081, -0.16605994998433246</data>
+      <data key="key36">38</data>
+      <data key="key39">Trinidad and Tobago</data>
+    </node>
+    <node id="n39">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-0.78872510873123969, -0.52358743408435848</data>
+      <data key="key36">39</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n40">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.3617650947120332, 0.34495283621995804</data>
+      <data key="key36">40</data>
+      <data key="key39">?</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-22.9027799999999999991</data>
+      <data key="key20">-43.2075000000000000004</data>
+      <data key="key32">-1.4240715687400434, -0.12029571027326115</data>
+      <data key="key36">41</data>
+      <data key="key39">Rio De Janeiro</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-23.3102800000000000002</data>
+      <data key="key20">-51.1627800000000000011</data>
+      <data key="key32">-0.95330088339547081, -0.046921007618820128</data>
+      <data key="key36">42</data>
+      <data key="key39">Londrina</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Bolivia</data>
+      <data key="key15">1</data>
+      <data key="key18">-19.0333200000000000007</data>
+      <data key="key20">-65.2627400000000000013</data>
+      <data key="key32">-1.3818841837134657, -0.90761832627741124</data>
+      <data key="key36">43</data>
+      <data key="key39">Sucre</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Bolivia</data>
+      <data key="key15">1</data>
+      <data key="key18">-21.5354900000000000007</data>
+      <data key="key20">-64.7295600000000000002</data>
+      <data key="key32">-1.4313414126464132, -1.0387252155539306</data>
+      <data key="key36">44</data>
+      <data key="key39">Tarija</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Argentina</data>
+      <data key="key15">1</data>
+      <data key="key18">-31.3999999999999999997</data>
+      <data key="key20">-64.1833299999999999999</data>
+      <data key="key32">-1.6691203633802563, -0.65974275243321623</data>
+      <data key="key36">45</data>
+      <data key="key39">Cordoba</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Argentina</data>
+      <data key="key15">1</data>
+      <data key="key18">-34.6131500000000000006</data>
+      <data key="key20">-58.3772299999999999993</data>
+      <data key="key32">-1.2801311336566474, -0.31183917740760447</data>
+      <data key="key36">46</data>
+      <data key="key39">Buenos Aires</data>
+    </node>
+    <node id="n47">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.5689721398364347, -0.23635530953846254</data>
+      <data key="key36">47</data>
+      <data key="key39">New York</data>
+    </node>
+    <node id="n48">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">-1.3920914998552627, -0.37452688823187513</data>
+      <data key="key36">48</data>
+      <data key="key39">Fort Lauderdale</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-15.7797199999999999999</data>
+      <data key="key20">-47.9297200000000000013</data>
+      <data key="key32">-1.5374347055625674, 0.058334160644264471</data>
+      <data key="key36">49</data>
+      <data key="key39">Brasilia</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Brazil</data>
+      <data key="key15">1</data>
+      <data key="key18">-19.9208299999999999992</data>
+      <data key="key20">-43.937779999999999999</data>
+      <data key="key32">-1.4050801396744255, 0.0012521005568175206</data>
+      <data key="key36">50</data>
+      <data key="key39">Belo Horizonte</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n46">
+      <data key="key37">e4</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n46">
+      <data key="key37">e5</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n22">
+      <data key="key37">e17</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n7">
+      <data key="key37">e18</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n42">
+      <data key="key37">e14</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n3">
+      <data key="key37">e15</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n29">
+      <data key="key37">e16</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n5">
+      <data key="key37">e22</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n7">
+      <data key="key37">e21</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e9" source="n6" target="n8">
+      <data key="key37">e20</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n22">
+      <data key="key37">e19</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e11" source="n6" target="n47">
+      <data key="key37">e8</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e12" source="n7" target="n43">
+      <data key="key37">e1</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e13" source="n8" target="n48">
+      <data key="key37">e9</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e14" source="n9" target="n21">
+      <data key="key37">e23</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e15" source="n10" target="n37">
+      <data key="key37">e32</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e16" source="n10" target="n23">
+      <data key="key37">e45</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e17" source="n11" target="n20">
+      <data key="key37">e42</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e18" source="n12" target="n19">
+      <data key="key37">e41</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e19" source="n13" target="n37">
+      <data key="key37">e34</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e20" source="n13" target="n31">
+      <data key="key37">e36</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e21" source="n17" target="n18">
+      <data key="key37">e37</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e22" source="n18" target="n19">
+      <data key="key37">e38</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e23" source="n19" target="n24">
+      <data key="key37">e39</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e24" source="n19" target="n20">
+      <data key="key37">e40</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e25" source="n21" target="n36">
+      <data key="key37">e24</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e26" source="n22" target="n45">
+      <data key="key37">e2</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e27" source="n23" target="n37">
+      <data key="key37">e31</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e28" source="n23" target="n40">
+      <data key="key37">e30</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e29" source="n23" target="n24">
+      <data key="key37">e43</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e30" source="n23" target="n29">
+      <data key="key37">e44</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e31" source="n23" target="n31">
+      <data key="key37">e35</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e32" source="n25" target="n26">
+      <data key="key37">e46</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e33" source="n25" target="n28">
+      <data key="key37">e47</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e34" source="n27" target="n28">
+      <data key="key37">e48</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e35" source="n27" target="n30">
+      <data key="key37">e49</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e36" source="n29" target="n41">
+      <data key="key37">e13</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e37" source="n29" target="n50">
+      <data key="key37">e12</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e38" source="n29" target="n46">
+      <data key="key37">e3</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e39" source="n30" target="n37">
+      <data key="key37">e33</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e40" source="n33" target="n40">
+      <data key="key37">e29</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e41" source="n33" target="n34">
+      <data key="key37">e28</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e42" source="n33" target="n35">
+      <data key="key37">e27</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e43" source="n34" target="n35">
+      <data key="key37">e26</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e44" source="n35" target="n36">
+      <data key="key37">e25</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e45" source="n41" target="n50">
+      <data key="key37">e11</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e46" source="n41" target="n47">
+      <data key="key37">e7</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e47" source="n43" target="n44">
+      <data key="key37">e0</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e48" source="n46" target="n48">
+      <data key="key37">e6</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e49" source="n49" target="n50">
+      <data key="key37">e10</data>
+      <data key="key38">0</data>
+    </edge>
+
+  </graph>
+</graphml>

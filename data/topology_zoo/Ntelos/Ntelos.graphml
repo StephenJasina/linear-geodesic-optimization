@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkStatus" attr.type="string" />
+  <key id="key23" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="node" attr.name="type" attr.type="string" />
+  <key id="key45" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">1</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">19/10/10</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2009</data>
+   <data key="key11">0</data>
+   <data key="key12">Region</data>
+   <data key="key13">West Virginia, Virginia, USA</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">Fibre</data>
+   <data key="key25">NTELOS </data>
+   <data key="key26">2009_08</data>
+   <data key="key27">Primary</data>
+   <data key="key28">http://www.ntelos.com/1pdfs/wireline/MapFiber21908.pdf</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">0</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">0</data>
+   <data key="key33">COM</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Ntelos</data>
+   <data key="key42">internet_top_pop (Ntelos)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key45">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.0190299999999999983</data>
+      <data key="key24">-78.4927899999999999989</data>
+      <data key="key35">-0.58220027245278483, 0.78181693085215587</data>
+      <data key="key38">0</data>
+      <data key="key40">Charlottesville</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.5167899999999999994</data>
+      <data key="key24">-78.0208300000000000013</data>
+      <data key="key35">-0.71679039732257355, 0.72309405629509593</data>
+      <data key="key38">1</data>
+      <data key="key40">Culpeper</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.0684699999999999996</data>
+      <data key="key24">-78.8894699999999999968</data>
+      <data key="key35">-0.57675444665607767, 0.87406210319198951</data>
+      <data key="key38">2</data>
+      <data key="key40">Waynesboro</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.3804100000000000016</data>
+      <data key="key24">-78.2574999999999999997</data>
+      <data key="key35">-0.64580646701180855, 0.72544330723664718</data>
+      <data key="key38">3</data>
+      <data key="key40">Madison</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.3021000000000000005</data>
+      <data key="key24">-78.3919399999999999967</data>
+      <data key="key35">-0.53882619687111444, 0.80091473773431532</data>
+      <data key="key38">4</data>
+      <data key="key40">Farmville</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.4031999999999999994</data>
+      <data key="key24">-79.1780800000000000022</data>
+      <data key="key35">-0.47763703850283007, 0.77751192831120064</data>
+      <data key="key38">5</data>
+      <data key="key40">Lynchburg</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.7134500000000000008</data>
+      <data key="key24">-77.7952699999999999977</data>
+      <data key="key35">-0.7504849113072215, 0.78330184863550989</data>
+      <data key="key38">6</data>
+      <data key="key40">Warrenton</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5537599999999999988</data>
+      <data key="key24">-77.4602600000000000025</data>
+      <data key="key35">-0.63489606264705489, 0.81455000671465938</data>
+      <data key="key38">7</data>
+      <data key="key40">Richmond</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.4181899999999999992</data>
+      <data key="key24">-79.8747600000000000028</data>
+      <data key="key35">-0.40839977339418521, 0.90279112841340614</data>
+      <data key="key38">8</data>
+      <data key="key40">Troutville</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.8162400000000000003</data>
+      <data key="key24">-79.8244900000000000007</data>
+      <data key="key35">-0.47710984138783163, 0.99561222963919183</data>
+      <data key="key38">9</data>
+      <data key="key40">Clifton Forge</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.2934700000000000017</data>
+      <data key="key24">-80.0547600000000000031</data>
+      <data key="key35">-0.32785273594771536, 0.78647916348177804</data>
+      <data key="key38">10</data>
+      <data key="key40">Salem</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.241800000000000001</data>
+      <data key="key24">-80.0155899999999999997</data>
+      <data key="key35">-0.3839567058459607, 0.77292074727726434</data>
+      <data key="key38">11</data>
+      <data key="key40">Roanoke</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.5951100000000000001</data>
+      <data key="key24">-82.188739999999999998</data>
+      <data key="key35">-0.017737977836873635, 0.51669627976685961</data>
+      <data key="key38">12</data>
+      <data key="key40">Bristol</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.7098299999999999992</data>
+      <data key="key24">-81.9773499999999999965</data>
+      <data key="key35">-0.056733374480415953, 0.58363490608391533</data>
+      <data key="key38">13</data>
+      <data key="key40">Abingdon</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.2473400000000000008</data>
+      <data key="key24">-81.3034299999999999983</data>
+      <data key="key35">-0.011052095435543613, 0.62464634203368496</data>
+      <data key="key38">14</data>
+      <data key="key40">Tazewell</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.26984</data>
+      <data key="key24">-81.2223199999999999968</data>
+      <data key="key35">-0.052753183729203353, 0.66576060987676344</data>
+      <data key="key38">15</data>
+      <data key="key40">Bluefield</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.9484500000000000014</data>
+      <data key="key24">-81.0848100000000000034</data>
+      <data key="key35">-0.11388401474291733, 0.64590306278430387</data>
+      <data key="key38">16</data>
+      <data key="key40">Wytheville</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.1317900000000000009</data>
+      <data key="key24">-80.5764499999999999971</data>
+      <data key="key35">-0.19348382510936499, 0.69528209162715404</data>
+      <data key="key38">17</data>
+      <data key="key40">Radford</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.2295699999999999998</data>
+      <data key="key24">-80.4139400000000000024</data>
+      <data key="key35">-0.27096321482410651, 0.71467947681488808</data>
+      <data key="key38">18</data>
+      <data key="key40">Blacksburg</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.1298500000000000001</data>
+      <data key="key24">-80.4089399999999999979</data>
+      <data key="key35">-0.2399971296273721, 0.75781569288877693</data>
+      <data key="key38">19</data>
+      <data key="key40">Christiansburg</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.6915299999999999989</data>
+      <data key="key24">-79.8725400000000000031</data>
+      <data key="key35">-0.34796973807803644, 0.85194909616754699</data>
+      <data key="key38">20</data>
+      <data key="key40">Martinsville</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.997639999999999999</data>
+      <data key="key24">-79.891980000000000002</data>
+      <data key="key35">-0.30845968492283354, 0.82278419858687524</data>
+      <data key="key38">21</data>
+      <data key="key40">Rocky Mount</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n22">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.5859700000000000013</data>
+      <data key="key24">-79.3950200000000000031</data>
+      <data key="key35">-0.4131421873921951, 0.83849205917139435</data>
+      <data key="key38">22</data>
+      <data key="key40">Danville</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n23">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.0726399999999999997</data>
+      <data key="key24">-79.7919800000000000034</data>
+      <data key="key35">-0.35346802642817837, 0.90663266631084549</data>
+      <data key="key38">23</data>
+      <data key="key40">Greensboro</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7890199999999999991</data>
+      <data key="key24">-79.4572599999999999998</data>
+      <data key="key35">-0.46716504231277339, 0.9344096939227251</data>
+      <data key="key38">24</data>
+      <data key="key40">Lexington</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n25">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.6987499999999999996</data>
+      <data key="key24">-78.9013999999999999999</data>
+      <data key="key35">-0.47824061797564621, 0.82938729677325485</data>
+      <data key="key38">25</data>
+      <data key="key40">South Boston</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n26">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8951099999999999994</data>
+      <data key="key24">-77.0363699999999999996</data>
+      <data key="key35">-0.30267156122248429, 1.1386894476763956</data>
+      <data key="key38">26</data>
+      <data key="key40">Washington DC</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n27">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1803799999999999987</data>
+      <data key="key24">-81.3284499999999999989</data>
+      <data key="key35">-0.73999810700834834, 1.2798054362059197</data>
+      <data key="key38">27</data>
+      <data key="key40">Montgomery</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n28">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.5484300000000000008</data>
+      <data key="key24">-82.56182</data>
+      <data key="key35">0.01929925456692835, 0.45764455770494089</data>
+      <data key="key38">28</data>
+      <data key="key40">Kingsport</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n29">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.3134399999999999999</data>
+      <data key="key24">-82.3534699999999999995</data>
+      <data key="key35">0.051336662583563647, 0.40560063440662553</data>
+      <data key="key38">29</data>
+      <data key="key40">Johnson City</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n30">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.2812200000000000012</data>
+      <data key="key24">-80.8525999999999999968</data>
+      <data key="key35">-1.0252040892238363, 1.0725406208847712</data>
+      <data key="key38">30</data>
+      <data key="key40">Summersville</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n31">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.8017899999999999992</data>
+      <data key="key24">-80.4456299999999999983</data>
+      <data key="key35">-0.63148739768751028, 1.1935522115083166</data>
+      <data key="key38">31</data>
+      <data key="key40">Lewisburg</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n32">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7965099999999999993</data>
+      <data key="key24">-80.2975700000000000012</data>
+      <data key="key35">-0.56369918554251008, 1.1377308165099465</data>
+      <data key="key38">32</data>
+      <data key="key40">White Sulphur Springs</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n33">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7934599999999999986</data>
+      <data key="key24">-79.9939500000000000002</data>
+      <data key="key35">-0.50717474676935248, 1.0642338073167539</data>
+      <data key="key38">33</data>
+      <data key="key40">Covington</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n34">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7781700000000000006</data>
+      <data key="key24">-81.1881600000000000009</data>
+      <data key="key35">-0.71026565901187244, 1.232749264318711</data>
+      <data key="key38">34</data>
+      <data key="key40">Beckley</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n35">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4784099999999999984</data>
+      <data key="key24">-82.6379400000000000001</data>
+      <data key="key35">-0.84267079002342982, 1.3562452042815085</data>
+      <data key="key38">35</data>
+      <data key="key40">Ashland</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n36">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4192500000000000011</data>
+      <data key="key24">-82.4451499999999999971</data>
+      <data key="key35">-0.82248414237654943, 1.3061079937767317</data>
+      <data key="key38">36</data>
+      <data key="key40">Huntington</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n37">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.349819999999999999</data>
+      <data key="key24">-81.6326200000000000018</data>
+      <data key="key35">-0.79542901119194631, 1.2487573490391013</data>
+      <data key="key38">37</data>
+      <data key="key40">Charleston</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n38">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4495700000000000009</data>
+      <data key="key24">-78.8689199999999999979</data>
+      <data key="key35">-0.61103892332964005, 0.92734143990759088</data>
+      <data key="key38">38</data>
+      <data key="key40">Harrisonburg</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n39">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1459599999999999995</data>
+      <data key="key24">-79.0772499999999999992</data>
+      <data key="key35">-0.53752263642617004, 0.94205196486756471</data>
+      <data key="key38">39</data>
+      <data key="key40">Staunton</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n40">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.9611799999999999997</data>
+      <data key="key24">-82.9987899999999999973</data>
+      <data key="key35">-0.91703545749888893, 1.2094935441648265</data>
+      <data key="key38">40</data>
+      <data key="key40">Columbus</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n41">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.6295299999999999993</data>
+      <data key="key24">-79.9558999999999999997</data>
+      <data key="key35">-0.84802634949378408, 1.0039355018444682</data>
+      <data key="key38">41</data>
+      <data key="key40">Morgantown</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n42">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2806500000000000002</data>
+      <data key="key24">-80.3445300000000000029</data>
+      <data key="key35">-0.88579328323109696, 1.0872960343097138</data>
+      <data key="key38">42</data>
+      <data key="key40">Clarksburg</data>
+      <data key="key44">POP Location</data>
+    </node>
+    <node id="n43">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.6645399999999999988</data>
+      <data key="key24">-80.7098199999999999996</data>
+      <data key="key35">-0.96075010133710781, 1.0778549101076507</data>
+      <data key="key38">43</data>
+      <data key="key40">Sutton</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n44">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.9481400000000000002</data>
+      <data key="key24">-81.7609599999999999975</data>
+      <data key="key35">-0.85865503435623525, 1.1780452479384809</data>
+      <data key="key38">44</data>
+      <data key="key40">Ravenswood</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n45">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.4406200000000000012</data>
+      <data key="key24">-79.9958899999999999975</data>
+      <data key="key35">-0.79671364663703825, 0.92617870564066562</data>
+      <data key="key38">45</data>
+      <data key="key40">Pittsburgh</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n46">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.0437199999999999984</data>
+      <data key="key24">-77.4874899999999999997</data>
+      <data key="key35">-0.72665878508587434, 0.85619075857876259</data>
+      <data key="key38">46</data>
+      <data key="key40">Ashburn</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n47">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.1856599999999999986</data>
+      <data key="key24">-78.163330000000000003</data>
+      <data key="key35">-0.68260754585349182, 0.90922165348625927</data>
+      <data key="key38">47</data>
+      <data key="key40">Winchester</data>
+      <data key="key44">POP Location</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n2">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n5">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n7">
+      <data key="key20">Network Partner</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n1" target="n3">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n1" target="n6">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n38">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n2" target="n39">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n25">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n5">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n4" target="n7">
+      <data key="key20">Network Partner</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n5" target="n11">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n5" target="n22">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n6" target="n46">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n7" target="n46">
+      <data key="key20">Network Partner</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n8" target="n24">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n8" target="n9">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n8" target="n10">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n9" target="n33">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n9" target="n33">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e20" source="n9" target="n39">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n10" target="n11">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n10" target="n18">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n10" target="n19">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n11" target="n21">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n12" target="n28">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n12" target="n13">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e27" source="n13" target="n16">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e28" source="n13" target="n14">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e29" source="n14" target="n15">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e30" source="n15" target="n16">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e31" source="n16" target="n17">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e32" source="n17" target="n18">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e33" source="n17" target="n19">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e34" source="n20" target="n21">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e35" source="n20" target="n22">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e36" source="n22" target="n25">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e37" source="n22" target="n23">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e38" source="n24" target="n39">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e39" source="n27" target="n34">
+      <data key="key20">Future nTelos Fiber Network</data>
+      <data key="key21"> nTelos  Network</data>
+      <data key="key22">Future</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e40" source="n27" target="n37">
+      <data key="key20">Future nTelos Fiber Network</data>
+      <data key="key21"> nTelos  Network</data>
+      <data key="key22">Future</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e41" source="n28" target="n29">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e42" source="n30" target="n43">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e43" source="n31" target="n32">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e44" source="n31" target="n34">
+      <data key="key20">Future nTelos Fiber Network</data>
+      <data key="key21"> nTelos  Network</data>
+      <data key="key22">Future</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e45" source="n32" target="n33">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e46" source="n34" target="n37">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e47" source="n35" target="n36">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e48" source="n35" target="n36">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e49" source="n36" target="n37">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e50" source="n36" target="n37">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e51" source="n37" target="n44">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e52" source="n38" target="n39">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e53" source="n38" target="n47">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e54" source="n40" target="n44">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e55" source="n41" target="n42">
+      <data key="key20">Network Partner</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e56" source="n41" target="n45">
+      <data key="key20">Network Partner</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e57" source="n42" target="n43">
+      <data key="key20">Available nTelos Fiber Network</data>
+      <data key="key21">Available nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e58" source="n42" target="n44">
+      <data key="key20">Network Partner</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e59" source="n45" target="n46">
+      <data key="key20">Network Partner</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e60" source="n46" target="n47">
+      <data key="key20">Existing nTelos Fiber Network</data>
+      <data key="key21">Existing nTelos  Network</data>
+      <data key="key23">Fiber</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

@@ -1,5 +1,6 @@
 import collections
 import csv
+import itertools
 import os
 import re
 import shutil
@@ -7,26 +8,24 @@ import subprocess
 import sys
 import urllib.request
 
-from GraphRicciCurvature.OllivierRicci import OllivierRicci
 import networkx as nx
-
-sys.path.append(os.path.join('..', 'src'))
-from linear_geodesic_optimization.data import utility
 
 
 url_base = "https://networks.skewed.de/net/internet_top_pop/files"
 
-directory = 'topology_zoo'
+main_directory = 'topology_zoo'
 
-with open(os.path.join(directory, 'dataset_names.txt'), 'r') as f_in:
+with open(os.path.join(main_directory, 'dataset_names.txt'), 'r') as f_in:
     for line in f_in.readlines():
         name = line.rstrip()
+        directory = os.path.join(main_directory, name)
+        os.makedirs(directory)
         print(name)
         name_archive = os.path.join(directory, name + '.xml.zst')
         name_xml = os.path.join(directory, name + '.xml')
         name_graphml = os.path.join(directory, name + '.graphml')
-        name_probes = os.path.join(directory, name + '_probes.csv')
-        name_latencies = os.path.join(directory, name + '_latencies.csv')
+        name_probes = os.path.join(directory, 'probes.csv')
+        name_connectivity = os.path.join(directory, 'connectivity.csv')
 
         # Don't bog down the servers unnecessarily
         if not os.path.exists(name_archive):
@@ -38,7 +37,7 @@ with open(os.path.join(directory, 'dataset_names.txt'), 'r') as f_in:
         subprocess.run(['zstd', '-dq', name_archive])
         subprocess.run(['mv', name_xml, name_graphml])
         subprocess.run(['sed', '-i',
-                        's/"vector_[^"]\+"/"string"/g;s/"short"/"int"/g',
+                        's/"vector_[^"]\\+"/"string"/g;s/"short"/"int"/g',
                         name_graphml])
 
         graph = nx.read_graphml(name_graphml)
@@ -68,11 +67,13 @@ with open(os.path.join(directory, 'dataset_names.txt'), 'r') as f_in:
             city = re.sub('[ \\d]*$', '', data['label'])
             data['label'] = city
             partition[city].add(node)
+        # Uncomment the next line to disable the deduplication
+        # partition = {node: [node] for node in graph.nodes}
         relabel_mapping = {}
         def node_data(b):
-            index = min([int(b_i[1:]) for b_i in b])
+            data = graph.nodes[min(b)]
+            index = data['id']
             relabel_mapping[b] = index
-            data = graph.nodes['n' + str(index)]
             return {
                 'city': data['label'],
                 'country': data['Country'] if 'Country' in data else '',
@@ -80,7 +81,7 @@ with open(os.path.join(directory, 'dataset_names.txt'), 'r') as f_in:
                 'long': data['Longitude'],
             }
         def edge_data(b, c):
-            return {'weight': 1.}
+            return {}
         graph = nx.quotient_graph(graph, partition,
                                   node_data=node_data, edge_data=edge_data)
         nx.relabel_nodes(graph, relabel_mapping, False)
@@ -98,32 +99,12 @@ with open(os.path.join(directory, 'dataset_names.txt'), 'r') as f_in:
                     'longitude': data['long'],
                 })
 
-        # Approximate RTTs using GCLs and shortest paths
-        for source_id, target_id, data in graph.edges(data=True):
-            source = graph.nodes[source_id]
-            target = graph.nodes[target_id]
-            data['rtt'] = utility.get_GCL(
-                (source['lat'], source['long']),
-                (target['lat'], target['long'])
-            )
-        rtts = nx.floyd_warshall(graph, 'rtt')
-
-        with open(name_latencies, 'w') as f:
-            writer = csv.DictWriter(f, ['source_id', 'target_id', 'rtt'])
+        with open(name_connectivity, 'w') as f:
+            writer = csv.DictWriter(f, ['source_id', 'target_id'])
             writer.writeheader()
 
-            for source_node in graph.nodes:
-                source = graph.nodes[source_node]
-                for target_node in graph.nodes:
-                    target = graph.nodes[target_node]
-                    writer.writerow({
-                        'source_id': source_node,
-                        'target_id': target_node,
-                        'rtt': float(rtts[source_node][target_node])
-                    })
-
-        orc = OllivierRicci(graph, weight='weight', alpha=0.)
-        graph = orc.compute_ricci_curvature()
-        for _, _, d in graph.edges(data=True):
-            del d['weight']
-        nx.write_graphml(graph, name_graphml)
+            for source_node, target_node in graph.edges:
+                writer.writerow({
+                    'source_id': source_node,
+                    'target_id': target_node,
+                })

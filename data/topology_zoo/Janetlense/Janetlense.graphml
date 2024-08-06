@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeed" attr.type="int" />
+  <key id="key23" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key24" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key25" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key26" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key27" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key28" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key32" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key34" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key36" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key37" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key38" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key39" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key40" for="graph" attr.name="description" attr.type="string" />
+  <key id="key41" for="node" attr.name="id" attr.type="int" />
+  <key id="key42" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key43" for="node" attr.name="label" attr.type="string" />
+  <key id="key44" for="graph" attr.name="label" attr.type="string" />
+  <key id="key45" for="graph" attr.name="name" attr.type="string" />
+  <key id="key46" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key47" for="node" attr.name="type" attr.type="string" />
+  <key id="key48" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">01</data>
+   <data key="key8">24/01/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">0</data>
+   <data key="key12">Region</data>
+   <data key="key13">Central South, UK</data>
+   <data key="key14">0</data>
+   <data key="key16">24/01/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key27">Janet Lense</data>
+   <data key="key28">2011_01</data>
+   <data key="key29">Additional information from http://www.lense.net.uk/index.php?option=com_content&amp;view=article&amp;id=51&amp;Itemid=70 JANET local provider</data>
+   <data key="key30">Primary</data>
+   <data key="key31">http://www.lense.net.uk/index.php?option=com_content&amp;view=article&amp;id=52&amp;Itemid=73</data>
+   <data key="key32">e278b1b</data>
+   <data key="key33">0</data>
+   <data key="key34">0.3.34dev-20120328</data>
+   <data key="key35">0</data>
+   <data key="key36">REN</data>
+   <data key="key37">1.0</data>
+   <data key="key39">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key40">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key44">Janetlense</data>
+   <data key="key45">internet_top_pop (Janetlense)</data>
+   <data key="key46">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key48">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.9000000000000000014</data>
+      <data key="key26">-1.39999999999999999998</data>
+      <data key="key38">5.1058149782398949, 7.7882492636445457</data>
+      <data key="key41">0</data>
+      <data key="key43">Southampton Aggregation</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.9000000000000000014</data>
+      <data key="key26">-1.39999999999999999998</data>
+      <data key="key38">6.2349313347108799, 9.0571913370315045</data>
+      <data key="key41">1</data>
+      <data key="key43">Southampton</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0651300000000000004</data>
+      <data key="key26">-1.3187</data>
+      <data key="key38">5.9388844542514327, 9.9959777711106277</data>
+      <data key="key41">2</data>
+      <data key="key43">Winchester</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8090800000000000006</data>
+      <data key="key26">-1.07141999999999999998</data>
+      <data key="key38">5.1494856545314285, 10.22785383974448</data>
+      <data key="key41">3</data>
+      <data key="key43">Portsmouth</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.7166700000000000015</data>
+      <data key="key26">-1.88332999999999999995</data>
+      <data key="key38">6.9102402099385465, 8.6652825202501518</data>
+      <data key="key41">4</data>
+      <data key="key43">Bournemouth</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6833299999999999999</data>
+      <data key="key26">-2.11667000000000000005</data>
+      <data key="key38">2.3380020678783526, 9.396388102149027</data>
+      <data key="key41">5</data>
+      <data key="key43">Bere Regis Colocation</data>
+      <data key="key47">Colocation</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.9000000000000000014</data>
+      <data key="key26">-1.39999999999999999998</data>
+      <data key="key38">4.1112444726826993, 7.9944491607138168</data>
+      <data key="key41">6</data>
+      <data key="key43">Solent</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.7166700000000000015</data>
+      <data key="key26">-1.88332999999999999995</data>
+      <data key="key38">3.6934288512721816, 9.041974562227205</data>
+      <data key="key41">7</data>
+      <data key="key43">Bournemouth Aggregation</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6666699999999999987</data>
+      <data key="key26">-1.33332999999999999999</data>
+      <data key="key38">3.8647409250732001, 5.9579780577540689</data>
+      <data key="key41">8</data>
+      <data key="key43">Isle of Wight Colocation</data>
+      <data key="key47">Colocation</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.7687100000000000009</data>
+      <data key="key26">0.284530000000000000011</data>
+      <data key="key38">6.3952609378785032, 5.9285011850935714</data>
+      <data key="key41">9</data>
+      <data key="key43">Hampton Park Colocation</data>
+      <data key="key47">Colocation</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8516400000000000012</data>
+      <data key="key26">-1.07404000000000000002</data>
+      <data key="key38">4.5840795609819089, 7.1499190134050901</data>
+      <data key="key41">10</data>
+      <data key="key43">Wymering</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8367300000000000015</data>
+      <data key="key26">-0.780029999999999999998</data>
+      <data key="key38">6.6909437917605805, 7.8339201061040393</data>
+      <data key="key41">11</data>
+      <data key="key43">Chichester</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n12">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key38">4.3393144361198139, 9.7453746133793064</data>
+      <data key="key41">12</data>
+      <data key="key43">Janet SJ5</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.9000000000000000014</data>
+      <data key="key26">-1.39999999999999999998</data>
+      <data key="key38">5.4851189380834722, 8.8258509877966667</data>
+      <data key="key41">13</data>
+      <data key="key43">Southampton Core</data>
+      <data key="key47">Core PoP</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.25</data>
+      <data key="key26">-0.766669999999999999976</data>
+      <data key="key38">5.2934878891332273, 8.5154904364759325</data>
+      <data key="key41">14</data>
+      <data key="key43">Aldershot Core</data>
+      <data key="key47">Core PoP</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8283799999999999983</data>
+      <data key="key26">-0.139470000000000000006</data>
+      <data key="key38">5.8104203643677224, 7.2532819344767328</data>
+      <data key="key41">15</data>
+      <data key="key43">Brighton Aggregation</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8283799999999999983</data>
+      <data key="key26">-0.139470000000000000006</data>
+      <data key="key38">4.4650155212686036, 8.7143271082853229</data>
+      <data key="key41">16</data>
+      <data key="key43">Brighton</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">50.7687100000000000009</data>
+      <data key="key26">0.284530000000000000011</data>
+      <data key="key38">6.6710383442867123, 9.6166670220694481</data>
+      <data key="key41">17</data>
+      <data key="key43">Sussex</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.3190300000000000011</data>
+      <data key="key26">-0.558930000000000000015</data>
+      <data key="key38">6.0128226389493253, 8.0511481026468701</data>
+      <data key="key41">18</data>
+      <data key="key43">Surrey</data>
+      <data key="key47">PoP</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.25</data>
+      <data key="key26">-0.766669999999999999976</data>
+      <data key="key38">5.0707230173316269, 9.4437058110983632</data>
+      <data key="key41">19</data>
+      <data key="key43">Aldershot Aggregation</data>
+      <data key="key47">PoP</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e2" source="n0" target="n14">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e4" source="n1" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e5" source="n1" target="n14">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e7" source="n2" target="n14">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e8" source="n3" target="n13">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e9" source="n3" target="n14">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e10" source="n4" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e11" source="n4" target="n14">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e12" source="n5" target="n7">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e13" source="n6" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e14" source="n6" target="n14">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e15" source="n7" target="n14">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e16" source="n7" target="n13">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e17" source="n8" target="n10">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e18" source="n9" target="n15">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e19" source="n10" target="n13">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e20" source="n10" target="n14">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e21" source="n11" target="n13">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e22" source="n11" target="n14">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e23" source="n12" target="n13">
+      <data key="key20">10 Gbps SDH</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key25">SDH</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e24" source="n12" target="n14">
+      <data key="key20">10 Gbps SDH</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key25">SDH</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e25" source="n13" target="n14">
+      <data key="key20">10 GE</data>
+      <data key="key21"> E</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e26" source="n13" target="n15">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e27" source="n13" target="n16">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e28" source="n13" target="n17">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e29" source="n13" target="n18">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e30" source="n13" target="n19">
+      <data key="key20">1GE Backup Link</data>
+      <data key="key21">E Backup Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e31" source="n14" target="n15">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e32" source="n14" target="n15">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e33" source="n14" target="n16">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e34" source="n14" target="n16">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e35" source="n14" target="n17">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e36" source="n14" target="n18">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e37" source="n14" target="n18">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e38" source="n14" target="n19">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e39" source="n14" target="n19">
+      <data key="key20">1GE Primary Link</data>
+      <data key="key21">E Primary Link</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+
+  </graph>
+</graphml>

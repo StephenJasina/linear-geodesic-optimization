@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="int" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="int" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="id" attr.type="int" />
+  <key id="key36" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key37" for="node" attr.name="label" attr.type="string" />
+  <key id="key38" for="graph" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="name" attr.type="string" />
+  <key id="key40" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key41" for="node" attr.name="type" attr.type="string" />
+  <key id="key42" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">0</data>
+   <data key="key8">16/11/10</data>
+   <data key="key9">Historic</data>
+   <data key="key10">0</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">USA</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">ATT North America</data>
+   <data key="key23">2007-2008</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.att.com/Common/merger/files/pdf/wired-network/Domestic_0C-768_Network.pdf</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">1</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key38">AttMpls</data>
+   <data key="key39">internet_top_pop (AttMpls)</data>
+   <data key="key40">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key42">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7142699999999999987</data>
+      <data key="key21">-74.0059700000000000031</data>
+      <data key="key32">-6.4062870143628112, -4.8153117106471237</data>
+      <data key="key35">0</data>
+      <data key="key37">NY54</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">42.3750999999999999994</data>
+      <data key="key21">-71.1056100000000000025</data>
+      <data key="key32">-6.405171469105186, -4.9262680248338331</data>
+      <data key="key35">1</data>
+      <data key="key37">CMBR</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8500300000000000009</data>
+      <data key="key21">-87.6500500000000000028</data>
+      <data key="key32">-6.5898371979657302, -4.7298969350543434</data>
+      <data key="key35">2</data>
+      <data key="key37">CHCG</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.4994999999999999996</data>
+      <data key="key21">-81.6954100000000000004</data>
+      <data key="key32">-6.4851336525534933, -4.7036242294904929</data>
+      <data key="key35">3</data>
+      <data key="key37">CLEV</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">35.7721000000000000016</data>
+      <data key="key21">-78.6386099999999999971</data>
+      <data key="key32">-6.267409468808042, -4.6188962664795978</data>
+      <data key="key35">4</data>
+      <data key="key37">RLGH</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.7489999999999999991</data>
+      <data key="key21">-84.3879799999999999985</data>
+      <data key="key32">-6.3913348648494992, -4.555805656564571</data>
+      <data key="key35">5</data>
+      <data key="key37">ATLN</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.952339999999999999</data>
+      <data key="key21">-75.1637899999999999981</data>
+      <data key="key32">-6.4736280411103557, -4.8107829526491273</data>
+      <data key="key35">6</data>
+      <data key="key37">PHLA</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8951099999999999994</data>
+      <data key="key21">-77.0363699999999999996</data>
+      <data key="key32">-6.3471723891840632, -4.7101665889178337</data>
+      <data key="key35">7</data>
+      <data key="key37">WASH</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.1658899999999999993</data>
+      <data key="key21">-86.7844399999999999984</data>
+      <data key="key32">-6.461301367828348, -4.591602174283012</data>
+      <data key="key35">8</data>
+      <data key="key37">NSVL</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.6272700000000000012</data>
+      <data key="key21">-90.1978900000000000034</data>
+      <data key="key32">-6.5394023422249461, -4.5996641297856611</data>
+      <data key="key35">9</data>
+      <data key="key37">STLS</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.9546500000000000003</data>
+      <data key="key21">-90.0750699999999999978</data>
+      <data key="key32">-6.4605592215499801, -4.4249166750822848</data>
+      <data key="key35">10</data>
+      <data key="key37">NWOR</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.7632800000000000001</data>
+      <data key="key21">-95.3632700000000000026</data>
+      <data key="key32">-6.51225485779959, -4.3664669261596654</data>
+      <data key="key35">11</data>
+      <data key="key37">HSTN</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.4241200000000000005</data>
+      <data key="key21">-98.4936299999999999993</data>
+      <data key="key32">-6.6216396387565695, -4.3756639881976822</data>
+      <data key="key35">12</data>
+      <data key="key37">SNAN</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7830599999999999991</data>
+      <data key="key21">-96.8066699999999999982</data>
+      <data key="key32">-6.5677485825488651, -4.5181300482260305</data>
+      <data key="key35">13</data>
+      <data key="key37">DLLS</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">28.5383400000000000008</data>
+      <data key="key21">-81.3792400000000000007</data>
+      <data key="key32">-6.3750769058969805, -4.4060844906698193</data>
+      <data key="key35">14</data>
+      <data key="key37">ORLD</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.7391500000000000015</data>
+      <data key="key21">-104.984699999999999999</data>
+      <data key="key32">-6.6632706791595986, -4.6067907987761387</data>
+      <data key="key35">15</data>
+      <data key="key37">DNVR</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.1141700000000000007</data>
+      <data key="key21">-94.6274599999999999969</data>
+      <data key="key32">-6.605004093975773, -4.6446629935791357</data>
+      <data key="key35">16</data>
+      <data key="key37">KSCY</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7749300000000000008</data>
+      <data key="key21">-122.419420000000000001</data>
+      <data key="key32">-6.6988179006186854, -4.6816514643855855</data>
+      <data key="key35">17</data>
+      <data key="key37">SNFN</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.5815700000000000001</data>
+      <data key="key21">-121.494399999999999999</data>
+      <data key="key32">-6.8482284180636324, -4.6830378869314906</data>
+      <data key="key35">18</data>
+      <data key="key37">SCRM</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5234499999999999986</data>
+      <data key="key21">-122.676209999999999999</data>
+      <data key="key32">-6.7876056909778972, -4.8127465649842867</data>
+      <data key="key35">19</data>
+      <data key="key37">PTLD</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6062099999999999989</data>
+      <data key="key21">-122.332069999999999997</data>
+      <data key="key32">-6.6915940239721543, -4.8119936711437399</data>
+      <data key="key35">20</data>
+      <data key="key37">STTL</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7607800000000000014</data>
+      <data key="key21">-111.891050000000000002</data>
+      <data key="key32">-6.7551326732425556, -4.6356275623865413</data>
+      <data key="key35">21</data>
+      <data key="key37">SLKC</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n22">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0522299999999999986</data>
+      <data key="key21">-118.243680000000000001</data>
+      <data key="key32">-6.7045145592618756, -4.5193646972084851</data>
+      <data key="key35">22</data>
+      <data key="key37">LA03</data>
+      <data key="key41">Completed</data>
+    </node>
+    <node id="n23">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7153300000000000006</data>
+      <data key="key21">-117.157259999999999997</data>
+      <data key="key32">-6.8283695431791882, -4.4341033858091148</data>
+      <data key="key35">23</data>
+      <data key="key37">SNDG</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.4483800000000000008</data>
+      <data key="key21">-112.074040000000000002</data>
+      <data key="key32">-6.734068452422064, -4.4093504322205535</data>
+      <data key="key35">24</data>
+      <data key="key37">PHNX</data>
+      <data key="key41">Completion 2007 - 2008</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n2">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n6">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n7">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e4" source="n1" target="n6">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n3">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n6">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e7" source="n2" target="n9">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e8" source="n2" target="n15">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e9" source="n2" target="n16">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e10" source="n2" target="n17">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e11" source="n2" target="n20">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e12" source="n2" target="n21">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e13" source="n3" target="n8">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e14" source="n3" target="n9">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e15" source="n3" target="n6">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e16" source="n4" target="n5">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e17" source="n4" target="n7">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e18" source="n5" target="n7">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e19" source="n5" target="n8">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e20" source="n5" target="n9">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e21" source="n5" target="n13">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e22" source="n5" target="n14">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e23" source="n6" target="n7">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e24" source="n8" target="n9">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e25" source="n8" target="n13">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e26" source="n9" target="n13">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e27" source="n9" target="n16">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e28" source="n9" target="n22">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e29" source="n10" target="n11">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e30" source="n10" target="n13">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e31" source="n10" target="n14">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e32" source="n11" target="n12">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e33" source="n11" target="n13">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e34" source="n11" target="n14">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e35" source="n12" target="n24">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e36" source="n12" target="n13">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e37" source="n13" target="n15">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e38" source="n13" target="n16">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e39" source="n13" target="n17">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e40" source="n13" target="n22">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e41" source="n15" target="n16">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e42" source="n15" target="n17">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e43" source="n15" target="n21">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e44" source="n16" target="n17">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e45" source="n17" target="n18">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e46" source="n17" target="n19">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e47" source="n17" target="n20">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e48" source="n17" target="n21">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e49" source="n17" target="n22">
+      <data key="key20">Completed</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e50" source="n18" target="n21">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e51" source="n19" target="n20">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e52" source="n21" target="n22">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e53" source="n22" target="n23">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e54" source="n22" target="n24">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e55" source="n22" target="n24">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e56" source="n23" target="n24">
+      <data key="key20">Completion 2007-2008</data>
+      <data key="key36">0</data>
+    </edge>
+
+  </graph>
+</graphml>

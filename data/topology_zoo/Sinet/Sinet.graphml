@@ -1,0 +1,1193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="node" attr.name="type" attr.type="string" />
+  <key id="key45" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">22/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">Japan</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">Sinet</data>
+   <data key="key26">2010_08</data>
+   <data key="key27">Primary</data>
+   <data key="key28">http://www.sinet.ad.jp/topology</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">0</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">0</data>
+   <data key="key33">REN</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Sinet</data>
+   <data key="key42">internet_top_pop (Sinet)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key45">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">33.6063899999999999985</data>
+      <data key="key24">130.418060000000000001</data>
+      <data key="key35">8.6276801845616014, -4.1160052872644695</data>
+      <data key="key38">0</data>
+      <data key="key40">Fukuoka DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">33.2380600000000000008</data>
+      <data key="key24">131.612500000000000003</data>
+      <data key="key35">8.8846329199692597, -4.5498788585406746</data>
+      <data key="key38">1</data>
+      <data key="key40">Oita U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">33</data>
+      <data key="key24">131</data>
+      <data key="key35">9.1208435228825717, -4.3536223940153995</data>
+      <data key="key38">2</data>
+      <data key="key40">Kyushu U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n3">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">8.6177473106758296, -4.4691652604900867</data>
+      <data key="key38">3</data>
+      <data key="key40">Kyushu IT</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.3962700000000000007</data>
+      <data key="key24">132.459370000000000001</data>
+      <data key="key35">8.2133186100801296, -4.4273931649983309</data>
+      <data key="key38">4</data>
+      <data key="key40">Hiroshima U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.3962700000000000007</data>
+      <data key="key24">132.459370000000000001</data>
+      <data key="key35">7.9279711312015682, -4.4416554900887348</data>
+      <data key="key38">5</data>
+      <data key="key40">Hiroshima DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">33.8391599999999999997</data>
+      <data key="key24">132.765740000000000004</data>
+      <data key="key35">8.5051858368502291, -3.4546466973044723</data>
+      <data key="key38">6</data>
+      <data key="key40">Ehime U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.1858299999999999987</data>
+      <data key="key24">131.471390000000000003</data>
+      <data key="key35">7.968233225111236, -4.9253402512848785</data>
+      <data key="key38">7</data>
+      <data key="key40">Yamaguchi U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n8">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.4818871375371057, -2.9457836440888459</data>
+      <data key="key38">8</data>
+      <data key="key40">IMS, U Tokyo</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n9">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.837558076305017, -2.4591129964295142</data>
+      <data key="key38">9</data>
+      <data key="key40">ISSP, U Tokyo</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">33.8391599999999999997</data>
+      <data key="key24">132.765740000000000004</data>
+      <data key="key35">8.1584347011608891, -3.5190747742438977</data>
+      <data key="key38">10</data>
+      <data key="key40">Matsuyama DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.3402799999999999991</data>
+      <data key="key24">134.043329999999999994</data>
+      <data key="key35">8.1892111835110821, -3.1353952781666345</data>
+      <data key="key38">11</data>
+      <data key="key40">Kagawa U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n12">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">6.7575825384489328, -2.443339677259313</data>
+      <data key="key38">12</data>
+      <data key="key40">Kamioka Obs, ICRR, U Tokyo</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6047200000000000006</data>
+      <data key="key24">140.123329999999999995</data>
+      <data key="key35">6.2720474509462747, -3.7216211784428492</data>
+      <data key="key38">13</data>
+      <data key="key40">Chiba U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1666699999999999987</data>
+      <data key="key24">133.566669999999999993</data>
+      <data key="key35">5.6676617716637185, -3.348276443592217</data>
+      <data key="key38">14</data>
+      <data key="key40">Shinshu U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n15">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">7.0718467659401041, -2.5780810777307748</data>
+      <data key="key38">15</data>
+      <data key="key40">NIFS</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">36.5944399999999999996</data>
+      <data key="key24">136.625560000000000005</data>
+      <data key="key35">6.2375984191750149, -4.6709746900701088</data>
+      <data key="key38">16</data>
+      <data key="key40">Kanazawa U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n17">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">6.4791403957975193, -4.785889751768555</data>
+      <data key="key38">17</data>
+      <data key="key40">JAIST</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.8055900000000000005</data>
+      <data key="key24">135.778410000000000005</data>
+      <data key="key35">7.4626423750319333, -4.1096274431478959</data>
+      <data key="key38">18</data>
+      <data key="key40">Doshisha U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n19">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">7.027787408752868, -4.5059805063037457</data>
+      <data key="key38">19</data>
+      <data key="key40">ICR, Kyoto U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1814699999999999994</data>
+      <data key="key24">136.906409999999999993</data>
+      <data key="key35">6.6515498123475094, -2.7142322176771336</data>
+      <data key="key38">20</data>
+      <data key="key40">Nagoya DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n21">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">6.8916687174617621, -2.9086131650015887</data>
+      <data key="key38">21</data>
+      <data key="key40">NINS-Okazaki</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.9769399999999999994</data>
+      <data key="key24">138.383059999999999998</data>
+      <data key="key35">6.9638247504935622, -2.2642648942840862</data>
+      <data key="key38">22</data>
+      <data key="key40">Shizuoka U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1814699999999999994</data>
+      <data key="key24">136.906409999999999993</data>
+      <data key="key35">6.5880082274634955, -2.2382829579942825</data>
+      <data key="key38">23</data>
+      <data key="key40">Nagoya U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">36.5944399999999999996</data>
+      <data key="key24">136.625560000000000005</data>
+      <data key="key35">6.2188423275685434, -4.3546623672000626</data>
+      <data key="key38">24</data>
+      <data key="key40">Kanazawa DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">36.6952799999999999987</data>
+      <data key="key24">137.211389999999999995</data>
+      <data key="key35">6.5429562584455132, -4.4299983449361777</data>
+      <data key="key38">25</data>
+      <data key="key40">Toyama U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.663890000000000001</data>
+      <data key="key24">138.568330000000000002</data>
+      <data key="key35">5.3511505560051749, -3.7842277319697053</data>
+      <data key="key38">26</data>
+      <data key="key40">Yamanashi U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0658299999999999996</data>
+      <data key="key24">134.559440000000000007</data>
+      <data key="key35">8.4955436618474636, -3.1596886269959068</data>
+      <data key="key38">27</data>
+      <data key="key40">U Tokushima</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6148799999999999995</data>
+      <data key="key24">139.581299999999999997</data>
+      <data key="key35">5.8503511786077249, -4.0499514153578646</data>
+      <data key="key38">28</data>
+      <data key="key40">Tokyo DC3</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n29">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">6.0405627699057662, -2.2970354797833799</data>
+      <data key="key38">29</data>
+      <data key="key40">NII</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n30">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.1897620213228555, -2.8538349191394135</data>
+      <data key="key38">30</data>
+      <data key="key40">NII-CHiba</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n31">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.3161058835170332, -2.0998238327597951</data>
+      <data key="key38">31</data>
+      <data key="key40">GSIST, U Tokyo</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n32">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.4107052626617138, -3.4986087257757363</data>
+      <data key="key38">32</data>
+      <data key="key40">U Electro-Communications</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n33">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.5756005815496987, -2.0227925552188846</data>
+      <data key="key38">33</data>
+      <data key="key40">RIKEN</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6148799999999999995</data>
+      <data key="key24">139.581299999999999997</data>
+      <data key="key35">5.6241790453945928, -2.6462333623099767</data>
+      <data key="key38">34</data>
+      <data key="key40">Tokyo DC1</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6148799999999999995</data>
+      <data key="key24">139.581299999999999997</data>
+      <data key="key35">5.8345198090650703, -3.618980716802044</data>
+      <data key="key38">35</data>
+      <data key="key40">Tokyo DC2</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n36">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.62646929468153, -2.2847975911763552</data>
+      <data key="key38">36</data>
+      <data key="key40">JAXA-ISAS</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n37">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.8476591122781567, -2.0956278581014121</data>
+      <data key="key38">37</data>
+      <data key="key40">Yokohama National U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6252200000000000014</data>
+      <data key="key24">139.424159999999999995</data>
+      <data key="key35">5.1106209586692746, -2.301901085489062</data>
+      <data key="key38">38</data>
+      <data key="key40">Keio U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n39">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.0518398718058508, -2.5669299392485283</data>
+      <data key="key38">39</data>
+      <data key="key40">Tokyo IT</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">37.9022200000000000011</data>
+      <data key="key24">139.023610000000000006</data>
+      <data key="key35">5.8946997113813673, -4.6218242321802743</data>
+      <data key="key38">40</data>
+      <data key="key40">Niigata U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">36.0644300000000000012</data>
+      <data key="key24">136.222570000000000004</data>
+      <data key="key35">6.0847626998734032, -4.8893429962589074</data>
+      <data key="key38">41</data>
+      <data key="key40">Fukui U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n42">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">4.5786908060724922, -2.9218880167244086</data>
+      <data key="key38">42</data>
+      <data key="key40">KEK</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n43">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">4.5836531184067031, -3.4347896263649824</data>
+      <data key="key38">43</data>
+      <data key="key40">JAEA</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">36.2000000000000000007</data>
+      <data key="key24">140.100000000000000006</data>
+      <data key="key35">4.9153445718428426, -3.2083638387301092</data>
+      <data key="key38">44</data>
+      <data key="key40">Tsukuba DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">36.2000000000000000007</data>
+      <data key="key24">140.100000000000000006</data>
+      <data key="key35">4.4243744707060557, -3.1781443892961008</data>
+      <data key="key38">45</data>
+      <data key="key40">U Tsukuba</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">36.3911099999999999993</data>
+      <data key="key24">139.060829999999999995</data>
+      <data key="key35">6.0692821279293421, -3.8972076008882492</data>
+      <data key="key38">46</data>
+      <data key="key40">Gunma U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n47">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.5552131639947815, -4.0346252084891407</data>
+      <data key="key38">47</data>
+      <data key="key40">ISM</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6148799999999999995</data>
+      <data key="key24">139.581299999999999997</data>
+      <data key="key35">5.3765156310038398, -2.3606270688405528</data>
+      <data key="key38">48</data>
+      <data key="key40">U Tokyo</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.0210699999999999985</data>
+      <data key="key24">135.753850000000000006</data>
+      <data key="key35">7.1511930729051496, -4.1523297762184965</data>
+      <data key="key38">49</data>
+      <data key="key40">Kyoto DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.0210699999999999985</data>
+      <data key="key24">135.753850000000000006</data>
+      <data key="key35">7.333534696277666, -4.4914253813509113</data>
+      <data key="key38">50</data>
+      <data key="key40">Kyoto U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n51">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">38.2999999999999999993</data>
+      <data key="key24">139.550000000000000003</data>
+      <data key="key35">5.3237746470188778, -2.6165031651284134</data>
+      <data key="key38">51</data>
+      <data key="key40">Waseda U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.2733900000000000011</data>
+      <data key="key24">136.506500000000000006</data>
+      <data key="key35">7.435083896597436, -2.9832735288668113</data>
+      <data key="key38">52</data>
+      <data key="key40">Kansai U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n53">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.693739999999999999</data>
+      <data key="key24">135.502180000000000001</data>
+      <data key="key35">7.6445580265700386, -3.5232353362430091</data>
+      <data key="key38">53</data>
+      <data key="key40">Osaka U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n54">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.6913000000000000013</data>
+      <data key="key24">135.182999999999999996</data>
+      <data key="key35">7.1532890324457661, -3.5437927361644173</data>
+      <data key="key38">54</data>
+      <data key="key40">Kobe U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n55">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.9972544377684507, -3.3114560165406202</data>
+      <data key="key38">55</data>
+      <data key="key40">JAMSTEC</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n56">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">7.6990664077234419, -3.1316347870216061</data>
+      <data key="key38">56</data>
+      <data key="key40">JASRI</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.5</data>
+      <data key="key24">134.233329999999999996</data>
+      <data key="key35">7.72967130717669, -4.7491961377220324</data>
+      <data key="key38">57</data>
+      <data key="key40">Tottori U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.6616700000000000012</data>
+      <data key="key24">133.934999999999999998</data>
+      <data key="key35">8.2192217773019909, -4.7796649074777617</data>
+      <data key="key38">58</data>
+      <data key="key40">Okayama U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.693739999999999999</data>
+      <data key="key24">135.502180000000000001</data>
+      <data key="key35">7.3621970104735333, -3.3583088135465715</data>
+      <data key="key38">59</data>
+      <data key="key40">Osaka DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n60">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">6.0625890017242421, -2.6495371973797606</data>
+      <data key="key38">60</data>
+      <data key="key40">NAOJ</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n61">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.9080699999999999987</data>
+      <data key="key24">139.656570000000000001</data>
+      <data key="key35">6.2357690467691418, -3.4558279962323333</data>
+      <data key="key38">61</data>
+      <data key="key40">Saitama U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n62">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.850309864246066, -2.8730839455401549</data>
+      <data key="key38">62</data>
+      <data key="key40">JAXA-IAT</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n63">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.6316613456659574, -3.7767356006933057</data>
+      <data key="key38">63</data>
+      <data key="key40">Tokyo U Ag and Tech</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n64">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">32.74472</data>
+      <data key="key24">129.873609999999999998</data>
+      <data key="key35">8.9706339834440509, -3.7783085808007191</data>
+      <data key="key38">64</data>
+      <data key="key40">Nagasaki U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n65">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">8.6696274637333008, -3.8119883047758942</data>
+      <data key="key38">65</data>
+      <data key="key40">Kurnamoto U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n66">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">43.0641700000000000013</data>
+      <data key="key24">141.346939999999999998</data>
+      <data key="key35">5.4321942121592759, -4.4027180595787367</data>
+      <data key="key38">66</data>
+      <data key="key40">Sapporo DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n67">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">43.0641700000000000013</data>
+      <data key="key24">141.346939999999999998</data>
+      <data key="key35">5.158170307749546, -4.8331920929134506</data>
+      <data key="key38">67</data>
+      <data key="key40">Hokkaido U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n68">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">4.9486358879773968, -5.1624350347579977</data>
+      <data key="key38">68</data>
+      <data key="key40">Kitami IT</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n69">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">40.5930600000000000004</data>
+      <data key="key24">140.472500000000000003</data>
+      <data key="key35">4.6401154210259294, -4.2748924202273448</data>
+      <data key="key38">69</data>
+      <data key="key40">Hirosaki U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n70">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">38.2688900000000000005</data>
+      <data key="key24">140.871940000000000007</data>
+      <data key="key35">4.8981036337689732, -3.9413044664278205</data>
+      <data key="key38">70</data>
+      <data key="key40">Sendai DC</data>
+      <data key="key44">Core Node</data>
+    </node>
+    <node id="n71">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7666700000000000008</data>
+      <data key="key24">131.366669999999999996</data>
+      <data key="key35">4.4692658106268457, -3.9885496316958755</data>
+      <data key="key38">71</data>
+      <data key="key40">Tohoku U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n72">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">9.1504522239805244, -4.0163747008031976</data>
+      <data key="key38">72</data>
+      <data key="key40">U of the Ryukyus</data>
+      <data key="key44">Edge Node</data>
+    </node>
+    <node id="n73">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">31.5601800000000000009</data>
+      <data key="key24">130.558139999999999997</data>
+      <data key="key35">8.9067052089618137, -4.1800058555416459</data>
+      <data key="key38">73</data>
+      <data key="key40">Kagoshima U</data>
+      <data key="key44">Edge Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n64">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n1">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n2">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n3">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n0" target="n5">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n0" target="n65">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n0" target="n72">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n0" target="n73">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n0" target="n10">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n4" target="n5">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n5" target="n7">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n5" target="n49">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n5" target="n57">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n5" target="n58">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n6" target="n10">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n8" target="n34">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n9" target="n34">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n10" target="n11">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n10" target="n27">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n10" target="n59">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n12" target="n20">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n13" target="n35">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n14" target="n35">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n15" target="n20">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n16" target="n24">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n17" target="n24">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n18" target="n49">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e27" source="n19" target="n49">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e28" source="n20" target="n34">
+      <data key="key20">40Gbps</data>
+      <data key="key21">40</data>
+      <data key="key22">40000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e29" source="n20" target="n21">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e30" source="n20" target="n22">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e31" source="n20" target="n23">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e32" source="n20" target="n59">
+      <data key="key20">40Gbps</data>
+      <data key="key21">40</data>
+      <data key="key22">40000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e33" source="n24" target="n66">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e34" source="n24" target="n35">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e35" source="n24" target="n49">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e36" source="n24" target="n40">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e37" source="n24" target="n41">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e38" source="n24" target="n25">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e39" source="n26" target="n35">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e40" source="n28" target="n35">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e41" source="n29" target="n34">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e42" source="n30" target="n34">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e43" source="n31" target="n34">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e44" source="n32" target="n35">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e45" source="n33" target="n34">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e46" source="n34" target="n35">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e47" source="n34" target="n36">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e48" source="n34" target="n37">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e49" source="n34" target="n38">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e50" source="n34" target="n39">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e51" source="n34" target="n44">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e52" source="n34" target="n48">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e53" source="n34" target="n51">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e54" source="n34" target="n62">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e55" source="n34" target="n60">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e56" source="n35" target="n47">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e57" source="n35" target="n46">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e58" source="n35" target="n55">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e59" source="n35" target="n61">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e60" source="n35" target="n63">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e61" source="n42" target="n44">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e62" source="n43" target="n44">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e63" source="n44" target="n70">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e64" source="n44" target="n45">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e65" source="n49" target="n50">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e66" source="n49" target="n59">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e67" source="n52" target="n59">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e68" source="n53" target="n59">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e69" source="n54" target="n59">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e70" source="n56" target="n59">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e71" source="n66" target="n67">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e72" source="n66" target="n70">
+      <data key="key20">10-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e73" source="n67" target="n68">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e74" source="n69" target="n70">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e75" source="n70" target="n71">
+      <data key="key20">1-20Gbps</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

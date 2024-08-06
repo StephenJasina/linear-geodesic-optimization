@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key23" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key24" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key25" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="node" attr.name="type" attr.type="string" />
+  <key id="key45" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">03</data>
+   <data key="key8">19/03/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">Portugal</data>
+   <data key="key14">0</data>
+   <data key="key16">19/03/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key24">FCCN</data>
+   <data key="key25">2011_03</data>
+   <data key="key26">2Mb/s links could be anything between 2Mb/s to 1Gb/s</data>
+   <data key="key27">Primary</data>
+   <data key="key28">http://www.fccn.pt/pt/rede-academica/diagrama-da-rede/</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">1</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">0</data>
+   <data key="key33">REN</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Fccn</data>
+   <data key="key42">internet_top_pop (Fccn)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key45">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2937899999999999991</data>
+      <data key="key23">-7.43122000000000000001</data>
+      <data key="key35">20.783022739054331, 10.215962341901722</data>
+      <data key="key38">0</data>
+      <data key="key40">Portalegre</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.5666700000000000001</data>
+      <data key="key23">-7.90000000000000000009</data>
+      <data key="key35">21.497957891977897, 10.162405718688822</data>
+      <data key="key38">1</data>
+      <data key="key40">Evora</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">40.5333299999999999985</data>
+      <data key="key23">-7.26666999999999999992</data>
+      <data key="key35">19.873733473968265, 8.7037310655103663</data>
+      <data key="key38">2</data>
+      <data key="key40">Guarda</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">39.8166700000000000001</data>
+      <data key="key23">-7.5</data>
+      <data key="key35">20.240782505748719, 9.950251706173054</data>
+      <data key="key38">3</data>
+      <data key="key40">Castelo Branco</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">39.5999999999999999986</data>
+      <data key="key23">-8.41666999999999999958</data>
+      <data key="key35">20.391793611717439, 10.329971958277104</data>
+      <data key="key38">4</data>
+      <data key="key40">Tomar</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">39.7436199999999999997</data>
+      <data key="key23">-8.80705000000000000002</data>
+      <data key="key35">20.931842578551429, 9.4056060247379225</data>
+      <data key="key38">5</data>
+      <data key="key40">Leiria</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.7166700000000000015</data>
+      <data key="key23">-9.13332999999999999973</data>
+      <data key="key35">20.86398821420622, 9.8886690628102087</data>
+      <data key="key38">6</data>
+      <data key="key40">Lisboa</data>
+      <data key="key44">Node with subnodes</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2333299999999999992</data>
+      <data key="key23">-8.6833299999999999999</data>
+      <data key="key35">20.46384132578023, 9.5841699051180367</data>
+      <data key="key38">7</data>
+      <data key="key40">Samtarem</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.5244000000000000015</data>
+      <data key="key23">-8.88819999999999999993</data>
+      <data key="key35">20.848851674730181, 10.75401087192825</data>
+      <data key="key38">8</data>
+      <data key="key40">Setubal</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">37.7333299999999999992</data>
+      <data key="key23">-25.6666700000000000004</data>
+      <data key="key35">21.183800625470091, 10.3668273017787</data>
+      <data key="key38">9</data>
+      <data key="key40">Ponta Delgada</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.0166700000000000008</data>
+      <data key="key23">-7.86666999999999999984</data>
+      <data key="key35">21.129835626456206, 11.214076443719339</data>
+      <data key="key38">10</data>
+      <data key="key40">Beja</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">37.0166700000000000008</data>
+      <data key="key23">-7.9333299999999999999</data>
+      <data key="key35">20.567382220080489, 11.211590617884731</data>
+      <data key="key38">11</data>
+      <data key="key40">Faro</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">32.6333300000000000006</data>
+      <data key="key23">-16.8999999999999999997</data>
+      <data key="key35">21.352091989485647, 9.4521665165869262</data>
+      <data key="key38">12</data>
+      <data key="key40">Funchal</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6500000000000000014</data>
+      <data key="key23">-7.91667000000000000001</data>
+      <data key="key35">21.428695687163632, 9.8143972797462773</data>
+      <data key="key38">13</data>
+      <data key="key40">Viseu</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">40.2833299999999999985</data>
+      <data key="key23">-7.5</data>
+      <data key="key35">20.718328675595284, 7.933837621378423</data>
+      <data key="key38">14</data>
+      <data key="key40">Covilha</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8466799999999999986</data>
+      <data key="key23">-8.41904999999999999975</data>
+      <data key="key35">19.63078353465513, 8.3890558618575088</data>
+      <data key="key38">15</data>
+      <data key="key40">Viana de Castelo</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">41.5333299999999999985</data>
+      <data key="key23">-8.61667000000000000027</data>
+      <data key="key35">19.742617544514349, 8.0147431431599738</data>
+      <data key="key38">16</data>
+      <data key="key40">Barcelos</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">41.5499999999999999993</data>
+      <data key="key23">-8.4333299999999999999</data>
+      <data key="key35">20.382434848347021, 7.7609168091707303</data>
+      <data key="key38">17</data>
+      <data key="key40">Braga</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">41.2999999999999999993</data>
+      <data key="key23">-7.75</data>
+      <data key="key35">20.00585191127951, 7.7560150609633096</data>
+      <data key="key38">18</data>
+      <data key="key40">Villa Real</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8166700000000000001</data>
+      <data key="key23">-6.75</data>
+      <data key="key35">20.774042183711899, 8.3403510432693331</data>
+      <data key="key38">19</data>
+      <data key="key40">Bragancia</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1500000000000000014</data>
+      <data key="key23">-8.61667000000000000027</data>
+      <data key="key35">20.24638124548057, 8.3356427529810961</data>
+      <data key="key38">20</data>
+      <data key="key40">Porto</data>
+      <data key="key44">Node with subnodes</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6333300000000000006</data>
+      <data key="key23">-8.64999999999999999965</data>
+      <data key="key35">20.429364539467461, 8.7762116004006749</data>
+      <data key="key38">21</data>
+      <data key="key40">Aveiro</data>
+      <data key="key44">Node</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">40.2000000000000000007</data>
+      <data key="key23">-8.41666999999999999958</data>
+      <data key="key35">20.591289690720078, 9.2056463903684467</data>
+      <data key="key38">22</data>
+      <data key="key40">Coimbra</data>
+      <data key="key44">Node with subnodes</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n6">
+      <data key="key20">Lambda (dashed)</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n6">
+      <data key="key20">Lambda</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e2" source="n1" target="n6">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n20">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n3" target="n6">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n6">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n5" target="n6">
+      <data key="key20">Lambda (dashed)</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n5" target="n22">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n6" target="n7">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n6" target="n8">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n9">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n6" target="n12">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n6" target="n13">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n6" target="n22">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n6" target="n22">
+      <data key="key20">Lambda</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e15" source="n7" target="n22">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n8" target="n10">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n8" target="n11">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n14" target="n20">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n15" target="n20">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n16" target="n20">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n17" target="n20">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n18" target="n20">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n19" target="n20">
+      <data key="key20">Circuito Ethernet</data>
+      <data key="key21">Circuito </data>
+      <data key="key22">Ethernet</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n20" target="n21">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n20" target="n22">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n21" target="n22">
+      <data key="key20">Lambda</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

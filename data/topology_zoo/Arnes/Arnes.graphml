@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="node" attr.name="type" attr.type="string" />
+  <key id="key45" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">10</data>
+   <data key="key8">19/10/10</data>
+   <data key="key9">Dynamic</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">Slovenia</data>
+   <data key="key14">0</data>
+   <data key="key16">19/10/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">ARNES</data>
+   <data key="key26">2010_10</data>
+   <data key="key27">Primary</data>
+   <data key="key28">http://www.arnes.si/infrastruktura.html</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">0</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">0</data>
+   <data key="key33">REN</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Arnes</data>
+   <data key="key42">internet_top_pop (Arnes)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key45">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1549999999999999989</data>
+      <data key="key24">15.0533299999999999998</data>
+      <data key="key35">9.6736558844801639, 10.450177705280861</data>
+      <data key="key38">0</data>
+      <data key="key40">Trbovlje</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.9591499999999999991</data>
+      <data key="key24">15.4916700000000000003</data>
+      <data key="key35">8.9420645222872093, 10.552708672414839</data>
+      <data key="key38">1</data>
+      <data key="key40">Krsko</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2309200000000000003</data>
+      <data key="key24">15.2604399999999999996</data>
+      <data key="key35">10.072458455980287, 10.740440192620259</data>
+      <data key="key38">2</data>
+      <data key="key40">Celje</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1546300000000000001</data>
+      <data key="key24">15.2355499999999999998</data>
+      <data key="key35">9.8287525253854771, 10.589332155132515</data>
+      <data key="key38">3</data>
+      <data key="key40">Lasko</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.238869999999999999</data>
+      <data key="key24">14.3556099999999999999</data>
+      <data key="key35">10.055482872392384, 10.155146520518285</data>
+      <data key="key38">4</data>
+      <data key="key40">Kranj</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.3691700000000000016</data>
+      <data key="key24">14.11361</data>
+      <data key="key35">10.337567496577472, 10.01922252838702</data>
+      <data key="key38">5</data>
+      <data key="key40">Bled</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.8039700000000000006</data>
+      <data key="key24">15.1688599999999999997</data>
+      <data key="key35">9.1266112086156959, 10.36431131760426</data>
+      <data key="key38">6</data>
+      <data key="key40">Novo Mesto</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.0510800000000000004</data>
+      <data key="key24">14.50513</data>
+      <data key="key35">9.8133139531336244, 10.283723494669484</data>
+      <data key="key38">7</data>
+      <data key="key40">Ljubljana</data>
+      <data key="key44">Large Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1830400000000000013</data>
+      <data key="key24">13.7332099999999999998</data>
+      <data key="key35">10.327333609417192, 9.8118050861234174</data>
+      <data key="key38">8</data>
+      <data key="key40">Tolmin</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.9560400000000000009</data>
+      <data key="key24">13.6483700000000000001</data>
+      <data key="key35">10.061260766726507, 9.9477873351180097</data>
+      <data key="key38">9</data>
+      <data key="key40">Nova Gorica</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5142900000000000006</data>
+      <data key="key24">13.5920600000000000003</data>
+      <data key="key35">9.7241732136771368, 9.3774351373927303</data>
+      <data key="key38">10</data>
+      <data key="key40">Portoroz</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.6733300000000000014</data>
+      <data key="key24">15.9922200000000000004</data>
+      <data key="key35">9.566383037604858, 11.158747788394439</data>
+      <data key="key38">11</data>
+      <data key="key40">Gornja Radgona</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.6420100000000000008</data>
+      <data key="key24">16.0378099999999999999</data>
+      <data key="key35">9.4281945456223504, 11.436878666435067</data>
+      <data key="key38">12</data>
+      <data key="key40">Radenci</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2374999999999999993</data>
+      <data key="key24">15.6397199999999999996</data>
+      <data key="key35">9.0463073775187244, 10.786138995985663</data>
+      <data key="key38">13</data>
+      <data key="key40">Rogasja Slatina</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.721110000000000001</data>
+      <data key="key24">14.0411099999999999998</data>
+      <data key="key35">9.4364282580460035, 9.7172010724014939</data>
+      <data key="key38">14</data>
+      <data key="key40">Senozece</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.4305599999999999983</data>
+      <data key="key24">14.0669400000000000004</data>
+      <data key="key35">10.334540069834683, 10.265626000134802</data>
+      <data key="key38">15</data>
+      <data key="key40">Jesenice</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7092399999999999989</data>
+      <data key="key24">13.8733300000000000004</data>
+      <data key="key35">9.2235562710626642, 9.5461712433901926</data>
+      <data key="key38">16</data>
+      <data key="key40">Sezana</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.6847199999999999988</data>
+      <data key="key24">13.9702800000000000001</data>
+      <data key="key35">9.70662692952531, 9.6535891036227337</data>
+      <data key="key38">17</data>
+      <data key="key40">Divaca</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7769399999999999987</data>
+      <data key="key24">14.2166699999999999997</data>
+      <data key="key35">9.5689984246955326, 10.00546452199716</data>
+      <data key="key38">18</data>
+      <data key="key40">Postojna</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.886009999999999999</data>
+      <data key="key24">13.9094600000000000002</data>
+      <data key="key35">9.9971400097908028, 9.6945402098637139</data>
+      <data key="key38">19</data>
+      <data key="key40">Ajdovscina</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.6433299999999999991</data>
+      <data key="key24">14.8633300000000000002</data>
+      <data key="key35">9.4320175151985648, 10.301417928075171</data>
+      <data key="key38">20</data>
+      <data key="key40">Kovevje</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2258700000000000013</data>
+      <data key="key24">14.6120700000000000003</data>
+      <data key="key35">10.047901412525235, 10.483611005820894</data>
+      <data key="key38">21</data>
+      <data key="key40">Kamnik</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5369400000000000006</data>
+      <data key="key24">13.6619399999999999997</data>
+      <data key="key35">9.868580698923564, 9.5408566846970526</data>
+      <data key="key38">22</data>
+      <data key="key40">Izola</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5469399999999999991</data>
+      <data key="key24">13.7294399999999999998</data>
+      <data key="key35">9.8419322910907869, 9.9095845821819122</data>
+      <data key="key38">23</data>
+      <data key="key40">Koper</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5102800000000000009</data>
+      <data key="key24">15.0805599999999999997</data>
+      <data key="key35">10.250033832478881, 11.212418659161376</data>
+      <data key="key38">24</data>
+      <data key="key40">Slovenj Gradec</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.3591699999999999997</data>
+      <data key="key24">15.1102800000000000004</data>
+      <data key="key35">10.203830771298627, 10.997894183225204</data>
+      <data key="key38">25</data>
+      <data key="key40">Velenje</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.6624999999999999986</data>
+      <data key="key24">16.1663899999999999997</data>
+      <data key="key35">9.2081089575727262, 11.588658293222672</data>
+      <data key="key38">26</data>
+      <data key="key40">Murska Sobota</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5208300000000000013</data>
+      <data key="key24">16.1975000000000000002</data>
+      <data key="key35">9.021774439308631, 11.434113079187759</data>
+      <data key="key38">27</data>
+      <data key="key40">Ljutomer</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.4113899999999999987</data>
+      <data key="key24">16.1544399999999999992</data>
+      <data key="key35">9.1022958434700278, 11.176045694023189</data>
+      <data key="key38">28</data>
+      <data key="key40">Ormoz</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.4200499999999999998</data>
+      <data key="key24">15.8701800000000000004</data>
+      <data key="key35">9.3058184438067606, 10.927227104084411</data>
+      <data key="key38">29</data>
+      <data key="key40">Ptuj</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5547200000000000013</data>
+      <data key="key24">15.64667</data>
+      <data key="key35">9.6986421883413101, 10.81582145048575</data>
+      <data key="key38">30</data>
+      <data key="key40">Maribor</data>
+      <data key="key44">Large Node</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.3927800000000000007</data>
+      <data key="key24">15.5744400000000000001</data>
+      <data key="key35">9.9017414635600893, 10.881526636640642</data>
+      <data key="key38">31</data>
+      <data key="key40">Slovenska Bistrica</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5880599999999999994</data>
+      <data key="key24">15.0191700000000000004</data>
+      <data key="key35">9.9933700016137426, 11.127555118972152</data>
+      <data key="key38">32</data>
+      <data key="key40">Dravograd</data>
+      <data key="key44">Small Node</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.5430600000000000011</data>
+      <data key="key24">14.9691700000000000002</data>
+      <data key="key35">10.030679745382621, 11.410975976492608</data>
+      <data key="key38">33</data>
+      <data key="key40">Ravne na Koroskem</data>
+      <data key="key44">Small Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n3">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n7">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n13">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n6">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n25">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n3">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n21">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n2" target="n31">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n3" target="n30">
+      <data key="key20">3 GB/s</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n3" target="n7">
+      <data key="key20">3 GB/s</data>
+      <data key="key21">3</data>
+      <data key="key22">3000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n4" target="n15">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n4" target="n23">
+      <data key="key20">10 GB/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n4" target="n5">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n4" target="n7">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n4" target="n7">
+      <data key="key20">10 GB/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">1</data>
+    </edge>
+    <edge id="e15" source="n5" target="n8">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n6" target="n20">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n7" target="n9">
+      <data key="key20">10 GB/s - redundantno</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n7" target="n18">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n7" target="n20">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n7" target="n21">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n7" target="n23">
+      <data key="key20">10 GB/s - redundantno</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n7" target="n30">
+      <data key="key20">10 GB/s - redundantno</data>
+      <data key="key22">0</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e23" source="n8" target="n9">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e24" source="n9" target="n19">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e25" source="n10" target="n17">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e26" source="n10" target="n22">
+      <data key="key20">10 GB/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e27" source="n11" target="n12">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e28" source="n11" target="n30">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e29" source="n12" target="n26">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e30" source="n13" target="n29">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e31" source="n14" target="n16">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e32" source="n14" target="n17">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e33" source="n14" target="n18">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e34" source="n17" target="n19">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e35" source="n17" target="n23">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e36" source="n22" target="n23">
+      <data key="key20">10 GB/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e37" source="n24" target="n32">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e38" source="n24" target="n25">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e39" source="n25" target="n32">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e40" source="n26" target="n27">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e41" source="n27" target="n28">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e42" source="n28" target="n29">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e43" source="n29" target="n30">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e44" source="n30" target="n32">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e45" source="n30" target="n31">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e46" source="n32" target="n33">
+      <data key="key20">1 GB/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

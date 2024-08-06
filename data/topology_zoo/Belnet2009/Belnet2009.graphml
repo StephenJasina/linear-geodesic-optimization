@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="int" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="id" attr.type="int" />
+  <key id="key36" for="edge" attr.name="key" attr.type="int" />
+  <key id="key37" for="node" attr.name="label" attr.type="string" />
+  <key id="key38" for="graph" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="name" attr.type="string" />
+  <key id="key40" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key41" for="node" attr.name="type" attr.type="string" />
+  <key id="key42" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">0</data>
+   <data key="key8">12/03/11</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2009</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Belgium</data>
+   <data key="key14">0</data>
+   <data key="key16">12/03/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">BELNET</data>
+   <data key="key23">2009</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.belnet.be/sites/www.belnet.be/files/publications/BELNET_annual_report_2009_EN.pdf</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">0</data>
+   <data key="key30">REN</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key38">Belnet2009</data>
+   <data key="key39">internet_top_pop (Belnet2009)</data>
+   <data key="key40">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key42">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6682899999999999986</data>
+      <data key="key21">4.61443000000000000003</data>
+      <data key="key32">-1.5182029395841778, 39.682553658569105</data>
+      <data key="key35">0</data>
+      <data key="key37">Louvain-la-Neuve</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4166699999999999987</data>
+      <data key="key21">4.4333299999999999999</data>
+      <data key="key32">-1.1955068980011418, 39.891556164201418</data>
+      <data key="key35">1</data>
+      <data key="key37">Charleroi</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">49.6833299999999999999</data>
+      <data key="key21">5.8166700000000000001</data>
+      <data key="key32">-1.9372477259125298, 40.11996621588068</data>
+      <data key="key35">2</data>
+      <data key="key37">Arlon</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4699200000000000009</data>
+      <data key="key21">4.82577000000000000011</data>
+      <data key="key32">-1.8614062129144222, 39.775907181215651</data>
+      <data key="key35">3</data>
+      <data key="key37">Namur</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2166700000000000015</data>
+      <data key="key21">4.41667000000000000001</data>
+      <data key="key32">-0.97758819240935935, 41.312310567551272</data>
+      <data key="key35">4</data>
+      <data key="key37">Antwerpen 2</data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2166700000000000015</data>
+      <data key="key21">4.41667000000000000001</data>
+      <data key="key32">-0.90457191946565363, 41.634211486438396</data>
+      <data key="key35">5</data>
+      <data key="key37">Antwerpen1</data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.4541299999999999989</data>
+      <data key="key21">3.95228999999999999998</data>
+      <data key="key32">-0.96050192234052967, 40.25265424669778</data>
+      <data key="key35">6</data>
+      <data key="key37">Mons</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8280299999999999987</data>
+      <data key="key21">3.26486999999999999997</data>
+      <data key="key32">-0.37764230773592428, 41.096235016300739</data>
+      <data key="key35">7</data>
+      <data key="key37">Korthijk</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0499999999999999993</data>
+      <data key="key21">3.71666999999999999997</data>
+      <data key="key32">-0.6249691815651427, 41.895801967912867</data>
+      <data key="key35">8</data>
+      <data key="key37">Gent2</data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0499999999999999993</data>
+      <data key="key21">3.71666999999999999997</data>
+      <data key="key32">-0.35231831191759222, 41.834863239768637</data>
+      <data key="key35">9</data>
+      <data key="key37">Gent1</data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.53474</data>
+      <data key="key21">5.27734000000000000015</data>
+      <data key="key32">-1.4256628355504029, 40.586714773934261</data>
+      <data key="key35">10</data>
+      <data key="key37">Liege 1 </data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.6411899999999999995</data>
+      <data key="key21">5.57178000000000000005</data>
+      <data key="key32">-1.715699000547767, 40.427502530469177</data>
+      <data key="key35">11</data>
+      <data key="key37">Liege 2</data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2089200000000000015</data>
+      <data key="key21">3.22424000000000000009</data>
+      <data key="key32">-0.23079270998703791, 41.48157388442489</data>
+      <data key="key35">12</data>
+      <data key="key37">Brugge</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">51.1666699999999999987</data>
+      <data key="key21">5</data>
+      <data key="key32">-0.26542320970923117, 40.584678647982386</data>
+      <data key="key35">13</data>
+      <data key="key37">Geel</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.9333299999999999999</data>
+      <data key="key21">5.33332999999999999999</data>
+      <data key="key32">-0.058355386521191627, 40.304923243884275</data>
+      <data key="key35">14</data>
+      <data key="key37">Hasselt</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8795900000000000003</data>
+      <data key="key21">4.7009300000000000001</data>
+      <data key="key32">-0.36051624188347425, 40.178788515302855</data>
+      <data key="key35">15</data>
+      <data key="key37">Leuven2</data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8795900000000000003</data>
+      <data key="key21">4.7009300000000000001</data>
+      <data key="key32">-0.60995668989791463, 40.36538025885779</data>
+      <data key="key35">16</data>
+      <data key="key37">Leuven1</data>
+      <data key="key41">One of two small nodes in same city</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.9182300000000000011</data>
+      <data key="key21">4.40731000000000000018</data>
+      <data key="key32">-0.69617906163750476, 40.713286304319993</data>
+      <data key="key35">17</data>
+      <data key="key37">Vilvoorde</data>
+      <data key="key41">Large Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8666699999999999994</data>
+      <data key="key21">4.40000000000000000009</data>
+      <data key="key32">-0.94792980492700452, 40.747203294945308</data>
+      <data key="key35">18</data>
+      <data key="key37">Evere</data>
+      <data key="key41">Large Node</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8504500000000000011</data>
+      <data key="key21">4.34878000000000000018</data>
+      <data key="key32">-1.1745922012028507, 40.979048945859653</data>
+      <data key="key35">19</data>
+      <data key="key37">Brussels Science</data>
+      <data key="key41">Small Node</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8504500000000000011</data>
+      <data key="key21">4.34878000000000000018</data>
+      <data key="key32">-0.85069810655244549, 41.006305136471369</data>
+      <data key="key35">20</data>
+      <data key="key37">Brussels Campus</data>
+      <data key="key41">Small Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n6">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n11">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n3">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n18">
+      <data key="key20">Blue</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n5">
+      <data key="key20">Blue</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n5">
+      <data key="key20">Blue</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e8" source="n5" target="n8">
+      <data key="key20">Blue</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e9" source="n6" target="n17">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e10" source="n7" target="n17">
+      <data key="key20">Blue</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e11" source="n7" target="n12">
+      <data key="key20">Blue</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e12" source="n8" target="n9">
+      <data key="key20">Blue</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e13" source="n8" target="n9">
+      <data key="key20">Blue</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e14" source="n9" target="n12">
+      <data key="key20">Blue</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e15" source="n10" target="n18">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e16" source="n10" target="n11">
+      <data key="key20">Green</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e17" source="n10" target="n11">
+      <data key="key20">Green</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e18" source="n13" target="n17">
+      <data key="key20">Orange</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e19" source="n13" target="n14">
+      <data key="key20">Orange</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e20" source="n14" target="n15">
+      <data key="key20">Orange</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e21" source="n15" target="n16">
+      <data key="key20">Orange</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e22" source="n15" target="n16">
+      <data key="key20">Orange</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e23" source="n16" target="n18">
+      <data key="key20">Orange</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e24" source="n17" target="n18">
+      <data key="key20">Red</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e25" source="n17" target="n18">
+      <data key="key20">Green</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e26" source="n17" target="n18">
+      <data key="key20">Orange</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e27" source="n17" target="n18">
+      <data key="key20">Blue</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e28" source="n17" target="n20">
+      <data key="key20">Red</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e29" source="n18" target="n19">
+      <data key="key20">Red</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e30" source="n19" target="n20">
+      <data key="key20">Red</data>
+      <data key="key36">0</data>
+    </edge>
+
+  </graph>
+</graphml>

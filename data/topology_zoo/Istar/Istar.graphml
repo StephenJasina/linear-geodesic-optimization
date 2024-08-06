@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key23" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key24" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key25" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key40" for="node" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="name" attr.type="string" />
+  <key id="key43" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key44" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">01</data>
+   <data key="key8">14/01/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">Canada</data>
+   <data key="key14">0</data>
+   <data key="key16">14/01/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key24">iSTAR</data>
+   <data key="key25">2011_01</data>
+   <data key="key26">http://www.itu.int/TELECOM/wt95/pressdocs/papers/cerf.html</data>
+   <data key="key27">Secondary</data>
+   <data key="key28">http://www.nthelp.com/images/istar.jpg</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">0</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">1</data>
+   <data key="key33">COM</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key41">Istar</data>
+   <data key="key42">internet_top_pop (Istar)</data>
+   <data key="key43">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key44">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5088400000000000006</data>
+      <data key="key23">-73.5878099999999999992</data>
+      <data key="key35">3.4437362710242443, 4.7583151509611863</data>
+      <data key="key38">0</data>
+      <data key="key40">Montreal</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">46.8122799999999999986</data>
+      <data key="key23">-71.2145400000000000015</data>
+      <data key="key35">3.0403604568347298, 4.5460703444002997</data>
+      <data key="key38">1</data>
+      <data key="key40">Quebec</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">42.9833900000000000002</data>
+      <data key="key23">-81.2330399999999999971</data>
+      <data key="key35">2.8163138294858729, 5.7838768745591773</data>
+      <data key="key38">2</data>
+      <data key="key40">London</data>
+    </node>
+    <node id="n3">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key23">0</data>
+      <data key="key35">2.8705603986954666, 5.1017847053142775</data>
+      <data key="key38">3</data>
+      <data key="key40">internetMCI T3</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1159400000000000014</data>
+      <data key="key23">-64.8018600000000000033</data>
+      <data key="key35">3.288540775360826, 4.0368992583623839</data>
+      <data key="key38">4</data>
+      <data key="key40">Moncton</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">44.6460000000000000013</data>
+      <data key="key23">-63.5733299999999999993</data>
+      <data key="key35">2.9505735429593152, 3.5215092820855012</data>
+      <data key="key38">5</data>
+      <data key="key40">Halifax</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4000800000000000016</data>
+      <data key="key23">-71.8990799999999999972</data>
+      <data key="key35">3.7693333647877183, 4.451886003965857</data>
+      <data key="key38">6</data>
+      <data key="key40">Sherbrooke</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">45.272710000000000001</data>
+      <data key="key23">-66.0676599999999999979</data>
+      <data key="key35">3.5837044680679013, 3.677209251546036</data>
+      <data key="key38">7</data>
+      <data key="key40">Saint John</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">46.1351000000000000013</data>
+      <data key="key23">-60.1830999999999999989</data>
+      <data key="key35">2.5162062538449628, 3.3607116797994374</data>
+      <data key="key38">8</data>
+      <data key="key40">Sydney</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">43.8334499999999999999</data>
+      <data key="key23">-66.1155699999999999991</data>
+      <data key="key35">2.9943506936114908, 3.0543080310046702</data>
+      <data key="key38">9</data>
+      <data key="key40">Yarmouth</data>
+    </node>
+    <node id="n10">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key23">0</data>
+      <data key="key35">3.5187952855301776, 5.7278067954906229</data>
+      <data key="key38">10</data>
+      <data key="key40">ANS CO+RE T1</data>
+    </node>
+    <node id="n11">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key23">0</data>
+      <data key="key35">5.0421942682097018, 5.6085807331571402</data>
+      <data key="key38">11</data>
+      <data key="key40">internetMCI T3</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">48.4329399999999999984</data>
+      <data key="key23">-123.369300000000000003</data>
+      <data key="key35">4.8162681605652127, 5.2453787572511441</data>
+      <data key="key38">12</data>
+      <data key="key40">Victoria</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7001099999999999997</data>
+      <data key="key23">-79.4163000000000000034</data>
+      <data key="key35">3.2179434780165868, 5.3986358653331612</data>
+      <data key="key38">13</data>
+      <data key="key40">Toronto</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">43.2334099999999999994</data>
+      <data key="key23">-79.949639999999999998</data>
+      <data key="key35">3.1710494499320077, 5.9506899489275407</data>
+      <data key="key38">14</data>
+      <data key="key40">Hamilton</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">49.24966</data>
+      <data key="key23">-123.119340000000000002</data>
+      <data key="key35">4.5694254114277939, 5.6526412729688325</data>
+      <data key="key38">15</data>
+      <data key="key40">Vancouver</data>
+    </node>
+    <node id="n16">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key23">0</data>
+      <data key="key35">4.4115727884145288, 6.064849175532796</data>
+      <data key="key38">16</data>
+      <data key="key40">ANS CO+RE T1</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">51.0501099999999999983</data>
+      <data key="key23">-114.085289999999999998</data>
+      <data key="key35">5.0157401114896611, 6.1456796009298937</data>
+      <data key="key38">17</data>
+      <data key="key40">Calgary</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">53.5501400000000000005</data>
+      <data key="key23">-113.468710000000000002</data>
+      <data key="key35">5.4889590963895447, 6.2321208344510985</data>
+      <data key="key38">18</data>
+      <data key="key40">Edmonton</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">49.6999900000000000011</data>
+      <data key="key23">-112.818560000000000003</data>
+      <data key="key35">5.0916689348115289, 6.6097689568162199</data>
+      <data key="key38">19</data>
+      <data key="key40">Lethbridge</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">49.8843999999999999986</data>
+      <data key="key23">-97.1470399999999999971</data>
+      <data key="key35">4.1996148378723861, 4.9805130905130506</data>
+      <data key="key38">20</data>
+      <data key="key40">Winnipeg</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4111700000000000008</data>
+      <data key="key23">-75.6981199999999999975</data>
+      <data key="key35">3.8694451789896198, 5.2587814068410133</data>
+      <data key="key38">21</data>
+      <data key="key40">Ottawa</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Canada</data>
+      <data key="key15">1</data>
+      <data key="key18">43.4501000000000000001</data>
+      <data key="key23">-80.4829900000000000027</data>
+      <data key="key35">2.6532021629864757, 5.4371720992192483</data>
+      <data key="key38">22</data>
+      <data key="key40">Kitchener</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n4">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n13">
+      <data key="key20">internetMCI T3</data>
+      <data key="key21">internetMCI </data>
+      <data key="key22">T3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e3" source="n0" target="n6">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e4" source="n0" target="n21">
+      <data key="key20">internetMCI T3</data>
+      <data key="key21">internetMCI </data>
+      <data key="key22">T3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n13">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e6" source="n3" target="n13">
+      <data key="key20">internetMCI T3</data>
+      <data key="key21">internetMCI </data>
+      <data key="key22">T3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n5">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n7">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e9" source="n5" target="n8">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e10" source="n5" target="n9">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e11" source="n10" target="n13">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e12" source="n11" target="n15">
+      <data key="key20">internetMCI T3</data>
+      <data key="key21">internetMCI </data>
+      <data key="key22">T3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e13" source="n12" target="n15">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e14" source="n13" target="n14">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e15" source="n13" target="n21">
+      <data key="key20">internetMCI T3</data>
+      <data key="key21">internetMCI </data>
+      <data key="key22">T3</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e16" source="n13" target="n22">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e17" source="n15" target="n16">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e18" source="n15" target="n17">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e19" source="n15" target="n21">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e20" source="n17" target="n18">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e21" source="n17" target="n19">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+    <edge id="e22" source="n20" target="n21">
+      <data key="key20">ANS CO+RE T1</data>
+      <data key="key21">ANS CO+RE </data>
+      <data key="key22">T1</data>
+      <data key="key39">0</data>
+    </edge>
+
+  </graph>
+</graphml>

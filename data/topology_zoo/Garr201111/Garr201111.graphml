@@ -1,0 +1,1225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key23" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key24" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key25" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key26" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key27" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key30" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key32" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key34" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key36" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key37" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key38" for="edge" attr.name="description" attr.type="string" />
+  <key id="key39" for="graph" attr.name="description" attr.type="string" />
+  <key id="key40" for="node" attr.name="id" attr.type="int" />
+  <key id="key41" for="edge" attr.name="id" attr.type="string" />
+  <key id="key42" for="edge" attr.name="key" attr.type="int" />
+  <key id="key43" for="node" attr.name="label" attr.type="string" />
+  <key id="key44" for="edge" attr.name="label" attr.type="string" />
+  <key id="key45" for="graph" attr.name="label" attr.type="string" />
+  <key id="key46" for="graph" attr.name="name" attr.type="string" />
+  <key id="key47" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key48" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">11</data>
+   <data key="key8">28/03/12</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2011</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">Italy</data>
+   <data key="key14">0</data>
+   <data key="key16">28/03/12</data>
+   <data key="key17">2012_03_28</data>
+   <data key="key19">IP</data>
+   <data key="key26">GARR</data>
+   <data key="key27">2011_11</data>
+   <data key="key28">Primary</data>
+   <data key="key29">http://www.garr.it/images/stories/mappe/mappa201111.jpg</data>
+   <data key="key30">e278b1b</data>
+   <data key="key31">0</data>
+   <data key="key32">0.3.34dev-20120328</data>
+   <data key="key33">1</data>
+   <data key="key34">REN</data>
+   <data key="key35">1.0</data>
+   <data key="key37">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key39">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key45">Garr201111</data>
+   <data key="key46">internet_top_pop (Garr201111)</data>
+   <data key="key47">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key48">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.574539173797785, 2.5297331765066176</data>
+      <data key="key40">0</data>
+      <data key="key43">Svizzera</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2073799999999999984</data>
+      <data key="key25">9.13462000000000000008</data>
+      <data key="key36">12.119040130535293, 2.05018064467767</data>
+      <data key="key40">1</data>
+      <data key="key43">CA</data>
+    </node>
+    <node id="n2">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.679233082396772, 2.5466137736446135</data>
+      <data key="key40">2</data>
+      <data key="key43">Global Crossing</data>
+    </node>
+    <node id="n3">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.676996805530617, 2.1828727125173111</data>
+      <data key="key40">3</data>
+      <data key="key43">GEANT</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">39.2073799999999999984</data>
+      <data key="key25">9.13462000000000000008</data>
+      <data key="key36">12.132623293174593, 2.183319589547402</data>
+      <data key="key40">4</data>
+      <data key="key43">CA-1</data>
+    </node>
+    <node id="n5">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.154195823743391, 2.4018980950934075</data>
+      <data key="key40">5</data>
+      <data key="key43">NAMEX</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">42.3505500000000000005</data>
+      <data key="key25">13.3995400000000000002</data>
+      <data key="key36">12.183179964761626, 2.2556980422586461</data>
+      <data key="key40">6</data>
+      <data key="key43">AQ-1</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7272199999999999984</data>
+      <data key="key25">8.56028000000000000025</data>
+      <data key="key36">12.057714825849121, 2.1186076664723053</data>
+      <data key="key40">7</data>
+      <data key="key43">SS</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1158199999999999993</data>
+      <data key="key25">13.3597599999999999999</data>
+      <data key="key36">11.682245320001488, 2.3068371019297107</data>
+      <data key="key40">8</data>
+      <data key="key43">PA-2</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.184459999999999999</data>
+      <data key="key25">9.16144999999999999976</data>
+      <data key="key36">12.681732492501249, 2.0423257915130586</data>
+      <data key="key40">9</data>
+      <data key="key43">Pv-1</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8947400000000000006</data>
+      <data key="key25">12.4839000000000000003</data>
+      <data key="key36">12.103100486355363, 2.3154129362661537</data>
+      <data key="key40">10</data>
+      <data key="key43">RM-1</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.0967399999999999996</data>
+      <data key="key25">12.3828599999999999998</data>
+      <data key="key36">12.268158671523445, 2.2087067269961316</data>
+      <data key="key40">11</data>
+      <data key="key43">PG</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8907899999999999985</data>
+      <data key="key25">16.5986999999999999995</data>
+      <data key="key36">11.682735695992697, 2.5173381099711922</data>
+      <data key="key40">12</data>
+      <data key="key43">CZ</data>
+    </node>
+    <node id="n13">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.358060553403609, 2.5686041082713063</data>
+      <data key="key40">13</data>
+      <data key="key43">TIX</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4938099999999999989</data>
+      <data key="key25">11.3387499999999999999</data>
+      <data key="key36">12.454239197914518, 2.5175889978460879</data>
+      <data key="key40">14</data>
+      <data key="key43">BO</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key25">9.18950999999999999963</data>
+      <data key="key36">12.682425348630321, 2.3086223406815667</data>
+      <data key="key40">15</data>
+      <data key="key43">MI-3</data>
+    </node>
+    <node id="n16">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.771304073786446, 2.5850161003568886</data>
+      <data key="key40">16</data>
+      <data key="key43">VSIX</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.648609999999999999</data>
+      <data key="key25">13.7799999999999999998</data>
+      <data key="key36">12.731364162115677, 2.3941631879499035</data>
+      <data key="key40">17</data>
+      <data key="key43">TS-1</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.8333300000000000013</data>
+      <data key="key25">14.25</data>
+      <data key="key36">12.11104900909279, 2.4997012297523602</data>
+      <data key="key40">18</data>
+      <data key="key43">NA</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1932700000000000008</data>
+      <data key="key25">15.5496899999999999998</data>
+      <data key="key36">11.87773911108188, 2.5007161099524993</data>
+      <data key="key40">19</data>
+      <data key="key43">ME</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">39.3099900000000000017</data>
+      <data key="key25">16.2501899999999999992</data>
+      <data key="key36">11.788874723843982, 2.4689424200941814</data>
+      <data key="key40">20</data>
+      <data key="key43">CS</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5021299999999999999</data>
+      <data key="key25">15.0871900000000000001</data>
+      <data key="key36">11.937134785653356, 2.408867765459326</data>
+      <data key="key40">21</data>
+      <data key="key43">CT</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">38.1158199999999999993</data>
+      <data key="key25">13.3597599999999999999</data>
+      <data key="key36">11.787639729235124, 2.3511907493734312</data>
+      <data key="key40">22</data>
+      <data key="key43">PA</data>
+    </node>
+    <node id="n23">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">11.87957191493466, 2.3174666201132341</data>
+      <data key="key40">23</data>
+      <data key="key43">EUMED CONNECT</data>
+    </node>
+    <node id="n24">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.548249331692741, 2.1592192531971843</data>
+      <data key="key40">24</data>
+      <data key="key43">MIX</data>
+    </node>
+    <node id="n25">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.477580073332192, 2.1156278041215284</data>
+      <data key="key40">25</data>
+      <data key="key43">Level 3</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4938099999999999989</data>
+      <data key="key25">11.3387499999999999999</data>
+      <data key="key36">12.427889467427773, 2.6498455664174689</data>
+      <data key="key40">26</data>
+      <data key="key43">BO-3</data>
+    </node>
+    <node id="n27">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.232800571088442, 2.4295378955205544</data>
+      <data key="key40">27</data>
+      <data key="key43">Cogent</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">42.0402299999999999984</data>
+      <data key="key25">13.4387999999999999999</data>
+      <data key="key36">12.322583628893996, 2.3773081127250246</data>
+      <data key="key40">28</data>
+      <data key="key43">FUC</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7666700000000000008</data>
+      <data key="key25">11.25</data>
+      <data key="key36">12.371338403055592, 2.4622540823954835</data>
+      <data key="key40">29</data>
+      <data key="key43">FI</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7666700000000000008</data>
+      <data key="key25">11.25</data>
+      <data key="key36">12.286241625969646, 2.5268733838824691</data>
+      <data key="key40">30</data>
+      <data key="key43">Fi</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.41519</data>
+      <data key="key25">11.8818100000000000001</data>
+      <data key="key36">12.778384761405054, 2.4877404441683346</data>
+      <data key="key40">31</data>
+      <data key="key43">PD-2</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4386099999999999999</data>
+      <data key="key25">12.3266700000000000003</data>
+      <data key="key36">12.877127662089018, 2.5014804196767804</data>
+      <data key="key40">32</data>
+      <data key="key43">VE</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.41519</data>
+      <data key="key25">11.8818100000000000001</data>
+      <data key="key36">12.668062650325453, 2.4747889250957202</data>
+      <data key="key40">33</data>
+      <data key="key43">PD</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key25">9.18950999999999999963</data>
+      <data key="key36">12.572439587312475, 2.4473997531316467</data>
+      <data key="key40">34</data>
+      <data key="key43">MI-1</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">46.0678699999999999998</data>
+      <data key="key25">11.1210800000000000001</data>
+      <data key="key36">12.570757406673758, 2.3680675906839639</data>
+      <data key="key40">35</data>
+      <data key="key43">TN</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key25">9.18950999999999999963</data>
+      <data key="key36">12.532503215134771, 2.2442768947568275</data>
+      <data key="key40">36</data>
+      <data key="key43">MI-2</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key25">9.18950999999999999963</data>
+      <data key="key36">12.621600340719786, 2.2476996014994017</data>
+      <data key="key40">37</data>
+      <data key="key43">MI-4</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4063200000000000006</data>
+      <data key="key25">8.93385999999999999999</data>
+      <data key="key36">12.446789990447927, 2.263855265338127</data>
+      <data key="key40">38</data>
+      <data key="key43">GE</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.0704900000000000006</data>
+      <data key="key25">7.68681999999999999995</data>
+      <data key="key36">12.406885560831789, 2.1735169215637185</data>
+      <data key="key40">39</data>
+      <data key="key43">TO</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6779699999999999997</data>
+      <data key="key25">14.7659899999999999999</data>
+      <data key="key36">12.022967339525611, 2.5160568374885095</data>
+      <data key="key40">40</data>
+      <data key="key43">SA</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6443200000000000004</data>
+      <data key="key25">15.8085699999999999997</data>
+      <data key="key36">12.168293490666661, 2.767781511810123</data>
+      <data key="key40">41</data>
+      <data key="key43">PZ</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.56003</data>
+      <data key="key25">14.6675300000000000001</data>
+      <data key="key36">12.068343015994893, 2.5849555537370823</data>
+      <data key="key40">42</data>
+      <data key="key43">CB</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8163200000000000005</data>
+      <data key="key25">12.6686800000000000001</data>
+      <data key="key36">12.17297188171319, 2.3257142882241437</data>
+      <data key="key40">43</data>
+      <data key="key43">FRA</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">42.3505500000000000005</data>
+      <data key="key25">13.3995400000000000002</data>
+      <data key="key36">12.057872102095564, 2.2414375930951564</data>
+      <data key="key40">44</data>
+      <data key="key43">AQ</data>
+    </node>
+    <node id="n45">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.5981600000000000007</data>
+      <data key="key25">13.5100800000000000004</data>
+      <data key="key36">12.520947571314908, 2.6914331674910845</data>
+      <data key="key40">45</data>
+      <data key="key43">AN</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.6685199999999999997</data>
+      <data key="key25">16.6015800000000000002</data>
+      <data key="key36">12.24576547847999, 2.7913052136964458</data>
+      <data key="key40">46</data>
+      <data key="key43">MT</data>
+    </node>
+    <node id="n47">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">40.3570300000000000001</data>
+      <data key="key25">18.1720199999999999993</data>
+      <data key="key36">12.312266248866994, 2.7501839732044568</data>
+      <data key="key40">47</data>
+      <data key="key43">LE</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.1177300000000000013</data>
+      <data key="key25">16.8511800000000000008</data>
+      <data key="key36">12.251031670977696, 2.6479068743472833</data>
+      <data key="key40">48</data>
+      <data key="key43">BA</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.4609299999999999994</data>
+      <data key="key25">15.5492500000000000004</data>
+      <data key="key36">12.145322343624873, 2.6926977888743782</data>
+      <data key="key40">49</data>
+      <data key="key43">FG</data>
+    </node>
+    <node id="n50">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.549458971594344, 2.0773777797893973</data>
+      <data key="key40">50</data>
+      <data key="key43">Google</data>
+    </node>
+    <node id="n51">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.619292639749958, 2.5964657208783275</data>
+      <data key="key40">51</data>
+      <data key="key43">GEANT</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5247799999999999999</data>
+      <data key="key25">10.2272699999999999998</data>
+      <data key="key36">12.811600473017227, 2.2654571671230239</data>
+      <data key="key40">52</data>
+      <data key="key43">BS</data>
+    </node>
+    <node id="n53">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">12.370262138315574, 2.0442967012009703</data>
+      <data key="key40">53</data>
+      <data key="key43">TO-PIX</data>
+    </node>
+    <node id="n54">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8947400000000000006</data>
+      <data key="key25">12.4839000000000000003</data>
+      <data key="key36">12.258952294094161, 2.3348325234460856</data>
+      <data key="key40">54</data>
+      <data key="key43">RM-2</data>
+    </node>
+    <node id="n55">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key25">9.18950999999999999963</data>
+      <data key="key36">12.625869184312258, 2.33854199786109</data>
+      <data key="key40">55</data>
+      <data key="key43">CO</data>
+    </node>
+    <node id="n56">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">44.826780000000000001</data>
+      <data key="key25">11.6207099999999999996</data>
+      <data key="key36">12.488543317467702, 2.5893985461291193</data>
+      <data key="key40">56</data>
+      <data key="key43">Fe</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.184459999999999999</data>
+      <data key="key25">9.16144999999999999976</data>
+      <data key="key36">12.62063993069289, 2.1263016050179324</data>
+      <data key="key40">57</data>
+      <data key="key43">Pv</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7155299999999999994</data>
+      <data key="key25">10.3965899999999999998</data>
+      <data key="key36">12.37160148253728, 2.3055628118831692</data>
+      <data key="key40">58</data>
+      <data key="key43">PI</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">43.7262100000000000014</data>
+      <data key="key25">12.6363299999999999998</data>
+      <data key="key36">12.562922347924102, 2.8087963953026311</data>
+      <data key="key40">59</data>
+      <data key="key43">Ur</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n34">
+      <data key="key20">Fibre ottica spenta (Dark Fibre), 10 Gbps</data>
+      <data key="key21">Fibre ottica spenta (Dark Fibre),  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n4">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n34">
+      <data key="key20">Peering, 5 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">5</data>
+      <data key="key23">5000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n36">
+      <data key="key23">0</data>
+      <data key="key41">e25</data>
+      <data key="key42">0</data>
+      <data key="key44">None</data>
+    </edge>
+    <edge id="e4" source="n4" target="n10">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e5" source="n4" target="n54">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n7">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n7">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e8" source="n5" target="n54">
+      <data key="key20">Peering, 13 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">13</data>
+      <data key="key23">13000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e9" source="n6" target="n44">
+      <data key="key20">34 Mbps</data>
+      <data key="key22">34</data>
+      <data key="key23">34000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n54">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e11" source="n6" target="n54">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e12" source="n8" target="n22">
+      <data key="key23">0</data>
+      <data key="key38">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key41">e61</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e13" source="n9" target="n57">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e14" source="n9" target="n57">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e15" source="n10" target="n44">
+      <data key="key20">622 Mbps</data>
+      <data key="key22">622</data>
+      <data key="key23">622000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e16" source="n10" target="n43">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e17" source="n10" target="n21">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e18" source="n10" target="n54">
+      <data key="key23">0</data>
+      <data key="key41">e9</data>
+      <data key="key42">0</data>
+      <data key="key44">None</data>
+    </edge>
+    <edge id="e19" source="n10" target="n54">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e20" source="n11" target="n54">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e21" source="n12" target="n20">
+      <data key="key20">100 Mbps</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e22" source="n13" target="n29">
+      <data key="key20">Peering, 1 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e23" source="n14" target="n33">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e24" source="n14" target="n34">
+      <data key="key23">0</data>
+      <data key="key41">e60</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e25" source="n14" target="n34">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e26" source="n14" target="n34">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">2</data>
+    </edge>
+    <edge id="e27" source="n14" target="n45">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e28" source="n14" target="n48">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e29" source="n14" target="n54">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e30" source="n14" target="n56">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e31" source="n14" target="n56">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e32" source="n14" target="n26">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e33" source="n14" target="n29">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e34" source="n15" target="n52">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e35" source="n15" target="n34">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e36" source="n15" target="n36">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e37" source="n16" target="n33">
+      <data key="key20">Peering, 1 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e38" source="n17" target="n33">
+      <data key="key20">155 Mbps</data>
+      <data key="key22">155</data>
+      <data key="key23">155000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e39" source="n17" target="n55">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e40" source="n18" target="n40">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e41" source="n18" target="n40">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e42" source="n18" target="n48">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e43" source="n18" target="n42">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e44" source="n18" target="n42">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e45" source="n18" target="n21">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e46" source="n18" target="n54">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e47" source="n19" target="n21">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e48" source="n20" target="n21">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e49" source="n21" target="n22">
+      <data key="key20">622 Mbps</data>
+      <data key="key22">622</data>
+      <data key="key23">622000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e50" source="n21" target="n23">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e51" source="n24" target="n36">
+      <data key="key20">Peering, 4Gbps</data>
+      <data key="key21">Peering, </data>
+      <data key="key22">4</data>
+      <data key="key23">4000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e52" source="n25" target="n36">
+      <data key="key20">Peering, 5 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">5</data>
+      <data key="key23">5000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e53" source="n27" target="n54">
+      <data key="key20">Peering, 10 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e54" source="n28" target="n54">
+      <data key="key20">34 Mbps</data>
+      <data key="key22">34</data>
+      <data key="key23">34000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e55" source="n29" target="n58">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e56" source="n29" target="n30">
+      <data key="key20">34 Mbps</data>
+      <data key="key22">34</data>
+      <data key="key23">34000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e57" source="n31" target="n32">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e58" source="n31" target="n32">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e59" source="n31" target="n33">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e60" source="n31" target="n33">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e61" source="n31" target="n33">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">2</data>
+    </edge>
+    <edge id="e62" source="n33" target="n34">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e63" source="n33" target="n35">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e64" source="n34" target="n36">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e65" source="n34" target="n51">
+      <data key="key20">Fibre ottica spenta (Dark Fibre), 20 Gbps</data>
+      <data key="key21">Fibre ottica spenta (Dark Fibre),  </data>
+      <data key="key22">20</data>
+      <data key="key23">20000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e66" source="n34" target="n55">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e67" source="n35" target="n36">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e68" source="n36" target="n37">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e69" source="n36" target="n38">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e70" source="n36" target="n39">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e71" source="n36" target="n55">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e72" source="n36" target="n50">
+      <data key="key20">Peering, 2 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">2</data>
+      <data key="key23">2000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e73" source="n36" target="n54">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e74" source="n36" target="n57">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e75" source="n36" target="n57">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">1</data>
+    </edge>
+    <edge id="e76" source="n37" target="n55">
+      <data key="key20">Fibre ottica spenta (Dark Fibre)</data>
+      <data key="key23">0</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e77" source="n38" target="n58">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e78" source="n39" target="n58">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e79" source="n39" target="n53">
+      <data key="key20">Peering, 1 Gbps</data>
+      <data key="key21">Peering,  </data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e80" source="n41" target="n48">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e81" source="n43" target="n54">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e82" source="n45" target="n59">
+      <data key="key20">622 Mbps</data>
+      <data key="key22">622</data>
+      <data key="key23">622000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e83" source="n46" target="n48">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e84" source="n47" target="n48">
+      <data key="key20">1 Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e85" source="n48" target="n49">
+      <data key="key20">155 Mbps</data>
+      <data key="key22">155</data>
+      <data key="key23">155000000</data>
+      <data key="key24">M</data>
+      <data key="key42">0</data>
+    </edge>
+    <edge id="e86" source="n54" target="n58">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key42">0</data>
+    </edge>
+
+  </graph>
+</graphml>

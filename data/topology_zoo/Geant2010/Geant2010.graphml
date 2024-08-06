@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key23" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key24" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key25" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key26" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key27" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key28" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key31" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key33" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key35" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key36" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key37" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key38" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key39" for="graph" attr.name="description" attr.type="string" />
+  <key id="key40" for="node" attr.name="geocode_country" attr.type="string" />
+  <key id="key41" for="node" attr.name="geocode_id" attr.type="string" />
+  <key id="key42" for="node" attr.name="id" attr.type="int" />
+  <key id="key43" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key44" for="node" attr.name="label" attr.type="string" />
+  <key id="key45" for="graph" attr.name="label" attr.type="string" />
+  <key id="key46" for="graph" attr.name="name" attr.type="string" />
+  <key id="key47" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key48" for="node" attr.name="type" attr.type="string" />
+  <key id="key49" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">11/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Continent</data>
+   <data key="key13">Europe</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key27">GEANT</data>
+   <data key="key28">2010_08</data>
+   <data key="key29">Primary</data>
+   <data key="key30">http://www.geant.net/Network/NetworkTopology/pages/home.aspx</data>
+   <data key="key31">e278b1b</data>
+   <data key="key32">1</data>
+   <data key="key33">0.3.34dev-20120328</data>
+   <data key="key34">1</data>
+   <data key="key35">REN</data>
+   <data key="key36">1.0</data>
+   <data key="key38">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key39">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key45">Geant2010</data>
+   <data key="key46">internet_top_pop (Geant2010)</data>
+   <data key="key47">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key49">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3740300000000000014</data>
+      <data key="key26">4.88968999999999999993</data>
+      <data key="key37">-1.5700235298915188, -1.9930680136692098</data>
+      <data key="key42">0</data>
+      <data key="key44">NL</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Belgium</data>
+      <data key="key15">1</data>
+      <data key="key18">50.8504500000000000011</data>
+      <data key="key26">4.34878000000000000018</data>
+      <data key="key37">-1.5671296093286864, -1.825353321464499</data>
+      <data key="key42">1</data>
+      <data key="key44">BE</data>
+      <data key="key48">Routerless</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Denmark</data>
+      <data key="key15">1</data>
+      <data key="key18">55.6759399999999999992</data>
+      <data key="key26">12.5655299999999999997</data>
+      <data key="key37">-1.6739935461236533, -2.0559279117567191</data>
+      <data key="key42">2</data>
+      <data key="key44">DK</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.4166699999999999987</data>
+      <data key="key26">16.9666699999999999997</data>
+      <data key="key37">-1.5072817121050424, -2.2785831067370403</data>
+      <data key="key42">3</data>
+      <data key="key44">PL</data>
+      <data key="key48">Off fibre net</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1166699999999999994</data>
+      <data key="key26">8.6833299999999999999</data>
+      <data key="key37">-1.4491747866244293, -2.1153741910007446</data>
+      <data key="key42">4</data>
+      <data key="key44">DE</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Czech Republic</data>
+      <data key="key15">1</data>
+      <data key="key18">50.0880400000000000002</data>
+      <data key="key26">14.4207600000000000003</data>
+      <data key="key37">-1.3760700015146388, -2.2666261464088202</data>
+      <data key="key42">5</data>
+      <data key="key44">CZ</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Luxembourg</data>
+      <data key="key15">1</data>
+      <data key="key18">49.6116699999999999984</data>
+      <data key="key26">6.1300000000000000001</data>
+      <data key="key37">-1.3815508727050678, -2.0211847660285547</data>
+      <data key="key42">6</data>
+      <data key="key44">LU</data>
+      <data key="key48">Routerless Off Fibre net</data>
+    </node>
+    <node id="n7">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8534099999999999984</data>
+      <data key="key26">2.34880000000000000002</data>
+      <data key="key37">-1.3305536888782441, -1.906546531288686</data>
+      <data key="key42">7</data>
+      <data key="key44">FR</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">46.9480899999999999987</data>
+      <data key="key26">7.44744000000000000005</data>
+      <data key="key37">-1.2762023438359609, -2.0245538184600274</data>
+      <data key="key42">8</data>
+      <data key="key44">CH</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Italy</data>
+      <data key="key15">1</data>
+      <data key="key18">45.4642699999999999987</data>
+      <data key="key26">9.18950999999999999963</data>
+      <data key="key37">-1.1337250337683227, -2.0690087811879092</data>
+      <data key="key42">9</data>
+      <data key="key44">IT</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Bulgaria</data>
+      <data key="key15">1</data>
+      <data key="key18">42.6975100000000000015</data>
+      <data key="key26">23.3241500000000000006</data>
+      <data key="key37">-0.94052974569297265, -2.3497960931502559</data>
+      <data key="key42">10</data>
+      <data key="key44">BG</data>
+      <data key="key48">IP/MPLS only</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Romania</data>
+      <data key="key15">1</data>
+      <data key="key18">44.4322499999999999988</data>
+      <data key="key26">26.1062600000000000003</data>
+      <data key="key37">-0.91604985662586003, -2.4439575547252379</data>
+      <data key="key42">11</data>
+      <data key="key44">RO</data>
+      <data key="key48">IP/MPLS only</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Turkey</data>
+      <data key="key15">1</data>
+      <data key="key18">39.05901</data>
+      <data key="key26">34.9115499999999999992</data>
+      <data key="key37">-0.83267284856392754, -2.3410765943079328</data>
+      <data key="key40">Turkey</data>
+      <data key="key42">12</data>
+      <data key="key44">TR</data>
+      <data key="key48">NREN POPs</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Greece</data>
+      <data key="key15">1</data>
+      <data key="key18">37.9794500000000000012</data>
+      <data key="key26">23.7162200000000000007</data>
+      <data key="key37">-1.0646104871826798, -2.208916834912741</data>
+      <data key="key42">13</data>
+      <data key="key44">GR</data>
+      <data key="key48">Off fibre net</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Cyprus</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1666699999999999987</data>
+      <data key="key26">33.3666699999999999994</data>
+      <data key="key37">-1.0103181245983948, -2.1075344059039312</data>
+      <data key="key42">14</data>
+      <data key="key44">CY</data>
+      <data key="key48">NREN POPs</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Israel</data>
+      <data key="key15">1</data>
+      <data key="key18">31.5</data>
+      <data key="key26">34.75</data>
+      <data key="key37">-1.4643760422164023, -1.9467992443723969</data>
+      <data key="key40">Israel</data>
+      <data key="key42">15</data>
+      <data key="key44">IL</data>
+      <data key="key48">NREN POPs</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Malta</data>
+      <data key="key15">1</data>
+      <data key="key18">35.909169999999999999</data>
+      <data key="key26">14.4255599999999999999</data>
+      <data key="key37">-1.0206332041369937, -1.9621656063206292</data>
+      <data key="key42">16</data>
+      <data key="key44">MT</data>
+      <data key="key48">NREN POPs</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Macedonia</data>
+      <data key="key15">1</data>
+      <data key="key18">42</data>
+      <data key="key26">21.4333299999999999999</data>
+      <data key="key37">-0.78456855616905108, -2.4311608837655396</data>
+      <data key="key42">17</data>
+      <data key="key44">MK</data>
+      <data key="key48">NREN POPs</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Montenegro</data>
+      <data key="key15">1</data>
+      <data key="key18">42.4411099999999999986</data>
+      <data key="key26">19.2636100000000000006</data>
+      <data key="key37">-1.1978088028693497, -2.6850306807055397</data>
+      <data key="key42">18</data>
+      <data key="key44">ME</data>
+      <data key="key48">NREN POPs</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">47.4980100000000000013</data>
+      <data key="key26">19.0399099999999999993</data>
+      <data key="key37">-1.0540794076074516, -2.4556821313346471</data>
+      <data key="key42">19</data>
+      <data key="key44">HU</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Slovakia</data>
+      <data key="key15">1</data>
+      <data key="key18">48.14816</data>
+      <data key="key26">17.1067399999999999998</data>
+      <data key="key37">-1.2035427565294501, -2.3329090675822539</data>
+      <data key="key42">20</data>
+      <data key="key44">SK</data>
+      <data key="key48">Routerless</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Portugal</data>
+      <data key="key15">1</data>
+      <data key="key18">38.7166700000000000015</data>
+      <data key="key26">-9.13332999999999999973</data>
+      <data key="key37">-1.2974800393491517, -1.7828780789326932</data>
+      <data key="key42">21</data>
+      <data key="key44">PT</data>
+      <data key="key48">Routerless Off Fibre net</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Spain</data>
+      <data key="key15">1</data>
+      <data key="key18">40.4164999999999999987</data>
+      <data key="key26">-3.70256000000000000004</data>
+      <data key="key37">-1.2139681776919318, -1.9168251409478432</data>
+      <data key="key42">22</data>
+      <data key="key44">ES</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Serbia</data>
+      <data key="key15">1</data>
+      <data key="key18">44.804009999999999999</data>
+      <data key="key26">20.46513</data>
+      <data key="key37">-0.99529181460139737, -2.590316918766693</data>
+      <data key="key42">23</data>
+      <data key="key44">RS</data>
+      <data key="key48">NREN POPs</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Croatia</data>
+      <data key="key15">1</data>
+      <data key="key18">45.8144400000000000008</data>
+      <data key="key26">15.9779800000000000004</data>
+      <data key="key37">-1.1701091154047998, -2.5483229671335481</data>
+      <data key="key42">24</data>
+      <data key="key44">HR</data>
+      <data key="key48">Routerless</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Slovenia</data>
+      <data key="key15">1</data>
+      <data key="key18">46.0510800000000000004</data>
+      <data key="key26">14.50513</data>
+      <data key="key37">-1.2378048634250034, -2.4165503585506682</data>
+      <data key="key42">25</data>
+      <data key="key44">SL</data>
+      <data key="key48">Routerless</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Austria</data>
+      <data key="key15">1</data>
+      <data key="key18">48.2084900000000000017</data>
+      <data key="key26">16.3720799999999999993</data>
+      <data key="key37">-1.233408703236784, -2.2167277239165246</data>
+      <data key="key42">26</data>
+      <data key="key44">AT</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.9000000000000000014</data>
+      <data key="key26">23.8999999999999999997</data>
+      <data key="key37">-1.6381319952641669, -2.3687153998016326</data>
+      <data key="key42">27</data>
+      <data key="key44">LT</data>
+      <data key="key48">IP/MPLS only</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Russia</data>
+      <data key="key15">1</data>
+      <data key="key18">55.7522199999999999998</data>
+      <data key="key26">37.6155599999999999995</data>
+      <data key="key37">-1.5861180518848745, -2.1346032340169194</data>
+      <data key="key41">524901</data>
+      <data key="key42">28</data>
+      <data key="key44">RU</data>
+      <data key="key48">Routerless Off Fibre net</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Iceland</data>
+      <data key="key15">1</data>
+      <data key="key18">64.1354800000000000032</data>
+      <data key="key26">-21.8954099999999999993</data>
+      <data key="key37">-1.6287351512952433, -1.8929070106878794</data>
+      <data key="key42">29</data>
+      <data key="key44">IS</data>
+      <data key="key48">NORDUnet</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Ireland</data>
+      <data key="key15">1</data>
+      <data key="key18">53.3439900000000000006</data>
+      <data key="key26">-6.26718999999999999998</data>
+      <data key="key37">-1.4654656715791996, -1.6909514024290195</data>
+      <data key="key42">30</data>
+      <data key="key44">IE</data>
+      <data key="key48">Routerless</data>
+    </node>
+    <node id="n31">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5085299999999999994</data>
+      <data key="key26">-0.125740000000000000003</data>
+      <data key="key37">-1.4567612012790871, -1.8104617831467658</data>
+      <data key="key42">31</data>
+      <data key="key44">UK</data>
+      <data key="key48">Fully Featured</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Norway</data>
+      <data key="key15">1</data>
+      <data key="key18">62</data>
+      <data key="key26">10</data>
+      <data key="key37">-1.8136452671240038, -2.0636643529686647</data>
+      <data key="key40">Norway</data>
+      <data key="key42">32</data>
+      <data key="key44">NO</data>
+      <data key="key48">NORDUnet</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Sweden</data>
+      <data key="key15">1</data>
+      <data key="key18">59.3325800000000000006</data>
+      <data key="key26">18.0648999999999999994</data>
+      <data key="key37">-1.8474300839144999, -1.9766386818563673</data>
+      <data key="key42">33</data>
+      <data key="key44">SE</data>
+      <data key="key48">NORDUnet</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Finland</data>
+      <data key="key15">1</data>
+      <data key="key18">60.4514799999999999994</data>
+      <data key="key26">22.26869</data>
+      <data key="key37">-1.9502194821027616, -1.9308037553390782</data>
+      <data key="key42">34</data>
+      <data key="key44">FI</data>
+      <data key="key48">NORDUnet</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Estonia</data>
+      <data key="key15">1</data>
+      <data key="key18">59.4369600000000000012</data>
+      <data key="key26">24.7535300000000000002</data>
+      <data key="key37">-1.7634059426252804, -2.2061241168313352</data>
+      <data key="key42">35</data>
+      <data key="key44">EE</data>
+      <data key="key48">IP/MPLS only</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.9460000000000000006</data>
+      <data key="key26">24.1058899999999999997</data>
+      <data key="key37">-1.7663214744886579, -2.3410111251494223</data>
+      <data key="key42">36</data>
+      <data key="key44">LV</data>
+      <data key="key48">IP/MPLS only</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n2">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n4">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n31">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n33">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n35">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n4">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e7" source="n2" target="n32">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e8" source="n2" target="n28">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e9" source="n2" target="n29">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e10" source="n3" target="n27">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e11" source="n3" target="n4">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e12" source="n3" target="n5">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e13" source="n4" target="n5">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e14" source="n4" target="n6">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e15" source="n4" target="n8">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e16" source="n4" target="n15">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e17" source="n4" target="n26">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e18" source="n4" target="n28">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e19" source="n5" target="n20">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e20" source="n6" target="n7">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e21" source="n7" target="n8">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e22" source="n7" target="n22">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e23" source="n7" target="n31">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e24" source="n8" target="n9">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e25" source="n8" target="n22">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e26" source="n9" target="n13">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e27" source="n9" target="n14">
+      <data key="key20">155 Mbps</data>
+      <data key="key22">155</data>
+      <data key="key23">155000000</data>
+      <data key="key24">M</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e28" source="n9" target="n16">
+      <data key="key20">1Gbps</data>
+      <data key="key22">1</data>
+      <data key="key23">1000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e29" source="n9" target="n22">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e30" source="n9" target="n26">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e31" source="n10" target="n19">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e32" source="n10" target="n17">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e33" source="n10" target="n11">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e34" source="n10" target="n12">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e35" source="n10" target="n13">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e36" source="n11" target="n19">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e37" source="n11" target="n12">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e38" source="n13" target="n26">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e39" source="n13" target="n14">
+      <data key="key20">155 Mbps</data>
+      <data key="key22">155</data>
+      <data key="key23">155000000</data>
+      <data key="key24">M</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e40" source="n15" target="n31">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e41" source="n18" target="n24">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e42" source="n19" target="n24">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e43" source="n19" target="n20">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e44" source="n19" target="n23">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e45" source="n20" target="n26">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e46" source="n21" target="n22">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e47" source="n21" target="n31">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e48" source="n24" target="n25">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e49" source="n25" target="n26">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e50" source="n27" target="n36">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e51" source="n29" target="n31">
+      <data key="key20">2.5 Gbps</data>
+      <data key="key22">2.5</data>
+      <data key="key23">2500000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e52" source="n30" target="n31">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e53" source="n30" target="n31">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">1</data>
+    </edge>
+    <edge id="e54" source="n32" target="n33">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e55" source="n33" target="n34">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">0</data>
+    </edge>
+    <edge id="e56" source="n33" target="n34">
+      <data key="key20">Lit Fibre</data>
+      <data key="key21">Lit </data>
+      <data key="key23">0</data>
+      <data key="key25">Fibre</data>
+      <data key="key43">1</data>
+    </edge>
+    <edge id="e57" source="n35" target="n36">
+      <data key="key20">10 Gbps</data>
+      <data key="key22">10</data>
+      <data key="key23">10000000000</data>
+      <data key="key24">G</data>
+      <data key="key43">0</data>
+    </edge>
+
+  </graph>
+</graphml>

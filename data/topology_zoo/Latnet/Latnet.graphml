@@ -1,0 +1,1377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="int" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkNote" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key23" for="edge" attr.name="LinkSpeedRaw" attr.type="int" />
+  <key id="key24" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key25" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key26" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key27" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key28" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key31" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key33" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key35" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key36" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key37" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key38" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key39" for="graph" attr.name="description" attr.type="string" />
+  <key id="key40" for="node" attr.name="id" attr.type="int" />
+  <key id="key41" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key42" for="node" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="label" attr.type="string" />
+  <key id="key44" for="graph" attr.name="name" attr.type="string" />
+  <key id="key45" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key46" for="node" attr.name="type" attr.type="string" />
+  <key id="key47" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">0</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">0</data>
+   <data key="key8">20/07/11</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2007</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Latvia</data>
+   <data key="key14">0</data>
+   <data key="key16">20/07/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key27">LATNET</data>
+   <data key="key28">2007</data>
+   <data key="key29">Secondary</data>
+   <data key="key30">http://www.porta-optica.org/publications/POS-Deliverable1.2v3_NREN_status_and_development_plans.pdf</data>
+   <data key="key31">e278b1b</data>
+   <data key="key32">0</data>
+   <data key="key33">0.3.34dev-20120328</data>
+   <data key="key34">0</data>
+   <data key="key35">REN</data>
+   <data key="key36">1.0</data>
+   <data key="key38">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key39">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key43">Latnet</data>
+   <data key="key44">internet_top_pop (Latnet)</data>
+   <data key="key45">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key47">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5986099999999999997</data>
+      <data key="key26">24.2022200000000000004</data>
+      <data key="key37">-0.59698961654096572, 9.1520273214153498</data>
+      <data key="key40">0</data>
+      <data key="key42">Iecava</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5597199999999999988</data>
+      <data key="key26">23.7719399999999999994</data>
+      <data key="key37">-1.3222643231744577, 10.876294673876158</data>
+      <data key="key40">1</data>
+      <data key="key42">Vircava</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">55.8951400000000000017</data>
+      <data key="key26">27.1679900000000000004</data>
+      <data key="key37">-0.57932976842402062, 9.3532049746256689</data>
+      <data key="key40">2</data>
+      <data key="key42">Kraslava</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7069399999999999989</data>
+      <data key="key26">24.3519399999999999994</data>
+      <data key="key37">-0.71890418701873748, 9.5228967124952</data>
+      <data key="key40">3</data>
+      <data key="key42">Baldone</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.45981</data>
+      <data key="key26">22.9016900000000000002</data>
+      <data key="key37">-0.46518978025895419, 10.724948643108727</data>
+      <data key="key40">4</data>
+      <data key="key42">Auce</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7000000000000000007</data>
+      <data key="key26">22.5333300000000000003</data>
+      <data key="key37">-1.8935203054260694, 8.7774022460362282</data>
+      <data key="key40">5</data>
+      <data key="key42">Broceni</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5372199999999999996</data>
+      <data key="key26">23.6963900000000000003</data>
+      <data key="key37">-1.0987603959672148, 10.614484407092514</data>
+      <data key="key40">6</data>
+      <data key="key42">Platone</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.625</data>
+      <data key="key26">23.27861</data>
+      <data key="key37">-0.65415354644725676, 10.446959306876234</data>
+      <data key="key40">7</data>
+      <data key="key42">Dobele</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.158610000000000001</data>
+      <data key="key26">24.7027800000000000002</data>
+      <data key="key37">-0.33421741717244113, 8.4638075987999493</data>
+      <data key="key40">8</data>
+      <data key="key42">Krimulda</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.6086100000000000017</data>
+      <data key="key26">24.6072199999999999993</data>
+      <data key="key37">-1.257079435805164, 8.1441580840627221</data>
+      <data key="key40">9</data>
+      <data key="key42">Vijkene</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6636300000000000011</data>
+      <data key="key26">22.4880700000000000004</data>
+      <data key="key37">-1.555510526730288, 8.9493218811618185</data>
+      <data key="key40">10</data>
+      <data key="key42">Saldus</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5900000000000000001</data>
+      <data key="key26">21.1386200000000000002</data>
+      <data key="key37">-1.8695087101756542, 9.8375107187054578</data>
+      <data key="key40">11</data>
+      <data key="key42">Kapsede</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.3475099999999999995</data>
+      <data key="key26">25.5551399999999999998</data>
+      <data key="key37">2.281669307379953, 9.3049266099515098</data>
+      <data key="key40">12</data>
+      <data key="key42">Viesite</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6047699999999999985</data>
+      <data key="key26">25.2553399999999999993</data>
+      <data key="key37">1.949060014660265, 9.3007731016588373</data>
+      <data key="key40">13</data>
+      <data key="key42">Aizkroukle</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5525300000000000003</data>
+      <data key="key26">26.9244899999999999993</data>
+      <data key="key37">-1.134097879870031, 9.0285381550197492</data>
+      <data key="key40">14</data>
+      <data key="key42">Vilani</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.1776700000000000015</data>
+      <data key="key26">26.7529099999999999994</data>
+      <data key="key37">-0.90530782632885676, 8.7567850214906802</data>
+      <data key="key40">15</data>
+      <data key="key42">Gulbene</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.8975199999999999984</data>
+      <data key="key26">25.3315499999999999992</data>
+      <data key="key37">-1.3749372748586679, 8.7439426674015426</data>
+      <data key="key40">16</data>
+      <data key="key42">Rujiena</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.7536099999999999986</data>
+      <data key="key26">24.3580599999999999998</data>
+      <data key="key37">-0.95297302875599632, 7.8125723451494702</data>
+      <data key="key40">17</data>
+      <data key="key42">Salagriva</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.7669400000000000002</data>
+      <data key="key26">24.8824999999999999997</data>
+      <data key="key37">-1.5362133923227261, 8.1864271767410219</data>
+      <data key="key40">18</data>
+      <data key="key42">Aloja</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.8632899999999999983</data>
+      <data key="key26">25.0547500000000000001</data>
+      <data key="key37">-1.6111397036221069, 8.4318813006614217</data>
+      <data key="key40">19</data>
+      <data key="key42">Mazsalaca</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.6257400000000000011</data>
+      <data key="key26">25.6853500000000000009</data>
+      <data key="key37">-0.12896793615837282, 8.843685197586785</data>
+      <data key="key40">20</data>
+      <data key="key42">Strenci</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.59639</data>
+      <data key="key26">24.8513899999999999992</data>
+      <data key="key37">-1.7319958525019827, 7.8999739836408382</data>
+      <data key="key40">21</data>
+      <data key="key42">Pociems</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.5128699999999999995</data>
+      <data key="key26">24.7194100000000000009</data>
+      <data key="key37">-1.1852449653821038, 8.4998804178345004</data>
+      <data key="key40">22</data>
+      <data key="key42">Limbazi</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.4638900000000000003</data>
+      <data key="key26">24.4677799999999999996</data>
+      <data key="key37">-0.94921988777838628, 8.1869513791483186</data>
+      <data key="key40">23</data>
+      <data key="key42">Liepupe</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6450000000000000004</data>
+      <data key="key26">25.1205799999999999997</data>
+      <data key="key37">-1.1260588322609852, 8.8080425816559806</data>
+      <data key="key40">24</data>
+      <data key="key42">Skriveri</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.5410799999999999985</data>
+      <data key="key26">25.4275099999999999994</data>
+      <data key="key37">-0.47375121283908211, 8.9691545678970854</data>
+      <data key="key40">25</data>
+      <data key="key42">Valmiera</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5</data>
+      <data key="key26">27.3166700000000000001</data>
+      <data key="key37">-1.7203365064621023, 9.1942555441331457</data>
+      <data key="key40">26</data>
+      <data key="key42">Rezekne</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.1294399999999999995</data>
+      <data key="key26">24.2744399999999999999</data>
+      <data key="key37">-1.3896155159994581, 9.4133604666659938</data>
+      <data key="key40">27</data>
+      <data key="key42">Carnikava</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6425000000000000017</data>
+      <data key="key26">24.9205599999999999998</data>
+      <data key="key37">1.5996302136957847, 9.2914724616284552</data>
+      <data key="key40">28</data>
+      <data key="key42">Jumprava</data>
+      <data key="key46">Small Red Node</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7450999999999999984</data>
+      <data key="key26">24.7243899999999999992</data>
+      <data key="key37">0.79189472713736986, 9.2709722434413653</data>
+      <data key="key40">29</data>
+      <data key="key42">Kegums</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.9460000000000000006</data>
+      <data key="key26">24.1058899999999999997</data>
+      <data key="key37">-1.0168279595965504, 9.2205125674869297</data>
+      <data key="key40">30</data>
+      <data key="key42">Riga</data>
+      <data key="key46">GEANT2 PoP</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">55.8833300000000000006</data>
+      <data key="key26">26.5333300000000000003</data>
+      <data key="key37">-1.4838712413595976, 9.2075942905068082</data>
+      <data key="key40">31</data>
+      <data key="key42">Daugapils</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.3894400000000000014</data>
+      <data key="key26">21.5605599999999999992</data>
+      <data key="key37">-1.5425034435689957, 10.039015735858184</data>
+      <data key="key40">32</data>
+      <data key="key42">Ventspits</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5352100000000000017</data>
+      <data key="key26">21.1678200000000000004</data>
+      <data key="key37">-1.9774569321570188, 9.5987283369936147</data>
+      <data key="key40">33</data>
+      <data key="key42">Grobina</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5166700000000000008</data>
+      <data key="key26">21.0166700000000000008</data>
+      <data key="key37">-1.6071644138878183, 9.5464161829838297</data>
+      <data key="key40">34</data>
+      <data key="key42">Liepaja</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.9411099999999999986</data>
+      <data key="key26">24.2897200000000000001</data>
+      <data key="key37">-1.0676598071627712, 9.6713661220554492</data>
+      <data key="key40">35</data>
+      <data key="key42">Ulbroka</data>
+      <data key="key46">Small Red Node</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7852799999999999989</data>
+      <data key="key26">23.9380599999999999997</data>
+      <data key="key37">-0.80877316038851854, 9.736734635990107</data>
+      <data key="key40">36</data>
+      <data key="key42">Olaine</data>
+      <data key="key46">Small Red Node</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7206599999999999985</data>
+      <data key="key26">24.8074300000000000001</data>
+      <data key="key37">1.2117699788115761, 9.2832894419772796</data>
+      <data key="key40">37</data>
+      <data key="key42">Lielvarde</data>
+      <data key="key46">Small Red Node</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.8333300000000000013</data>
+      <data key="key26">24.5</data>
+      <data key="key37">0.30955554417036202, 9.223661478935167</data>
+      <data key="key40">38</data>
+      <data key="key42">Ikskile</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.8601399999999999983</data>
+      <data key="key26">24.3654399999999999992</data>
+      <data key="key37">-0.28059407369715239, 9.2357953438138463</data>
+      <data key="key40">39</data>
+      <data key="key42">Salaspils</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.4075000000000000011</data>
+      <data key="key26">24.1905600000000000002</data>
+      <data key="key37">-0.80669811025373916, 9.3189274452736868</data>
+      <data key="key40">40</data>
+      <data key="key42">Bauska</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.4990300000000000014</data>
+      <data key="key26">25.8573499999999999992</data>
+      <data key="key37">2.5869044856894425, 9.3101415249744921</data>
+      <data key="key40">41</data>
+      <data key="key42">Jekabpils</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6500000000000000014</data>
+      <data key="key26">23.7127800000000000004</data>
+      <data key="key37">-0.96013334670669415, 10.075226295385177</data>
+      <data key="key40">42</data>
+      <data key="key42">Jelgava</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n43">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.8399100000000000003</data>
+      <data key="key26">23.5890200000000000002</data>
+      <data key="key37">-1.210478158266725, 10.309783444998875</data>
+      <data key="key40">43</data>
+      <data key="key42">Kalnciems</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n44">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.8266200000000000006</data>
+      <data key="key26">24.2299999999999999996</data>
+      <data key="key37">-1.3298098708278545, 8.9859075026853326</data>
+      <data key="key40">44</data>
+      <data key="key42">Kekava</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n45">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key26">0</data>
+      <data key="key37">-0.78867962530552194, 9.092613405704725</data>
+      <data key="key40">45</data>
+      <data key="key42">GEANT2</data>
+    </node>
+    <node id="n46">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6883300000000000009</data>
+      <data key="key26">23.5</data>
+      <data key="key37">-0.91493865000868335, 10.373879627506971</data>
+      <data key="key40">46</data>
+      <data key="key42">Livberze</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n47">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.3223999999999999991</data>
+      <data key="key26">24.7430100000000000003</data>
+      <data key="key37">-0.48627852557042733, 8.0832324365405768</data>
+      <data key="key40">47</data>
+      <data key="key42">Ledurga</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n48">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.1519399999999999987</data>
+      <data key="key26">24.8647200000000000008</data>
+      <data key="key37">-0.67606705480932738, 8.4880381772291429</data>
+      <data key="key40">48</data>
+      <data key="key42">Sigulda</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n49">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.9679999999999999993</data>
+      <data key="key26">23.7703800000000000005</data>
+      <data key="key37">-0.93379966711965545, 8.949089116032944</data>
+      <data key="key40">49</data>
+      <data key="key42">Jurmala</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n50">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.9669400000000000009</data>
+      <data key="key26">23.1552799999999999996</data>
+      <data key="key37">-1.3272888635172926, 9.7349644432859215</data>
+      <data key="key40">50</data>
+      <data key="key42">Tukums</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n51">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.2456200000000000015</data>
+      <data key="key26">22.5813699999999999996</data>
+      <data key="key37">-0.70827291098072243, 8.8845477576029896</data>
+      <data key="key40">51</data>
+      <data key="key42">Talsi</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n52">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7166700000000000015</data>
+      <data key="key26">21.6000000000000000003</data>
+      <data key="key37">-1.1109852656119454, 9.402703082122617</data>
+      <data key="key40">52</data>
+      <data key="key42">Aizpute</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n53">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.1807400000000000014</data>
+      <data key="key26">24.7073099999999999995</data>
+      <data key="key37">-0.67966590481940437, 8.1599283853483726</data>
+      <data key="key40">53</data>
+      <data key="key42">Ragona</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n54">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.0936099999999999988</data>
+      <data key="key26">24.5486100000000000004</data>
+      <data key="key37">-0.33396903845702774, 8.2490713409456102</data>
+      <data key="key40">54</data>
+      <data key="key42">Vangazi</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n55">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.0758300000000000016</data>
+      <data key="key26">24.3213900000000000003</data>
+      <data key="key37">-1.2574196326354949, 9.5351253799951774</data>
+      <data key="key40">55</data>
+      <data key="key42">Adazi</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n56">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6863900000000000001</data>
+      <data key="key26">23.7877799999999999993</data>
+      <data key="key37">-0.69595689090956825, 10.045311323721286</data>
+      <data key="key40">56</data>
+      <data key="key42">Ozolnieki</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n57">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.4158799999999999997</data>
+      <data key="key26">23.6833500000000000008</data>
+      <data key="key37">-1.0283142369109737, 10.952568899766147</data>
+      <data key="key40">57</data>
+      <data key="key42">Eleja</data>
+      <data key="key46">Large Blue Node</data>
+    </node>
+    <node id="n58">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.8161999999999999984</data>
+      <data key="key26">24.6140100000000000002</data>
+      <data key="key37">0.54226734605639737, 9.048611829968598</data>
+      <data key="key40">58</data>
+      <data key="key42">Ogre</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n59">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.2944400000000000003</data>
+      <data key="key26">26.7245899999999999997</data>
+      <data key="key37">-1.2979087988528366, 9.2131558121575186</data>
+      <data key="key40">59</data>
+      <data key="key42">Preili</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n60">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.3543099999999999999</data>
+      <data key="key26">26.1757900000000000001</data>
+      <data key="key37">2.8609941350083741, 9.315642507374859</data>
+      <data key="key40">60</data>
+      <data key="key42">Livani</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n61">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">57.1313</data>
+      <data key="key26">27.2658300000000000003</data>
+      <data key="key37">-0.93091131127097759, 9.5160732322533956</data>
+      <data key="key40">61</data>
+      <data key="key42">Balvi</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n62">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.7840500000000000004</data>
+      <data key="key26">27.6882900000000000008</data>
+      <data key="key37">-0.47829690545178327, 9.5769934961017942</data>
+      <data key="key40">62</data>
+      <data key="key42">Karsava</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n63">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.775350000000000001</data>
+      <data key="key26">27.7190199999999999994</data>
+      <data key="key37">-0.11119128761246853, 9.8229961803617716</data>
+      <data key="key40">63</data>
+      <data key="key42">Malnava</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n64">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.6333300000000000006</data>
+      <data key="key26">27.7166699999999999997</data>
+      <data key="key37">0.15550431627245667, 10.014279226771009</data>
+      <data key="key40">64</data>
+      <data key="key42">Pusmucova</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n65">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5666700000000000001</data>
+      <data key="key26">27.6666700000000000004</data>
+      <data key="key37">-2.6556459165235693, 9.1366348895449345</data>
+      <data key="key40">65</data>
+      <data key="key42">Zvigzdene</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n66">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5499999999999999993</data>
+      <data key="key26">27.7166699999999999997</data>
+      <data key="key37">-2.295172788411791, 9.1569041131195412</data>
+      <data key="key40">66</data>
+      <data key="key42">Ludza</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n67">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.5499999999999999993</data>
+      <data key="key26">27.8833300000000000006</data>
+      <data key="key37">-2.5382805886989925, 9.3822968708162087</data>
+      <data key="key40">67</data>
+      <data key="key42">Cibla</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+    <node id="n68">
+      <data key="key3">Latvia</data>
+      <data key="key15">1</data>
+      <data key="key18">56.3861599999999999998</data>
+      <data key="key26">28.1216499999999999995</data>
+      <data key="key37">-2.5116293509933665, 8.9035403231960331</data>
+      <data key="key40">68</data>
+      <data key="key42">Zilupe</data>
+      <data key="key46">Large Orange Node</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n6">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e4" source="n4" target="n7">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e5" source="n5" target="n10">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e6" source="n6" target="n42">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e7" source="n6" target="n57">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e8" source="n7" target="n42">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e9" source="n8" target="n48">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e10" source="n9" target="n22">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e11" source="n10" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e12" source="n11" target="n34">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e13" source="n12" target="n41">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e14" source="n12" target="n13">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e15" source="n13" target="n28">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e16" source="n14" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e17" source="n15" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e18" source="n16" target="n19">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e19" source="n16" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e20" source="n17" target="n23">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e21" source="n18" target="n19">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e22" source="n18" target="n21">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e23" source="n18" target="n22">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e24" source="n20" target="n25">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e25" source="n22" target="n30">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e26" source="n22" target="n23">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e27" source="n23" target="n48">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e28" source="n24" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e29" source="n25" target="n30">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e30" source="n26" target="n66">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e31" source="n26" target="n30">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e32" source="n26" target="n31">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e33" source="n27" target="n30">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e34" source="n27" target="n55">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e35" source="n28" target="n37">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e36" source="n29" target="n37">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e37" source="n29" target="n38">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e38" source="n30" target="n31">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e39" source="n30" target="n34">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e40" source="n30" target="n35">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e41" source="n30" target="n36">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e42" source="n30" target="n39">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e43" source="n30" target="n40">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e44" source="n30" target="n42">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e45" source="n30" target="n44">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e46" source="n30" target="n45">
+      <data key="key20">International connectivity to GEANT2</data>
+      <data key="key21">International connectivity to GEAN</data>
+      <data key="key23">0</data>
+      <data key="key25">T2</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e47" source="n30" target="n48">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e48" source="n30" target="n49">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e49" source="n30" target="n50">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e50" source="n30" target="n51">
+      <data key="key20">100 Mbps and more</data>
+      <data key="key21">  and more</data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e51" source="n30" target="n52">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e52" source="n30" target="n55">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e53" source="n30" target="n59">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e54" source="n30" target="n61">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e55" source="n30" target="n62">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e56" source="n31" target="n59">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e57" source="n32" target="n50">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e58" source="n33" target="n34">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e59" source="n36" target="n56">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e60" source="n38" target="n58">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e61" source="n38" target="n39">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e62" source="n41" target="n60">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e63" source="n42" target="n43">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e64" source="n42" target="n46">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e65" source="n42" target="n56">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e66" source="n47" target="n48">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e67" source="n48" target="n53">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e68" source="n48" target="n54">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e69" source="n62" target="n63">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e70" source="n63" target="n64">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e71" source="n65" target="n66">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e72" source="n66" target="n67">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e73" source="n66" target="n68">
+      <data key="key20">less than 100 Mbps</data>
+      <data key="key21">less than  </data>
+      <data key="key22">100</data>
+      <data key="key23">100000000</data>
+      <data key="key24">M</data>
+      <data key="key41">0</data>
+    </edge>
+
+  </graph>
+</graphml>

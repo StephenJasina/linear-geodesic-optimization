@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="int" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="long" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key25" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key26" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key29" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key31" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key32" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key33" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key34" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key35" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key36" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key37" for="graph" attr.name="description" attr.type="string" />
+  <key id="key38" for="node" attr.name="id" attr.type="int" />
+  <key id="key39" for="edge" attr.name="id" attr.type="string" />
+  <key id="key40" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key41" for="node" attr.name="label" attr.type="string" />
+  <key id="key42" for="graph" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="name" attr.type="string" />
+  <key id="key44" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key45" for="node" attr.name="type" attr.type="string" />
+  <key id="key46" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">0</data>
+   <data key="key8">22/10/10</data>
+   <data key="key9">Historic</data>
+   <data key="key10">2009</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Lithuania</data>
+   <data key="key14">0</data>
+   <data key="key16">21/10/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key25">LITNET</data>
+   <data key="key26">2009</data>
+   <data key="key27">Primary</data>
+   <data key="key28">http://www.litnet.lt/litnet/schema.gif</data>
+   <data key="key29">e278b1b</data>
+   <data key="key30">0</data>
+   <data key="key31">0.3.34dev-20120328</data>
+   <data key="key32">0</data>
+   <data key="key33">REN</data>
+   <data key="key34">1.0</data>
+   <data key="key36">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key37">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key42">Litnet</data>
+   <data key="key43">internet_top_pop (Litnet)</data>
+   <data key="key44">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key46">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.7333299999999999992</data>
+      <data key="key24">26.25</data>
+      <data key="key35">4.585816115797126, 2.6965060291144969</data>
+      <data key="key38">0</data>
+      <data key="key41">Zarasai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.7333299999999999992</data>
+      <data key="key24">24.3500000000000000003</data>
+      <data key="key35">4.8981818981637471, 2.5446326816509033</data>
+      <data key="key38">1</data>
+      <data key="key41">Panevezys</data>
+      <data key="key45">Major City PoP</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.9666700000000000015</data>
+      <data key="key24">25.5833299999999999996</data>
+      <data key="key35">4.6025643009261934, 3.1454148103850654</data>
+      <data key="key38">2</data>
+      <data key="key41">Rokiskis</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.8333300000000000013</data>
+      <data key="key24">24.9666699999999999997</data>
+      <data key="key35">4.9022722027959471, 3.8974100411913906</data>
+      <data key="key38">3</data>
+      <data key="key41">Kupiskis</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.6338899999999999986</data>
+      <data key="key24">22.9341700000000000004</data>
+      <data key="key35">4.6474792806110621, 3.5806259048281683</data>
+      <data key="key38">4</data>
+      <data key="key41">Kelme</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n5">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.5126285252204257, 3.8003519305377624</data>
+      <data key="key38">5</data>
+      <data key="key41">Siale</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.8166700000000000001</data>
+      <data key="key24">23.5333300000000000003</data>
+      <data key="key35">5.0185214125024133, 3.1106358471301716</data>
+      <data key="key38">6</data>
+      <data key="key41">Radviliskis</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.9113899999999999987</data>
+      <data key="key24">21.8441700000000000002</data>
+      <data key="key35">4.3682146984786501, 3.6227160263472471</data>
+      <data key="key38">7</data>
+      <data key="key41">Plunge</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.2522199999999999998</data>
+      <data key="key24">22.2897200000000000001</data>
+      <data key="key35">6.117635441098157, 3.9159419006396696</data>
+      <data key="key38">8</data>
+      <data key="key41">Taurage</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.3591699999999999997</data>
+      <data key="key24">21.7022200000000000004</data>
+      <data key="key35">5.5369637182540981, 3.2925412678520498</data>
+      <data key="key38">9</data>
+      <data key="key41">Zemaiciu Naumiestis</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.6333300000000000006</data>
+      <data key="key24">23.9500000000000000007</data>
+      <data key="key35">6.4937048288103369, 2.2422354885172657</data>
+      <data key="key38">10</data>
+      <data key="key41">Prienai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.6333300000000000006</data>
+      <data key="key24">24.9333299999999999999</data>
+      <data key="key35">5.5814140061057467, 1.7521065418485728</data>
+      <data key="key38">11</data>
+      <data key="key41">Trakar</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.3499999999999999986</data>
+      <data key="key24">26.1666700000000000004</data>
+      <data key="key35">5.1752543938355391, 1.8211536910179833</data>
+      <data key="key38">12</data>
+      <data key="key41">Ignalina</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.25</data>
+      <data key="key24">24.75</data>
+      <data key="key35">5.9224002260331865, 2.0505003322896256</data>
+      <data key="key38">13</data>
+      <data key="key41">Ukmerge</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.0499999999999999993</data>
+      <data key="key24">24.9500000000000000007</data>
+      <data key="key35">5.5874923400854302, 1.4698503372598957</data>
+      <data key="key38">14</data>
+      <data key="key41">Sirvintos</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.0777799999999999984</data>
+      <data key="key24">22.7663900000000000001</data>
+      <data key="key35">6.3596708743498915, 3.1490917290275187</data>
+      <data key="key38">15</data>
+      <data key="key41">Jurbarkas</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.9547199999999999992</data>
+      <data key="key24">23.0358300000000000007</data>
+      <data key="key35">6.5938357046904308, 2.8865647754310655</data>
+      <data key="key38">16</data>
+      <data key="key41">Sakiai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.6516699999999999993</data>
+      <data key="key24">23.0322200000000000004</data>
+      <data key="key35">6.6568356321811901, 3.1869286960962686</data>
+      <data key="key38">17</data>
+      <data key="key41">Vilkaviskis</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.5666700000000000001</data>
+      <data key="key24">23.3500000000000000003</data>
+      <data key="key35">6.0721654821486775, 2.996959525747569</data>
+      <data key="key38">18</data>
+      <data key="key41">Marijampole</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.4000000000000000014</data>
+      <data key="key24">24.0499999999999999993</data>
+      <data key="key35">6.5756719944494257, 2.5637169348526441</data>
+      <data key="key38">19</data>
+      <data key="key41">Alytus</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.0166700000000000008</data>
+      <data key="key24">23.9666699999999999997</data>
+      <data key="key35">5.8606005095129188, 1.5714166296632346</data>
+      <data key="key38">20</data>
+      <data key="key41">Druskininkai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.2999999999999999993</data>
+      <data key="key24">25.3833300000000000006</data>
+      <data key="key35">5.9662671824997293, 2.6690694497050385</data>
+      <data key="key38">21</data>
+      <data key="key41">Salcininkai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n22">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">6.2254908194246656, 2.396723369887158</data>
+      <data key="key38">22</data>
+      <data key="key41">GEANT</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.2333299999999999992</data>
+      <data key="key24">25.4166700000000000004</data>
+      <data key="key35">5.265289856385758, 2.1124631016652833</data>
+      <data key="key38">23</data>
+      <data key="key41">Moletai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.5999999999999999986</data>
+      <data key="key24">26.4166700000000000004</data>
+      <data key="key35">4.3912460196978298, 2.4894976910259161</data>
+      <data key="key38">24</data>
+      <data key="key41">Visaginas</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">56.0594399999999999998</data>
+      <data key="key24">24.40361</data>
+      <data key="key35">5.5147011224217897, 2.3692771852781749</data>
+      <data key="key38">25</data>
+      <data key="key41">Pasvalys</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.9000000000000000014</data>
+      <data key="key24">23.8999999999999999997</data>
+      <data key="key35">6.3110995109572601, 2.7364832489072755</data>
+      <data key="key38">26</data>
+      <data key="key41">Kaunas</data>
+      <data key="key45">Major City PoP</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.2883299999999999995</data>
+      <data key="key24">23.9747199999999999996</data>
+      <data key="key35">6.77874533703711, 2.364261535034081</data>
+      <data key="key38">27</data>
+      <data key="key41">Kedainiai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.3736100000000000011</data>
+      <data key="key24">23.1216700000000000004</data>
+      <data key="key35">6.8791556171972523, 2.6555530931482911</data>
+      <data key="key38">28</data>
+      <data key="key41">Raseiniai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.5</data>
+      <data key="key24">25.6000000000000000003</data>
+      <data key="key35">6.0397798459454926, 1.7844131257480929</data>
+      <data key="key38">29</data>
+      <data key="key41">Utena</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.525569999999999999</data>
+      <data key="key24">25.1026400000000000003</data>
+      <data key="key35">4.7901598705463151, 2.193406831229499</data>
+      <data key="key38">30</data>
+      <data key="key41">Anyksciai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.0833300000000000013</data>
+      <data key="key24">24.2833300000000000003</data>
+      <data key="key35">6.8715243963884687, 2.9441342007371372</data>
+      <data key="key38">31</data>
+      <data key="key41">Jonava</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">54.6891599999999999983</data>
+      <data key="key24">25.2798000000000000001</data>
+      <data key="key35">5.6031946303079323, 2.0527979908674125</data>
+      <data key="key38">32</data>
+      <data key="key41">Vilnius</data>
+      <data key="key45">Major City PoP</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.7172199999999999999</data>
+      <data key="key24">21.1175000000000000003</data>
+      <data key="key35">5.7554629442553233, 3.4808149549593379</data>
+      <data key="key38">33</data>
+      <data key="key41">Klaipeda</data>
+      <data key="key45">Major City PoP</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.9813899999999999985</data>
+      <data key="key24">22.2472200000000000005</data>
+      <data key="key35">6.1534140568607896, 3.5864991175589607</data>
+      <data key="key38">34</data>
+      <data key="key41">Telsiai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">56.3166700000000000001</data>
+      <data key="key24">22.3333299999999999996</data>
+      <data key="key35">4.3665161289277119, 3.3108202192123826</data>
+      <data key="key38">35</data>
+      <data key="key41">Mazeikiai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n36">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.080831434144006, 3.6599148361061768</data>
+      <data key="key38">36</data>
+      <data key="key41">N.Akmene</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n37">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">56.2402800000000000005</data>
+      <data key="key24">23.6152800000000000005</data>
+      <data key="key35">4.5958114869076372, 3.8681986763423408</data>
+      <data key="key38">37</data>
+      <data key="key41">Joniskis</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n38">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">56.2000000000000000007</data>
+      <data key="key24">24.75</data>
+      <data key="key35">4.507943808856675, 2.2119149271363381</data>
+      <data key="key38">38</data>
+      <data key="key41">Birzai</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.9333299999999999999</data>
+      <data key="key24">23.3166700000000000001</data>
+      <data key="key35">4.8811461750602527, 3.3874321085905148</data>
+      <data key="key38">39</data>
+      <data key="key41">Siauliai</data>
+      <data key="key45">Major City PoP</data>
+    </node>
+    <node id="n40">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key24">0</data>
+      <data key="key35">5.3084510918916576, 1.5844604448716613</data>
+      <data key="key38">40</data>
+      <data key="key41">Skoudas</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.9174999999999999996</data>
+      <data key="key24">21.0686100000000000008</data>
+      <data key="key35">5.8649261634058361, 3.7897493912654308</data>
+      <data key="key38">41</data>
+      <data key="key41">Palanga</data>
+      <data key="key45">PoP</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Lithuania</data>
+      <data key="key15">1</data>
+      <data key="key18">55.8758300000000000009</data>
+      <data key="key24">21.2508299999999999991</data>
+      <data key="key35">5.7300634829384247, 4.037742214183786</data>
+      <data key="key38">42</data>
+      <data key="key41">Kretinga</data>
+      <data key="key45">PoP</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n32">
+      <data key="key20">1Gb/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n38">
+      <data key="key22">0</data>
+      <data key="key39">e3</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n39">
+      <data key="key20">1Gb/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e4" source="n1" target="n24">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e5" source="n1" target="n30">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n39">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e7" source="n3" target="n39">
+      <data key="key20">10Mb/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n39">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e9" source="n5" target="n33">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n39">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e11" source="n7" target="n39">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e12" source="n8" target="n33">
+      <data key="key20">40Mb/s</data>
+      <data key="key21">40</data>
+      <data key="key22">40000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e13" source="n9" target="n33">
+      <data key="key20">40mb/s</data>
+      <data key="key21">40</data>
+      <data key="key22">40000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e14" source="n10" target="n26">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e15" source="n11" target="n32">
+      <data key="key20">20mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e16" source="n12" target="n32">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e17" source="n13" target="n32">
+      <data key="key20">20mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e18" source="n14" target="n32">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e19" source="n15" target="n26">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e20" source="n16" target="n26">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e21" source="n17" target="n26">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e22" source="n18" target="n26">
+      <data key="key20">40Mb/s</data>
+      <data key="key21">40</data>
+      <data key="key22">40000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e23" source="n19" target="n26">
+      <data key="key20">60Mb/s</data>
+      <data key="key21">60</data>
+      <data key="key22">60000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e24" source="n20" target="n32">
+      <data key="key20">8Mb/s</data>
+      <data key="key21">8</data>
+      <data key="key22">8000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e25" source="n21" target="n26">
+      <data key="key20">8Mb/s</data>
+      <data key="key21">8</data>
+      <data key="key22">8000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e26" source="n22" target="n26">
+      <data key="key20">5Gb/s</data>
+      <data key="key21">5</data>
+      <data key="key22">5000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e27" source="n23" target="n32">
+      <data key="key20">8Mb/s</data>
+      <data key="key21">8</data>
+      <data key="key22">8000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e28" source="n25" target="n32">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e29" source="n26" target="n32">
+      <data key="key20">1Gb/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e30" source="n26" target="n33">
+      <data key="key20">1Gb/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e31" source="n26" target="n27">
+      <data key="key20">40Mb/s</data>
+      <data key="key21">40</data>
+      <data key="key22">40000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e32" source="n26" target="n28">
+      <data key="key20">8Mb/s</data>
+      <data key="key21">8</data>
+      <data key="key22">8000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e33" source="n26" target="n31">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e34" source="n29" target="n32">
+      <data key="key20">60Mb/s</data>
+      <data key="key21">60</data>
+      <data key="key22">60000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e35" source="n32" target="n40">
+      <data key="key20">8Mb/s</data>
+      <data key="key21">8</data>
+      <data key="key22">8000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e36" source="n33" target="n34">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e37" source="n33" target="n39">
+      <data key="key20">1Gb/s</data>
+      <data key="key21">1</data>
+      <data key="key22">1000000000</data>
+      <data key="key23">G</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e38" source="n33" target="n42">
+      <data key="key20">40Mb/s</data>
+      <data key="key21">40</data>
+      <data key="key22">40000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e39" source="n33" target="n41">
+      <data key="key20">10Mb/s</data>
+      <data key="key21">10</data>
+      <data key="key22">10000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e40" source="n35" target="n39">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e41" source="n36" target="n39">
+      <data key="key20">8Mb/s</data>
+      <data key="key21">8</data>
+      <data key="key22">8000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+    <edge id="e42" source="n37" target="n39">
+      <data key="key20">20Mb/s</data>
+      <data key="key21">20</data>
+      <data key="key22">20000000</data>
+      <data key="key23">M</data>
+      <data key="key40">0</data>
+    </edge>
+
+  </graph>
+</graphml>

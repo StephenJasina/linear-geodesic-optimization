@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key21" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key22" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key23" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="geocode_append" attr.type="string" />
+  <key id="key36" for="node" attr.name="id" attr.type="int" />
+  <key id="key37" for="edge" attr.name="id" attr.type="string" />
+  <key id="key38" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key39" for="node" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="label" attr.type="string" />
+  <key id="key41" for="graph" attr.name="name" attr.type="string" />
+  <key id="key42" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key43" for="node" attr.name="type" attr.type="string" />
+  <key id="key44" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">18/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Country</data>
+   <data key="key13">USA</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key21">Integra Telecom </data>
+   <data key="key22">2010_08</data>
+   <data key="key23">Electric Lightwave provides carrier wholesale. Hard to read as 3D style. May be multiple PoPs in same city, with multiple links.</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.integratelecom.com/about/images/networkmap_large.png</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">1</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key40">Integra</data>
+   <data key="key41">internet_top_pop (Integra)</data>
+   <data key="key42">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key44">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8500300000000000009</data>
+      <data key="key20">-87.6500500000000000028</data>
+      <data key="key32">-1.2687403349510307, 0.13355131795053524</data>
+      <data key="key36">0</data>
+      <data key="key39">Chicago</data>
+      <data key="key43">PoP with Peering</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7830599999999999991</data>
+      <data key="key20">-96.8066699999999999982</data>
+      <data key="key32">-0.63476595744612008, -0.017053289179731288</data>
+      <data key="key36">1</data>
+      <data key="key39">Dallas</data>
+      <data key="key43">PoP with Peering</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5607999999999999999</data>
+      <data key="key20">-94.1624900000000000025</data>
+      <data key="key32">-1.6734466164214679, 0.43069672848667045</data>
+      <data key="key35">MN</data>
+      <data key="key36">2</data>
+      <data key="key39">St Cloud</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">44.9799700000000000008</data>
+      <data key="key20">-93.2638399999999999981</data>
+      <data key="key32">-1.4247667311190784, 0.40636644660825033</data>
+      <data key="key36">3</data>
+      <data key="key39">Minneapolis/St Paul</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0522299999999999986</data>
+      <data key="key20">-118.243680000000000001</data>
+      <data key="key32">-0.21140610485698039, 0.36356008944560175</data>
+      <data key="key36">4</data>
+      <data key="key39">Los Angeles</data>
+      <data key="key43">PoP with Peering</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.3541100000000000012</data>
+      <data key="key20">-121.955239999999999999</data>
+      <data key="key32">-0.26015594559270505, 0.6506622710098835</data>
+      <data key="key36">5</data>
+      <data key="key39">Santa Clara</data>
+      <data key="key43">PoP with Peering</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">36.1749700000000000005</data>
+      <data key="key20">-115.137220000000000002</data>
+      <data key="key32">-0.37035728039705007, 0.3034478098226624</data>
+      <data key="key36">6</data>
+      <data key="key39">Las Vegas</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.4483800000000000008</data>
+      <data key="key20">-112.074040000000000002</data>
+      <data key="key32">-0.35717021527960119, 0.11294994867536698</data>
+      <data key="key36">7</data>
+      <data key="key39">Phoenix</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.5815700000000000001</data>
+      <data key="key20">-121.494399999999999999</data>
+      <data key="key32">-0.49016124464299432, 0.86676958084236422</data>
+      <data key="key36">8</data>
+      <data key="key39">Sacramento</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.4404700000000000004</data>
+      <data key="key20">-122.714430000000000003</data>
+      <data key="key32">-0.46843001360533687, 1.1101525778959815</data>
+      <data key="key36">9</data>
+      <data key="key39">Santa Rose</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">44.9428999999999999986</data>
+      <data key="key20">-123.035099999999999999</data>
+      <data key="key32">-0.92533174717236311, 1.1286107126660465</data>
+      <data key="key36">10</data>
+      <data key="key39">Salem</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">44.0581699999999999995</data>
+      <data key="key20">-121.31531</data>
+      <data key="key32">-1.0922293324373633, 0.8523779469128967</data>
+      <data key="key35">OR</data>
+      <data key="key36">11</data>
+      <data key="key39">Bend</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">44.0520700000000000017</data>
+      <data key="key20">-123.086750000000000001</data>
+      <data key="key32">-0.98235027243546691, 1.3503086900348369</data>
+      <data key="key36">12</data>
+      <data key="key39">Eugene</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.5296300000000000001</data>
+      <data key="key20">-119.813800000000000003</data>
+      <data key="key32">-0.49967848925942865, 0.65606803955488036</data>
+      <data key="key36">13</data>
+      <data key="key39">Reno</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.5890699999999999999</data>
+      <data key="key20">-121.302729999999999999</data>
+      <data key="key32">-0.26920789862943356, 0.98646370533563599</data>
+      <data key="key36">14</data>
+      <data key="key39">Rancho Cordova</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7142699999999999987</data>
+      <data key="key20">-74.0059700000000000031</data>
+      <data key="key32">-1.5571515451052325, 0.18969027184785667</data>
+      <data key="key36">15</data>
+      <data key="key39">New York</data>
+      <data key="key43">PoP with Peering</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.0437199999999999984</data>
+      <data key="key20">-77.4874899999999999997</data>
+      <data key="key32">-1.4653381498329499, 0.013645165484727273</data>
+      <data key="key36">16</data>
+      <data key="key39">Ashburn</data>
+      <data key="key43">PoP with Peering</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">47.658780000000000001</data>
+      <data key="key20">-117.426049999999999998</data>
+      <data key="key32">-1.1326078732644411, 0.44446059507262697</data>
+      <data key="key36">17</data>
+      <data key="key39">Spokane</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">46.877190000000000001</data>
+      <data key="key20">-96.789800000000000002</data>
+      <data key="key32">-1.5948239750105817, 0.5753344982797598</data>
+      <data key="key35">ND</data>
+      <data key="key36">18</data>
+      <data key="key39">Fargo?</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">45.7832900000000000001</data>
+      <data key="key20">-108.500690000000000003</data>
+      <data key="key32">-1.0606172896469783, 0.2370380157411037</data>
+      <data key="key36">19</data>
+      <data key="key39">Billings</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">39.7391500000000000015</data>
+      <data key="key20">-104.984699999999999999</data>
+      <data key="key32">-0.94193580892762652, 0.070998575634124761</data>
+      <data key="key36">20</data>
+      <data key="key39">Denver</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.2230000000000000003</data>
+      <data key="key20">-111.973830000000000001</data>
+      <data key="key32">-0.76204649460196328, 0.22941820269262905</data>
+      <data key="key36">21</data>
+      <data key="key39">Ogden</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n22">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.2969000000000000007</data>
+      <data key="key20">-111.694649999999999997</data>
+      <data key="key32">-0.59886794171115032, 0.23869945562301798</data>
+      <data key="key36">22</data>
+      <data key="key39">Orem</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n23">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7607800000000000014</data>
+      <data key="key20">-111.891050000000000002</data>
+      <data key="key32">-0.5934791722032724, 0.43394046685069482</data>
+      <data key="key36">23</data>
+      <data key="key39">Salt Lake City</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">43.6135000000000000002</data>
+      <data key="key20">-116.203449999999999999</data>
+      <data key="key32">-0.74505691065394331, 0.64430552032282018</data>
+      <data key="key36">24</data>
+      <data key="key39">Boise</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n25">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">45.5234499999999999986</data>
+      <data key="key20">-122.676209999999999999</data>
+      <data key="key32">-0.86536917094482424, 0.85053184411007243</data>
+      <data key="key36">25</data>
+      <data key="key39">Portland</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+    <node id="n26">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6062099999999999989</data>
+      <data key="key20">-122.332069999999999997</data>
+      <data key="key32">-1.1618358241184492, 0.65520120568669771</data>
+      <data key="key36">26</data>
+      <data key="key39">Seattle</data>
+      <data key="key43">Customer Service PoP</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n16">
+      <data key="key37">e24</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key37">e23</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n20">
+      <data key="key37">e3</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n20">
+      <data key="key37">e4</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e4" source="n1" target="n7">
+      <data key="key37">e25</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n18">
+      <data key="key37">e19</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e6" source="n2" target="n3">
+      <data key="key37">e21</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e7" source="n3" target="n26">
+      <data key="key37">e17</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e8" source="n3" target="n18">
+      <data key="key37">e20</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e9" source="n3" target="n15">
+      <data key="key37">e22</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e10" source="n4" target="n5">
+      <data key="key37">e29</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e11" source="n4" target="n6">
+      <data key="key37">e26</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e12" source="n4" target="n7">
+      <data key="key37">e28</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e13" source="n5" target="n8">
+      <data key="key37">e30</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e14" source="n6" target="n7">
+      <data key="key37">e27</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e15" source="n6" target="n23">
+      <data key="key37">e10</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e16" source="n8" target="n9">
+      <data key="key37">e32</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e17" source="n8" target="n25">
+      <data key="key37">e12</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e18" source="n8" target="n14">
+      <data key="key37">e31</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e19" source="n8" target="n13">
+      <data key="key37">e33</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e20" source="n10" target="n25">
+      <data key="key37">e15</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e21" source="n10" target="n12">
+      <data key="key37">e34</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e22" source="n11" target="n25">
+      <data key="key37">e14</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e23" source="n11" target="n26">
+      <data key="key37">e18</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e24" source="n13" target="n23">
+      <data key="key37">e8</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e25" source="n15" target="n16">
+      <data key="key37">e35</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e26" source="n17" target="n26">
+      <data key="key37">e16</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e27" source="n17" target="n19">
+      <data key="key37">e0</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e28" source="n19" target="n20">
+      <data key="key37">e1</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e29" source="n20" target="n21">
+      <data key="key37">e2</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e30" source="n21" target="n22">
+      <data key="key37">e5</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e31" source="n21" target="n23">
+      <data key="key37">e6</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e32" source="n22" target="n23">
+      <data key="key37">e7</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e33" source="n23" target="n24">
+      <data key="key37">e9</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e34" source="n24" target="n25">
+      <data key="key37">e11</data>
+      <data key="key38">0</data>
+    </edge>
+    <edge id="e35" source="n25" target="n26">
+      <data key="key37">e13</data>
+      <data key="key38">0</data>
+    </edge>
+
+  </graph>
+</graphml>

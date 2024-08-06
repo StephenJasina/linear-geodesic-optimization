@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="edge" attr.name="LinkSpeed" attr.type="string" />
+  <key id="key22" for="edge" attr.name="LinkSpeedRaw" attr.type="int" />
+  <key id="key23" for="edge" attr.name="LinkSpeedUnits" attr.type="string" />
+  <key id="key24" for="edge" attr.name="LinkType" attr.type="string" />
+  <key id="key25" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key26" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key27" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key30" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key32" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key33" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key34" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key35" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key36" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key37" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key38" for="graph" attr.name="description" attr.type="string" />
+  <key id="key39" for="node" attr.name="id" attr.type="int" />
+  <key id="key40" for="edge" attr.name="id" attr.type="string" />
+  <key id="key41" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key42" for="node" attr.name="label" attr.type="string" />
+  <key id="key43" for="graph" attr.name="label" attr.type="string" />
+  <key id="key44" for="graph" attr.name="name" attr.type="string" />
+  <key id="key45" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key46" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">10</data>
+   <data key="key8">19/10/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Algeria</data>
+   <data key="key14">0</data>
+   <data key="key16">19/10/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key26">ARN</data>
+   <data key="key27">2010_10</data>
+   <data key="key28">Primary</data>
+   <data key="key29">http://www.arn.dz/index.php?option=com_content&amp;amp;task=view&amp;amp;id=18&amp;amp;Itemid=33</data>
+   <data key="key30">e278b1b</data>
+   <data key="key31">0</data>
+   <data key="key32">0.3.34dev-20120328</data>
+   <data key="key33">0</data>
+   <data key="key34">REN</data>
+   <data key="key35">1.0</data>
+   <data key="key37">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key38">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key43">Arn</data>
+   <data key="key44">internet_top_pop (Arn)</data>
+   <data key="key45">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key46">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">34.6727899999999999991</data>
+      <data key="key25">3.26300000000000000005</data>
+      <data key="key36">10.432856177119231, 4.2436570240084457</data>
+      <data key="key39">0</data>
+      <data key="key42">Djelfa</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.2641699999999999986</data>
+      <data key="key25">2.7539299999999999999</data>
+      <data key="key36">10.5088850829337, 5.0147511333189421</data>
+      <data key="key39">1</data>
+      <data key="key42">Medea</data>
+    </node>
+    <node id="n2">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">9.9565064229123443, 4.3915951202431645</data>
+      <data key="key39">2</data>
+      <data key="key42">Internet</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.4700399999999999995</data>
+      <data key="key25">2.82769999999999999997</data>
+      <data key="key36">10.798725147768256, 4.8413657754610897</data>
+      <data key="key39">3</data>
+      <data key="key42">Blida</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">33.3560800000000000007</data>
+      <data key="key25">6.86318999999999999981</data>
+      <data key="key36">9.0864277822913433, 4.1240926100316386</data>
+      <data key="key39">4</data>
+      <data key="key42">ElOued</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.6594399999999999984</data>
+      <data key="key25">5.67186000000000000018</data>
+      <data key="key36">10.554803989636634, 6.1477946072346024</data>
+      <data key="key39">5</data>
+      <data key="key42">Msila</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">33.7999999999999999993</data>
+      <data key="key25">2.86513999999999999994</data>
+      <data key="key36">9.349578558213496, 3.7296238762583225</data>
+      <data key="key39">6</data>
+      <data key="key42">Laghouat</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">31.9493200000000000006</data>
+      <data key="key25">5.32501999999999999988</data>
+      <data key="key36">9.5771325035460606, 4.1668419703815793</data>
+      <data key="key39">7</data>
+      <data key="key42">Ouargla</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.3650000000000000015</data>
+      <data key="key25">6.61471999999999999992</data>
+      <data key="key36">10.141375895622188, 5.7556357319914326</data>
+      <data key="key39">8</data>
+      <data key="key42">Constantine</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">34.8503800000000000005</data>
+      <data key="key25">5.72805000000000000011</data>
+      <data key="key36">10.501769751071011, 5.594671513107361</data>
+      <data key="key39">9</data>
+      <data key="key42">Biskra</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.5559699999999999989</data>
+      <data key="key25">6.17414000000000000009</data>
+      <data key="key36">9.8911199332326873, 6.3567884411977369</data>
+      <data key="key39">10</data>
+      <data key="key42">Batna</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.7118200000000000013</data>
+      <data key="key25">4.04590999999999999985</data>
+      <data key="key36">9.6744155329352974, 4.6064912128592201</data>
+      <data key="key39">11</data>
+      <data key="key42">Tizi Ouzou</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.9000000000000000014</data>
+      <data key="key25">7.76666999999999999992</data>
+      <data key="key36">9.546951886951069, 5.7726292115064437</data>
+      <data key="key39">12</data>
+      <data key="key42">Annaba</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.4621399999999999987</data>
+      <data key="key25">7.42607999999999999997</data>
+      <data key="key36">9.67570194131312, 6.0854454913428793</data>
+      <data key="key39">13</data>
+      <data key="key42">Guelma</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.4041700000000000015</data>
+      <data key="key25">8.12416999999999999999</data>
+      <data key="key36">10.724129597814464, 5.8559060717614795</data>
+      <data key="key39">14</data>
+      <data key="key42">Tebessa</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.8754100000000000006</data>
+      <data key="key25">7.11352999999999999984</data>
+      <data key="key36">10.110779934055182, 6.0882743971692825</data>
+      <data key="key39">15</data>
+      <data key="key42">Oum el Bouaghi</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.7558700000000000002</data>
+      <data key="key25">5.08433000000000000001</data>
+      <data key="key36">10.113419234255179, 4.0773505482779804</data>
+      <data key="key39">16</data>
+      <data key="key42">Bejaia</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.1911200000000000017</data>
+      <data key="key25">5.4137300000000000001</data>
+      <data key="key36">10.122078503469018, 5.0285308169984608</data>
+      <data key="key39">17</data>
+      <data key="key42">Setif</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.8761700000000000009</data>
+      <data key="key25">6.90920999999999999996</data>
+      <data key="key36">10.304758095133256, 6.3772884916152774</data>
+      <data key="key39">18</data>
+      <data key="key42">Skikda</data>
+    </node>
+    <node id="n19">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.8205500000000000016</data>
+      <data key="key25">5.76671000000000000003</data>
+      <data key="key36">9.7968335031541098, 5.5398863217558443</data>
+      <data key="key39">19</data>
+      <data key="key42">Jijel</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.3710299999999999987</data>
+      <data key="key25">1.31698999999999999996</data>
+      <data key="key36">11.273397424505948, 4.2778422317770675</data>
+      <data key="key39">20</data>
+      <data key="key42">Tiaret</data>
+    </node>
+    <node id="n21">
+      <data key="key15">0</data>
+      <data key="key18">0</data>
+      <data key="key25">0</data>
+      <data key="key36">9.7814446803305888, 4.9203131602548726</data>
+      <data key="key39">21</data>
+      <data key="key42">GEANT</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.7524999999999999988</data>
+      <data key="key25">3.04196999999999999993</data>
+      <data key="key36">10.24153734249937, 4.6473080305824546</data>
+      <data key="key39">22</data>
+      <data key="key42">Alger</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">36.1959100000000000008</data>
+      <data key="key25">1.25538000000000000002</data>
+      <data key="key36">10.678210194766315, 4.5176308575438293</data>
+      <data key="key39">23</data>
+      <data key="key42">Chlef</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6911099999999999986</data>
+      <data key="key25">-0.641669999999999999976</data>
+      <data key="key36">10.963570559454094, 3.9423698109104222</data>
+      <data key="key39">24</data>
+      <data key="key42">Oran</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.9311499999999999985</data>
+      <data key="key25">0.0891800000000000000005</data>
+      <data key="key36">11.524474049817909, 4.0243953654481732</data>
+      <data key="key39">25</data>
+      <data key="key42">Mostaganem</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">34.8783299999999999996</data>
+      <data key="key25">-1.31500000000000000005</data>
+      <data key="key36">10.899692159631856, 3.3788722730308249</data>
+      <data key="key39">26</data>
+      <data key="key42">Tlemcen</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.1899400000000000012</data>
+      <data key="key25">-0.630850000000000000003</data>
+      <data key="key36">11.462125083231646, 3.6955150459843589</data>
+      <data key="key39">27</data>
+      <data key="key42">Sidi Bel Abbes</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">34.8303400000000000017</data>
+      <data key="key25">0.151710000000000000005</data>
+      <data key="key36">10.637287173082196, 3.620585128643194</data>
+      <data key="key39">28</data>
+      <data key="key42">Saida</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Algeria</data>
+      <data key="key15">1</data>
+      <data key="key18">35.3147299999999999993</data>
+      <data key="key25">-0.0503699999999999999988</data>
+      <data key="key36">11.22586049023251, 3.4601643868244683</data>
+      <data key="key39">29</data>
+      <data key="key42">Mascara</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e5</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e1" source="n1" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e6</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e2" source="n2" target="n22">
+      <data key="key20">60Mb/s</data>
+      <data key="key21">60</data>
+      <data key="key22">60000000</data>
+      <data key="key23">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e3" source="n3" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e4</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e4" source="n4" target="n7">
+      <data key="key22">0</data>
+      <data key="key40">e19</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e5" source="n5" target="n8">
+      <data key="key22">0</data>
+      <data key="key40">e20</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e6" source="n6" target="n7">
+      <data key="key22">0</data>
+      <data key="key40">e18</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e7" source="n7" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e7</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e8" source="n8" target="n9">
+      <data key="key22">0</data>
+      <data key="key40">e21</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e9" source="n8" target="n10">
+      <data key="key22">0</data>
+      <data key="key40">e28</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e10" source="n8" target="n12">
+      <data key="key22">0</data>
+      <data key="key40">e25</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e11" source="n8" target="n13">
+      <data key="key22">0</data>
+      <data key="key40">e24</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e12" source="n8" target="n14">
+      <data key="key22">0</data>
+      <data key="key40">e23</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e13" source="n8" target="n15">
+      <data key="key22">0</data>
+      <data key="key40">e22</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e14" source="n8" target="n18">
+      <data key="key22">0</data>
+      <data key="key40">e27</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e15" source="n8" target="n19">
+      <data key="key22">0</data>
+      <data key="key40">e26</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e16" source="n8" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e8</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e17" source="n11" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e11</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e18" source="n16" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e10</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e19" source="n17" target="n22">
+      <data key="key22">0</data>
+      <data key="key40">e9</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e20" source="n20" target="n24">
+      <data key="key22">0</data>
+      <data key="key40">e17</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e21" source="n21" target="n22">
+      <data key="key20">155Mb/s</data>
+      <data key="key21">155</data>
+      <data key="key22">155000000</data>
+      <data key="key23">M</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e22" source="n22" target="n23">
+      <data key="key22">0</data>
+      <data key="key40">e0</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e23" source="n22" target="n24">
+      <data key="key20">24 Mb/s + Satellite</data>
+      <data key="key21">24</data>
+      <data key="key22">24000000</data>
+      <data key="key23">M</data>
+      <data key="key24">Satellite</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e24" source="n24" target="n25">
+      <data key="key22">0</data>
+      <data key="key40">e12</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e25" source="n24" target="n26">
+      <data key="key22">0</data>
+      <data key="key40">e13</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e26" source="n24" target="n27">
+      <data key="key22">0</data>
+      <data key="key40">e14</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e27" source="n24" target="n28">
+      <data key="key22">0</data>
+      <data key="key40">e15</data>
+      <data key="key41">0</data>
+    </edge>
+    <edge id="e28" source="n24" target="n29">
+      <data key="key22">0</data>
+      <data key="key40">e16</data>
+      <data key="key41">0</data>
+    </edge>
+
+  </graph>
+</graphml>

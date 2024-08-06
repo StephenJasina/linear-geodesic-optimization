@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key21" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key22" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key23" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key25" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key26" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key27" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key28" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key29" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key30" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key31" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key32" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key33" for="graph" attr.name="description" attr.type="string" />
+  <key id="key34" for="node" attr.name="id" attr.type="int" />
+  <key id="key35" for="edge" attr.name="id" attr.type="string" />
+  <key id="key36" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key37" for="node" attr.name="label" attr.type="string" />
+  <key id="key38" for="graph" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="name" attr.type="string" />
+  <key id="key40" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key41" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">0</data>
+   <data key="key6">=</data>
+   <data key="key7">08</data>
+   <data key="key8">15/11/10</data>
+   <data key="key9">Current</data>
+   <data key="key10">2010</data>
+   <data key="key11">1</data>
+   <data key="key12">Region</data>
+   <data key="key13">Louisiana, Texas, USA</data>
+   <data key="key14">0</data>
+   <data key="key16">3/08/10</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">Fibre</data>
+   <data key="key21">Network USA </data>
+   <data key="key22">2010_08</data>
+   <data key="key23">Primary</data>
+   <data key="key24">http://www.networkusa.com/network.html</data>
+   <data key="key25">e278b1b</data>
+   <data key="key26">0</data>
+   <data key="key27">0.3.34dev-20120328</data>
+   <data key="key28">0</data>
+   <data key="key29">COM</data>
+   <data key="key30">1.0</data>
+   <data key="key32">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key33">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key38">NetworkUsa</data>
+   <data key="key39">internet_top_pop (NetworkUsa)</data>
+   <data key="key40">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key41">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.9546500000000000003</data>
+      <data key="key20">-90.0750699999999999978</data>
+      <data key="key31">-2.1289923523553598, 3.4686208100542451</data>
+      <data key="key34">0</data>
+      <data key="key37">New Orleans</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.7957600000000000003</data>
+      <data key="key20">-90.8228699999999999973</data>
+      <data key="key31">-2.0682076141111732, 3.2880544630708144</data>
+      <data key="key34">1</data>
+      <data key="key37">Thi&apos;bodaux</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.4754700000000000003</data>
+      <data key="key20">-90.1009099999999999997</data>
+      <data key="key31">-2.2025192310716539, 3.6747417650688492</data>
+      <data key="key34">2</data>
+      <data key="key37">Covington</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.3674200000000000001</data>
+      <data key="key20">-89.0928199999999999997</data>
+      <data key="key31">-2.312875703607761, 3.4707739476552937</data>
+      <data key="key34">3</data>
+      <data key="key37">Gulfport</data>
+    </node>
+    <node id="n4">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.4507499999999999996</data>
+      <data key="key20">-91.1545499999999999999</data>
+      <data key="key31">-1.8687169507285217, 3.457461240107381</data>
+      <data key="key34">4</data>
+      <data key="key37">Baton Rouge</data>
+    </node>
+    <node id="n5">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.2240899999999999993</data>
+      <data key="key20">-92.0198400000000000035</data>
+      <data key="key31">-1.7249619386273829, 3.2795944714210261</data>
+      <data key="key34">5</data>
+      <data key="key37">Lafayette</data>
+    </node>
+    <node id="n6">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.6993700000000000003</data>
+      <data key="key20">-91.2067700000000000024</data>
+      <data key="key31">-1.9066253675430014, 3.2121406858361672</data>
+      <data key="key34">6</data>
+      <data key="key37">Morgan City</data>
+    </node>
+    <node id="n7">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.5043599999999999993</data>
+      <data key="key20">-90.4611999999999999988</data>
+      <data key="key31">-1.9970654351841974, 3.6577556101891013</data>
+      <data key="key34">7</data>
+      <data key="key37">Hammond</data>
+    </node>
+    <node id="n8">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">31.3112900000000000007</data>
+      <data key="key20">-92.445140000000000001</data>
+      <data key="key31">-1.8238755146337629, 3.7700285395503701</data>
+      <data key="key34">8</data>
+      <data key="key37">Alexandria</data>
+    </node>
+    <node id="n9">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">31.53406</data>
+      <data key="key20">-92.9476600000000000024</data>
+      <data key="key31">-1.983272328372836, 3.9145793898920362</data>
+      <data key="key34">9</data>
+      <data key="key37">Derry</data>
+    </node>
+    <node id="n10">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.4241200000000000005</data>
+      <data key="key20">-98.4936299999999999993</data>
+      <data key="key31">-0.70648378450205496, 3.5200932112968863</data>
+      <data key="key34">10</data>
+      <data key="key37">San Antonio</data>
+    </node>
+    <node id="n11">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.2671500000000000003</data>
+      <data key="key20">-97.7430599999999999983</data>
+      <data key="key31">-0.70001735560622091, 3.7052321261273624</data>
+      <data key="key34">11</data>
+      <data key="key37">Austin</data>
+    </node>
+    <node id="n12">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.62798</data>
+      <data key="key20">-96.3344099999999999989</data>
+      <data key="key31">-0.7658964161358337, 3.8787599462304212</data>
+      <data key="key34">12</data>
+      <data key="key37">College Station</data>
+    </node>
+    <node id="n13">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">31.5493300000000000006</data>
+      <data key="key20">-97.1466700000000000018</data>
+      <data key="key31">-0.89507477020951465, 4.0214407347594827</data>
+      <data key="key34">13</data>
+      <data key="key37">Waco</data>
+    </node>
+    <node id="n14">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">31.7607200000000000004</data>
+      <data key="key20">-93.0862699999999999995</data>
+      <data key="key31">-2.0336966269033159, 4.0826318863838456</data>
+      <data key="key34">14</data>
+      <data key="key37">Natchitoches</data>
+    </node>
+    <node id="n15">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.7632800000000000001</data>
+      <data key="key20">-95.3632700000000000026</data>
+      <data key="key31">-0.78727637155348451, 3.350592898247279</data>
+      <data key="key34">15</data>
+      <data key="key37">Houston</data>
+    </node>
+    <node id="n16">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.0579899999999999999</data>
+      <data key="key20">-94.7954799999999999996</data>
+      <data key="key31">-0.92870332179143156, 3.2212317351254747</data>
+      <data key="key34">16</data>
+      <data key="key37">Liberty</data>
+    </node>
+    <node id="n17">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.5335300000000000008</data>
+      <data key="key20">-92.0815099999999999991</data>
+      <data key="key31">-1.6546774000360296, 3.4448830668413608</data>
+      <data key="key34">17</data>
+      <data key="key37">Opelousas</data>
+    </node>
+    <node id="n18">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.8443599999999999994</data>
+      <data key="key20">-92.2578999999999999973</data>
+      <data key="key31">-1.6969477194005715, 3.6254102398485064</data>
+      <data key="key34">18</data>
+      <data key="key37">St Landry</data>
+    </node>
+    <node id="n19">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">31.0465799999999999999</data>
+      <data key="key20">-93.2054399999999999976</data>
+      <data key="key31">-1.5341668648635081, 2.7546600084728325</data>
+      <data key="key34">19</data>
+      <data key="key37">Fort Polk</data>
+    </node>
+    <node id="n20">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.0148800000000000009</data>
+      <data key="key20">-93.3421200000000000005</data>
+      <data key="key31">-1.9036659552130433, 4.1851639947469916</data>
+      <data key="key34">20</data>
+      <data key="key37">Coushatta</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.0357699999999999997</data>
+      <data key="key20">-94.4243600000000000011</data>
+      <data key="key31">-1.1074119068876978, 3.1443211798990527</data>
+      <data key="key34">21</data>
+      <data key="key37">Nome</data>
+    </node>
+    <node id="n22">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.0860499999999999998</data>
+      <data key="key20">-94.101850000000000003</data>
+      <data key="key31">-1.3120855369081974, 3.1135701554203834</data>
+      <data key="key34">22</data>
+      <data key="key37">Beaumont</data>
+    </node>
+    <node id="n23">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.2130899999999999999</data>
+      <data key="key20">-93.2043999999999999984</data>
+      <data key="key31">-1.5312864492734124, 3.1130912275239471</data>
+      <data key="key34">23</data>
+      <data key="key37">Lake Charles</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.8463099999999999998</data>
+      <data key="key20">-93.2890500000000000014</data>
+      <data key="key31">-1.5349501684991393, 2.9208073164788586</data>
+      <data key="key34">24</data>
+      <data key="key37">Deridder</data>
+    </node>
+    <node id="n25">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.2987600000000000013</data>
+      <data key="key20">-90.1848100000000000021</data>
+      <data key="key31">-1.8374835826457889, 3.9329742296468213</data>
+      <data key="key34">25</data>
+      <data key="key37">Jackson</data>
+    </node>
+    <node id="n26">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">30.2751900000000000006</data>
+      <data key="key20">-89.7811700000000000033</data>
+      <data key="key31">-2.3629132438328941, 3.612737646486194</data>
+      <data key="key34">26</data>
+      <data key="key37">Slidell</data>
+    </node>
+    <node id="n27">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7830599999999999991</data>
+      <data key="key20">-96.8066699999999999982</data>
+      <data key="key31">-1.0667618590257528, 4.1172497495050608</data>
+      <data key="key34">27</data>
+      <data key="key37">Dallas</data>
+    </node>
+    <node id="n28">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.3512599999999999993</data>
+      <data key="key20">-95.3010600000000000012</data>
+      <data key="key31">-1.264111430359379, 4.1679677130097552</data>
+      <data key="key34">28</data>
+      <data key="key37">Tyler</data>
+    </node>
+    <node id="n29">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.5006999999999999992</data>
+      <data key="key20">-94.7404900000000000024</data>
+      <data key="key31">-1.4825116038446242, 4.1853757979558077</data>
+      <data key="key34">29</data>
+      <data key="key37">Longview</data>
+    </node>
+    <node id="n30">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.5251499999999999987</data>
+      <data key="key20">-93.7501799999999999996</data>
+      <data key="key31">-1.7227214366393109, 4.1931123019096921</data>
+      <data key="key34">30</data>
+      <data key="key37">Shreveport</data>
+    </node>
+    <node id="n31">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.5159900000000000007</data>
+      <data key="key20">-93.7321199999999999999</data>
+      <data key="key31">-1.6400795870545193, 4.3807196832996027</data>
+      <data key="key34">31</data>
+      <data key="key37">Bossier City</data>
+    </node>
+    <node id="n32">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.6154300000000000014</data>
+      <data key="key20">-93.2868399999999999977</data>
+      <data key="key31">-1.6557000485656541, 4.5576258286253335</data>
+      <data key="key34">32</data>
+      <data key="key37">Minden</data>
+    </node>
+    <node id="n33">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.5232100000000000015</data>
+      <data key="key20">-92.6379299999999999971</data>
+      <data key="key31">-1.8041672836748419, 4.5600102524306481</data>
+      <data key="key34">33</data>
+      <data key="key37">Ruston</data>
+    </node>
+    <node id="n34">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.5093099999999999988</data>
+      <data key="key20">-92.1193000000000000033</data>
+      <data key="key31">-1.808855809519289, 4.3844727630749016</data>
+      <data key="key34">34</data>
+      <data key="key37">Monroe</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key35">e16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key35">e15</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e2" source="n0" target="n7">
+      <data key="key35">e17</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e3" source="n1" target="n6">
+      <data key="key35">e18</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n26">
+      <data key="key35">e12</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e5" source="n2" target="n7">
+      <data key="key35">e14</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e6" source="n3" target="n26">
+      <data key="key35">e13</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n5">
+      <data key="key35">e21</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e8" source="n4" target="n7">
+      <data key="key35">e20</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e9" source="n5" target="n17">
+      <data key="key35">e23</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e10" source="n5" target="n6">
+      <data key="key35">e19</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e11" source="n5" target="n23">
+      <data key="key35">e22</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e12" source="n7" target="n25">
+      <data key="key35">e11</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e13" source="n8" target="n9">
+      <data key="key35">e24</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e14" source="n8" target="n18">
+      <data key="key35">e25</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e15" source="n9" target="n14">
+      <data key="key35">e26</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e16" source="n10" target="n11">
+      <data key="key35">e36</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e17" source="n10" target="n15">
+      <data key="key35">e35</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e18" source="n11" target="n12">
+      <data key="key35">e37</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e19" source="n12" target="n13">
+      <data key="key35">e38</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e20" source="n13" target="n27">
+      <data key="key35">e1</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e21" source="n14" target="n20">
+      <data key="key35">e27</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e22" source="n15" target="n16">
+      <data key="key35">e34</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e23" source="n16" target="n21">
+      <data key="key35">e33</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e24" source="n17" target="n18">
+      <data key="key35">e29</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e25" source="n19" target="n24">
+      <data key="key35">e28</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e26" source="n20" target="n30">
+      <data key="key35">e5</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e27" source="n21" target="n22">
+      <data key="key35">e32</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e28" source="n22" target="n23">
+      <data key="key35">e31</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e29" source="n23" target="n24">
+      <data key="key35">e30</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e30" source="n25" target="n30">
+      <data key="key35">e4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e31" source="n27" target="n28">
+      <data key="key35">e0</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e32" source="n28" target="n29">
+      <data key="key35">e2</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e33" source="n29" target="n30">
+      <data key="key35">e3</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e34" source="n30" target="n34">
+      <data key="key35">e7</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e35" source="n30" target="n31">
+      <data key="key35">e6</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e36" source="n31" target="n32">
+      <data key="key35">e8</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e37" source="n32" target="n33">
+      <data key="key35">e9</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e38" source="n33" target="n34">
+      <data key="key35">e10</data>
+      <data key="key36">0</data>
+    </edge>
+
+  </graph>
+</graphml>

@@ -1,0 +1,1427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="edge" attr.name="LinkLabel" attr.type="string" />
+  <key id="key21" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key22" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key23" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="id" attr.type="int" />
+  <key id="key36" for="edge" attr.name="key" attr.type="int" />
+  <key id="key37" for="node" attr.name="label" attr.type="string" />
+  <key id="key38" for="graph" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="name" attr.type="string" />
+  <key id="key40" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key41" for="node" attr.name="type" attr.type="string" />
+  <key id="key42" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">0</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">03</data>
+   <data key="key8">31/03/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">0</data>
+   <data key="key12">Global</data>
+   <data key="key13">Global</data>
+   <data key="key14">0</data>
+   <data key="key16">31/03/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key22">NTT</data>
+   <data key="key23">2011_03</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.ntt.net/english/about/network_map.cfm</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">1</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key38">Ntt</data>
+   <data key="key39">internet_top_pop (Ntt)</data>
+   <data key="key40">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key42">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">38.8951099999999999994</data>
+      <data key="key21">-77.0363699999999999996</data>
+      <data key="key32">5.0256371855291206, 0.74940982194115113</data>
+      <data key="key35">0</data>
+      <data key="key37">Washington DC</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n1">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">25.7742699999999999999</data>
+      <data key="key21">-80.1936599999999999988</data>
+      <data key="key32">5.1868176804889821, 0.84553808882708126</data>
+      <data key="key35">1</data>
+      <data key="key37">Miami</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n2">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">33.7489999999999999991</data>
+      <data key="key21">-84.3879799999999999985</data>
+      <data key="key32">5.1800631239828903, 0.98996305856837918</data>
+      <data key="key35">2</data>
+      <data key="key37">Atlanta</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n3">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">40.7142699999999999987</data>
+      <data key="key21">-74.0059700000000000031</data>
+      <data key="key32">5.0300461006902957, 0.60579937284042429</data>
+      <data key="key35">3</data>
+      <data key="key37">New York City</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Switzerland</data>
+      <data key="key15">1</data>
+      <data key="key18">46.2022200000000000004</data>
+      <data key="key21">6.14569000000000000006</data>
+      <data key="key32">4.8723492636654022, 0.033388212692351912</data>
+      <data key="key35">4</data>
+      <data key="key37">Geneva</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">50.1166699999999999994</data>
+      <data key="key21">8.6833299999999999999</data>
+      <data key="key32">4.9780182734503198, 0.23908984334336911</data>
+      <data key="key35">5</data>
+      <data key="key37">Frankfurt</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n6">
+      <data key="key3">France</data>
+      <data key="key15">1</data>
+      <data key="key18">48.8534099999999999984</data>
+      <data key="key21">2.34880000000000000002</data>
+      <data key="key32">4.8119590767124514, 0.22678246981301714</data>
+      <data key="key35">6</data>
+      <data key="key37">Paris</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Spain</data>
+      <data key="key15">1</data>
+      <data key="key18">40.4164999999999999987</data>
+      <data key="key21">-3.70256000000000000004</data>
+      <data key="key32">5.1999248202800246, 0.44689462470553026</data>
+      <data key="key35">7</data>
+      <data key="key37">Madrid</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Germany</data>
+      <data key="key15">1</data>
+      <data key="key18">51.2217200000000000004</data>
+      <data key="key21">6.77616000000000000009</data>
+      <data key="key32">5.1152242151907741, 0.300135456521467</data>
+      <data key="key35">8</data>
+      <data key="key37">Dusseldorf</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Netherlands</data>
+      <data key="key15">1</data>
+      <data key="key18">52.3740300000000000014</data>
+      <data key="key21">4.88968999999999999993</data>
+      <data key="key32">4.9072176946103863, 0.507128389370891</data>
+      <data key="key35">9</data>
+      <data key="key37">Amsterdam</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Egypt</data>
+      <data key="key15">1</data>
+      <data key="key18">30.0626299999999999999</data>
+      <data key="key21">31.2496699999999999996</data>
+      <data key="key32">6.0445220902226646, 0.97063547657129767</data>
+      <data key="key35">10</data>
+      <data key="key37">Cairo</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Saudi Arabia</data>
+      <data key="key15">1</data>
+      <data key="key18">24.6877299999999999993</data>
+      <data key="key21">46.7218499999999999986</data>
+      <data key="key32">3.5195450711302283, 1.1958615100325789</data>
+      <data key="key35">11</data>
+      <data key="key37">Ar Riyad</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n12">
+      <data key="key3">India</data>
+      <data key="key15">1</data>
+      <data key="key18">13.0878399999999999997</data>
+      <data key="key21">80.2784700000000000022</data>
+      <data key="key32">6.0711191870664294, 0.44792596350887925</data>
+      <data key="key35">12</data>
+      <data key="key37">Chennai</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Sri Lanka</data>
+      <data key="key15">1</data>
+      <data key="key18">6.93194000000000000016</data>
+      <data key="key21">79.8477799999999999989</data>
+      <data key="key32">4.1864841745543204, 0.35524729391856685</data>
+      <data key="key35">13</data>
+      <data key="key37">Colombo</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Thailand</data>
+      <data key="key15">1</data>
+      <data key="key18">13.75</data>
+      <data key="key21">100.516669999999999997</data>
+      <data key="key32">3.8802769316155201, 1.6254173068043933</data>
+      <data key="key35">14</data>
+      <data key="key37">Bangkok</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Vietnam</data>
+      <data key="key15">1</data>
+      <data key="key18">10.75</data>
+      <data key="key21">106.666669999999999999</data>
+      <data key="key32">3.9877913186594962, -0.43793562780058426</data>
+      <data key="key35">15</data>
+      <data key="key37">Ho Chi Minh</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Brunei</data>
+      <data key="key15">1</data>
+      <data key="key18">4.94028999999999999995</data>
+      <data key="key21">114.94806</data>
+      <data key="key32">5.3820938318373344, 1.8128161600389339</data>
+      <data key="key35">16</data>
+      <data key="key37">Brunei</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Nigeria</data>
+      <data key="key15">1</data>
+      <data key="key18">6.45306000000000000005</data>
+      <data key="key21">3.39582999999999999999</data>
+      <data key="key32">5.9083249974435752, -0.058913327337909369</data>
+      <data key="key35">17</data>
+      <data key="key37">Lagos</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n18">
+      <data key="key3">South Africa</data>
+      <data key="key15">1</data>
+      <data key="key18">-26.2022700000000000001</data>
+      <data key="key21">28.0436300000000000004</data>
+      <data key="key32">3.614311439995527, -0.070975089365246782</data>
+      <data key="key35">18</data>
+      <data key="key37">Johannesburg</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n19">
+      <data key="key3">South Africa</data>
+      <data key="key15">1</data>
+      <data key="key18">-33.9166699999999999987</data>
+      <data key="key21">18.4166700000000000004</data>
+      <data key="key32">4.441412948733567, -0.65188969785123119</data>
+      <data key="key35">19</data>
+      <data key="key37">Cape Town</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n20">
+      <data key="key3">South Korea</data>
+      <data key="key15">1</data>
+      <data key="key18">37.5682600000000000012</data>
+      <data key="key21">126.977829999999999998</data>
+      <data key="key32">4.5838377835461817, 0.92510174653399735</data>
+      <data key="key35">20</data>
+      <data key="key37">Seoul</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n21">
+      <data key="key3">United Arab Emirates</data>
+      <data key="key15">1</data>
+      <data key="key18">25.2522199999999999998</data>
+      <data key="key21">55.2799999999999999989</data>
+      <data key="key32">3.3800969729916099, 0.48359162323855015</data>
+      <data key="key35">21</data>
+      <data key="key37">Dubai</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n22">
+      <data key="key3">China</data>
+      <data key="key15">1</data>
+      <data key="key18">39.9075000000000000011</data>
+      <data key="key21">116.39723</data>
+      <data key="key32">5.5272994599765255, -0.49385243783705285</data>
+      <data key="key35">22</data>
+      <data key="key37">Beijing</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n23">
+      <data key="key3">China</data>
+      <data key="key15">1</data>
+      <data key="key18">31.2222200000000000009</data>
+      <data key="key21">121.458060000000000002</data>
+      <data key="key32">4.3381781506386341, 1.8819567807087245</data>
+      <data key="key35">23</data>
+      <data key="key37">Shanghai</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n24">
+      <data key="key3">United Kingdom</data>
+      <data key="key15">1</data>
+      <data key="key18">51.5085299999999999994</data>
+      <data key="key21">-0.125740000000000000003</data>
+      <data key="key32">4.8533802478991861, 0.42012972253657638</data>
+      <data key="key35">24</data>
+      <data key="key37">London</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n25">
+      <data key="key3">New Zealand</data>
+      <data key="key15">1</data>
+      <data key="key18">-41.286639999999999999</data>
+      <data key="key21">174.775569999999999996</data>
+      <data key="key32">4.8568238409081825, 1.9530052807643357</data>
+      <data key="key35">25</data>
+      <data key="key37">Wellington</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n26">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.3860500000000000008</data>
+      <data key="key21">-122.083850000000000001</data>
+      <data key="key32">4.6407719243937162, 0.41067557830554541</data>
+      <data key="key35">26</data>
+      <data key="key37">Mountain View</data>
+      <data key="key41">Private Peering Point</data>
+    </node>
+    <node id="n27">
+      <data key="key3">India</data>
+      <data key="key15">1</data>
+      <data key="key18">19.0144099999999999992</data>
+      <data key="key21">72.8479399999999999993</data>
+      <data key="key32">5.8099412087929725, 1.4591058856481454</data>
+      <data key="key35">27</data>
+      <data key="key37">Mumbai</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Myanmar [Burma]</data>
+      <data key="key15">1</data>
+      <data key="key18">16.8052799999999999993</data>
+      <data key="key21">96.1561099999999999988</data>
+      <data key="key32">3.8690514594121121, 0.71623873055456144</data>
+      <data key="key35">28</data>
+      <data key="key37">Rangoon</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n29">
+      <data key="key3">Hong Kong</data>
+      <data key="key15">1</data>
+      <data key="key18">22.2855199999999999995</data>
+      <data key="key21">114.157689999999999997</data>
+      <data key="key32">4.5461161808455408, 0.74595496271893669</data>
+      <data key="key35">29</data>
+      <data key="key37">Hong Kong</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n30">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">35.6148799999999999995</data>
+      <data key="key21">139.581299999999999997</data>
+      <data key="key32">4.6821839654010224, 0.72875132340527526</data>
+      <data key="key35">30</data>
+      <data key="key37">Tokyo</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n31">
+      <data key="key3">Japan</data>
+      <data key="key15">1</data>
+      <data key="key18">34.693739999999999999</data>
+      <data key="key21">135.502180000000000001</data>
+      <data key="key32">4.7201187449587971, 0.66126643038394395</data>
+      <data key="key35">31</data>
+      <data key="key37">Osaka</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n32">
+      <data key="key3">Poland</data>
+      <data key="key15">1</data>
+      <data key="key18">52.2297699999999999985</data>
+      <data key="key21">21.0117800000000000005</data>
+      <data key="key32">5.1364178202495454, 0.021859505536491124</data>
+      <data key="key35">32</data>
+      <data key="key37">Warsaw</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n33">
+      <data key="key3">Macau</data>
+      <data key="key15">1</data>
+      <data key="key18">22.2005600000000000004</data>
+      <data key="key21">113.546109999999999998</data>
+      <data key="key32">4.9719030443463721, -0.70113996857823735</data>
+      <data key="key35">33</data>
+      <data key="key37">Macau</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n34">
+      <data key="key3">Vietnam</data>
+      <data key="key15">1</data>
+      <data key="key18">21.0244999999999999992</data>
+      <data key="key21">105.841170000000000001</data>
+      <data key="key32">4.4550748375842586, 0.3631992424887816</data>
+      <data key="key35">34</data>
+      <data key="key37">Hanoi</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n35">
+      <data key="key3">Philippines</data>
+      <data key="key15">1</data>
+      <data key="key18">14.6042000000000000001</data>
+      <data key="key21">120.982199999999999997</data>
+      <data key="key32">4.4087497205067452, 1.0032382058651867</data>
+      <data key="key35">35</data>
+      <data key="key37">Manila</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n36">
+      <data key="key3">Hungary</data>
+      <data key="key15">1</data>
+      <data key="key18">46.3166700000000000001</data>
+      <data key="key21">20.1166699999999999994</data>
+      <data key="key32">4.429711859261011, 0.81130422464347907</data>
+      <data key="key35">36</data>
+      <data key="key37">Tapei</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n37">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">32.7830599999999999991</data>
+      <data key="key21">-96.8066699999999999982</data>
+      <data key="key32">4.9849899259459205, 0.91120882573670636</data>
+      <data key="key35">37</data>
+      <data key="key37">Dallas</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n38">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">29.7632800000000000001</data>
+      <data key="key21">-95.3632700000000000026</data>
+      <data key="key32">4.9386547885477157, 1.1694692388244159</data>
+      <data key="key35">38</data>
+      <data key="key37">Houston</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n39">
+      <data key="key3">Malaysia</data>
+      <data key="key15">1</data>
+      <data key="key18">3.14119999999999999999</data>
+      <data key="key21">101.686530000000000001</data>
+      <data key="key32">4.1591203934509915, 0.67021060096654939</data>
+      <data key="key35">39</data>
+      <data key="key37">Kuala Lumpur</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n40">
+      <data key="key3">Singapore</data>
+      <data key="key15">1</data>
+      <data key="key18">1.28966999999999999997</data>
+      <data key="key21">103.850069999999999999</data>
+      <data key="key32">4.4907324746549655, 0.60251055474548643</data>
+      <data key="key35">40</data>
+      <data key="key37">Singapore</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n41">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.21462000000000000001</data>
+      <data key="key21">106.845129999999999999</data>
+      <data key="key32">4.3242318459384341, 0.54579686074503897</data>
+      <data key="key35">41</data>
+      <data key="key37">Jakarta</data>
+      <data key="key41">Partner POP</data>
+    </node>
+    <node id="n42">
+      <data key="key3">Australia</data>
+      <data key="key15">1</data>
+      <data key="key18">-33.8678499999999999999</data>
+      <data key="key21">151.207320000000000004</data>
+      <data key="key32">4.7417128644208386, 0.98516464532262771</data>
+      <data key="key35">42</data>
+      <data key="key37">Sydney</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n43">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">37.3393900000000000007</data>
+      <data key="key21">-121.894959999999999999</data>
+      <data key="key32">4.8248481696254588, 0.76070837733564156</data>
+      <data key="key35">43</data>
+      <data key="key37">San Jose</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n44">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">34.0522299999999999986</data>
+      <data key="key21">-118.243680000000000001</data>
+      <data key="key32">4.812735568686306, 0.84200861907008306</data>
+      <data key="key35">44</data>
+      <data key="key37">Los Angeles</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n45">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">47.6062099999999999989</data>
+      <data key="key21">-122.332069999999999997</data>
+      <data key="key32">4.856662992951577, 0.65447049046928107</data>
+      <data key="key35">45</data>
+      <data key="key37">Seattle</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+    <node id="n46">
+      <data key="key3">United States</data>
+      <data key="key15">1</data>
+      <data key="key18">41.8500300000000000009</data>
+      <data key="key21">-87.6500500000000000028</data>
+      <data key="key32">4.9479977201209486, 0.79741262112848454</data>
+      <data key="key35">46</data>
+      <data key="key37">Chicago</data>
+      <data key="key41">Core IP Network POP</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n1">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e2" source="n0" target="n1">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e3" source="n0" target="n1">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e4" source="n0" target="n2">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e5" source="n0" target="n2">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e6" source="n0" target="n3">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e7" source="n0" target="n3">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e8" source="n0" target="n3">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e9" source="n0" target="n3">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e10" source="n0" target="n3">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e11" source="n0" target="n3">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e12" source="n0" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e13" source="n0" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e14" source="n0" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e15" source="n0" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e16" source="n0" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e17" source="n0" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e18" source="n0" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e19" source="n0" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e20" source="n0" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e21" source="n0" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e22" source="n0" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e23" source="n0" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e24" source="n0" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e25" source="n0" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e26" source="n0" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e27" source="n0" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e28" source="n0" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e29" source="n0" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e30" source="n0" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e31" source="n1" target="n2">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e32" source="n1" target="n2">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e33" source="n1" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e34" source="n1" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e35" source="n1" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e36" source="n2" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e37" source="n2" target="n37">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e38" source="n3" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e39" source="n3" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e40" source="n3" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e41" source="n3" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e42" source="n3" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e43" source="n3" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e44" source="n3" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e45" source="n3" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e46" source="n4" target="n5">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e47" source="n4" target="n5">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e48" source="n4" target="n6">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e49" source="n4" target="n6">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e50" source="n5" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e51" source="n5" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e52" source="n5" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e53" source="n5" target="n8">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e54" source="n5" target="n8">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e55" source="n5" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e56" source="n5" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e57" source="n5" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e58" source="n5" target="n32">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e59" source="n5" target="n32">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e60" source="n6" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e61" source="n6" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e62" source="n6" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e63" source="n6" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e64" source="n7" target="n24">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e65" source="n7" target="n9">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e66" source="n8" target="n9">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e67" source="n8" target="n9">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e68" source="n9" target="n30">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e69" source="n9" target="n30">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e70" source="n9" target="n30">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e71" source="n9" target="n30">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e72" source="n9" target="n30">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e73" source="n9" target="n30">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e74" source="n13" target="n40">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e75" source="n20" target="n30">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e76" source="n20" target="n30">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e77" source="n20" target="n30">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e78" source="n20" target="n31">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e79" source="n24" target="n40">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e80" source="n24" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e81" source="n24" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e82" source="n24" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e83" source="n26" target="n43">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e84" source="n28" target="n39">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e85" source="n29" target="n40">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e86" source="n29" target="n40">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e87" source="n29" target="n35">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e88" source="n29" target="n36">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e89" source="n29" target="n36">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e90" source="n29" target="n36">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e91" source="n29" target="n30">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e92" source="n29" target="n30">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e93" source="n29" target="n30">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e94" source="n29" target="n30">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e95" source="n29" target="n30">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e96" source="n29" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e97" source="n29" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e98" source="n29" target="n31">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e99" source="n29" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e100" source="n29" target="n31">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e101" source="n30" target="n34">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e102" source="n30" target="n35">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e103" source="n30" target="n36">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e104" source="n30" target="n36">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e105" source="n30" target="n36">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e106" source="n30" target="n40">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e107" source="n30" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e108" source="n30" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e109" source="n30" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e110" source="n30" target="n40">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e111" source="n30" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e112" source="n30" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">6</data>
+    </edge>
+    <edge id="e113" source="n30" target="n42">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e114" source="n30" target="n42">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e115" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e116" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e117" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e118" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e119" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e120" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e121" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">6</data>
+    </edge>
+    <edge id="e122" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">7</data>
+    </edge>
+    <edge id="e123" source="n30" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">8</data>
+    </edge>
+    <edge id="e124" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e125" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e126" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e127" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e128" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e129" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e130" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">6</data>
+    </edge>
+    <edge id="e131" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">7</data>
+    </edge>
+    <edge id="e132" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">8</data>
+    </edge>
+    <edge id="e133" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">9</data>
+    </edge>
+    <edge id="e134" source="n30" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">10</data>
+    </edge>
+    <edge id="e135" source="n30" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e136" source="n30" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e137" source="n30" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e138" source="n30" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e139" source="n30" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e140" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e141" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e142" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e143" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e144" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e145" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e146" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">6</data>
+    </edge>
+    <edge id="e147" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">7</data>
+    </edge>
+    <edge id="e148" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">8</data>
+    </edge>
+    <edge id="e149" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">9</data>
+    </edge>
+    <edge id="e150" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">10</data>
+    </edge>
+    <edge id="e151" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">11</data>
+    </edge>
+    <edge id="e152" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">12</data>
+    </edge>
+    <edge id="e153" source="n30" target="n31">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">13</data>
+    </edge>
+    <edge id="e154" source="n31" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e155" source="n31" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e156" source="n31" target="n40">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e157" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e158" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e159" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e160" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e161" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e162" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e163" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">6</data>
+    </edge>
+    <edge id="e164" source="n31" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">7</data>
+    </edge>
+    <edge id="e165" source="n31" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e166" source="n31" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e167" source="n31" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e168" source="n31" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e169" source="n31" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e170" source="n31" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">5</data>
+    </edge>
+    <edge id="e171" source="n31" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">6</data>
+    </edge>
+    <edge id="e172" source="n31" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e173" source="n31" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e174" source="n31" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e175" source="n31" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e176" source="n31" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e177" source="n37" target="n38">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e178" source="n37" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e179" source="n37" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e180" source="n37" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e181" source="n37" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e182" source="n37" target="n43">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e183" source="n37" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e184" source="n37" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e185" source="n37" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e186" source="n37" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e187" source="n37" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e188" source="n37" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e189" source="n37" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e190" source="n37" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e191" source="n38" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e192" source="n39" target="n40">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e193" source="n39" target="n40">
+      <data key="key20">OC48/STM16</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e194" source="n40" target="n41">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e195" source="n40" target="n41">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e196" source="n40" target="n41">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e197" source="n40" target="n41">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e198" source="n40" target="n41">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">4</data>
+    </edge>
+    <edge id="e199" source="n42" target="n43">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e200" source="n42" target="n43">
+      <data key="key20">OC12/STM4</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e201" source="n42" target="n43">
+      <data key="key20">OC3 and below/STM1</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e202" source="n43" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e203" source="n43" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e204" source="n43" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e205" source="n43" target="n44">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e206" source="n43" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e207" source="n43" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e208" source="n43" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e209" source="n43" target="n45">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">3</data>
+    </edge>
+    <edge id="e210" source="n43" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e211" source="n43" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e212" source="n43" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+    <edge id="e213" source="n45" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">0</data>
+    </edge>
+    <edge id="e214" source="n45" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">1</data>
+    </edge>
+    <edge id="e215" source="n45" target="n46">
+      <data key="key20">OC192/STM64</data>
+      <data key="key36">2</data>
+    </edge>
+
+  </graph>
+</graphml>

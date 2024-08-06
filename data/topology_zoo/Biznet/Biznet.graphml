@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- property keys -->
+  <key id="key0" for="graph" attr.name="Access" attr.type="int" />
+  <key id="key1" for="graph" attr.name="Backbone" attr.type="int" />
+  <key id="key2" for="graph" attr.name="Commercial" attr.type="int" />
+  <key id="key3" for="node" attr.name="Country" attr.type="string" />
+  <key id="key4" for="graph" attr.name="Creator" attr.type="string" />
+  <key id="key5" for="graph" attr.name="Customer" attr.type="int" />
+  <key id="key6" for="graph" attr.name="DateModifier" attr.type="string" />
+  <key id="key7" for="graph" attr.name="DateMonth" attr.type="string" />
+  <key id="key8" for="graph" attr.name="DateObtained" attr.type="string" />
+  <key id="key9" for="graph" attr.name="DateType" attr.type="string" />
+  <key id="key10" for="graph" attr.name="DateYear" attr.type="string" />
+  <key id="key11" for="graph" attr.name="Developed" attr.type="int" />
+  <key id="key12" for="graph" attr.name="GeoExtent" attr.type="string" />
+  <key id="key13" for="graph" attr.name="GeoLocation" attr.type="string" />
+  <key id="key14" for="graph" attr.name="IX" attr.type="int" />
+  <key id="key15" for="node" attr.name="Internal" attr.type="boolean" />
+  <key id="key16" for="graph" attr.name="LastAccess" attr.type="string" />
+  <key id="key17" for="graph" attr.name="LastProcessed" attr.type="string" />
+  <key id="key18" for="node" attr.name="Latitude" attr.type="double" />
+  <key id="key19" for="graph" attr.name="Layer" attr.type="string" />
+  <key id="key20" for="node" attr.name="Longitude" attr.type="double" />
+  <key id="key21" for="graph" attr.name="Network" attr.type="string" />
+  <key id="key22" for="graph" attr.name="NetworkDate" attr.type="string" />
+  <key id="key23" for="graph" attr.name="Note" attr.type="string" />
+  <key id="key24" for="graph" attr.name="Provenance" attr.type="string" />
+  <key id="key25" for="graph" attr.name="Source" attr.type="string" />
+  <key id="key26" for="graph" attr.name="SourceGitVersion" attr.type="string" />
+  <key id="key27" for="graph" attr.name="Testbed" attr.type="int" />
+  <key id="key28" for="graph" attr.name="ToolsetVersion" attr.type="string" />
+  <key id="key29" for="graph" attr.name="Transit" attr.type="int" />
+  <key id="key30" for="graph" attr.name="Type" attr.type="string" />
+  <key id="key31" for="graph" attr.name="Version" attr.type="string" />
+  <key id="key32" for="node" attr.name="_pos" attr.type="string" />
+  <key id="key33" for="graph" attr.name="citation" attr.type="string" />
+  <key id="key34" for="graph" attr.name="description" attr.type="string" />
+  <key id="key35" for="node" attr.name="id" attr.type="int" />
+  <key id="key36" for="edge" attr.name="id" attr.type="string" />
+  <key id="key37" for="edge" attr.name="key" attr.type="boolean" />
+  <key id="key38" for="node" attr.name="label" attr.type="string" />
+  <key id="key39" for="graph" attr.name="label" attr.type="string" />
+  <key id="key40" for="graph" attr.name="name" attr.type="string" />
+  <key id="key41" for="graph" attr.name="tags" attr.type="string" />
+  <key id="key42" for="graph" attr.name="url" attr.type="string" />
+
+  <graph id="G" edgedefault="undirected" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
+
+   <!-- graph properties -->
+   <data key="key0">1</data>
+   <data key="key1">1</data>
+   <data key="key2">0</data>
+   <data key="key4">Topology Zoo Toolset</data>
+   <data key="key5">1</data>
+   <data key="key6">=</data>
+   <data key="key7">01</data>
+   <data key="key8">16/01/11</data>
+   <data key="key9">Current</data>
+   <data key="key10">2011</data>
+   <data key="key11">0</data>
+   <data key="key12">Country</data>
+   <data key="key13">Indonesia</data>
+   <data key="key14">0</data>
+   <data key="key16">16/01/11</data>
+   <data key="key17">2011_09_01</data>
+   <data key="key19">IP</data>
+   <data key="key21">BizNetworks</data>
+   <data key="key22">2011_01</data>
+   <data key="key23">Offers IX but unclear as to how.</data>
+   <data key="key24">Primary</data>
+   <data key="key25">http://www.biznetnetworks.com/pdf/BiznetInterCityNetwork.pdf</data>
+   <data key="key26">e278b1b</data>
+   <data key="key27">0</data>
+   <data key="key28">0.3.34dev-20120328</data>
+   <data key="key29">1</data>
+   <data key="key30">COM</data>
+   <data key="key31">1.0</data>
+   <data key="key33">[&apos;S. Knight, et al. &quot;The Internet Topology Zoo.&quot; IEEE Journal on Selected Areas in Communications 29(9), 1765-1775 (2011), http://www.topology-zoo.org/publications/topology_zoo.pdf&apos;]</data>
+   <data key="key34">Assorted snapshots of internet graph at the Point of Presence (PoP) level (which lies between the IP and AS levels), collected from around the world and at various times. The earliest snapshots are for ARPANET (1969-1972), with a few more from pre-2000. Most are from 2006 onward. Metadata include link type or speed, longitudes, and latitudes of nodes, URL, and date of record.</data>
+   <data key="key39">Biznet</data>
+   <data key="key40">internet_top_pop (Biznet)</data>
+   <data key="key41">Technological, Communication, Unweighted, Multigraph, Metadata</data>
+   <data key="key42">http://www.topology-zoo.org/dataset.html</data>
+
+   <!-- vertices -->
+    <node id="n0">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.72639000000000000009</data>
+      <data key="key20">109.009439999999999997</data>
+      <data key="key32">3.818342239992456, -6.6422329033364189</data>
+      <data key="key35">0</data>
+      <data key="key38">Cilacap</data>
+    </node>
+    <node id="n1">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.42138999999999999981</data>
+      <data key="key20">109.234440000000000003</data>
+      <data key="key32">3.8695624285258159, -6.8722002168318603</data>
+      <data key="key35">1</data>
+      <data key="key38">Purwokerto</data>
+    </node>
+    <node id="n2">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.91806000000000000019</data>
+      <data key="key20">106.926670000000000001</data>
+      <data key="key32">3.5808477890268238, -6.0465375154867811</data>
+      <data key="key35">2</data>
+      <data key="key38">Sukabumi</data>
+    </node>
+    <node id="n3">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.33332999999999999999</data>
+      <data key="key20">108.199999999999999997</data>
+      <data key="key32">3.6796660834137773, -6.4447586377209696</data>
+      <data key="key35">3</data>
+      <data key="key38">Tasikmalaya</data>
+    </node>
+    <node id="n4">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.88860000000000000011</data>
+      <data key="key20">109.675299999999999997</data>
+      <data key="key32">3.2232452339928352, -7.0302761263823781</data>
+      <data key="key35">4</data>
+      <data key="key38">Pekalongan</data>
+    </node>
+    <node id="n5">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.99319999999999999995</data>
+      <data key="key20">110.4203</data>
+      <data key="key32">3.2529209220088453, -7.3001094909261335</data>
+      <data key="key35">5</data>
+      <data key="key38">Semarang</data>
+    </node>
+    <node id="n6">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.47055999999999999998</data>
+      <data key="key20">110.217780000000000001</data>
+      <data key="key32">3.8187835881329883, -7.1004571247669324</data>
+      <data key="key35">6</data>
+      <data key="key38">Magelang</data>
+    </node>
+    <node id="n7">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.78278000000000000011</data>
+      <data key="key20">110.360829999999999998</data>
+      <data key="key32">3.6781415014175383, -7.2931701503142881</data>
+      <data key="key35">7</data>
+      <data key="key38">Yogyakarta</data>
+    </node>
+    <node id="n8">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.80480000000000000019</data>
+      <data key="key20">110.840499999999999997</data>
+      <data key="key32">3.0958867448774106, -7.4908290624594773</data>
+      <data key="key35">8</data>
+      <data key="key38">Kudus</data>
+    </node>
+    <node id="n9">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.55611000000000000015</data>
+      <data key="key20">110.83167</data>
+      <data key="key32">3.4724224832986432, -7.4402705697365379</data>
+      <data key="key35">9</data>
+      <data key="key38">Surakarta</data>
+    </node>
+    <node id="n10">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-9.5980599999999999996</data>
+      <data key="key20">123.770279999999999999</data>
+      <data key="key32">3.1504907960273854, -8.7855625150316889</data>
+      <data key="key35">10</data>
+      <data key="key38">Nusa Dua</data>
+    </node>
+    <node id="n11">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.24916999999999999999</data>
+      <data key="key20">112.750829999999999997</data>
+      <data key="key32">3.1104437653156838, -7.9452726160905822</data>
+      <data key="key35">11</data>
+      <data key="key38">Surabaya</data>
+    </node>
+    <node id="n12">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.8166700000000000001</data>
+      <data key="key20">112.016669999999999997</data>
+      <data key="key32">3.3361101906519393, -7.9411980301819298</data>
+      <data key="key35">12</data>
+      <data key="key38">Kediri</data>
+    </node>
+    <node id="n13">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.62980000000000000001</data>
+      <data key="key20">111.523899999999999998</data>
+      <data key="key32">3.4419723426105855, -7.7036059238575554</data>
+      <data key="key35">13</data>
+      <data key="key38">Madium</data>
+    </node>
+    <node id="n14">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.90000000000000000009</data>
+      <data key="key20">112.050000000000000003</data>
+      <data key="key32">3.0396385296936326, -7.7169682294530766</data>
+      <data key="key35">14</data>
+      <data key="key38">Tuban</data>
+    </node>
+    <node id="n15">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-8.22149999999999999984</data>
+      <data key="key20">114.3646</data>
+      <data key="key32">3.171134561687345, -8.5859330723746226</data>
+      <data key="key35">15</data>
+      <data key="key38">Banyunwangi</data>
+    </node>
+    <node id="n16">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-8.16604000000000000009</data>
+      <data key="key20">113.703170000000000003</data>
+      <data key="key32">3.1937185366396719, -8.3563405475235051</data>
+      <data key="key35">16</data>
+      <data key="key38">Jember</data>
+    </node>
+    <node id="n17">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.7543</data>
+      <data key="key20">113.215900000000000002</data>
+      <data key="key32">3.0711499481189697, -8.173849610649313</data>
+      <data key="key35">17</data>
+      <data key="key38">Probolinggo</data>
+    </node>
+    <node id="n18">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-7.9797000000000000001</data>
+      <data key="key20">112.630400000000000002</data>
+      <data key="key32">3.3337792073229715, -8.1820395354577418</data>
+      <data key="key35">18</data>
+      <data key="key38">Malang</data>
+    </node>
+    <node id="n19">
+      <data key="key15">1</data>
+      <data key="key18">0</data>
+      <data key="key20">0</data>
+      <data key="key32">3.4091487687756961, -5.2080514735784504</data>
+      <data key="key35">19</data>
+      <data key="key38">Bakauhuni</data>
+    </node>
+    <node id="n20">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.76666999999999999992</data>
+      <data key="key20">105.849999999999999999</data>
+      <data key="key32">3.5689532261458892, -5.5733804823948194</data>
+      <data key="key35">20</data>
+      <data key="key38">Cibaliung</data>
+    </node>
+    <node id="n21">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.86940000000000000006</data>
+      <data key="key20">109.140199999999999998</data>
+      <data key="key32">3.2501886789534171, -6.7657836117165759</data>
+      <data key="key35">21</data>
+      <data key="key38">Tegal</data>
+    </node>
+    <node id="n22">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.70629999999999999987</data>
+      <data key="key20">108.557000000000000002</data>
+      <data key="key32">3.338924285621816, -6.5138216329619194</data>
+      <data key="key35">22</data>
+      <data key="key38">Cirebon</data>
+    </node>
+    <node id="n23">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.90388999999999999988</data>
+      <data key="key20">107.61861</data>
+      <data key="key32">3.4824188688617328, -6.2799904498487695</data>
+      <data key="key35">23</data>
+      <data key="key38">Bandung</data>
+    </node>
+    <node id="n24">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.3033299999999999998</data>
+      <data key="key20">107.305559999999999998</data>
+      <data key="key32">3.3489958573169467, -6.0635418006253055</data>
+      <data key="key35">24</data>
+      <data key="key38">Karawang</data>
+    </node>
+    <node id="n25">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.21462000000000000001</data>
+      <data key="key20">106.845129999999999999</data>
+      <data key="key32">3.3456650386986371, -5.8204200001223887</data>
+      <data key="key35">25</data>
+      <data key="key38">Jakarta</data>
+    </node>
+    <node id="n26">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.59444000000000000008</data>
+      <data key="key20">106.789170000000000003</data>
+      <data key="key32">3.5516541576144141, -5.8038530485525319</data>
+      <data key="key35">26</data>
+      <data key="key38">Bogor</data>
+    </node>
+    <node id="n27">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.11489999999999999996</data>
+      <data key="key20">106.1502</data>
+      <data key="key32">3.2981916763550938, -5.5930518894469357</data>
+      <data key="key35">27</data>
+      <data key="key38">Serang</data>
+    </node>
+    <node id="n28">
+      <data key="key3">Indonesia</data>
+      <data key="key15">1</data>
+      <data key="key18">-6.0666700000000000001</data>
+      <data key="key20">105.883329999999999997</data>
+      <data key="key32">3.4211913302388024, -5.4133328807892367</data>
+      <data key="key35">28</data>
+      <data key="key38">Anyer</data>
+    </node>
+
+   <!-- edges -->
+    <edge id="e0" source="n0" target="n1">
+      <data key="key36">e15</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e1" source="n0" target="n3">
+      <data key="key36">e14</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e2" source="n1" target="n6">
+      <data key="key36">e16</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e3" source="n2" target="n26">
+      <data key="key36">e10</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e4" source="n2" target="n23">
+      <data key="key36">e4</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e5" source="n3" target="n23">
+      <data key="key36">e5</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e6" source="n4" target="n21">
+      <data key="key36">e0</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e7" source="n4" target="n5">
+      <data key="key36">e19</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e8" source="n5" target="n8">
+      <data key="key36">e20</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e9" source="n5" target="n9">
+      <data key="key36">e21</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e10" source="n6" target="n7">
+      <data key="key36">e17</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e11" source="n7" target="n9">
+      <data key="key36">e18</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e12" source="n8" target="n14">
+      <data key="key36">e22</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e13" source="n9" target="n13">
+      <data key="key36">e23</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e14" source="n10" target="n15">
+      <data key="key36">e32</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e15" source="n11" target="n17">
+      <data key="key36">e28</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e16" source="n11" target="n12">
+      <data key="key36">e27</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e17" source="n11" target="n14">
+      <data key="key36">e24</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e18" source="n12" target="n18">
+      <data key="key36">e26</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e19" source="n12" target="n13">
+      <data key="key36">e25</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e20" source="n15" target="n16">
+      <data key="key36">e31</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e21" source="n16" target="n17">
+      <data key="key36">e30</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e22" source="n16" target="n18">
+      <data key="key36">e29</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e23" source="n19" target="n28">
+      <data key="key36">e12</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e24" source="n20" target="n26">
+      <data key="key36">e9</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e25" source="n20" target="n28">
+      <data key="key36">e13</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e26" source="n21" target="n22">
+      <data key="key36">e1</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e27" source="n22" target="n23">
+      <data key="key36">e2</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e28" source="n23" target="n24">
+      <data key="key36">e3</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e29" source="n24" target="n25">
+      <data key="key36">e6</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e30" source="n25" target="n26">
+      <data key="key36">e7</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e31" source="n25" target="n27">
+      <data key="key36">e8</data>
+      <data key="key37">0</data>
+    </edge>
+    <edge id="e32" source="n27" target="n28">
+      <data key="key36">e11</data>
+      <data key="key37">0</data>
+    </edge>
+
+  </graph>
+</graphml>
