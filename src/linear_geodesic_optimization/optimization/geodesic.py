@@ -74,7 +74,7 @@ class Computer:
         """
         A sparse symmetric matrix representing (id - t * Laplacian).
         """
-        self._S_inv: typing.Optional[sparse_linalg.SuperLU] = None
+        self._S_inv: sparse_linalg.SuperLU = None  # type: ignore
         """
         A sparse LU decomposition of S that can be used in place of
         computing S's inverse.
@@ -93,7 +93,7 @@ class Computer:
         """
         A sparse symmetric matrix representing (id - t * Laplacian).
         """
-        self._S_interior_inv: typing.Optional[sparse_linalg.SuperLU] = None
+        self._S_interior_inv: sparse_linalg.SuperLU = None  # type: ignore
         """
         A sparse LU decomposition of S that can be used in place of
         computing S's inverse.
@@ -115,6 +115,10 @@ class Computer:
         """
         A collection of vectors representing the gradient of u, indexed
         by face.
+        """
+        self.norm_grad_u: npt.NDArray[np.float64] = np.zeros(f)
+        """
+        A collection of norms of the gradient of u, indexed by face.
         """
         self._X: npt.NDArray[np.float64] = np.zeros((f, 3))
         """
@@ -262,10 +266,10 @@ class Computer:
                     - self._coordinates[origin_index]
                 )
             self._grad_u[face_index] = Computer._cross(N, self._ue[face_index])
-        norm_grad_u = np.linalg.norm(self._grad_u, axis=1).reshape((-1, 1))
+        self.norm_grad_u = np.linalg.norm(self._grad_u, axis=1).reshape((-1, 1))
         self._X = np.divide(
-            -self._grad_u, norm_grad_u, out=np.zeros_like(self._grad_u),
-            where=norm_grad_u != 0
+            -self._grad_u, self.norm_grad_u, out=np.zeros_like(self._grad_u),
+            where=self.norm_grad_u != 0
         )
 
         # Compute div_X
@@ -427,10 +431,13 @@ class Computer:
             )
 
         # Compute dif_X
-        dif_X = (np.sum(self._X * dif_grad_u, axis=1).reshape((-1, 1))
-                 * self._X
-                 - dif_grad_u) \
-            / np.linalg.norm(self._grad_u, axis=1).reshape((-1, 1))
+        dif_X = np.divide(
+            np.sum(self._X * dif_grad_u, axis=1).reshape((-1, 1)) * self._X
+                - dif_grad_u,
+            self.norm_grad_u,
+            out=np.zeros_like(self._grad_u),
+            where=self.norm_grad_u != 0
+        )
 
         # print(f'{time.time() - t_start:3.4f}: dif_X computed')
 

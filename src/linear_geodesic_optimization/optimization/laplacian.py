@@ -18,48 +18,44 @@ class Computer:
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
 
+        v = self._topology.n_vertices()
+        he = self._topology.n_halfedges()
+        e = self._topology.n_edges()
+        f = self._topology.n_faces()
+
         # Forward variables
         self._forward_updates: int = mesh.get_updates() - 1
-        self._coordinates: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
-        self.N: typing.List[npt.NDArray[np.float64]] \
-            = [np.zeros(3) for _ in range(self._topology.n_faces())]
-        """A list of normals of faces, indexed by faces."""
-        self.A: typing.List[np.float64] \
-            = [np.float64(0.) for _ in range(self._topology.n_faces())]
-        """A list of areas of faces, indexed by faces."""
-        self.D: typing.List[np.float64] \
-            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
-        """A list of vertex areas, indexed by vertices."""
-        self.cot: typing.List[np.float64] \
-            = [np.float64(0.) for _ in range(self._topology.n_halfedges())]
+        self._coordinates: npt.NDArray[np.float64] = np.zeros((v, 3))
+        self.N: npt.NDArray[np.float64] = np.zeros((f, 3))
+        """An array of normals of faces, indexed by faces."""
+        self.A: npt.NDArray[np.float64] = np.zeros(f)
+        """An array areas of faces, indexed by faces."""
+        self.D: npt.NDArray[np.float64] = np.zeros(v)
+        """An array of vertex areas, indexed by vertices."""
+        self.cot: npt.NDArray[np.float64] = np.zeros(he)
         """
-        A list of cotangents of the opposing angles to halfedges,
+        An array of cotangents of the opposing angles to halfedges,
         indexed by halfedges.
         """
-        self.LC_edges: typing.List[np.float64] \
-            = [np.float64(0.) for _ in range(self._topology.n_edges())]
+        self.LC_edges: npt.NDArray[np.float64] = np.zeros(e)
         """
-        A list of (non-trivial) off-diagonal entries of the
+        An array of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator, indexed by edges.
         """
-        self.LC_vertices: typing.List[np.float64] \
-            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
+        self.LC_vertices: typing.List[np.float64] = np.zeros(v)
         """
-        A list of diagonal entries of the Laplace-Beltrami operator,
+        An array of diagonal entries of the Laplace-Beltrami operator,
         indexed by vertices.
         """
-        self.LC_interior_edges: typing.List[np.float64] \
-            = [np.float64(0.) for _ in range(self._topology.n_edges())]
+        self.LC_interior_edges: npt.NDArray[np.float64] = np.zeros(e)
         """
-        A list of (non-trivial) off-diagonal entries of the
+        An array of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator ignoring the boundary vertices,
         indexed by edges.
         """
-        self.LC_interior_vertices: typing.List[np.float64] \
-            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
+        self.LC_interior_vertices: npt.NDArray[np.float64] = np.zeros(v)
         """
-        A list of diagonal entries of the Laplace-Beltrami operator
+        An array of diagonal entries of the Laplace-Beltrami operator
         ignoring the boundary vertices, indexed by vertices.
         """
 
