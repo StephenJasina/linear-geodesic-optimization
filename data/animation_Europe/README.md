@@ -1,0 +1,1 @@
+In this folder is a set of hourly measurements taken over a day. The measurements use IPv4 in Europe.
