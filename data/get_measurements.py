@@ -33,7 +33,7 @@ def get_rtt(id_measurement, id_source, id_target, date_start, date_stop):
 
 
 def write_measurements(probes, latencies_filename, date_start, date_stop):
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor(100) as executor:
         futures = {
             executor.submit(
                 get_rtt,
