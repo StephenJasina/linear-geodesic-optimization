@@ -5,7 +5,6 @@ import csv
 import os
 import sys
 
-from GraphRicciCurvature.OllivierRicci import OllivierRicci
 import networkx as nx
 import numpy as np
 
