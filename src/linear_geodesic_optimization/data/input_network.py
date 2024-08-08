@@ -72,6 +72,11 @@ def get_base_graph(probes, latencies):
     for latency in latencies:
         id_source = latency['source_id']
         id_target = latency['target_id']
+
+        if id_source not in graph.nodes or id_target not in graph.nodes:
+            # Skip maesurements we're missing the nodes for
+            continue
+
         lat_source = graph.nodes[id_source]['lat']
         long_source = graph.nodes[id_source]['long']
         lat_target = graph.nodes[id_target]['lat']
