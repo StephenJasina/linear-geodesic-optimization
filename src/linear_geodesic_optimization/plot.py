@@ -73,9 +73,13 @@ def get_scatter_plot(before_data, after_data, title):
 def get_network_plot(
     graph,
     weight_label='ricciCurvature', color_min=-2., color_max=2.,
-    trim_vertices=False
+    trim_vertices=False,
+    ax = None
 ):
-    fig, ax = plt.subplots(1, 1, facecolor='#808080')
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, facecolor='#808080')
+    else:
+        fig = ax.get_figure()
     ax.set_aspect('equal')
     ax.axis('off')
 
