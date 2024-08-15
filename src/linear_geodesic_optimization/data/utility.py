@@ -3,25 +3,43 @@ import typing
 import numpy as np
 
 
-def mercator(longitude: np.float64, latitude: np.float64) \
-        -> typing.Tuple[np.float64, np.float64]:
+def mercator(
+    longitude: typing.Optional[np.float64] = None,
+    latitude: typing.Optional[np.float64] = None
+) -> typing.Union[
+    np.float64,
+    typing.Tuple[np.float64, np.float64]
+]:
     '''
     Given a longitude in [-180, 180] and a latitude in [-90, 90], return
     an (x, y) pair representing the location on a Mercator projection.
     Assuming the latitude is no larger/smaller than +/- 85
     (approximately), the pair will lie in [-0.5, 0.5]^2.
     '''
+    x = longitude / 360. if longitude is not None else None
+    y = np.log(np.tan(np.pi / 4. + latitude * np.pi / 360.)) / (2. * np.pi) if latitude is not None else None
 
-    x = longitude / 360.
-    y = np.log(np.tan(np.pi / 4. + latitude * np.pi / 360.)) / (2. * np.pi)
+    if x is None:
+        return y
+    if y is None:
+        return x
     return (x, y)
 
-def inverse_mercator(x: np.float64, y: np.float64) \
-        -> typing.Tuple[np.float64, np.float64]:
-    longitude = x * 360.
-    latitude = np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90.
-    return (longitude, latitude)
+def inverse_mercator(
+    x: typing.Optional[np.float64] = None,
+    y: typing.Optional[np.float64] = None
+) -> typing.Union[
+    np.float64,
+    typing.Tuple[np.float64, np.float64]
+]:
+    longitude = x * 360. if x is not None else None
+    latitude = np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90. if y is not None else None
 
+    if longitude is None:
+        return latitude
+    if latitude is None:
+        return longitude
+    return (longitude, latitude)
 
 def get_sphere_point(latlong):
     """Convert spherical coordinates to Cartesian coordinates."""
