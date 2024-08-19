@@ -1,3 +1,4 @@
+import itertools
 import os
 import pathlib
 import pickle
@@ -8,26 +9,26 @@ import pandas as pd
 import matplotlib.gridspec as gridspec
 from matplotlib import pyplot as plt
 from matplotlib import animation as animation
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import time
 
-sys.path.append('.')
 from linear_geodesic_optimization.data import input_network, input_mesh, utility
 from linear_geodesic_optimization.plot \
     import get_mesh_plot, get_rectangular_mesh_plot
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 lambda_curvature = 1.
-lambda_smooth = 0.005
+lambda_smooth = 0.002
 initial_radius = 20.
 width = 50
 height = 50
 scale = 1.
 ip_type = 'ipv4'
-threshold = 10
+threshold = 5
 
-directory = pathlib.Path('..', 'outputs', 'animation_smoother')
+directory = pathlib.Path('..', 'outputs', 'animation_Europe_windowed')
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{scale}'
 
 output_filepaths = [
@@ -36,46 +37,90 @@ output_filepaths = [
 ]
 
 fps = 24
-animation_length = 4.  # in seconds
+animation_length = 12.  # in seconds
 
 include_line_graph = False
 
-def get_image_data(coordinates, coordinates_scale, resolution=100):
+def get_image_data(coordinates, resolution, scale = 1.):
+    """
+    Get the image data to plot a square map.
+
+    `coordinates` is a list of pairs of longitudes and latitudes.
+
+    `resolution` is the number of pixels on one side of the image.
+
+    `scale` is the size of the space taken up in the map by the
+    coordinates (smaller number = zoom out).
+    """
     coordinates = np.array(coordinates)
-    center = np.mean(coordinates, axis=0)
-    coordinates = center + (coordinates - center) / coordinates_scale
+    center = np.mean(coordinates)
+    coordinates = center + (coordinates - center) / scale
 
-    coordinates_left = np.amin(coordinates[:,0])
-    coordinates_right = np.amax(coordinates[:,0])
-    coordinates_bottom = np.amin(coordinates[:,1])
-    coordinates_top = np.amax(coordinates[:,1])
+    # Find the least disruptive break in the horizontal coordinates
+    # (as they are cyclic)
+    coordinates_x = list(sorted(coordinates[:, 0] % 1.))
+    coordinates_x.append(1 + coordinates_x[0])
+    difference_max = -1.
+    difference_index = -1
+    for index, (x_left, x_right) in enumerate(itertools.pairwise(coordinates_x)):
+        difference = x_right - x_left
+        if difference > difference_max:
+            difference_max = difference
+            difference_index = index
+    left = coordinates_x[difference_index + 1] - 1.
+    right = coordinates_x[difference_index]
+    bottom = np.amin(coordinates[:, 1])
+    top = np.amax(coordinates[:, 1])
 
-    if coordinates_right - coordinates_left > coordinates_top - coordinates_bottom:
-        center = (coordinates_bottom + coordinates_top) / 2.
-        coordinates_scale = (coordinates_top - coordinates_bottom) / (coordinates_right - coordinates_left)
-        coordinates_bottom = center + (coordinates_bottom - center) / coordinates_scale
-        coordinates_top = center + (coordinates_top - center) / coordinates_scale
+    # Expand the coordinates out so they are a square
+    height = top - bottom
+    width = right - left
+    if height > width:
+        center = (left + right) / 2.
+        left = center - height / 2.
+        right = center + height / 2.
     else:
-        center = (coordinates_left + coordinates_right) / 2.
-        coordinates_scale = (coordinates_right - coordinates_left) / (coordinates_top - coordinates_bottom)
-        coordinates_left = center + (coordinates_left - center) / coordinates_scale
-        coordinates_right = center + (coordinates_right - center) / coordinates_scale
+        center = (bottom + top) / 2.
+        bottom = center - width / 2.
+        top = center + width / 2.
 
-    left, _ = utility.inverse_mercator(coordinates_left, 0.)
-    right, _ = utility.inverse_mercator(coordinates_right, 0.)
-    _, bottom = utility.inverse_mercator(0., coordinates_bottom)
-    _, top = utility.inverse_mercator(0., coordinates_top)
+    # Make a fake image just to grab the map data
 
-    m = Basemap(llcrnrlon=left, urcrnrlon=right,
-                  llcrnrlat=bottom, urcrnrlat=top, epsg=3857)
-    fig, ax = plt.subplots()
-    image_data = m.arcgisimage(
-        server='http://server.arcgisonline.com/ArcGIS', service='World_Imagery',
-        ax=ax, xpixels=resolution, y_pixels=resolution
-    ).get_array()
-    image_data = np.flipud(image_data).swapaxes(0, 1) / 255
+    # Create the figure and axes. If errors appear due to invalid fontsize,
+    # try increasing the dpi
+    dpi = 1.
+    fig = plt.figure(figsize = (resolution / dpi, resolution / dpi), dpi = dpi)
+    ax = fig.add_subplot()
+
+    # We need the axes to be hidden, but we can't just turn them off
+    # (otherwise, the water on the exterior portion of the map will not
+    # appear). As a result, we manually hide the axes and tick marks
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_linewidth(0.)
+    ax.margins(0.)
+    fig.tight_layout(pad = 0.)
+
+    m = Basemap(
+        projection = 'merc',
+        llcrnrlon = utility.inverse_mercator(x = left),
+        urcrnrlon = utility.inverse_mercator(x = right),
+        llcrnrlat = utility.inverse_mercator(y = bottom),
+        urcrnrlat = utility.inverse_mercator(y = top),
+        resolution = 'i'
+    )
+    m.drawcoastlines(ax = ax, linewidth = 0.)
+    m.fillcontinents(ax = ax, color = 'coral',lake_color = 'aqua')
+    m.drawmapboundary(ax = ax, linewidth = 0., fill_color = 'aqua')
+
+    canvas = FigureCanvasAgg(fig)
+    canvas.draw()
+    canvas_data = np.flipud(np.asarray(canvas.buffer_rgba())).swapaxes(0, 1) / 256.
+
     plt.close(fig)
-    return image_data
+
+    return canvas_data
 
 def investigating_graph(k=3):
     path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/{threshold}/'
@@ -239,8 +284,8 @@ if __name__ == '__main__':
     mesh = RectangleMesh(width, height, scale)
 
     resolution = 500
-    # face_colors = get_image_data(coordinates, resolution)
-    face_colors = np.full((width, height, 3), 0.4)
+    face_colors = get_image_data(coordinates, resolution, coordinates_scale)
+    # face_colors = np.full((width, height, 3), 0.4)
 
     fig = plt.figure()
 
@@ -364,7 +409,9 @@ if __name__ == '__main__':
                 [network_vertices, network_edges, network_curvatures, network_city],
                 ax
             ),
-            ax.text2D(0.05, 0.95, f'{left:02}:{round(lam*60):02}',
+            # ax.text2D(0.05, 0.95, f'{left:02}:{round(lam*60):02}',
+            #           transform=ax.transAxes)
+            ax.text2D(0.05, 0.95, f'{t:02}',
                       transform=ax.transAxes)
         ] + (
             [line1, line2, line3, legend1, legend2, legend3]
