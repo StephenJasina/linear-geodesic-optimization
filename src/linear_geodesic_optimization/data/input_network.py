@@ -73,8 +73,12 @@ def get_base_graph(probes, latencies):
         id_source = latency['source_id']
         id_target = latency['target_id']
 
+        # Skip self loops
+        if id_source == id_target:
+            continue
+
+        # Skip maesurements we're missing the nodes for
         if id_source not in graph.nodes or id_target not in graph.nodes:
-            # Skip maesurements we're missing the nodes for
             continue
 
         lat_source = graph.nodes[id_source]['lat']
@@ -186,10 +190,10 @@ def get_graph(
         ]
     if should_remove_tivs:
         graph = remove_tivs(graph)
-    if clustering_distance is not None:
-        graph = cluster_graph(graph, clustering_distance)
     if epsilon is not None:
         graph = threshold_graph(graph, epsilon)
+    if clustering_distance is not None:
+        graph = cluster_graph(graph, clustering_distance)
     if should_compute_curvatures:
         graph = compute_ricci_curvatures(graph, ricci_curvature_alpha)
     if should_include_latencies:
