@@ -61,6 +61,8 @@ def get_spherical_distance(a, b):
     """Find the distance on the unit sphere between two unit vectors."""
     # The value of (a @ b) is clamped between -1 and 1 to avoid issues
     # with floating point
+    if np.all(a == b):
+        return np.float64(0.)
     return np.arccos(min(max(a @ b, -1.), 1.))
 
 def get_GCL(latlong_a, latlong_b):
