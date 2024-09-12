@@ -36,9 +36,12 @@ def minimize_id_removal(rtt_violation_list):
 
     return ids_to_remove
 
-def get_base_graph(probes, latencies):
+def get_base_graph(probes, latencies, directed=False):
     # Create the graph
-    graph = nx.Graph()
+    if directed:
+        graph = nx.DiGraph()
+    else:
+        graph = nx.Graph()
 
     # Create the RTT violation list
     rtt_violation_list = []
@@ -109,10 +112,17 @@ def get_base_graph(probes, latencies):
         # edge, only pay attention to the minimal one
         if ((id_source, id_target) not in graph.edges
                 or graph.edges[id_source,id_target]['rtt'] > rtt):
-            graph.add_edge(
-                id_source, id_target,
-                weight=1., rtt=rtt, gcl=gcl
-            )
+            edge_data = {
+                'rtt': rtt,
+                'gcl': gcl,
+            }
+
+            if 'throughput' in latency:
+                throughput = latency['throughput']
+                if throughput != '':
+                    edge_data['throughput'] = float(throughput)
+
+            graph.add_edge(id_source, id_target, **edge_data)
 
     # TODO: Make this less aggressive
     # Delete nodes with inconsistent geolocation
@@ -124,6 +134,8 @@ def get_base_graph(probes, latencies):
 def threshold_graph(graph, epsilon):
     edges_to_delete = []
     for u, v, d in graph.edges(data=True):
+        if 'rtt' not in d:
+            continue
         rtt = d['rtt']
         gcl = d['gcl']
 
@@ -174,9 +186,10 @@ def get_graph(
     clustering_distance=None, should_remove_tivs=False,
     should_include_latencies=False,
     should_compute_curvatures=True,
-    ricci_curvature_alpha=0.
+    ricci_curvature_alpha=0.,
+    directed=False
 ):
-    graph = get_base_graph(probes, latencies)
+    graph = get_base_graph(probes, latencies, directed)
     if should_include_latencies:
         latencies = [
             ((source_id, target_id), data['rtt'])
@@ -200,7 +213,8 @@ def get_graph_from_paths(
     clustering_distance=None, should_remove_tivs=False,
     should_include_latencies=False,
     should_compute_curvatures=True,
-    ricci_curvature_alpha=0.
+    ricci_curvature_alpha=0.,
+    directed=False
 ):
     """
     Generate a NetworkX graph and optionally a list of latencies.
@@ -229,7 +243,8 @@ def get_graph_from_paths(
             clustering_distance, should_remove_tivs,
             should_include_latencies,
             should_compute_curvatures,
-            ricci_curvature_alpha
+            ricci_curvature_alpha,
+            directed
         )
 
 def extract_from_graph(

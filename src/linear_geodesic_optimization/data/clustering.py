@@ -19,7 +19,7 @@ def get_cluster_center(cluster):
 
     return cluster[center_index]
 
-def cluster_graph(graph, distance_threshold):
+def cluster_graph(graph: nx.Graph, distance_threshold: float):
     """
     Simplify a graph using agglomerative clustering with single linkage.
 
@@ -54,7 +54,10 @@ def cluster_graph(graph, distance_threshold):
     cluster_labels = clustering.fit_predict(spherical_distances)
     cluster_count = max(cluster_labels) + 1
 
-    new_graph = nx.Graph()
+    if isinstance(graph, nx.DiGraph):
+        new_graph = nx.DiGraph()
+    else:
+        new_graph = nx.Graph()
 
     # Copy nodes to new graph
     clusters = [[] for _ in range(cluster_count)]
@@ -69,26 +72,61 @@ def cluster_graph(graph, distance_threshold):
 
     # Copy edges to new graph
     for i, cluster_i in enumerate(clusters):
-        for j, cluster_j in enumerate(clusters[i+1:], start=i+1):
-            rtt = min([
-                graph.edges[node_i,node_j]['rtt']
+        id_source = cluster_centers[i]
+        for j, cluster_j in enumerate(clusters):
+            id_target = cluster_centers[j]
+
+            # Don't add self-loops
+            if id_source == id_target:
+                continue
+
+            # Don't need to do anything if we've already processed the
+            # edge in a previous iteration
+            if (id_source, id_target) in new_graph.edges:
+                continue
+
+            cluster_edges = [
+                (node_i, node_j)
                 for node_i, _ in cluster_i
                 for node_j, _ in cluster_j
                 if (node_i, node_j) in graph.edges
-            ], default=np.inf)
-            if rtt != np.inf:
-                id_source = cluster_centers[i]
-                id_target = cluster_centers[j]
-                lat_source = graph.nodes[id_source]['lat']
-                long_source = graph.nodes[id_source]['long']
-                lat_target = graph.nodes[id_target]['lat']
-                long_target = graph.nodes[id_target]['long']
-                gcl = utility.get_GCL(
-                    [lat_source, long_source],
-                    [lat_target, long_target]
-                )
-                new_graph.add_edge(id_source, id_target,
-                                   rtt=rtt, gcl=gcl)
+            ]
+
+            # Don't need to do anything if there shouldn't be an edge
+            if not cluster_edges:
+                continue
+
+            edge_data = {}
+
+            lat_source = graph.nodes[id_source]['lat']
+            long_source = graph.nodes[id_source]['long']
+            lat_target = graph.nodes[id_target]['lat']
+            long_target = graph.nodes[id_target]['long']
+            edge_data['gcl'] = utility.get_GCL(
+                [lat_source, long_source],
+                [lat_target, long_target]
+            )
+
+            rtts = [
+                data['rtt']
+                for (node_i, node_j) in cluster_edges
+                for data in (graph.edges[node_i,node_j],)
+                if 'rtt' in data
+            ]
+            if rtts:
+                edge_data['rtt'] = min(rtts)
+
+            throughputs = [
+                data['throughput']
+                for (node_i, node_j) in cluster_edges
+                for data in (graph.edges[node_i,node_j],)
+                if 'throughput' in data
+            ]
+            if throughputs:
+                edge_data['throughput'] = sum(throughputs)
+
+            new_graph.add_edge(id_source, id_target,
+                               **edge_data)
 
     # Copy other attributes
     new_graph.graph = dict(graph.graph)
