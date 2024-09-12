@@ -12,9 +12,9 @@ from linear_geodesic_optimization.data import utility
 data_directory = os.path.join('animation_Europe')
 probes_file_path = os.path.join(data_directory, 'probes.csv')
 latencies_input_directory = os.path.join(data_directory, 'latencies')
-latencies_output_directory = os.path.join(data_directory, 'latencies_windowed_5')
 threshold = 5.
 window = 5.
+latencies_output_directory = os.path.join(data_directory, f'latencies_windowed_{window}')
 
 
 def smooth_windowed(z, window_center, window_lower, window_upper):
@@ -23,9 +23,12 @@ def smooth_windowed(z, window_center, window_lower, window_upper):
         return []
 
     z_smooth = []
+    # Store whether the previous value of z was labeled as being below
+    # the window center
     z_state = None
     for z_current in z:
         if z_current is None:
+            z_state = None
             z_smooth.append(None)
         else:
             if z_state is None:
