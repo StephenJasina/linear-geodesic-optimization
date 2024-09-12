@@ -1,11 +1,10 @@
 import csv
 import typing
 
-from GraphRicciCurvature.OllivierRicci import OllivierRicci
 import networkx as nx
 import numpy as np
 
-from linear_geodesic_optimization.data import clustering
+from linear_geodesic_optimization.data import clustering, curvature
 from linear_geodesic_optimization.data \
     import triangle_inequality_violations as tivs
 from linear_geodesic_optimization.data import utility
@@ -161,17 +160,12 @@ def remove_tivs(graph):
 
     return graph
 
-def compute_ricci_curvatures(graph, alpha=0.):
-    orc = OllivierRicci(
-        graph, weight='weight', alpha=alpha,
-        method='OTD', proc=1
+def compute_ricci_curvatures(graph: nx.Graph, alpha: float = 0.):
+    ricci_curvatures = curvature.ricci_curvature_optimal_transport(
+        graph, alpha=alpha
     )
-    graph = orc.compute_ricci_curvature()
-
-    # Delete extraneous edge data, and rescale Ricci curvature
-    for _, _, d in graph.edges(data=True):
-        del d['weight']
-        d['ricciCurvature'] /= (1. - alpha)
+    for (source, destination), ricci_curvature in ricci_curvatures.items():
+        graph.edges[source, destination]['ricciCurvature'] = ricci_curvature
 
     return graph
 
