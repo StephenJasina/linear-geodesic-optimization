@@ -1,8 +1,11 @@
 from collections.abc import Iterable
+import itertools
 
 from adjustText import adjust_text
 import matplotlib as mpl
 from matplotlib import pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from mpl_toolkits.basemap import Basemap
 from matplotlib.colors import LightSource
 import numpy as np
 
@@ -320,3 +323,89 @@ def get_rectangular_mesh_plot(z, face_colors, title, vertical_scale=0.25,
     ax.set_axis_off()
 
     return to_return
+
+def get_image_data(coordinates, resolution, scale = 1.):
+    """
+    Get the image data to plot a square map.
+
+    `coordinates` is a list of pairs of longitudes and latitudes that
+    have been projected onto the plane. That is, they are points roughly
+    in [-0.5, 0.5]^2.
+
+    `resolution` is the number of pixels on one side of the image.
+
+    `scale` is the size of the space taken up in the map by the
+    coordinates (smaller number = zoom out).
+    """
+    coordinates = np.array(coordinates)
+    center = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
+    coordinates = center + (coordinates - center) / scale
+
+    # Find the least disruptive break in the horizontal coordinates
+    # (as they are cyclic)
+    coordinates_x = list(sorted(coordinates[:, 0] % 1.))
+    coordinates_x.append(1 + coordinates_x[0])
+    difference_max = -1.
+    difference_index = -1
+    for index, (x_left, x_right) in enumerate(itertools.pairwise(coordinates_x)):
+        difference = x_right - x_left
+        if difference > difference_max:
+            difference_max = difference
+            difference_index = index
+    left = coordinates_x[difference_index + 1] - 1.
+    right = coordinates_x[difference_index]
+    if left > 0.5:
+        left -= 1.
+        right -= 1.
+    bottom = np.amin(coordinates[:, 1])
+    top = np.amax(coordinates[:, 1])
+
+    # Expand the coordinates out so they are a square
+    height = top - bottom
+    width = right - left
+    if height > width:
+        center = (left + right) / 2.
+        left = center - height / 2.
+        right = center + height / 2.
+    else:
+        center = (bottom + top) / 2.
+        bottom = center - width / 2.
+        top = center + width / 2.
+
+    # Make a fake image just to grab the map data
+
+    # Create the figure and axes. If errors appear due to invalid fontsize,
+    # try increasing the dpi
+    dpi = 1.
+    fig = plt.figure(figsize = (resolution / dpi, resolution / dpi), dpi = dpi)
+    ax = fig.add_subplot()
+
+    # We need the axes to be hidden, but we can't just turn them off
+    # (otherwise, the water on the exterior portion of the map will not
+    # appear). As a result, we manually hide the axes and tick marks
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_linewidth(0.)
+    ax.margins(0.)
+    fig.tight_layout(pad = 0.)
+
+    m = Basemap(
+        projection = 'merc',
+        llcrnrlon = utility.inverse_mercator(x = left),
+        urcrnrlon = utility.inverse_mercator(x = right),
+        llcrnrlat = utility.inverse_mercator(y = bottom),
+        urcrnrlat = utility.inverse_mercator(y = top),
+        resolution = 'i'
+    )
+    m.drawcoastlines(ax = ax, linewidth = 0.)
+    m.fillcontinents(ax = ax, color = 'black',lake_color = 'white')
+    m.drawmapboundary(ax = ax, linewidth = 0., fill_color = 'white')
+
+    canvas = FigureCanvasAgg(fig)
+    canvas.draw()
+    canvas_data = np.asarray(canvas.buffer_rgba())
+
+    plt.close(fig)
+
+    return canvas_data, (left, right, bottom, top)
