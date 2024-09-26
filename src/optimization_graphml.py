@@ -106,22 +106,25 @@ def main(
 
 
 if __name__ == '__main__':
-    graphml_filenames = [
-        pathlib.PurePath('..', 'data', 'toy', 'elbow.graphml'),
-    ]
+    graphml_directory = pathlib.PurePath('..', 'data', 'Internet2', 'graphml')
+    graphml_filenames = list(sorted(
+        graphml_directory / filename
+        for filename in os.listdir(graphml_directory)
+    ))[:25]
 
     count = len(graphml_filenames)
 
     lambda_curvatures = [1.] * count
-    lambda_smooths = [0.0002] * count
+    lambda_smooths = [0.005] * count
     initial_radii = [20.] * count
-    sides = [40]
+    sides = [50] * count
     mesh_scales = [1.] * count
 
-    max_iters = [None] * count
+    max_iters = [1] * count
 
     output_dir_names = [
-        pathlib.PurePath('..', 'outputs', 'PacificVis2025', 'toy', 'elbow'),
+        pathlib.PurePath('..', 'outputs', 'Internet2', 'fake_animation', graphml_filename.name)
+        for graphml_filename in graphml_filenames
     ]
 
     arguments = list(zip(
