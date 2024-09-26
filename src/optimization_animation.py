@@ -183,9 +183,7 @@ if __name__ == '__main__':
     sides = [50] * count
     mesh_scales = [1.] * count
 
-    leaveout_proportions = [1.] * count
-
-    max_iters = [1003] * count
+    max_iters = [2003] * count
 
     output_dir_names = [
         os.path.join(
