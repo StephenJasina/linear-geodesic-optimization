@@ -313,6 +313,7 @@ def extract_from_graph(
         latencies = [
             ((source_id, target_id), data['rtt'])
             for source_id, target_id, data in graph.edges(data=True)
+            if 'rtt' in data
         ]
 
     for (source_id, target_id), rtt in latencies:
