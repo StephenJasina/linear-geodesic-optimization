@@ -1,0 +1,673 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d7" for="edge" attr.name="ricciCurvature" attr.type="double" />
+  <key id="d6" for="edge" attr.name="throughput" attr.type="double" />
+  <key id="d5" for="edge" attr.name="rtt" attr.type="float" />
+  <key id="d4" for="edge" attr.name="gcl" attr.type="float" />
+  <key id="d3" for="node" attr.name="long" attr.type="double" />
+  <key id="d2" for="node" attr.name="lat" attr.type="double" />
+  <key id="d1" for="node" attr.name="country" attr.type="string" />
+  <key id="d0" for="node" attr.name="city" attr.type="string" />
+  <graph edgedefault="undirected">
+    <node id="LOSA">
+      <data key="d0">Los Angeles</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">34.0206085</data>
+      <data key="d3">-118.7413724</data>
+    </node>
+    <node id="HOUH">
+      <data key="d0">Houston</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">29.8173647</data>
+      <data key="d3">-95.7309337</data>
+    </node>
+    <node id="DALL">
+      <data key="d0">Dallas</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">32.8208451</data>
+      <data key="d3">-96.8963601</data>
+    </node>
+    <node id="BOST">
+      <data key="d0">Boston</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">42.3144474</data>
+      <data key="d3">-71.0526843</data>
+    </node>
+    <node id="SEAT">
+      <data key="d0">Seattle</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">47.6088285</data>
+      <data key="d3">-122.5046032</data>
+    </node>
+    <node id="CHIC">
+      <data key="d0">Chicago</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">41.833871</data>
+      <data key="d3">-87.8967702</data>
+    </node>
+    <node id="SUNN">
+      <data key="d0">Sunnyvale</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">37.395842</data>
+      <data key="d3">-122.1062685</data>
+    </node>
+    <node id="TULS">
+      <data key="d0">Tulsa</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">36.1524658</data>
+      <data key="d3">-96.0428176</data>
+    </node>
+    <node id="WASH">
+      <data key="d0">Washington D.C.</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">38.8938592</data>
+      <data key="d3">-77.0969764</data>
+    </node>
+    <node id="SANJ">
+      <data key="d0">San Jose</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">37.2961211</data>
+      <data key="d3">-121.9809032</data>
+    </node>
+    <node id="PENS">
+      <data key="d0">Pensacola</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">30.436996</data>
+      <data key="d3">-87.2751447</data>
+    </node>
+    <node id="RALE">
+      <data key="d0">Raleigh</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">35.8436436</data>
+      <data key="d3">-78.9568731</data>
+    </node>
+    <node id="PORT">
+      <data key="d0">Portland</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">45.5428359</data>
+      <data key="d3">-122.8192067</data>
+    </node>
+    <node id="PHOE">
+      <data key="d0">Phoenix</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">33.6055498</data>
+      <data key="d3">-112.4546912</data>
+    </node>
+    <node id="PITT">
+      <data key="d0">Pittsburgh</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">40.4314699</data>
+      <data key="d3">-80.0629009</data>
+    </node>
+    <node id="TOLE2">
+      <data key="d0">Toledo</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">41.6566538</data>
+      <data key="d3">-83.6566564</data>
+    </node>
+    <node id="MINN">
+      <data key="d0">Minneapolis</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">44.9707888</data>
+      <data key="d3">-93.3438787</data>
+    </node>
+    <node id="SACR">
+      <data key="d0">Sacramento</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">38.5618869</data>
+      <data key="d3">-121.6262368</data>
+    </node>
+    <node id="TUCS">
+      <data key="d0">Tuscon</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">32.1560939</data>
+      <data key="d3">-111.0486127</data>
+    </node>
+    <node id="HART2">
+      <data key="d0">Hartford</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">41.7657251</data>
+      <data key="d3">-72.7580258</data>
+    </node>
+    <node id="JACK">
+      <data key="d0">Jacksonville</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">30.345183</data>
+      <data key="d3">-81.8479148</data>
+    </node>
+    <node id="KANS">
+      <data key="d0">Kansas City</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">39.0919879</data>
+      <data key="d3">-94.9053562</data>
+    </node>
+    <node id="MISS">
+      <data key="d0">Missoula</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">46.8764093</data>
+      <data key="d3">-114.1005671</data>
+    </node>
+    <node id="DENV">
+      <data key="d0">Denver</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">39.7644863</data>
+      <data key="d3">-105.019918</data>
+    </node>
+    <node id="ELPA">
+      <data key="d0">El Paso</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">31.8113208</data>
+      <data key="d3">-106.5893251</data>
+    </node>
+    <node id="BOIS">
+      <data key="d0">Boise</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">43.6009008</data>
+      <data key="d3">-116.3162982</data>
+    </node>
+    <node id="NASH">
+      <data key="d0">Nashville</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">36.1868047</data>
+      <data key="d3">-86.9500526</data>
+    </node>
+    <node id="HOLY">
+      <data key="d0">Holyoke</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">42.2241886</data>
+      <data key="d3">-72.7228952</data>
+    </node>
+    <node id="LOUI">
+      <data key="d0">Louisville</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">38.1889597</data>
+      <data key="d3">-85.8415773</data>
+    </node>
+    <node id="CHAR">
+      <data key="d0">Charlotte</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">35.2033224</data>
+      <data key="d3">-81.0046362</data>
+    </node>
+    <node id="LASV">
+      <data key="d0">Las Vegas</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">36.1251645</data>
+      <data key="d3">-115.3398071</data>
+    </node>
+    <node id="SALT">
+      <data key="d0">Salt Lake City</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">40.7767086</data>
+      <data key="d3">-112.0028854</data>
+    </node>
+    <node id="INDI">
+      <data key="d0">Indianapolis</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">39.7799318</data>
+      <data key="d3">-86.2975566</data>
+    </node>
+    <node id="CLEV">
+      <data key="d0">Cleveland</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">41.4976312</data>
+      <data key="d3">-81.7882603</data>
+    </node>
+    <node id="CINC">
+      <data key="d0">Cincinnati</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">39.1364442</data>
+      <data key="d3">-84.6228019</data>
+    </node>
+    <node id="JCSN">
+      <data key="d0">Jackson</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">32.3104467</data>
+      <data key="d3">-90.2693986</data>
+    </node>
+    <node id="PHIL">
+      <data key="d0">Philadelphia</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">40.0026443</data>
+      <data key="d3">-75.2828348</data>
+    </node>
+    <node id="NEWY32AOA">
+      <data key="d0">New York</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">40.697329</data>
+      <data key="d3">-74.2914928</data>
+    </node>
+    <node id="ALBA">
+      <data key="d0">Albany</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">42.6681401</data>
+      <data key="d3">-73.8518804</data>
+    </node>
+    <node id="FARG">
+      <data key="d0">Fargo</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">46.8543144</data>
+      <data key="d3">-96.9933192</data>
+    </node>
+    <node id="ASHB">
+      <data key="d0">Ashburn</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">39.0300011</data>
+      <data key="d3">-77.5550621</data>
+    </node>
+    <node id="ATLA">
+      <data key="d0">Atlanta</data>
+      <data key="d1">United States of America</data>
+      <data key="d2">33.7674828</data>
+      <data key="d3">-84.5025311</data>
+    </node>
+    <edge source="LOSA" target="SUNN">
+      <data key="d4">4.836637610212596</data>
+      <data key="d5">4.836637610212596</data>
+      <data key="d6">19881503148.17</data>
+      <data key="d7">1.4378718374253432</data>
+    </edge>
+    <edge source="LOSA" target="PHOE">
+      <data key="d4">5.83602609998109</data>
+      <data key="d5">5.83602609998109</data>
+      <data key="d6">3103924160.3344417</data>
+      <data key="d7">1.912239875827473</data>
+    </edge>
+    <edge source="LOSA" target="ELPA">
+      <data key="d4">11.619576059039572</data>
+      <data key="d5">11.619576059039572</data>
+      <data key="d6">16528849688.13777</data>
+      <data key="d7">1.532664515584135</data>
+    </edge>
+    <edge source="LOSA" target="LASV">
+      <data key="d4">3.887153465750475</data>
+      <data key="d5">3.887153465750475</data>
+      <data key="d6">10303189468.387775</data>
+      <data key="d7">1.7086883762580862</data>
+    </edge>
+    <edge source="LOSA" target="SALT">
+      <data key="d4">9.59553479242503</data>
+      <data key="d5">9.59553479242503</data>
+      <data key="d6">67888704209.532196</data>
+      <data key="d7">0.08051975384007393</data>
+    </edge>
+    <edge source="HOUH" target="DALL">
+      <data key="d4">3.5247178643692</data>
+      <data key="d5">3.5247178643692</data>
+      <data key="d6">32099419992.294456</data>
+      <data key="d7">1.0924233522231668</data>
+    </edge>
+    <edge source="HOUH" target="PENS">
+      <data key="d4">8.174264885710357</data>
+      <data key="d5">8.174264885710357</data>
+      <data key="d6">5537424843.74</data>
+      <data key="d7">1.843435255895461</data>
+    </edge>
+    <edge source="HOUH" target="ELPA">
+      <data key="d4">10.618070848065805</data>
+      <data key="d5">10.618070848065805</data>
+      <data key="d6">18533230441.496666</data>
+      <data key="d7">1.475992801097127</data>
+    </edge>
+    <edge source="HOUH" target="NASH">
+      <data key="d4">10.837084296824855</data>
+      <data key="d5">10.837084296824855</data>
+      <data key="d6">9084226635.82778</data>
+      <data key="d7">1.7431532420284</data>
+    </edge>
+    <edge source="HOUH" target="JCSN">
+      <data key="d4">5.904059883431096</data>
+      <data key="d5">5.904059883431096</data>
+      <data key="d6">1794669005.86222</data>
+      <data key="d7">1.9492576600885494</data>
+    </edge>
+    <edge source="DALL" target="TULS">
+      <data key="d4">3.793101654784672</data>
+      <data key="d5">3.793101654784672</data>
+      <data key="d6">2301553517.02485</data>
+      <data key="d7">1.9349260445776957</data>
+    </edge>
+    <edge source="DALL" target="KANS">
+      <data key="d4">7.212258396619572</data>
+      <data key="d5">7.212258396619572</data>
+      <data key="d6">38615704142.2345</data>
+      <data key="d7">0.9081824118515474</data>
+    </edge>
+    <edge source="BOST" target="HART2">
+      <data key="d4">1.537541381730133</data>
+      <data key="d5">1.537541381730133</data>
+      <data key="d6">9334670958.93667</data>
+      <data key="d7">1.7360721975959315</data>
+    </edge>
+    <edge source="BOST" target="HOLY">
+      <data key="d4">1.380440418022173</data>
+      <data key="d5">1.380440418022173</data>
+      <data key="d6">114010.2488888889</data>
+      <data key="d7">1.9999967764825806</data>
+    </edge>
+    <edge source="BOST" target="ALBA">
+      <data key="d4">2.3327018869158795</data>
+      <data key="d5">2.3327018869158795</data>
+      <data key="d6">262429417.8377773</data>
+      <data key="d7">1.9925800898777482</data>
+    </edge>
+    <edge source="SEAT" target="PORT">
+      <data key="d4">2.314012476015914</data>
+      <data key="d5">2.314012476015914</data>
+      <data key="d6">2365411429.366663</data>
+      <data key="d7">1.9331205306453216</data>
+    </edge>
+    <edge source="SEAT" target="SACR">
+      <data key="d4">10.103094706883162</data>
+      <data key="d5">10.103094706883162</data>
+      <data key="d6">12187120334.56333</data>
+      <data key="d7">1.6554222530515807</data>
+    </edge>
+    <edge source="SEAT" target="MISS">
+      <data key="d4">6.404598862032386</data>
+      <data key="d5">6.404598862032386</data>
+      <data key="d6">1771123991.6966681</data>
+      <data key="d7">1.9499233700930716</data>
+    </edge>
+    <edge source="SEAT" target="BOIS">
+      <data key="d4">6.568234452834455</data>
+      <data key="d5">6.568234452834455</data>
+      <data key="d6">148086237.62111112</data>
+      <data key="d7">1.9958130205731346</data>
+    </edge>
+    <edge source="SEAT" target="SALT">
+      <data key="d4">11.307678896413545</data>
+      <data key="d5">11.307678896413545</data>
+      <data key="d6">43552148167.36441</data>
+      <data key="d7">0.7686097553567923</data>
+    </edge>
+    <edge source="SEAT" target="FARG">
+      <data key="d4">19.228511410936456</data>
+      <data key="d5">19.228511410936456</data>
+      <data key="d6">2386567681.521114</data>
+      <data key="d7">1.9325223603227906</data>
+    </edge>
+    <edge source="CHIC" target="TOLE2">
+      <data key="d4">3.5293074299043883</data>
+      <data key="d5">3.5293074299043883</data>
+      <data key="d6">7242721048.614449</data>
+      <data key="d7">1.7952198360075617</data>
+    </edge>
+    <edge source="CHIC" target="MINN">
+      <data key="d4">5.623341830927815</data>
+      <data key="d5">5.623341830927815</data>
+      <data key="d6">6324018560.614446</data>
+      <data key="d7">1.8211951628067198</data>
+    </edge>
+    <edge source="CHIC" target="KANS">
+      <data key="d4">6.676296491292664</data>
+      <data key="d5">6.676296491292664</data>
+      <data key="d6">141473097929.1899</data>
+      <data key="d7">-2.0</data>
+    </edge>
+    <edge source="CHIC" target="INDI">
+      <data key="d4">2.6556708928575206</data>
+      <data key="d5">2.6556708928575206</data>
+      <data key="d6">4561663325.343339</data>
+      <data key="d7">1.8710238655372757</data>
+    </edge>
+    <edge source="CHIC" target="CLEV">
+      <data key="d4">5.096025676498022</data>
+      <data key="d5">5.096025676498022</data>
+      <data key="d6">115280081971.1077</data>
+      <data key="d7">-1.2594205869106694</data>
+    </edge>
+    <edge source="CHIC" target="CINC">
+      <data key="d4">4.088773741226444</data>
+      <data key="d5">4.088773741226444</data>
+      <data key="d6">25010961135.525497</data>
+      <data key="d7">1.292841918311735</data>
+    </edge>
+    <edge source="SUNN" target="SANJ">
+      <data key="d4">0.1570538035007293</data>
+      <data key="d5">0.1570538035007293</data>
+      <data key="d6">28489421070.963333</data>
+      <data key="d7">1.194492197089715</data>
+    </edge>
+    <edge source="SUNN" target="SACR">
+      <data key="d4">1.3656041852843868</data>
+      <data key="d5">1.3656041852843868</data>
+      <data key="d6">36928960729.48002</data>
+      <data key="d7">0.9558732714550806</data>
+    </edge>
+    <edge source="TULS" target="KANS">
+      <data key="d4">3.424779987250176</data>
+      <data key="d5">3.424779987250176</data>
+      <data key="d6">20577339437.7557</data>
+      <data key="d7">1.4181978131826853</data>
+    </edge>
+    <edge source="WASH" target="ASHB">
+      <data key="d4">0.4247791027711629</data>
+      <data key="d5">0.4247791027711629</data>
+      <data key="d6">60737169936.06772</data>
+      <data key="d7">0.28272170963647447</data>
+    </edge>
+    <edge source="PENS" target="JACK">
+      <data key="d4">5.215517786311391</data>
+      <data key="d5">5.215517786311391</data>
+      <data key="d6">5349860156.00284</data>
+      <data key="d7">1.848738446126894</data>
+    </edge>
+    <edge source="RALE" target="CHAR">
+      <data key="d4">1.988822535750963</data>
+      <data key="d5">1.988822535750963</data>
+      <data key="d6">36217825375.91999</data>
+      <data key="d7">0.975979860311033</data>
+    </edge>
+    <edge source="RALE" target="ASHB">
+      <data key="d4">3.7596789813007567</data>
+      <data key="d5">3.7596789813007567</data>
+      <data key="d6">57797653778.69</data>
+      <data key="d7">0.3658333739855226</data>
+    </edge>
+    <edge source="PORT" target="SACR">
+      <data key="d4">7.8386273459337765</data>
+      <data key="d5">7.8386273459337765</data>
+      <data key="d6">514242849.60888803</data>
+      <data key="d7">1.9854603353673281</data>
+    </edge>
+    <edge source="PHOE" target="TUCS">
+      <data key="d4">2.0825754034178754</data>
+      <data key="d5">2.0825754034178754</data>
+      <data key="d6">999524120.311111</data>
+      <data key="d7">1.9717395282936012</data>
+    </edge>
+    <edge source="PITT" target="CLEV">
+      <data key="d4">1.8752679878217202</data>
+      <data key="d5">1.8752679878217202</data>
+      <data key="d6">5380249403.37444</data>
+      <data key="d7">1.8478792227744285</data>
+    </edge>
+    <edge source="PITT" target="ASHB">
+      <data key="d4">2.655604177657977</data>
+      <data key="d5">2.655604177657977</data>
+      <data key="d6">13093235464.68331</data>
+      <data key="d7">1.6298028202863917</data>
+    </edge>
+    <edge source="TOLE2" target="CLEV">
+      <data key="d4">1.5669781567485903</data>
+      <data key="d5">1.5669781567485903</data>
+      <data key="d6">1780191873.755559</data>
+      <data key="d7">1.9496669854604702</data>
+    </edge>
+    <edge source="MINN" target="KANS">
+      <data key="d4">6.6746350869232725</data>
+      <data key="d5">6.6746350869232725</data>
+      <data key="d6">115576077.1633333</data>
+      <data key="d7">1.9967322104667227</data>
+    </edge>
+    <edge source="MINN" target="MISS">
+      <data key="d4">16.175354476895127</data>
+      <data key="d5">16.175354476895127</data>
+      <data key="d6">267861400.587778</data>
+      <data key="d7">1.9924265063956725</data>
+    </edge>
+    <edge source="MINN" target="FARG">
+      <data key="d4">3.5211230013725205</data>
+      <data key="d5">3.5211230013725205</data>
+      <data key="d6">2384157820.827773</data>
+      <data key="d7">1.9325904965473764</data>
+    </edge>
+    <edge source="SACR" target="SALT">
+      <data key="d4">8.607346918367554</data>
+      <data key="d5">8.607346918367554</data>
+      <data key="d6">17728334363.2533</data>
+      <data key="d7">1.498750373809537</data>
+    </edge>
+    <edge source="TUCS" target="ELPA">
+      <data key="d4">4.230578309136914</data>
+      <data key="d5">4.230578309136914</data>
+      <data key="d6">2932018158.20444</data>
+      <data key="d7">1.9171003335299275</data>
+    </edge>
+    <edge source="HART2" target="NEWY32AOA">
+      <data key="d4">1.7511907406009337</data>
+      <data key="d5">1.7511907406009337</data>
+      <data key="d6">19544018129.7711</data>
+      <data key="d7">1.447413864095822</data>
+    </edge>
+    <edge source="HART2" target="ALBA">
+      <data key="d4">1.3508795419377937</data>
+      <data key="d5">1.3508795419377937</data>
+      <data key="d6">3673588130.61444</data>
+      <data key="d7">1.896133238491656</data>
+    </edge>
+    <edge source="JACK" target="ATLA">
+      <data key="d4">4.561884964378198</data>
+      <data key="d5">4.561884964378198</data>
+      <data key="d6">7576274740.09496</data>
+      <data key="d7">1.7857889633861828</data>
+    </edge>
+    <edge source="KANS" target="DENV">
+      <data key="d4">8.730557333273529</data>
+      <data key="d5">8.730557333273529</data>
+      <data key="d6">126311706480.0722</data>
+      <data key="d7">-1.5713279295910723</data>
+    </edge>
+    <edge source="DENV" target="ELPA">
+      <data key="d4">8.971876125825808</data>
+      <data key="d5">8.971876125825808</data>
+      <data key="d6">1032454969.3500003</data>
+      <data key="d7">1.97080844388191</data>
+    </edge>
+    <edge source="DENV" target="SALT">
+      <data key="d4">6.039626297749015</data>
+      <data key="d5">6.039626297749015</data>
+      <data key="d6">116345993137.7722</data>
+      <data key="d7">-1.2895580810990843</data>
+    </edge>
+    <edge source="BOIS" target="SALT">
+      <data key="d4">4.749844244590806</data>
+      <data key="d5">4.749844244590806</data>
+      <data key="d6">5629243923.52778</data>
+      <data key="d7">1.8408391699644457</data>
+    </edge>
+    <edge source="NASH" target="LOUI">
+      <data key="d4">2.43758003748399</data>
+      <data key="d5">2.43758003748399</data>
+      <data key="d6">454183734.67555505</data>
+      <data key="d7">1.98715844238025</data>
+    </edge>
+    <edge source="NASH" target="CINC">
+      <data key="d4">3.873699374132989</data>
+      <data key="d5">3.873699374132989</data>
+      <data key="d6">20892677917.3256</data>
+      <data key="d7">1.4092819561275798</data>
+    </edge>
+    <edge source="NASH" target="JCSN">
+      <data key="d4">5.289513645058242</data>
+      <data key="d5">5.289513645058242</data>
+      <data key="d6">1142613430.727778</data>
+      <data key="d7">1.9676938316202086</data>
+    </edge>
+    <edge source="NASH" target="ATLA">
+      <data key="d4">3.5002776745271564</data>
+      <data key="d5">3.5002776745271564</data>
+      <data key="d6">8613489700.555561</data>
+      <data key="d7">1.7564628236283684</data>
+    </edge>
+    <edge source="HOLY" target="ALBA">
+      <data key="d4">1.05156930866527</data>
+      <data key="d5">1.05156930866527</data>
+      <data key="d6">833646951.215556</data>
+      <data key="d7">1.9764295272127903</data>
+    </edge>
+    <edge source="LOUI" target="CINC">
+      <data key="d4">1.4959192931616703</data>
+      <data key="d5">1.4959192931616703</data>
+      <data key="d6">671971.583333333</data>
+      <data key="d7">1.9999810007247125</data>
+    </edge>
+    <edge source="CHAR" target="ATLA">
+      <data key="d4">3.587706735577953</data>
+      <data key="d5">3.587706735577953</data>
+      <data key="d6">3929916377.8888903</data>
+      <data key="d7">1.8888858324186584</data>
+    </edge>
+    <edge source="LASV" target="SALT">
+      <data key="d4">5.9421994798688225</data>
+      <data key="d5">5.9421994798688225</data>
+      <data key="d6">5244415511.807779</data>
+      <data key="d7">1.851719780267123</data>
+    </edge>
+    <edge source="INDI" target="CINC">
+      <data key="d4">1.6088903725264887</data>
+      <data key="d5">1.6088903725264887</data>
+      <data key="d6">4144115044.918889</data>
+      <data key="d7">1.8828295950091345</data>
+    </edge>
+    <edge source="CLEV" target="CINC">
+      <data key="d4">3.565351678433503</data>
+      <data key="d5">3.565351678433503</data>
+      <data key="d6">21570970028.7822</data>
+      <data key="d7">1.3901039746912476</data>
+    </edge>
+    <edge source="CLEV" target="NEWY32AOA">
+      <data key="d4">6.354098175170647</data>
+      <data key="d5">6.354098175170647</data>
+      <data key="d6">113476.9488888888</data>
+      <data key="d7">1.9999967915610657</data>
+    </edge>
+    <edge source="CLEV" target="ALBA">
+      <data key="d4">6.687074005093775</data>
+      <data key="d5">6.687074005093775</data>
+      <data key="d6">10517886670.366669</data>
+      <data key="d7">1.702618043307963</data>
+    </edge>
+    <edge source="CLEV" target="ASHB">
+      <data key="d4">4.527235470018132</data>
+      <data key="d5">4.527235470018132</data>
+      <data key="d6">102877607771.84</data>
+      <data key="d7">-0.9087539405783644</data>
+    </edge>
+    <edge source="PHIL" target="NEWY32AOA">
+      <data key="d4">1.1432929970824008</data>
+      <data key="d5">1.1432929970824008</data>
+      <data key="d6">3096902604.8911057</data>
+      <data key="d7">1.9124384027713548</data>
+    </edge>
+    <edge source="PHIL" target="ASHB">
+      <data key="d4">2.2330180520827008</data>
+      <data key="d5">2.2330180520827008</data>
+      <data key="d6">26098239247.635582</data>
+      <data key="d7">1.2621002966741206</data>
+    </edge>
+    <edge source="NEWY32AOA" target="ASHB">
+      <data key="d4">3.351733299561338</data>
+      <data key="d5">3.351733299561338</data>
+      <data key="d6">71048924323.0022</data>
+      <data key="d7">-0.008832077984567643</data>
+    </edge>
+    <edge source="ASHB" target="ATLA">
+      <data key="d4">8.548836570667934</data>
+      <data key="d5">8.548836570667934</data>
+      <data key="d6">19077164320.63552</data>
+      <data key="d7">1.4606136544720603</data>
+    </edge>
+  </graph>
+</graphml>
