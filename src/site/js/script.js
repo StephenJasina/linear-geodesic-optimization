@@ -132,9 +132,10 @@ let linesCleared = true;
 let current_edges = {};
 
 edgecolor = 0x178e51;
+let linewidth = 20;
 let lineMat = new T.LineBasicMaterial({
   color: edgecolor,
-  linewidth: 6,
+  linewidth: linewidth,
   clippingPlanes: [clipPlaneUp]
 });
 
@@ -269,7 +270,6 @@ window.onload = function() {
     // Draw physical graph edge, texture edge
     if (showGraph.checked) {
       for (let id in edges) {
-        let lineWidth = 6;
         let borders = true;
         let edge = edges[id];
 
@@ -297,7 +297,7 @@ window.onload = function() {
           ctx.moveTo(startPt[1], startPt[0]);
           ctx.lineTo(endPt[1], endPt[0]);
           ctx.strokeStyle = "#000000";
-          ctx.lineWidth = lineWidth + 1;
+          ctx.lineWidth = linewidth + 5;
           ctx.stroke();
         }
 
@@ -305,7 +305,7 @@ window.onload = function() {
         ctx.lineTo(endPt[1], endPt[0]);
         let color = getCurvatureColor(edge.weight);
         ctx.strokeStyle = "#" + color.getHexString();
-        ctx.lineWidth = lineWidth;
+        ctx.lineWidth = linewidth;
         ctx.stroke();
         ctx.restore();
       }
