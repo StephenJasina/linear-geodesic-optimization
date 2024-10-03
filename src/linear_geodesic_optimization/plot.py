@@ -324,7 +324,10 @@ def get_rectangular_mesh_plot(z, face_colors, title, vertical_scale=0.25,
 
     return to_return
 
-def get_image_data(coordinates, resolution, scale = 1.):
+def get_image_data(
+    coordinates, resolution, scale = 1.,
+    color_land = 'black', color_water = 'white'
+):
     """
     Get the image data to plot a square map.
 
@@ -399,8 +402,8 @@ def get_image_data(coordinates, resolution, scale = 1.):
         resolution = 'i'
     )
     m.drawcoastlines(ax = ax, linewidth = 0.)
-    m.fillcontinents(ax = ax, color = 'black',lake_color = 'white')
-    m.drawmapboundary(ax = ax, linewidth = 0., fill_color = 'white')
+    m.fillcontinents(ax = ax, color = color_land, lake_color = color_water)
+    m.drawmapboundary(ax = ax, linewidth = 0., fill_color = color_water)
 
     canvas = FigureCanvasAgg(fig)
     canvas.draw()

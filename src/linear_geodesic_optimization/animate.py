@@ -3,6 +3,7 @@ import os
 import pathlib
 import pickle
 import sys
+import time
 
 import networkx as nx
 import pandas as pd
@@ -12,23 +13,23 @@ from matplotlib import animation as animation
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from mpl_toolkits.basemap import Basemap
 import numpy as np
-import time
 
+sys.path.append('.')
 from linear_geodesic_optimization.data import input_network, input_mesh, utility
 from linear_geodesic_optimization.plot \
-    import get_mesh_plot, get_rectangular_mesh_plot
+    import get_mesh_plot, get_rectangular_mesh_plot, get_image_data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 lambda_curvature = 1.
-lambda_smooth = 0.002
+lambda_smooth = 0.005
 initial_radius = 20.
 width = 50
 height = 50
 scale = 1.
 ip_type = 'ipv4'
-threshold = 5
+threshold = 1
 
-directory = pathlib.Path('..', 'outputs', 'animation_Europe_windowed')
+directory = pathlib.Path('..', 'outputs', 'Internet2', 'fake_animation')
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{scale}'
 
 output_filepaths = [
@@ -36,91 +37,10 @@ output_filepaths = [
     for output_directory in directory.iterdir()
 ]
 
-fps = 24
-animation_length = 12.  # in seconds
+fps = 12
+animation_length = 6.  # in seconds
 
 include_line_graph = False
-
-def get_image_data(coordinates, resolution, scale = 1.):
-    """
-    Get the image data to plot a square map.
-
-    `coordinates` is a list of pairs of longitudes and latitudes.
-
-    `resolution` is the number of pixels on one side of the image.
-
-    `scale` is the size of the space taken up in the map by the
-    coordinates (smaller number = zoom out).
-    """
-    coordinates = np.array(coordinates)
-    center = np.mean(coordinates)
-    coordinates = center + (coordinates - center) / scale
-
-    # Find the least disruptive break in the horizontal coordinates
-    # (as they are cyclic)
-    coordinates_x = list(sorted(coordinates[:, 0] % 1.))
-    coordinates_x.append(1 + coordinates_x[0])
-    difference_max = -1.
-    difference_index = -1
-    for index, (x_left, x_right) in enumerate(itertools.pairwise(coordinates_x)):
-        difference = x_right - x_left
-        if difference > difference_max:
-            difference_max = difference
-            difference_index = index
-    left = coordinates_x[difference_index + 1] - 1.
-    right = coordinates_x[difference_index]
-    bottom = np.amin(coordinates[:, 1])
-    top = np.amax(coordinates[:, 1])
-
-    # Expand the coordinates out so they are a square
-    height = top - bottom
-    width = right - left
-    if height > width:
-        center = (left + right) / 2.
-        left = center - height / 2.
-        right = center + height / 2.
-    else:
-        center = (bottom + top) / 2.
-        bottom = center - width / 2.
-        top = center + width / 2.
-
-    # Make a fake image just to grab the map data
-
-    # Create the figure and axes. If errors appear due to invalid fontsize,
-    # try increasing the dpi
-    dpi = 1.
-    fig = plt.figure(figsize = (resolution / dpi, resolution / dpi), dpi = dpi)
-    ax = fig.add_subplot()
-
-    # We need the axes to be hidden, but we can't just turn them off
-    # (otherwise, the water on the exterior portion of the map will not
-    # appear). As a result, we manually hide the axes and tick marks
-    ax.set_xticks([])
-    ax.set_yticks([])
-    for spine in ax.spines.values():
-        spine.set_linewidth(0.)
-    ax.margins(0.)
-    fig.tight_layout(pad = 0.)
-
-    m = Basemap(
-        projection = 'merc',
-        llcrnrlon = utility.inverse_mercator(x = left),
-        urcrnrlon = utility.inverse_mercator(x = right),
-        llcrnrlat = utility.inverse_mercator(y = bottom),
-        urcrnrlat = utility.inverse_mercator(y = top),
-        resolution = 'i'
-    )
-    m.drawcoastlines(ax = ax, linewidth = 0.)
-    m.fillcontinents(ax = ax, color = 'coral',lake_color = 'aqua')
-    m.drawmapboundary(ax = ax, linewidth = 0., fill_color = 'aqua')
-
-    canvas = FigureCanvasAgg(fig)
-    canvas.draw()
-    canvas_data = np.flipud(np.asarray(canvas.buffer_rgba())).swapaxes(0, 1) / 256.
-
-    plt.close(fig)
-
-    return canvas_data
 
 def investigating_graph(k=3):
     path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/{threshold}/'
@@ -237,8 +157,6 @@ def investigating_graph(k=3):
     return time_series, name_series
 
 if __name__ == '__main__':
-    initialization_path = os.path.join(directory, 'graph_0', subdirectory_name, '0')
-
     # Assume the first word of each path is a number indicating time
     paths = list(sorted(
         (
@@ -254,23 +172,27 @@ if __name__ == '__main__':
         parameters = pickle.load(f)['parameters']
         width = parameters['width']
         height = parameters['height']
-        probes_filename = parameters['probes_filename']
-        probes_file_path = os.path.join('..', 'data', probes_filename)
-        latencies_filename = parameters['latencies_filenames']
-        if not isinstance(latencies_filename, str):
-            latencies_filename = latencies_filename[0]
-        latencies_file_path = os.path.join('..', 'data', latencies_filename)
-        epsilon = parameters['epsilon']
-        clustering_distance = parameters['clustering_distance']
-        should_remove_tivs = parameters['should_remove_TIVs']
-        ricci_curvature_alpha = parameters['ricci_curvature_alpha']
+        if 'graphml_filename' in parameters:
+            network = nx.read_graphml(parameters['graphml_filename'])
+            latencies = []
+        else:
+            probes_filename = parameters['probes_filename']
+            probes_file_path = os.path.join('..', 'data', probes_filename)
+            latencies_filename = parameters['latencies_filenames']
+            if not isinstance(latencies_filename, str):
+                latencies_filename = latencies_filename[0]
+            latencies_file_path = os.path.join('..', 'data', latencies_filename)
+            epsilon = parameters['epsilon']
+            clustering_distance = parameters['clustering_distance']
+            should_remove_tivs = parameters['should_remove_TIVs']
+            ricci_curvature_alpha = parameters['ricci_curvature_alpha']
+            network, latencies = input_network.get_graph_from_paths(
+                probes_file_path, latencies_file_path,
+                epsilon, clustering_distance, should_remove_tivs,
+                should_include_latencies=True,
+                ricci_curvature_alpha=ricci_curvature_alpha
+            )
         coordinates_scale = parameters['coordinates_scale']
-        network, latencies = input_network.get_graph_from_paths(
-            probes_file_path, latencies_file_path,
-            epsilon, clustering_distance, should_remove_tivs,
-            should_include_latencies=True,
-            ricci_curvature_alpha=ricci_curvature_alpha
-        )
         network = input_network.extract_from_graph(network, latencies)
         coordinates = network[0]
     for output_filepath in output_filepaths:
@@ -284,7 +206,10 @@ if __name__ == '__main__':
     mesh = RectangleMesh(width, height, scale)
 
     resolution = 500
-    face_colors = get_image_data(coordinates, resolution, coordinates_scale)
+    face_colors = np.flipud(get_image_data(
+        coordinates, resolution, coordinates_scale,
+        'coral', 'aqua'
+    )[0]).swapaxes(0, 1) / 256.
     # face_colors = np.full((width, height, 3), 0.4)
 
     fig = plt.figure()
@@ -348,23 +273,27 @@ if __name__ == '__main__':
         entry = paths[left_index if lam < 0.5 else right_index][1]
         with (entry.parent / 'parameters').open('rb') as f:
             parameters = pickle.load(f)
-            probes_filename = parameters['probes_filename']
-            probes_file_path = os.path.join('..', 'data', probes_filename)
-            latencies_filename = parameters['latencies_filenames']
-            if not isinstance(latencies_filename, str):
-                latencies_filename = latencies_filename[0]
-            latencies_file_path = os.path.join('..', 'data', latencies_filename)
-            epsilon = parameters['epsilon']
-            clustering_distance = parameters['clustering_distance']
-            should_remove_tivs = parameters['should_remove_TIVs']
-            ricci_curvature_alpha = parameters['ricci_curvature_alpha']
+            if 'graphml_filename' in parameters:
+                network = nx.read_graphml(parameters['graphml_filename'])
+                latencies = []
+            else:
+                probes_filename = parameters['probes_filename']
+                probes_file_path = os.path.join('..', 'data', probes_filename)
+                latencies_filename = parameters['latencies_filenames']
+                if not isinstance(latencies_filename, str):
+                    latencies_filename = latencies_filename[0]
+                latencies_file_path = os.path.join('..', 'data', latencies_filename)
+                epsilon = parameters['epsilon']
+                clustering_distance = parameters['clustering_distance']
+                should_remove_tivs = parameters['should_remove_TIVs']
+                ricci_curvature_alpha = parameters['ricci_curvature_alpha']
+                network, latencies = input_network.get_graph_from_paths(
+                    probes_file_path, latencies_file_path,
+                    epsilon, clustering_distance, should_remove_tivs,
+                    should_include_latencies=True,
+                    ricci_curvature_alpha=ricci_curvature_alpha
+                )
             coordinates_scale = parameters['coordinates_scale']
-            network, latencies = input_network.get_graph_from_paths(
-                probes_file_path, latencies_file_path,
-                epsilon, clustering_distance, should_remove_tivs,
-                should_include_latencies=True,
-                ricci_curvature_alpha=ricci_curvature_alpha
-            )
             coordinates, bounding_box, network_edges, network_curvatures,  _, \
                 _, network_city \
                 = input_network.extract_from_graph(network, latencies, with_labels=True)
@@ -420,7 +349,7 @@ if __name__ == '__main__':
         )
 
     ani = animation.FuncAnimation(fig, get_frame,
-                                  np.linspace(0, paths[-1][0],
+                                  np.linspace(paths[0][0], paths[-1][0],
                                               int(round(fps * animation_length)) + 1),
                                   interval=1000/fps,
                                   blit=True)
