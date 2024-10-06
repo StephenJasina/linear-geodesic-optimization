@@ -10,19 +10,40 @@ def ricci_curvature_optimal_transport(
     edge_distance_label: typing.Optional[str] = None,
     edge_weight_label: typing.Optional[str] = None,
     alpha: float = 0.9999
-) -> typing.Dict[typing.Tuple[typing.Any, typing.Any], float]:
-    # Create mappings between node names (generally strings) and
-    # integers, which act as indices
-    nodes_to_indices = {}
-    indices_to_nodes = []
-    for node in graph.nodes:
-        nodes_to_indices[node] = len(indices_to_nodes)
-        indices_to_nodes.append(node)
-    n_nodes = len(indices_to_nodes)
+):
+    # Create mappings between numerical IDs and node names
+    index_to_node = [node for node in graph.nodes]
+    node_to_index = {node: index for index, node in enumerate(index_to_node)}
+    n_nodes = len(index_to_node)
+
+    # Relabel the graph
+    graph = nx.relabel_nodes(graph, node_to_index)
+
+    # Create an augmented graph. Essentially, add a duplicate edge for
+    # each node incident to a particular node.
+    # Simultaneously, create dictionaries of the edge weights.
+    weights = []
+    index_to_node_augmented = list(range(n_nodes))
+    for index in range(n_nodes):
+        neighbors = list(graph.neighbors(index))
+        weights_index = {}
+        for neighbor in neighbors:
+            graph.add_edge(
+                index, (index, neighbor),
+                weight = 1. if edge_weight_label is None else graph.edges[index, neighbor][edge_weight_label]
+            )
+            weights_index[neighbor] = (
+                1. if edge_weight_label is None
+                else graph.edges[index, neighbor][edge_weight_label]
+            )
+            index_to_node_augmented.append((index, neighbor))
+        weights.append(weights_index)
+    n_nodes_augmented = len(index_to_node_augmented)
+    node_to_index_augmented = {node: index for index, node in enumerate(index_to_node_augmented)}
 
     # Compute the distance matrix, which is just a matrix of shortest
     # paths
-    distance_matrix = np.zeros((n_nodes, n_nodes))
+    distance_matrix = np.zeros((n_nodes_augmented, n_nodes_augmented))
     if edge_distance_label is None:
         distances_iterator = nx.all_pairs_shortest_path_length(graph)
     else:
@@ -30,58 +51,49 @@ def ricci_curvature_optimal_transport(
             graph, weight = edge_distance_label
         )
     for source, distance_dict in distances_iterator:
-        index_source = nodes_to_indices[source]
+        index_source = node_to_index_augmented[source]
         for destination, distance in distance_dict.items():
-            index_destination = nodes_to_indices[destination]
+            index_destination = node_to_index_augmented[destination]
             distance_matrix[index_source, index_destination] = distance
 
-    # Compute the relative probability that a chain is in a state at a
-    # given time. That is, for each node, assign a probability (scaled
-    # by `alpha`) that a random walk stays at the node in one step.
-    # TODO: Is this doing the right thing when the edges are weighted?
-    node_weights = np.ones(n_nodes)
-
-    # Compute the initial distributions
-    distributions = []
-    for node in indices_to_nodes:
-        n_neighbors = graph.degree[node]
-        distribution = np.zeros(n_nodes)
-
-        node_index = nodes_to_indices[node]
-        node_probability = alpha * node_weights[node_index]
-
-        distribution_sum = 0.
-        for neighbor in graph.neighbors(node):
-            distribution_neighbor = (
-                1.
-                if edge_weight_label is None
-                else graph.edges[node, neighbor][edge_weight_label]
-            ) / (
-                1.
-                if edge_distance_label is None
-                else graph.edges[node, neighbor][edge_distance_label]**2
-            )
-            distribution[nodes_to_indices[neighbor]] = distribution_neighbor
-            distribution_sum += distribution_neighbor
-        if distribution_sum == 0.:
-            distribution[node_index] = 1.
-        else:
-            distribution *= (1. - node_probability) / np.sum(distribution)
-            distribution[node_index] += node_probability
-
-        distributions.append(distribution)
-
-    # For each edge, compute the optimal transport cost between the
-    # distributions corresponding to the edge's endpoints. From there,
-    # compute the Ollivier-Ricci curvature.
     ricci_curvatures = {}
-    for source, destination, data in graph.edges(data=True):
-        transport_distance = ot.emd2(
-            distributions[nodes_to_indices[source]],
-            distributions[nodes_to_indices[destination]],
-            distance_matrix
-        )
-        edge_distance = 1. if edge_distance_label is None else data[edge_distance_label]
-        ricci_curvatures[source, destination] = (1. - transport_distance / edge_distance) / (1. - alpha)
+    for source in range(n_nodes):
+        weights_source = weights[source]
+        for destination in weights_source:
+            # Don't do duplicate work
+            if source > destination:
+                continue
+
+            # TODO: Should these distributions depend on distances?
+            distribution_source = np.zeros(n_nodes_augmented)
+            for neighbor, neighbor_weight in weights_source.items():
+                if neighbor == destination:
+                    distribution_source[node_to_index_augmented[source, neighbor]] = weights_source[destination]
+                else:
+                    distribution_source[neighbor] = weights_source[neighbor]
+            distribution_source_sum = np.sum(distribution_source)
+            if distribution_source_sum != 0.:
+                distribution_source *= (1. - alpha) / distribution_source_sum
+                distribution_source[source] = alpha
+            else:
+                distribution_source[source] = 1.
+
+            distribution_destination = np.zeros(n_nodes_augmented)
+            weights_destination = weights[destination]
+            for neighbor, neighbor_weight in weights[destination].items():
+                if neighbor == source:
+                    distribution_destination[node_to_index_augmented[destination, neighbor]] = weights_destination[source]
+                else:
+                    distribution_destination[neighbor] = weights_destination[neighbor]
+            distribution_destination_sum = np.sum(distribution_destination)
+            if distribution_destination_sum != 0.:
+                distribution_destination *= (1. - alpha) / distribution_destination_sum
+                distribution_destination[destination] = alpha
+            else:
+                distribution_destination[destination] = 1.
+
+            transport_distance = ot.emd2(distribution_source, distribution_destination, distance_matrix)
+            edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
+            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
 
     return ricci_curvatures
