@@ -32,7 +32,7 @@ def main(
     width = height = sides
     mesh = RectangleMesh(width, height, mesh_scale)
 
-    coordinates_scale = 0.8  
+    coordinates_scale = 0.8
 
     # Construct the network graph
     graph = nx.read_graphml(graphml_filename)
@@ -86,6 +86,7 @@ def main(
         mesh, network_vertices, network_edges, network_curvatures,
         1.01 * 2**0.5 * mesh_scale / width,
         lambda_curvature, lambda_smooth,
+        edge_weights=edge_data['throughput'] if 'throughput' in edge_data else None,
         directory=directory
     )
 
