@@ -21,6 +21,8 @@ for i in range(n):
     long, lat = utility.inverse_mercator(xy[0], xy[1])
     graph.add_node(
         f'a{i}',
+        city = f'a{i}',
+        country = '',
         lat = lat,
         long = long
     )
@@ -38,6 +40,8 @@ for i in range(n):
     long, lat = utility.inverse_mercator(xy[0], xy[1])
     graph.add_node(
         f'b{i}',
+        city = f'b{i}',
+        country = '',
         lat = lat,
         long = long
     )
@@ -65,8 +69,8 @@ with open('probes.csv', 'w') as f:
     for node, data in sorted(graph.nodes(data=True)):
         writer.writerow({
             'id': node,
-            'city': 'city',
-            'country': 'country',
+            'city': data['city'],
+            'country': data['country'],
             'latitude': data['lat'],
             'longitude': data['long'],
         })
