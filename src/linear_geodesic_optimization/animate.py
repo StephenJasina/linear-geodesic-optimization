@@ -10,8 +10,6 @@ import pandas as pd
 import matplotlib.gridspec as gridspec
 from matplotlib import pyplot as plt
 from matplotlib import animation as animation
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from mpl_toolkits.basemap import Basemap
 import numpy as np
 
 sys.path.append('.')
@@ -29,15 +27,15 @@ scale = 1.
 ip_type = 'ipv4'
 threshold = 1
 
-directory = pathlib.Path('..', 'outputs', 'Internet2', 'fake_animation')
+directory = pathlib.Path('..', 'outputs', 'Internet2', 'animation')
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{scale}'
 
-output_filepaths = [
+output_filepaths = list(sorted(
     output_directory / subdirectory_name / 'output'
     for output_directory in directory.iterdir()
-]
+))[:24]
 
-fps = 12
+fps = 24
 animation_length = 6.  # in seconds
 
 include_line_graph = False
@@ -193,7 +191,7 @@ if __name__ == '__main__':
                 ricci_curvature_alpha=ricci_curvature_alpha
             )
         coordinates_scale = parameters['coordinates_scale']
-        network = input_network.extract_from_graph(network, latencies)
+        network = input_network.extract_from_graph_old(network, latencies)
         coordinates = network[0]
     for output_filepath in output_filepaths:
         with output_filepath.open('rb') as f:
@@ -296,7 +294,7 @@ if __name__ == '__main__':
             coordinates_scale = parameters['coordinates_scale']
             coordinates, bounding_box, network_edges, network_curvatures,  _, \
                 _, network_city \
-                = input_network.extract_from_graph(network, latencies, with_labels=True)
+                = input_network.extract_from_graph_old(network, latencies, with_labels=True)
         coordinates = np.array(coordinates)
         network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
 

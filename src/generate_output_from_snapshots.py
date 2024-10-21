@@ -42,7 +42,7 @@ def main(directory, max_iterations):
             should_include_latencies=True,
             ricci_curvature_alpha=ricci_curvature_alpha
         )
-    network = input_network.extract_from_graph(network, latencies)
+    network = input_network.extract_from_graph_old(network, latencies)
 
     with open(os.path.join(directory, 'output'), 'wb') as f:
         pickle.dump({

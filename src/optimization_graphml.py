@@ -25,22 +25,26 @@ def main(
     graphml_filename,
     lambda_curvature, lambda_smooth,
     initial_radius=20., sides=50, mesh_scale=1.,
-    maxiter=None, output_dir_name=os.path.join('..', 'out'),
+    maxiter=None, output_dir_name=pathlib.PurePath('..', 'out'),
     initialization_file_path=None
 ):
     # Construct the mesh
     width = height = sides
     mesh = RectangleMesh(width, height, mesh_scale)
 
+    coordinates_scale = 0.8  
+
     # Construct the network graph
-    network = input_network.extract_from_graph(nx.read_graphml(graphml_filename))
-    network_coordinates, bounding_box, network_edges, network_curvatures, _ = network
-    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8), bounding_box)
-    network_edges = [network_edges]
-    network_curvatures = [network_curvatures]
+    graph = nx.read_graphml(graphml_filename)
+    graph_data, vertex_data, edge_data = input_network.extract_from_graph(graph)
+    network_coordinates = graph_data['coordinates']
+    bounding_box = graph_data['bounding_box']
+    network_edges = graph_data['edges']
+    network_curvatures = edge_data['ricciCurvature']
+    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), coordinates_scale, bounding_box)
 
     # Setup snapshots
-    directory = os.path.join(
+    directory = pathlib.PurePath(
         output_dir_name,
         f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{mesh_scale}'
     )
@@ -57,10 +61,10 @@ def main(
         'width': width,
         'height': height,
         'mesh_scale': mesh_scale,
-        'coordinates_scale': 0.8
+        'coordinates_scale': coordinates_scale
     }
 
-    with open(os.path.join(directory, 'parameters'), 'wb') as f:
+    with open(directory / 'parameters', 'wb') as f:
         pickle.dump(parameters, f)
 
     # Initialize mesh
@@ -96,21 +100,21 @@ def main(
         'options': None if maxiter is None else {'maxiter': maxiter},
     }
     z = scipy.optimize.minimize(f, z_0, **minimizer_kwargs).x
-    with open(os.path.join(directory, 'output'), 'wb') as f:
+    with open(directory / 'output', 'wb') as f:
         pickle.dump({
             'parameters': parameters,
             'initial': optimization.Computer.to_float_list(z_0),
             'final': optimization.Computer.to_float_list(z),
-            'network': network, # TODO: JSONify this
-        }, f)
+            'network': (graph_data, vertex_data, edge_data),
+        }, f) # TODO: JSONify this
 
 
 if __name__ == '__main__':
-    graphml_directory = pathlib.PurePath('..', 'data', 'Internet2', 'graphml')
+    graphml_directory = pathlib.PurePath('..', 'data', 'toy', 'two_clusters', 'graphml')
     graphml_filenames = list(sorted(
         graphml_directory / filename
         for filename in os.listdir(graphml_directory)
-    ))[:25]
+    ))
 
     count = len(graphml_filenames)
 
@@ -120,10 +124,10 @@ if __name__ == '__main__':
     sides = [50] * count
     mesh_scales = [1.] * count
 
-    max_iters = [1] * count
+    max_iters = [2000] * count
 
     output_dir_names = [
-        pathlib.PurePath('..', 'outputs', 'Internet2', 'fake_animation', graphml_filename.name)
+        pathlib.PurePath('..', 'outputs', 'toy', 'two_clusters', graphml_filename.name)
         for graphml_filename in graphml_filenames
     ]
 

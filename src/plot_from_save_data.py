@@ -105,7 +105,7 @@ if __name__ == '__main__':
             for source_id, target_id, data in network.edges(data=True)
         ]
     network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
-        = input_network.extract_from_graph(network, latencies)
+        = input_network.extract_from_graph_old(network, latencies)
 
     network_vertices = mesh.map_coordinates_to_support(
         np.array(network_coordinates), coordinates_scale, bounding_box)

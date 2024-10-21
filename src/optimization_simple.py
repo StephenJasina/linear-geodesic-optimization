@@ -49,14 +49,14 @@ def main(
         latency_threshold, clustering_distance,
         ricci_curvature_alpha=ricci_curvature_alpha
     )
-    network = input_network.extract_from_graph(network)
+    network = input_network.extract_from_graph_old(network)
     network_coordinates, bounding_box, network_edges, network_curvatures, _ = network
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8), bounding_box)
     network_edges = [network_edges]
     network_curvatures = [network_curvatures]
     for latencies_file_path, network_weight in zip(latencies_file_paths[1:], network_weights[1:]):
         _, _, network_edges_to_add, network_curvatures_to_add, _ = \
-            input_network.extract_from_graph(
+            input_network.extract_from_graph_old(
                 input_network.get_graph_from_paths(
                     probes_file_path, latencies_file_path,
                     latency_threshold, clustering_distance,
@@ -138,41 +138,35 @@ def main(
 
 if __name__ == '__main__':
     probes_filenames = [
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'probes.csv'),
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'probes.csv'),
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'probes.csv'),
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'probes.csv'),
+        pathlib.PurePath('..', 'data', 'toy', 'toy_probes.csv'),
+        pathlib.PurePath('..', 'data', 'toy', 'elbow_probes.csv'),
     ]
 
     latencies_filenames = [
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'latencies.csv'),
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'latencies.csv'),
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'latencies.csv'),
-        pathlib.PurePath('..', 'data', 'ipv4', 'graph_Europe', 'latencies.csv'),
+        pathlib.PurePath('..', 'data', 'toy', 'toy_latencies.csv'),
+        pathlib.PurePath('..', 'data', 'toy', 'elbow_latencies.csv'),
     ]
 
     output_dir_names = [
-        pathlib.PurePath('..', 'outputs', 'PacificVis2025', 'graph_Europe', 'unclustered_5'),
-        pathlib.PurePath('..', 'outputs', 'PacificVis2025', 'graph_Europe', 'unclustered_8'),
-        pathlib.PurePath('..', 'outputs', 'PacificVis2025', 'graph_Europe', 'clustered_5'),
-        pathlib.PurePath('..', 'outputs', 'PacificVis2025', 'graph_Europe', 'clustered_8'),
+        pathlib.PurePath('..', 'outputs', 'toy', 'toy'),
+        pathlib.PurePath('..', 'outputs', 'toy', 'elbow'),
     ]
 
     count = len(probes_filenames)
 
     network_weights = [None] * count
 
-    latency_thresholds = [5, 8, 5, 8]
-    clustering_distances = [None, None, 500000, 500000]
+    latency_thresholds = [0] * count
+    clustering_distances = [None] * count
 
     lambda_curvatures = [1.] * count
-    lambda_smooths = [0.0002] * count
-    ricci_curvature_alphas = [0.] * count
+    lambda_smooths = [0.002] * count
+    ricci_curvature_alphas = [0.9999] * count
     initial_radii = [20.] * count
     sides = [50] * count
     mesh_scales = [1.] * count
 
-    max_iters = [None] * count
+    max_iters = [2000] * count
 
     arguments = list(zip(
         probes_filenames, latencies_filenames,

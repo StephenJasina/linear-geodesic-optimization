@@ -1,3 +1,4 @@
+import collections
 import csv
 import typing
 
@@ -248,6 +249,95 @@ def get_graph_from_paths(
         )
 
 def extract_from_graph(
+    graph: nx.Graph
+):
+    """
+    Extract data from a graph into dictionaries.
+
+    The main use of this function is to turn the graph data that is
+    indexed by node names into a format that is indexed by integers.
+
+    Furthermore, this function will convert latitude-longitude positions
+    into Cartesian coordinates using the Mercator projection. This is
+    something that is subject to change, but is fine for now.
+
+    The function returns:
+    * A dictionary of "graph data," which contains geometry and
+      connectivity information. This has three members: `coordinates`,
+      `edges`, and `labels`, where coordinates is a list of x-y pairs,
+      `edges` is a list of pairs of indices whose vertices are
+      connected, and `labels` is the original names of the vertices in
+      the NetworkX representation.
+    * A dictionary of "vertex data," which maps attribute names to lists
+      of their values on the nodes.
+    * A dictionary of "edge data," which maps attribute names to lists
+      of their values on the edges.
+    """
+    labels_to_indices = {
+        node: index
+        for index, node in enumerate(graph.nodes)
+    }
+
+    graph_data = {}
+    graph_data['labels'] = list(graph.nodes)
+    graph_data['coordinates'] = [
+        utility.mercator(node['long'], node['lat'])
+        for node in graph.nodes.values()
+    ]
+    graph_data['edges'] = [
+        (
+            labels_to_indices[source_label],
+            labels_to_indices[target_label]
+        )
+        for source_label, target_label in graph.edges
+    ]
+
+    longitudes = [node['long'] for node in graph.nodes.values()]
+    latitudes = [node['long'] for node in graph.nodes.values()]
+    if 'long_min' in graph.graph:
+        coordiate_min = utility.mercator(
+            graph.graph['long_min'], graph.graph['lat_min']
+        )
+        coordiate_max = utility.mercator(
+            graph.graph['long_max'], graph.graph['lat_max']
+        )
+        graph_data['bounding_box'] = (
+            coordiate_min[0], coordiate_max[0],
+            coordiate_min[1], coordiate_max[1]
+        )
+    else:
+        # TODO: Implement this in a reasonable way
+        graph_data['bounding_box'] = None
+
+    vertex_data = {}
+    vertex_attributes = {}  # Mapping from name to type
+    for _, data in graph.nodes(data=True):
+        for attribute_name, attribute_type in data.items():
+            vertex_attributes[attribute_name] = attribute_type
+    for attribute_name, attribute_type in vertex_attributes.items():
+        vertex_data[attribute_name] = [
+            data[attribute_name]
+            if attribute_name in data
+            else attribute_type()
+            for _, data in graph.nodes(data=True)
+        ]
+
+    edge_data = {}
+    edge_attributes = {}  # Mapping from name to type
+    for _, _, data in graph.edges(data=True):
+        for attribute_name, attribute_type in data.items():
+            edge_attributes[attribute_name] = attribute_type
+    for attribute_name, attribute_type in edge_attributes.items():
+        edge_data[attribute_name] = [
+            data[attribute_name]
+            if attribute_name in data
+            else attribute_type()
+            for _, _, data in graph.edges(data=True)
+        ]
+
+    return graph_data, vertex_data, edge_data
+
+def extract_from_graph_old(
     graph: nx.Graph,
     latencies: typing.Optional[typing.Tuple[typing.Tuple[str, str],
                                             float]] = None,
@@ -276,7 +366,7 @@ def extract_from_graph(
 
     Given a graph, a list of latencies, and an optional boolean, return:
     * A list of (x, y) coordinate pairs representing vertices
-    * A bounding box aruond the coordinates
+    * A bounding box around the coordinates
     * A list of pairs of indices into the vertex list representing edges
     * A list of (Ollivier-Ricci) curvatures of each of the edges
     * A list of list of pairs representing measured latencies. This is

@@ -2,6 +2,7 @@ import os
 import sys
 import time
 
+import networkx as nx
 import numpy as np
 
 sys.path.append('.')
@@ -12,30 +13,33 @@ from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
 from linear_geodesic_optimization.optimization.curvature_loss \
     import Computer as CurvatureLoss
-from linear_geodesic_optimization import data
+from linear_geodesic_optimization.data import input_network
 
+
+seed = time.time_ns()
+seed = seed % (2**32 - 1)
+np.random.seed(seed)
 
 width = 20
 height = 20
 mesh = RectangleMesh(width, height, extent=1.)
 
 coordinates, _, network_edges, network_curvatures, _ \
-    = data.read_graphml(
-        os.path.join('..', 'data', 'graph_US', 'graph16.graphml')
-    )
+    = input_network.extract_from_graph_old(nx.read_graphml(
+        os.path.join('..', 'data', 'ipv4', 'graph_US', 'graph16.graphml')
+    ))
 network_vertices = mesh.map_coordinates_to_support(
     np.array(coordinates, dtype=np.float64)
 )
 
 laplacian = Laplacian(mesh)
 curvature = Curvature(mesh, laplacian)
-curvature_loss = CurvatureLoss(mesh, network_vertices, network_edges,
-                               network_curvatures, 1.01 * 2**0.5 / width,
-                               curvature)
+curvature_loss = CurvatureLoss(
+    mesh, network_vertices, network_edges,
+    network_curvatures, 1.01 * 2**0.5 / width,
+    curvature, np.random.random(len(network_edges))
+)
 
-seed = time.time_ns()
-seed = seed % (2**32 - 1)
-np.random.seed(seed)
 z = mesh.set_parameters(np.random.random(width * height) / 100)
 # h is smaller here than in other tests since the values are more
 # resilient to small changes

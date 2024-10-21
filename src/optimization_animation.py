@@ -47,14 +47,14 @@ def main(
         latency_threshold, clustering_distance,
         ricci_curvature_alpha=ricci_curvature_alpha
     )
-    network = input_network.extract_from_graph(network)
+    network = input_network.extract_from_graph_old(network)
     network_coordinates, bounding_box, network_edges, network_curvatures, _ = network
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8), bounding_box)
     network_edges = [network_edges]
     network_curvatures = [network_curvatures]
     for latencies_file_path, network_weight in zip(latencies_file_paths[1:], network_weights[1:]):
         _, _, network_edges_to_add, network_curvatures_to_add, _ = \
-            input_network.extract_from_graph(
+            input_network.extract_from_graph_old(
                 input_network.get_graph_from_paths(
                     probes_file_path, latencies_file_path,
                     latency_threshold, clustering_distance,

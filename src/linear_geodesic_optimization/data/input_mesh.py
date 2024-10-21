@@ -55,7 +55,7 @@ def get_mesh_from_directory(
         epsilon, clustering_distance, should_remove_TIVs,
         should_include_latencies=True
     )
-    network = input_network.extract_from_graph(network, latencies)
+    network = input_network.extract_from_graph_old(network, latencies)
 
     return get_mesh(z, width, height, network, postprocessed, z_0)
 

@@ -20,7 +20,8 @@ class Computer:
         network_edges: typing.List[typing.Tuple[int, int]],
         network_curvatures: typing.List[np.float64],
         epsilon: np.float64,
-        curvature: Curvature
+        curvature: Curvature,
+        edge_weights = None
     ):
         """Initialize the computer."""
         self._mesh = mesh
@@ -32,10 +33,16 @@ class Computer:
             network_edges,
             epsilon
         )
-        self._network_edge_lengths = [
+
+        edge_lengths = np.array([
             np.linalg.norm(network_vertices[i] - network_vertices[j])
             for i, j in network_edges
-        ]
+        ])
+        if edge_weights is None:
+            edge_weights = [1.] * len(network_edges)
+        edge_weights = np.array(edge_weights) * edge_lengths
+        self._edge_weights = edge_weights / np.sum(edge_weights)
+
         self._network_curvatures = network_curvatures
 
         # Forward variables
@@ -72,10 +79,10 @@ class Computer:
         self._forward_updates = self._mesh.get_updates()
 
         self.loss = np.float64(0.)
-        for fat_edge, network_curvature, edge_length in zip(
+        for fat_edge, network_curvature, edge_weight in zip(
             self._fat_edges,
             self._network_curvatures,
-            self._network_edge_lengths
+            self._edge_weights
         ):
             if len(fat_edge) == 0:
                 continue
@@ -83,8 +90,7 @@ class Computer:
             for vertex in fat_edge:
                 loss_part += (self._curvature.kappa_G[vertex.index]
                               - network_curvature)**2
-            self.loss += edge_length * loss_part / len(fat_edge)
-        self.loss /= sum(self._network_edge_lengths)
+            self.loss += loss_part * edge_weight / len(fat_edge)
 
     def reverse(self) -> None:
         """
@@ -101,15 +107,14 @@ class Computer:
         self._partials = self._mesh.get_partials()
 
         self.dif_loss = np.zeros(self._topology.n_vertices())
-        for fat_edge, network_curvature, edge_length \
+        for fat_edge, network_curvature, edge_weight \
                 in zip(self._fat_edges,
                        self._network_curvatures,
-                       self._network_edge_lengths):
+                       self._edge_weights):
             for vertex in fat_edge:
                 curvature = self._curvature.kappa_G[vertex.index]
                 for index, partial \
                         in self._curvature.dif_kappa_G[vertex.index].items():
                     self.dif_loss[index] \
-                        += 2 * edge_length * (curvature - network_curvature) \
+                        += 2 * edge_weight * (curvature - network_curvature) \
                         * partial / len(fat_edge)
-        self.dif_loss /= sum(self._network_edge_lengths)

@@ -93,7 +93,7 @@ if __name__ == '__main__':
         should_remove_tivs=should_remove_tivs,
         should_include_latencies=True
     )
-    network = input_network.extract_from_graph(network, latencies, with_labels=True)
+    network = input_network.extract_from_graph_old(network, latencies, with_labels=True)
     network, (labels, _) = network[:-2], network[-2:]
     network_coordinates, bounding_box, network_edges, _, _ = network
     mesh = input_mesh.get_mesh(z, width, height, network, coordinates_scale, use_postprocessing, z_0)

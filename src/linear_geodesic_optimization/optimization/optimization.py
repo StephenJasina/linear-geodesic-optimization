@@ -32,7 +32,7 @@ class Computer:
         epsilon: np.float64,
         lambda_curvature: np.float64 = np.float64(1.),
         lambda_smooth: np.float64 = np.float64(0.01),
-        network_weights: typing.Optional[typing.List[np.float64]]=None,
+        edge_weights: typing.Optional[typing.List[np.float64]]=None,
         directory: typing.Optional[str] = None
     ):
         """
@@ -56,24 +56,18 @@ class Computer:
 
         self.lambda_curvature = lambda_curvature
         self.lambda_smooth = lambda_smooth
-        if network_weights is None:
-            network_weights = [1. / len(network_edges)] * len(network_edges)
-        self.network_weights = network_weights
+        self.edge_weights = edge_weights
 
         self.directory = directory
 
         self.laplacian = Laplacian(mesh)
         self.curvature = Curvature(mesh, self.laplacian)
-        self.curvature_losses = [
-            CurvatureLoss(
-                mesh, network_vertices,
-                network_edges_, network_curvatures_,
-                epsilon, self.curvature
-            )
-            for network_edges_, network_curvatures_ in zip(
-                network_edges, network_curvatures
-            )
-        ]
+        self.curvature_loss = CurvatureLoss(
+            mesh, network_vertices,
+            network_edges, network_curvatures,
+            epsilon, self.curvature,
+            edge_weights
+        )
         self.smooth_loss = SmoothLoss(mesh, self.laplacian, self.curvature)
 
         # Count of iterations for diagnostic purposes
@@ -82,24 +76,18 @@ class Computer:
     def forward(self, z: typing.Optional[npt.NDArray[np.float64]] = None):
         if z is not None:
             self.mesh.set_parameters(z)
-        for curvature_loss in self.curvature_losses:
-            curvature_loss.forward()
+        self.curvature_loss.forward()
         self.smooth_loss.forward()
-        return self.lambda_curvature * sum(
-            curvature_loss.loss * network_weight
-            for curvature_loss, network_weight in zip(self.curvature_losses, self.network_weights)
-        ) + self.lambda_smooth * self.smooth_loss.loss
+        return self.lambda_curvature * self.curvature_loss.loss \
+            + self.lambda_smooth * self.smooth_loss.loss
 
     def reverse(self, z: typing.Optional[npt.NDArray[np.float64]] = None):
         if z is not None:
             self.mesh.set_parameters(z)
         self.smooth_loss.reverse()
-        for curvature_loss in self.curvature_losses:
-            curvature_loss.reverse()
-        return self.lambda_curvature * sum(
-            curvature_loss.dif_loss * network_weight
-            for curvature_loss, network_weight in zip(self.curvature_losses, self.network_weights)
-        ) + self.lambda_smooth * self.smooth_loss.dif_loss
+        self.curvature_loss.reverse()
+        return self.lambda_curvature * self.curvature_loss.dif_loss \
+            + self.lambda_smooth * self.smooth_loss.dif_loss
 
     @staticmethod
     def to_float_list(array: npt.NDArray[np.float64]):
@@ -111,13 +99,9 @@ class Computer:
         the loss functions.
         """
         loss = self.forward()
-        curvature_loss = sum(
-            curvature_loss.loss * network_weight
-            for curvature_loss, network_weight in zip(self.curvature_losses, self.network_weights)
-        )
         print(
             f'iteration {self.iterations}:\n'
-            + f'\tL_curvature: {curvature_loss:.6f}\n'
+            + f'\tL_curvature: {self.curvature_loss.loss:.6f}\n'
             + f'\tL_smooth: {self.smooth_loss.loss:.6f}\n'
             + f'\tLoss: {loss:.6f}\n'
         )
@@ -127,7 +111,7 @@ class Computer:
                                    str(self.iterations)), 'wb') as f:
                 pickle.dump({
                     'mesh_parameters': Computer.to_float_list(self.mesh.get_parameters()),
-                    'L_curvature': float(curvature_loss),
+                    'L_curvature': float(self.curvature_loss.loss),
                     'L_smooth': float(self.smooth_loss.loss),
                 }, f)
 
