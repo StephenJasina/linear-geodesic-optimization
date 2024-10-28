@@ -92,20 +92,24 @@ if __name__ == '__main__':
     if graphml_filename is None:
         probes_file_path = os.path.join('..', 'data', probes_filename)
         latencies_file_path = os.path.join('..', 'data', latencies_filename)
-        network, latencies = input_network.get_graph_from_paths(
+        graph, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
             epsilon, clustering_distance, should_remove_tivs,
             should_include_latencies=True
         )
     else:
         graphml_file_path = os.path.join('..', 'data', graphml_filename)
-        network = nx.read_graphml(graphml_file_path)
+        graph = nx.read_graphml(graphml_file_path)
         latencies = [
             ((source_id, target_id), data['rtt'])
-            for source_id, target_id, data in network.edges(data=True)
+            for source_id, target_id, data in graph.edges(data=True)
         ]
-    network_coordinates, bounding_box, network_edges, network_curvatures, network_latencies \
-        = input_network.extract_from_graph_old(network, latencies)
+    graph_data, vertex_data, edge_data = input_network.get_network_data(graph)
+    bounding_box = graph_data['bounding_box']
+    network_coordinates = graph_data['coordinates']
+    network_edges = graph_data['edges']
+    network_curvatures = edge_data['ricciCurvature']
+    network_latencies = edge_data['rtt']
 
     network_vertices = mesh.map_coordinates_to_support(
         np.array(network_coordinates), coordinates_scale, bounding_box)

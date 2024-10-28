@@ -24,10 +24,14 @@ width = 20
 height = 20
 mesh = RectangleMesh(width, height, extent=1.)
 
-coordinates, _, network_edges, network_curvatures, _ \
-    = input_network.extract_from_graph_old(nx.read_graphml(
+graph_data, vertex_data, edge_data = input_network.get_network_data(
+    nx.read_graphml(
         os.path.join('..', 'data', 'ipv4', 'graph_US', 'graph16.graphml')
-    ))
+    )
+)
+coordinates = graph_data['coordinates']
+network_edges = graph_data['edges']
+network_curvatures = edge_data['ricciCurvature']
 network_vertices = mesh.map_coordinates_to_support(
     np.array(coordinates, dtype=np.float64)
 )

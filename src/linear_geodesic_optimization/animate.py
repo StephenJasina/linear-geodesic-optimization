@@ -27,19 +27,18 @@ scale = 1.
 ip_type = 'ipv4'
 threshold = 1
 
-directory = pathlib.Path('..', 'outputs', 'Internet2', 'animation')
+directory = pathlib.Path('..', 'outputs', 'toy', 'two_clusters')
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{scale}'
 
 output_filepaths = list(sorted(
     output_directory / subdirectory_name / 'output'
     for output_directory in directory.iterdir()
-))[:24]
+))
 
-fps = 24
+fps = 12
 animation_length = 6.  # in seconds
 
 include_line_graph = False
-
 def investigating_graph(k=3):
     path_to_graphml = f'../data/{ip_type}/graph_Europe_hourly/{threshold}/'
     path_to_probes = f'../data/{ip_type}/graph_Europe_hourly/probes.csv'
@@ -171,7 +170,7 @@ if __name__ == '__main__':
         width = parameters['width']
         height = parameters['height']
         if 'graphml_filename' in parameters:
-            network = nx.read_graphml(parameters['graphml_filename'])
+            graph = nx.read_graphml(parameters['graphml_filename'])
             latencies = []
         else:
             probes_filename = parameters['probes_filename']
@@ -184,19 +183,19 @@ if __name__ == '__main__':
             clustering_distance = parameters['clustering_distance']
             should_remove_tivs = parameters['should_remove_TIVs']
             ricci_curvature_alpha = parameters['ricci_curvature_alpha']
-            network, latencies = input_network.get_graph_from_paths(
+            graph, latencies = input_network.get_graph_from_paths(
                 probes_file_path, latencies_file_path,
                 epsilon, clustering_distance, should_remove_tivs,
                 should_include_latencies=True,
                 ricci_curvature_alpha=ricci_curvature_alpha
             )
         coordinates_scale = parameters['coordinates_scale']
-        network = input_network.extract_from_graph_old(network, latencies)
-        coordinates = network[0]
+        network_data = input_network.get_network_data(graph)
+        coordinates = network_data[0]['coordinates']
     for output_filepath in output_filepaths:
         with output_filepath.open('rb') as f:
             data = pickle.load(f)
-            mesh = input_mesh.get_mesh(data['final'], width, height, network, coordinates_scale, postprocessed=True, z_0=data['initial'])
+            mesh = input_mesh.get_mesh(data['final'], width, height, network_data, coordinates_scale, postprocessed=True, z_0=data['initial'])
             zs.append(mesh.get_parameters())
 
     z_max = np.amax(zs)
@@ -292,9 +291,12 @@ if __name__ == '__main__':
                     ricci_curvature_alpha=ricci_curvature_alpha
                 )
             coordinates_scale = parameters['coordinates_scale']
-            coordinates, bounding_box, network_edges, network_curvatures,  _, \
-                _, network_city \
-                = input_network.extract_from_graph_old(network, latencies, with_labels=True)
+            graph_data, vertex_data, edge_data = input_network.get_network_data(network)
+            coordinates = graph_data['coordinates']
+            bounding_box = graph_data['bounding_box']
+            network_edges = graph_data['edges']
+            network_city = vertex_data['city']
+            network_curvatures = edge_data['ricciCurvature']
         coordinates = np.array(coordinates)
         network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
 

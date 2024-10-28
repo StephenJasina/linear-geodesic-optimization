@@ -34,8 +34,9 @@ if __name__ == '__main__':
             sys.exit(-1)
 
         graph = input_network.get_graph_from_paths(
-            probes_filename, latencies_filename,
-            epsilon, ricci_curvature_alpha=0.9999, clustering_distance=500000
+            probes_filename, latencies_filename, epsilon,
+            ricci_curvature_alpha=0.9999,
+            # clustering_distance=500000,
         )
 
     coordinates = np.array([
@@ -43,7 +44,7 @@ if __name__ == '__main__':
         for _, data in graph.nodes(data = True)
     ])
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(1, 1, facecolor='#808080')
 
     if show_map:
         scale = 0.8

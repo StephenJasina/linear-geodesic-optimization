@@ -87,15 +87,16 @@ if __name__ == '__main__':
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
-    network, latencies = input_network.get_graph_from_paths(
+    network = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
         epsilon, clustering_distance,
-        should_remove_tivs=should_remove_tivs,
-        should_include_latencies=True
+        should_remove_tivs=should_remove_tivs
     )
-    network = input_network.extract_from_graph_old(network, latencies, with_labels=True)
-    network, (labels, _) = network[:-2], network[-2:]
-    network_coordinates, bounding_box, network_edges, _, _ = network
+    graph_data, vertex_data, edge_data = input_network.get_network_data(network)
+    bounding_box = graph_data['bounding_box']
+    network_coordinates = graph_data['coordinates']
+    network_edges = graph_data['edges']
+    labels = graph_data['labels']
     mesh = input_mesh.get_mesh(z, width, height, network, coordinates_scale, use_postprocessing, z_0)
     network_vertices = mesh.map_coordinates_to_support(
         np.array(network_coordinates), coordinates_scale, bounding_box)

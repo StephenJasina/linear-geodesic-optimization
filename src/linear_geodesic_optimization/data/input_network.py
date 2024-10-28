@@ -248,11 +248,11 @@ def get_graph_from_paths(
             directed
         )
 
-def extract_from_graph(
+def get_network_data(
     graph: nx.Graph
 ):
     """
-    Extract data from a graph into dictionaries.
+    Extract data from a NetworkX graph into dictionaries.
 
     The main use of this function is to turn the graph data that is
     indexed by node names into a format that is indexed by integers.
@@ -267,7 +267,9 @@ def extract_from_graph(
       `edges`, and `labels`, where coordinates is a list of x-y pairs,
       `edges` is a list of pairs of indices whose vertices are
       connected, and `labels` is the original names of the vertices in
-      the NetworkX representation.
+      the NetworkX representation. Optionally, it includes a fourth
+      `bounding_box` member describing the geographical extents of the
+      network.
     * A dictionary of "vertex data," which maps attribute names to lists
       of their values on the nodes.
     * A dictionary of "edge data," which maps attribute names to lists
@@ -312,8 +314,8 @@ def extract_from_graph(
     vertex_data = {}
     vertex_attributes = {}  # Mapping from name to type
     for _, data in graph.nodes(data=True):
-        for attribute_name, attribute_type in data.items():
-            vertex_attributes[attribute_name] = attribute_type
+        for attribute_name, attribute_value in data.items():
+            vertex_attributes[attribute_name] = type(attribute_value)
     for attribute_name, attribute_type in vertex_attributes.items():
         vertex_data[attribute_name] = [
             data[attribute_name]
@@ -336,92 +338,3 @@ def extract_from_graph(
         ]
 
     return graph_data, vertex_data, edge_data
-
-def extract_from_graph_old(
-    graph: nx.Graph,
-    latencies: typing.Optional[typing.Tuple[typing.Tuple[str, str],
-                                            float]] = None,
-    with_labels: bool = False
-) -> typing.Union[
-    typing.Tuple[
-        typing.List[typing.Tuple[np.float64, np.float64]],
-        typing.Optional[typing.Tuple[np.float64, np.float64,
-                                     np.float64, np.float64]],
-        typing.List[typing.Tuple[int, int]],
-        typing.List[np.float64],
-        typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]]
-    ],
-    typing.Tuple[
-        typing.List[typing.Tuple[np.float64, np.float64]],
-        typing.Optional[typing.Tuple[np.float64, np.float64,
-                                     np.float64, np.float64]],
-        typing.List[typing.Tuple[int, int]],
-        typing.List[np.float64],
-        typing.List[typing.Tuple[typing.Tuple[int, int], np.float64]],
-        typing.List[str]
-    ]
-]:
-    """
-    Extract a tuple of location and latency data from a graph.
-
-    Given a graph, a list of latencies, and an optional boolean, return:
-    * A list of (x, y) coordinate pairs representing vertices
-    * A bounding box around the coordinates
-    * A list of pairs of indices into the vertex list representing edges
-    * A list of (Ollivier-Ricci) curvatures of each of the edges
-    * A list of list of pairs representing measured latencies. This is
-      stored in the format ((i_index, j_index), latency) (which is
-      different from the ((source_id, target_id), latency) format of the
-      input parameter)
-    * Optionally, a list of labels for each of the vertices
-    """
-    coordinates: typing.List[typing.Tuple[np.float64, np.float64]] \
-        = [utility.mercator(node['long'], node['lat'])
-           for node in graph.nodes.values()]
-    bounding_box = None
-    if 'long_min' in graph.graph:
-        coordiate_min = utility.mercator(graph.graph['long_min'],
-                                 graph.graph['lat_min'])
-        coordiate_max = utility.mercator(graph.graph['long_max'],
-                                 graph.graph['lat_max'])
-        bounding_box = (
-            coordiate_min[0], coordiate_max[0],
-            coordiate_min[1], coordiate_max[1]
-        )
-    label_to_index = {label: index
-                      for index, label in enumerate(graph.nodes)}
-    network_edges: typing.List[typing.Tuple[int, int]] \
-        = [(label_to_index[u], label_to_index[v])
-           for u, v in graph.edges]
-    network_curvatures: typing.List[np.float64] \
-        = [edge['ricciCurvature']
-           for edge in graph.edges.values()]
-    network_latencies: typing.List[typing.Tuple[typing.Tuple[int, int],
-                                                np.float64]] = []
-
-    if latencies is None:
-        latencies = [
-            ((source_id, target_id), data['rtt'])
-            for source_id, target_id, data in graph.edges(data=True)
-            if 'rtt' in data
-        ]
-
-    for (source_id, target_id), rtt in latencies:
-        if source_id in label_to_index and target_id in label_to_index:
-            network_latencies.append((
-                (label_to_index[source_id],
-                 label_to_index[target_id]),
-                np.float64(rtt)
-            ))
-
-    if with_labels:
-        network_city: typing.List[str] = [
-            node['city']
-            for node in graph.nodes.values()
-        ]
-
-        return coordinates, bounding_box, network_edges, network_curvatures, \
-            network_latencies, list(graph.nodes), network_city
-    else:
-        return coordinates, bounding_box, network_edges, network_curvatures, \
-            network_latencies

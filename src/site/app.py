@@ -68,9 +68,9 @@ def unpickle():
         height = parameters['height']
         coordinates_scale = parameters['coordinates_scale']
 
-        network = unpickled_data['network']
+        network_data = unpickled_data['network']
 
-        mesh = input_mesh.get_mesh(z, width, height, network, coordinates_scale, True, z_0)
+        mesh = input_mesh.get_mesh(z, width, height, network_data, coordinates_scale, True, z_0)
         z = mesh.get_parameters()
         z = np.flip(z.reshape((width, height)), axis=1).T.reshape((-1))
         z = z - np.amin(z)
@@ -78,8 +78,11 @@ def unpickle():
         z = z.tolist()
 
         # Get map and network data
-        coordinates, bounding_box, network_edges, network_curvatures, network_latencies = network
-        coordinates = np.array(coordinates)
+        graph_data, vertex_data, edge_data = network_data
+        coordinates = np.array(graph_data['coordinates'])
+        bounding_box = graph_data['bounding_box']
+        network_edges = graph_data['edges']
+        network_curvatures = edge_data['ricciCurvature']
         network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
         vertices = [
             (network_vertex[1] * 20., network_vertex[0] * 20.)

@@ -23,7 +23,7 @@ def main(directory, max_iterations):
         z = pickle.load(f)['mesh_parameters']
 
     if 'graphml_filename' in parameters:
-        network = nx.read_graphml(parameters['graphml_filename'])
+        graph = nx.read_graphml(parameters['graphml_filename'])
         latencies = []
     else:
         probes_file_path = os.path.join('..', 'data', parameters['probes_filename'])
@@ -35,21 +35,20 @@ def main(directory, max_iterations):
         clustering_distance = parameters['clustering_distance']
         should_remove_tivs = parameters['should_remove_TIVs']
         ricci_curvature_alpha = parameters['ricci_curvature_alpha']
-        network, latencies = input_network.get_graph_from_paths(
+        graph, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
             epsilon, clustering_distance,
             should_remove_tivs=should_remove_tivs,
-            should_include_latencies=True,
             ricci_curvature_alpha=ricci_curvature_alpha
         )
-    network = input_network.extract_from_graph_old(network, latencies)
+    network_data = input_network.get_network_data(graph)
 
     with open(os.path.join(directory, 'output'), 'wb') as f:
         pickle.dump({
             'parameters': parameters,
             'initial': z_0,
             'final': z,
-            'network': network,
+            'network': network_data,
         }, f)
 
 if __name__ == '__main__':

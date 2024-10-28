@@ -36,7 +36,7 @@ def main(
 
     # Construct the network graph
     graph = nx.read_graphml(graphml_filename)
-    graph_data, vertex_data, edge_data = input_network.extract_from_graph(graph)
+    graph_data, vertex_data, edge_data = input_network.get_network_data(graph)
     network_coordinates = graph_data['coordinates']
     bounding_box = graph_data['bounding_box']
     network_edges = graph_data['edges']
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     max_iters = [2000] * count
 
     output_dir_names = [
-        pathlib.PurePath('..', 'outputs', 'toy', 'two_clusters', graphml_filename.name)
+        pathlib.PurePath('..', 'outputs', 'toy', 'two_clusters', graphml_filename.stem)
         for graphml_filename in graphml_filenames
     ]
 

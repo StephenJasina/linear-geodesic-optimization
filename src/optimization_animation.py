@@ -42,14 +42,18 @@ def main(
         os.path.join('..', 'data', latencies_filename)
         for latencies_filename in latencies_filenames
     ]
-    network = input_network.get_graph_from_paths(
+    graph = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_paths[0],
         latency_threshold, clustering_distance,
         ricci_curvature_alpha=ricci_curvature_alpha
     )
-    network = input_network.extract_from_graph_old(network)
-    network_coordinates, bounding_box, network_edges, network_curvatures, _ = network
+    network = input_network.get_network_data(graph)
+    graph_data, vertex_data, edge_data = network
+    bounding_box = graph_data['bounding_box']
+    network_coordinates = graph_data['coordinates']
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8), bounding_box)
+    network_edges = graph_data['edges']
+    network_curvatures = edge_data['ricciCurvature']
     network_edges = [network_edges]
     network_curvatures = [network_curvatures]
     for latencies_file_path, network_weight in zip(latencies_file_paths[1:], network_weights[1:]):
@@ -108,6 +112,7 @@ def main(
             z_0 = np.array(pickle.load(f)['mesh_parameters'])
     z_0 = mesh.set_parameters(z_0)
 
+    # TODO: This needs to be fixed
     computer = optimization.Computer(
         mesh, network_vertices, network_edges, network_curvatures,
         1.01 * 2**0.5 * mesh_scale / width,

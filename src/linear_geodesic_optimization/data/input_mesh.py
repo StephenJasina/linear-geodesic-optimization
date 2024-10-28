@@ -50,20 +50,19 @@ def get_mesh_from_directory(
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
-    network, latencies = input_network.get_graph_from_paths(
+    graph = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
-        epsilon, clustering_distance, should_remove_TIVs,
-        should_include_latencies=True
+        epsilon, clustering_distance, should_remove_TIVs
     )
-    network = input_network.extract_from_graph_old(network, latencies)
+    network_data = input_network.get_network_data(graph)
 
-    return get_mesh(z, width, height, network, postprocessed, z_0)
+    return get_mesh(z, width, height, network_data, postprocessed, z_0)
 
 def get_mesh(
         z: typing.List[np.float64],
         width: int,
         height: int,
-        network,
+        network_data,
         coordinates_scale: float,
         postprocessed: bool = False,
         z_0: typing.Optional[typing.List[np.float64]] = None,
@@ -76,15 +75,18 @@ def get_mesh(
     """
     mesh = RectangleMesh(width, height)
 
-    coordinates, bounding_box, network_edges, _, _ = network
-    coordinates = np.array(coordinates)
+    graph_data, vertex_data, edge_data = network_data
+
+    coordinates = np.array(graph_data['coordinates'])
+    bounding_box = graph_data['bounding_box']
+    network_edges = graph_data['edges']
     network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
     nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index
                               for network_vertex in network_vertices]
-    network_convex_hulls = convex_hull.compute_connected_convex_hulls(
-        network_vertices, network_edges)
 
     if postprocessed:
+        network_convex_hulls = convex_hull.compute_connected_convex_hulls(
+            network_vertices, network_edges)
         vertices = mesh.get_coordinates()
         x = list(sorted(set(vertices[:,0])))
         y = list(sorted(set(vertices[:,1])))

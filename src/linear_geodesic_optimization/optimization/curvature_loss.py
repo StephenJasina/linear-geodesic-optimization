@@ -41,7 +41,7 @@ class Computer:
         if edge_weights is None:
             edge_weights = [1.] * len(network_edges)
         edge_weights = np.array(edge_weights) * edge_lengths
-        self._edge_weights = edge_weights / np.sum(edge_weights)
+        self._edge_weights = edge_weights / sum(edge_weights)
 
         self._network_curvatures = network_curvatures
 
@@ -90,6 +90,7 @@ class Computer:
             for vertex in fat_edge:
                 loss_part += (self._curvature.kappa_G[vertex.index]
                               - network_curvature)**2
+            # print(network_curvature, edge_weight, loss_part * edge_weight / len(fat_edge))
             self.loss += loss_part * edge_weight / len(fat_edge)
 
     def reverse(self) -> None:

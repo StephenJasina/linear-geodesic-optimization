@@ -24,7 +24,7 @@ warnings.simplefilter('error')
 def main(
     probes_filename, latencies_filenames,
     latency_threshold, clustering_distance, ricci_curvature_alpha,
-    lambda_curvature, lambda_smooth, network_weights,
+    lambda_curvature, lambda_smooth,
     initial_radius, sides, mesh_scale,
     maxiter=None, output_dir_name=os.path.join('..', 'out'),
     initialization_file_path=None
@@ -39,21 +39,22 @@ def main(
         latencies_filenames = str(latencies_filenames)
     if isinstance(latencies_filenames, str):
         latencies_filenames = [latencies_filenames]
-        network_weights = [1.]
     latencies_file_paths = [
         os.path.join('..', 'data', latencies_filename)
         for latencies_filename in latencies_filenames
     ]
-    network = input_network.get_graph_from_paths(
+    graph = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_paths[0],
         latency_threshold, clustering_distance,
         ricci_curvature_alpha=ricci_curvature_alpha
     )
-    network = input_network.extract_from_graph_old(network)
-    network_coordinates, bounding_box, network_edges, network_curvatures, _ = network
+    network = input_network.get_network_data(graph)
+    graph_data, vertex_data, edge_data = network
+    bounding_box = graph_data['bounding_box']
+    network_coordinates = graph_data['coordinates']
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), np.float64(0.8), bounding_box)
-    network_edges = [network_edges]
-    network_curvatures = [network_curvatures]
+    network_edges = graph_data['edges']
+    network_curvatures = edge_data['ricciCurvature']
     for latencies_file_path, network_weight in zip(latencies_file_paths[1:], network_weights[1:]):
         _, _, network_edges_to_add, network_curvatures_to_add, _ = \
             input_network.extract_from_graph_old(
@@ -154,8 +155,6 @@ if __name__ == '__main__':
 
     count = len(probes_filenames)
 
-    network_weights = [None] * count
-
     latency_thresholds = [0] * count
     clustering_distances = [None] * count
 
@@ -171,7 +170,7 @@ if __name__ == '__main__':
     arguments = list(zip(
         probes_filenames, latencies_filenames,
         latency_thresholds, clustering_distances, ricci_curvature_alphas,
-        lambda_curvatures, lambda_smooths, network_weights,
+        lambda_curvatures, lambda_smooths,
         initial_radii, sides, mesh_scales,
         max_iters,
         output_dir_names,
