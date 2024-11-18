@@ -186,11 +186,11 @@ def get_mesh_plot(mesh, title = '', face_colors=None, network=None, ax=None):
 
             ax.plot([network_vertices[u][0], network_vertices[v][0]],
                     [network_vertices[u][1], network_vertices[v][1]],
-                    [0.7, 0.7], color=color)
+                    [0.4, 0.4], color=color)
 
         # # Plot the vertices
         for vertex in network_vertices:
-            ax.plot(vertex[0], vertex[1], 0.7, '.', ms=4, color='green')
+            ax.plot(vertex[0], vertex[1], 0.4, '.', ms=4, color='green')
         # Plot the name of a few cities above the vertices
         # for vertex, name in zip(network_vertices, network_name):
         # texts = [ax.text(vertex[0], vertex[1], 0.7, name, fontsize=4) for (vertex,name) in zip(network_vertices, network_name)]
@@ -219,7 +219,7 @@ def get_mesh_plot(mesh, title = '', face_colors=None, network=None, ax=None):
 
         for vertex, name in zip(network_vertices, network_name):
             if not is_too_close(vertex, labeled_vertices, name):
-                texts.append(ax.text(vertex[0]-0.01, vertex[1]+0.01, 0.7, name, fontsize=4))
+                texts.append(ax.text(vertex[0]-0.01, vertex[1]+0.01, 0.4, name, fontsize=4))
                 labeled_vertices.append((vertex, name))
 
 
