@@ -43,7 +43,7 @@ class Computer:
         # Forward variables
         self._forward_updates: int = self._mesh.get_updates() - 1
         self._coordinates: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
+            = np.zeros((self._topology.n_vertices, 3))
         self.edge_lengths: typing.List[np.float64] \
             = [np.float64(0.) for _ in self._topology.edges()]
         """A list of the mesh's edge lengths, indexed by edges."""
@@ -138,7 +138,7 @@ class Computer:
         # Reverse variables
         self._reverse_updates: int = self._mesh.get_updates() - 1
         self._partials: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
+            = np.zeros((self._topology.n_vertices, 3))
         self.dif_edge_lengths: typing.List[typing.Dict[int, np.float64]] \
             = [{} for _ in self._topology.edges()]
         """

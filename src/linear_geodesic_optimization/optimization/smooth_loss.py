@@ -35,9 +35,9 @@ class Computer:
         # Reverse variables
         self._reverse_updates: int = mesh.get_updates() - 1
         self._partials: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
+            = np.zeros((self._topology.n_vertices, 3))
         self.dif_loss: npt.NDArray[np.float64] \
-            = np.zeros(self._topology.n_vertices())
+            = np.zeros(self._topology.n_vertices)
         """The partials of the smoothness loss, indexed by vertices."""
 
     def forward(self) -> None:
@@ -90,7 +90,7 @@ class Computer:
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
 
-        self.dif_loss = np.zeros(self._topology.n_vertices())
+        self.dif_loss = np.zeros(self._topology.n_vertices)
         for edge, laplacian_element, dif_laplacian_elements \
                 in zip(self._topology.edges(),
                        self._laplacian.LC_interior_edges,

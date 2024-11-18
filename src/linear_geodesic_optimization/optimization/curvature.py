@@ -24,7 +24,7 @@ class Computer:
         # Forward variables
         self._forward_updates: int = mesh.get_updates() - 1
         self._coordinates: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
+            = np.zeros((self._topology.n_vertices, 3))
         self.vertex_N: typing.List[npt.NDArray[np.float64]] \
             = [np.zeros(3) for _ in self._topology.vertices()]
         """
@@ -49,7 +49,7 @@ class Computer:
         # Reverse variables
         self._reverse_updates: int = mesh.get_updates() - 1
         self._partials: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
+            = np.zeros((self._topology.n_vertices, 3))
         self.dif_mean_curvature_normal: \
             typing.List[typing.Dict[int, npt.NDArray[np.float64]]] \
             = [{} for _ in self._topology.vertices()]

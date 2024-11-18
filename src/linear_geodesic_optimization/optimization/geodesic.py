@@ -39,8 +39,8 @@ class Computer:
         """
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
-        n = self._topology.n_vertices()
-        f = self._topology.n_faces()
+        n = self._topology.n_vertices
+        f = self._topology.n_faces
         self._laplacian = laplacian
 
         self._source: int = source
@@ -183,8 +183,8 @@ class Computer:
         self._laplacian.forward()
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = list(self._mesh.get_coordinates())
-        n = self._topology.n_vertices()
-        f = self._topology.n_faces()
+        n = self._topology.n_vertices
+        f = self._topology.n_faces
 
         # Compute h and t
         self._h = np.mean([
@@ -303,8 +303,8 @@ class Computer:
         Compute the derivative of phi with respect to one of the
         coordinates.
         """
-        n = self._topology.n_vertices()
-        f = self._topology.n_faces()
+        n = self._topology.n_vertices
+        f = self._topology.n_faces
 
         # Compute dif_D
         dif_D_data = np.zeros(n)
@@ -495,9 +495,9 @@ class Computer:
         self._reverse_updates = self._mesh.get_updates()
         self._partials = self._mesh.get_partials()
 
-        n = self._topology.n_vertices()
-        he = self._topology.n_halfedges()
-        f = self._topology.n_faces()
+        n = self._topology.n_vertices
+        he = self._topology.n_halfedges
+        f = self._topology.n_faces
 
         # Compute dif_h and dif_t
         self._dif_h = np.zeros(n)

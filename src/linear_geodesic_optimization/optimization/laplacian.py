@@ -18,10 +18,10 @@ class Computer:
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
 
-        v = self._topology.n_vertices()
-        he = self._topology.n_halfedges()
-        e = self._topology.n_edges()
-        f = self._topology.n_faces()
+        v = self._topology.n_vertices
+        he = self._topology.n_halfedges
+        e = self._topology.n_edges
+        f = self._topology.n_faces
 
         # Forward variables
         self._forward_updates: int = mesh.get_updates() - 1
@@ -62,27 +62,27 @@ class Computer:
         # Reverse variables
         self._reverse_updates: int = mesh.get_updates() - 1
         self._partials: npt.NDArray[np.float64] \
-            = np.zeros((self._topology.n_vertices(), 3))
+            = np.zeros((self._topology.n_vertices, 3))
         self.dif_N: typing.List[typing.Dict[int, npt.NDArray[np.float64]]] \
-            = [{} for _ in range(self._topology.n_faces())]
+            = [{} for _ in range(self._topology.n_faces)]
         """
         A list of partials of normals of faces, indexed by faces and
         then by (incident) vertices.
         """
         self.dif_A: typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in range(self._topology.n_faces())]
+            = [{} for _ in range(self._topology.n_faces)]
         """
         A list partials of areas of faces, indexed by faces and then by
         (incident) vertices.
         """
         self.dif_D: typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in range(self._topology.n_vertices())]
+            = [{} for _ in range(self._topology.n_vertices)]
         """
         A list of partials of vertex areas, indexed by vertices and
         then by vertices (at most distance 1 away).
         """
         self.dif_cot: typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in range(self._topology.n_halfedges())]
+            = [{} for _ in range(self._topology.n_halfedges)]
         """
         A list of partials of cotangents of the opposing angles to
         halfedges, indexed by halfedges and then by vertices (of the
@@ -90,7 +90,7 @@ class Computer:
         """
         self.dif_LC_edges: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in range(self._topology.n_edges())]
+            = [{} for _ in range(self._topology.n_edges)]
         """
         A list of partials of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator, indexed by edges and then by vertices
@@ -98,7 +98,7 @@ class Computer:
         """
         self.dif_LC_vertices: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in range(self._topology.n_vertices())]
+            = [{} for _ in range(self._topology.n_vertices)]
         """
         A list of partials of diagonal entries of the Laplace-Beltrami
         operator, indexed by vertices and then vertices (at most
@@ -106,7 +106,7 @@ class Computer:
         """
         self.dif_LC_interior_edges: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in range(self._topology.n_edges())]
+            = [{} for _ in range(self._topology.n_edges)]
         """
         A list of partials of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator ignoring the boundary vertices,
@@ -115,7 +115,7 @@ class Computer:
         """
         self.dif_LC_interior_vertices: \
             typing.List[typing.Dict[int, np.float64]] \
-            = [{} for _ in range(self._topology.n_vertices())]
+            = [{} for _ in range(self._topology.n_vertices)]
         """
         A list of partials of diagonal entries of the Laplace-Beltrami
         operator ignoring the boundary vertices, indexed by vertices and
@@ -152,13 +152,13 @@ class Computer:
         self._coordinates = self._mesh.get_coordinates()
 
         # Reset quantities that will be computed via accumulation
-        self.D = [np.float64(0.) for _ in range(self._topology.n_vertices())]
-        self.LC_edges = [np.float64(0.) for _ in range(self._topology.n_edges())]
-        self.LC_vertices = [np.float64(0.) for _ in range(self._topology.n_vertices())]
+        self.D = [np.float64(0.) for _ in range(self._topology.n_vertices)]
+        self.LC_edges = [np.float64(0.) for _ in range(self._topology.n_edges)]
+        self.LC_vertices = [np.float64(0.) for _ in range(self._topology.n_vertices)]
         self.LC_interior_edges \
-            = [np.float64(0.) for _ in range(self._topology.n_edges())]
+            = [np.float64(0.) for _ in range(self._topology.n_edges)]
         self.LC_interior_vertices \
-            = [np.float64(0.) for _ in range(self._topology.n_vertices())]
+            = [np.float64(0.) for _ in range(self._topology.n_vertices)]
 
         # N and A can be computed by iterating over faces
         for face in self._topology.faces():
