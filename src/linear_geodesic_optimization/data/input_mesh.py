@@ -66,6 +66,8 @@ def get_mesh(
         coordinates_scale: float,
         postprocessed: bool = False,
         z_0: typing.Optional[typing.List[np.float64]] = None,
+        network_trim_radius: np.float64 = np.inf,
+        mesh: typing.Optional[RectangleMesh] = None
 ) -> RectangleMesh:
     """
     Return a mesh with the given parameters.
@@ -73,7 +75,8 @@ def get_mesh(
     Some extra postprocessing is optionally done to make the output a
     bit more aesthetically pleasing.
     """
-    mesh = RectangleMesh(width, height)
+    if mesh is None:
+        mesh = RectangleMesh(width, height)
 
     graph_data, vertex_data, edge_data = network_data
 
@@ -81,23 +84,19 @@ def get_mesh(
     bounding_box = graph_data['bounding_box']
     network_edges = graph_data['edges']
     network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
-    nearest_vertex_indices = [mesh.nearest_vertex(network_vertex).index
-                              for network_vertex in network_vertices]
+    mesh.trim_to_graph(network_vertices, network_edges, network_trim_radius)
 
     if postprocessed:
         network_convex_hulls = convex_hull.compute_connected_convex_hulls(
             network_vertices, network_edges)
         vertices = mesh.get_coordinates()
-        x = list(sorted(set(vertices[:,0])))
-        y = list(sorted(set(vertices[:,1])))
         distances = np.array([
             convex_hull.distance_to_convex_hulls(
-                np.array([px, py]),
+                np.array(vertex_coordinate),
                 network_vertices,
                 network_convex_hulls
             )
-            for px in x
-            for py in y
+            for vertex_coordinate in vertices[:, :2]
         ])
         # Add a small amount of space around the convex hull
         distances = np.maximum(distances - 0.05, 0.)
