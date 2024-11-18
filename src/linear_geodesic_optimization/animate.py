@@ -15,7 +15,7 @@ import numpy as np
 sys.path.append('.')
 from linear_geodesic_optimization.data import input_network, input_mesh, utility
 from linear_geodesic_optimization.plot \
-    import get_mesh_plot, get_rectangular_mesh_plot, get_image_data
+    import get_rectangular_mesh_plot, get_image_data
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 lambda_curvature = 1.
