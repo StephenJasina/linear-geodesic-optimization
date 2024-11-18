@@ -5,12 +5,14 @@ import numpy as np
 import ot
 
 
+# TODO: Add back older computation methods
+
 def ricci_curvature_optimal_transport(
     graph: nx.Graph,
     edge_distance_label: typing.Optional[str] = None,
     edge_weight_label: typing.Optional[str] = None,
     alpha: float = 0.9999
-):
+) -> typing.Dict[typing.Tuple[int, int], float]:
     # Create mappings between numerical IDs and node names
     index_to_node = [node for node in graph.nodes]
     node_to_index = {node: index for index, node in enumerate(index_to_node)}
