@@ -41,16 +41,21 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         self._scale_factor = None
 
         self._topology: dcelmesh.Mesh = self._get_topology()
+        """`dcelmesh.Mesh` encoding of this mesh's connectivity."""
         self._coordinates: npt.NDArray[np.float64] = self._get_coordinates()
+        """x-y coordinates of this mesh's points."""
 
         self._extent: np.float64 = extent
 
         self._parameters: npt.NDArray[np.float64] = np.zeros(width * height)
+        """Parameters controlling the z-coordinates of this mesh."""
 
         self._updates: int = 0
 
         self._partials: npt.NDArray[np.float64] = np.zeros((width * height, 3))
         self._partials[:, 2] = 1.
+
+        self._trim_mapping = list(range(self._topology.n_vertices))
 
     def _get_topology(self) -> dcelmesh.Mesh:
         topology = dcelmesh.Mesh(self._width * self._height)
@@ -187,29 +192,43 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
             uv = u - v
 
             if ru @ uv <= 0 and rv @ uv >= 0:
+                # In this case, `r` is "between" `u` and `v`
                 if uv @ uv == 0:
+                    # Need a special case when `u` and `v` coincide
                     return ru @ ru < epsilon**2
+                # Compare the square distance between `r` and the
+                # segment between `u` and `v`. Then compare it to
+                # `epsilon`^2
                 return rv @ rv - (uv @ rv)**2 / (uv @ uv) < epsilon**2
             else:
+                # Check whether `r` is in the `epsilon` ball around `u`
+                # or `v`
                 return ru @ ru < epsilon**2 or rv @ rv < epsilon**2
 
-        return [[self._topology.get_vertex(index)
-                 for index in range(self._coordinates.shape[0])
-                 if is_on_fat_edge(vertices[e1], vertices[e2],
-                                   self._coordinates[index, :], epsilon)]
-                for (e1, e2) in edges]
+        return [
+            [
+                vertex
+                for vertex in self._topology.vertices()
+                if is_on_fat_edge(
+                    vertices[e1, :],
+                    vertices[e2, :],
+                    self._coordinates[vertex.index, :],
+                    epsilon
+                )
+            ]
+            for (e1, e2) in edges
+        ]
 
     def nearest_vertex(self, coordinate: npt.NDArray[np.float64]) \
             -> dcelmesh.Mesh.Vertex:
         """
         Find the closest mesh vertex to the input coordinate pair.
 
-        Distance is measured solely by x-y coordinates. We assume the
-        input lies in the mesh's support [-`scale` / 2, `scale` / 2]^2.
+        Distance is measured solely by x-y coordinates.
         """
-        i = round((coordinate[0] / self._scale + 0.5) * (self._width - 1))
-        j = round((coordinate[1] / self._scale + 0.5) * (self._height - 1))
-        return self._topology.get_vertex(i * self._height + j)
+        return self._topology.get_vertex(np.argmin(np.linalg.norm(
+            self._coordinates - coordinate, axis=1
+        )))
 
     def map_coordinates_to_support(
             self,
@@ -254,20 +273,34 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
         return self._scale * self._scale_factor * (coordinates - self._center)
 
-    def get_support_area(self) -> np.float64:
-        """
-        Return the support area of this mesh.
+    def trim_to_graph(
+        self,
+        vertices: npt.NDArray[np.float64],
+        edges: typing.List[typing.Tuple[int, int]],
+        epsilon: np.float64
+    ) -> None:
+        fat_edges = self.get_fat_edges(vertices, edges, epsilon)
+        included_vertex_indices = set(
+            vertex.index
+            for fat_edge in fat_edges
+            for vertex in fat_edge
+        )
+        excluded_vertex_indices = [
+            vertex.index
+            for vertex in self._topology.vertices()
+            if vertex.index not in included_vertex_indices
+        ]
+        for index in excluded_vertex_indices:
+            self._topology.remove_vertex(index)
 
-        This is a simple length-times-width computation, where both of
-        them is given by the `scale` parameter passed during
-        initialization.
-        """
-        return self._scale**2
+        mapping = self._topology.reindex()
+        self._coordinates = self._coordinates[mapping, :]
+        self._parameters = self._parameters[mapping]
+        self._partials = self._partials[mapping, :]
+        self._trim_mapping = [
+            self._trim_mapping[index]
+            for index in mapping
+        ]
 
-    def get_width(self) -> int:
-        """Return the number of vertices horizontally in this mesh."""
-        return self._width
-
-    def get_height(self) -> int:
-        """Return the number of vertices vertically in this mesh."""
-        return self._height
+    def get_trim_mapping(self) -> typing.List[int]:
+        return self._trim_mapping

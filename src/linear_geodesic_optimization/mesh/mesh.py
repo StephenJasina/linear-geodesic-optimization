@@ -122,12 +122,3 @@ class Mesh:
             latencies.append(((i_key, j_key), latency))
 
         return latencies
-
-    def get_support_area(self) -> np.float64:
-        """
-        Return the area of the support of the mesh.
-
-        For example, if the support is the unit sphere, then this will
-        return 4 * pi.
-        """
-        raise NotImplementedError

@@ -347,9 +347,6 @@ class Mesh(mesh.Mesh):
         return max(np.linalg.norm(self._vertices[u,:] - self._vertices[v,:])
                    for u, vs in enumerate(self._edges) for v in vs)
 
-    def get_support_area(self):
-        return 1.
-
     def nearest_vertex_index(self, v):
         '''
         Find the index of the vertex whose (x, y) coordinate pair is closest to
