@@ -64,9 +64,11 @@ def get_mesh(
         height: int,
         network_data,
         coordinates_scale: float,
+        mesh_scale: float = 1.,
         postprocessed: bool = False,
         z_0: typing.Optional[typing.List[np.float64]] = None,
         network_trim_radius: np.float64 = np.inf,
+        z_hole = -0.5,
         mesh: typing.Optional[RectangleMesh] = None
 ) -> RectangleMesh:
     """
@@ -76,7 +78,7 @@ def get_mesh(
     bit more aesthetically pleasing.
     """
     if mesh is None:
-        mesh = RectangleMesh(width, height)
+        mesh = RectangleMesh(width, height, mesh_scale)
 
     graph_data, vertex_data, edge_data = network_data
 
@@ -84,6 +86,7 @@ def get_mesh(
     bounding_box = graph_data['bounding_box']
     network_edges = graph_data['edges']
     network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
+
     mesh.trim_to_graph(network_vertices, network_edges, network_trim_radius)
 
     if postprocessed:
