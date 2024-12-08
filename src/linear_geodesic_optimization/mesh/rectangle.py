@@ -6,6 +6,7 @@ import dcelmesh
 import numpy as np
 import numpy.typing as npt
 
+from linear_geodesic_optimization import geometry
 import linear_geodesic_optimization.mesh.mesh
 
 
@@ -56,6 +57,15 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         self._partials[:, 2] = 1.
 
         self._trim_mapping = list(range(self._topology.n_vertices))
+
+    def get_width(self) -> int:
+        return self._width
+
+    def get_height(self) -> int:
+        return self._width
+
+    def get_scale(self) -> float:
+        return self._scale
 
     def _get_topology(self) -> dcelmesh.Mesh:
         topology = dcelmesh.Mesh(self._width * self._height)
@@ -170,53 +180,17 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         those within a distance of epsilon of the original edge when
         everything is projected to the x-y plane.
         """
-        def is_on_fat_edge(
-            u: npt.NDArray[np.float64],
-            v: npt.NDArray[np.float64],
-            r: npt.NDArray[np.float64],
-            epsilon: np.float64
-        ) -> bool:
-            """
-            Find whether a point is close to a line segment.
-
-            In detail, determine whether `r` is within `epsilon` of the
-            line segment between `u` and `v`.
-            """
-            # Only care about the first two coordinates
-            u = u[:2]
-            v = v[:2]
-            r = r[:2]
-
-            ru = r - u
-            rv = r - v
-            uv = u - v
-
-            if ru @ uv <= 0 and rv @ uv >= 0:
-                # In this case, `r` is "between" `u` and `v`
-                if uv @ uv == 0:
-                    # Need a special case when `u` and `v` coincide
-                    return ru @ ru < epsilon**2
-                # Compare the square distance between `r` and the
-                # segment between `u` and `v`. Then compare it to
-                # `epsilon`^2
-                return rv @ rv - (uv @ rv)**2 / (uv @ uv) < epsilon**2
-            else:
-                # Check whether `r` is in the `epsilon` ball around `u`
-                # or `v`
-                return ru @ ru < epsilon**2 or rv @ rv < epsilon**2
-
         return [
             [
                 vertex
                 for vertex in self._topology.vertices()
-                if is_on_fat_edge(
-                    vertices[e1, :],
-                    vertices[e2, :],
-                    self._coordinates[vertex.index, :],
-                    epsilon
-                )
+                if geometry.distance_to_line_segment(
+                    v1, v2, self._coordinates[vertex.index, :2]
+                ) < epsilon
             ]
-            for (e1, e2) in edges
+            for (v1_index, v2_index) in edges
+            for v1 in (vertices[v1_index, :2],)
+            for v2 in (vertices[v2_index, :2],)
         ]
 
     def nearest_vertex(self, coordinate: npt.NDArray[np.float64]) \
@@ -225,6 +199,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         Find the closest mesh vertex to the input coordinate pair.
 
         Distance is measured solely by x-y coordinates.
+
+        Note that this implementation is rather inefficient.
         """
         return self._topology.get_vertex(np.argmin(np.linalg.norm(
             self._coordinates - coordinate, axis=1
@@ -279,6 +255,9 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         edges: typing.List[typing.Tuple[int, int]],
         epsilon: np.float64
     ) -> None:
+        if np.isposinf(epsilon):
+            return
+
         fat_edges = self.get_fat_edges(vertices, edges, epsilon)
         included_vertex_indices = set(
             vertex.index
