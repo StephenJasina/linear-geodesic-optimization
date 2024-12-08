@@ -15,7 +15,7 @@ import numpy as np
 sys.path.append('.')
 from linear_geodesic_optimization.data import input_network, input_mesh, utility
 from linear_geodesic_optimization.plot \
-    import get_rectangular_mesh_plot, get_image_data
+    import get_rectangular_mesh_plot, get_image_data, get_face_colors_curvature_true
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 lambda_curvature = 1.
@@ -23,11 +23,11 @@ lambda_smooth = 0.005
 initial_radius = 20.
 width = 50
 height = 50
-scale = 1.
+scale = 0.7
 ip_type = 'ipv4'
 threshold = 1
 
-directory = pathlib.Path('..', 'outputs', 'toy', 'two_clusters')
+directory = pathlib.Path('..', 'outputs', 'toy', 'three_clusters_animation')
 subdirectory_name = f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{scale}'
 
 output_filepaths = list(sorted(
@@ -35,8 +35,8 @@ output_filepaths = list(sorted(
     for output_directory in directory.iterdir()
 ))
 
-fps = 12
-animation_length = 6.  # in seconds
+fps = 24
+animation_length = 12.  # in seconds
 
 include_line_graph = False
 def investigating_graph(k=3):
@@ -190,24 +190,49 @@ if __name__ == '__main__':
                 ricci_curvature_alpha=ricci_curvature_alpha
             )
         coordinates_scale = parameters['coordinates_scale']
+        mesh_scale = parameters['mesh_scale']
+        network_trim_radius = parameters['network_trim_radius']
         network_data = input_network.get_network_data(graph)
         coordinates = network_data[0]['coordinates']
+
+    # Use curvature values for coloring
+    face_colors = []
+
     for output_filepath in output_filepaths:
         with output_filepath.open('rb') as f:
             data = pickle.load(f)
-            mesh = input_mesh.get_mesh(data['final'], width, height, network_data, coordinates_scale, postprocessed=True, z_0=data['initial'])
-            zs.append(mesh.get_parameters())
+            mesh = input_mesh.get_mesh(
+                data['final'], width, height,
+                network_data, coordinates_scale, mesh_scale,
+                network_trim_radius=network_trim_radius,
+                # postprocessed=True, z_0=data['initial']
+            )
+
+            # Use curvature values for coloring
+            face_colors.append(get_face_colors_curvature_true(mesh))
+
+            # Fill in the missing z values (and postprocess)
+            # TODO: Make this less ad hoc
+            z = np.full(width * height, -0.5)
+            z_trim_mapping = np.array(data['final']) - np.array(data['initial'])
+            z_trim_mapping = z_trim_mapping - np.amin(z_trim_mapping)
+            z_trim_mapping = z_trim_mapping / np.amax(z_trim_mapping)
+            z[mesh.get_trim_mapping()] = z_trim_mapping
+            zs.append(z)
 
     z_max = np.amax(zs)
 
     mesh = RectangleMesh(width, height, scale)
 
-    resolution = 500
-    face_colors = np.flipud(get_image_data(
-        coordinates, resolution, coordinates_scale,
-        'coral', 'aqua'
-    )[0]).swapaxes(0, 1) / 256.
-    # face_colors = np.full((width, height, 3), 0.4)
+    # Use map colors for coloring
+    # resolution = 500
+    # face_colors = [np.flipud(get_image_data(
+    #     coordinates, resolution, coordinates_scale,
+    #     'coral', 'aqua'
+    # )[0]).swapaxes(0, 1) / 256.] * len(zs)
+
+    # Use solid colors for coloring
+    # face_colors = [np.full((width, height, 3), 0.4)] * len(zs)
 
     fig = plt.figure()
 
@@ -333,7 +358,7 @@ if __name__ == '__main__':
         ax.clear()
 
         return [
-            get_rectangular_mesh_plot(z, face_colors, None,
+            get_rectangular_mesh_plot(z, face_colors[left_index], None,
                 np.amax(z) / z_max * 0.25,
                 [network_vertices, network_edges, network_curvatures, network_city],
                 ax
