@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 import itertools
+import typing
 
 from adjustText import adjust_text
 import matplotlib as mpl
@@ -10,6 +11,9 @@ from matplotlib.colors import LightSource
 import numpy as np
 
 from linear_geodesic_optimization.data import utility
+from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
+from linear_geodesic_optimization.optimization.curvature import Computer as Curvature
+from linear_geodesic_optimization.optimization.laplacian import Computer as Laplacian
 
 
 # Allow TeX to be used in titles, axes, etc.
@@ -412,3 +416,54 @@ def get_image_data(
     plt.close(fig)
 
     return canvas_data, (left, right, bottom, top)
+
+def get_color_from_float(value: float, value_min: float, value_max: float) -> typing.Tuple[float, float, float]:
+    return list(mpl.colormaps['RdBu']((value - value_min) / (value_max - value_min)))[:3]
+
+def get_face_colors_curvature_true(mesh_true: RectangleMesh):
+    width = mesh_true.get_width()
+    height = mesh_true.get_height()
+
+    vertex_index_list = mesh_true.get_trim_mapping()
+    vertex_index_lookup = {vertex_index: index for index, vertex_index in enumerate(vertex_index_list)}
+
+    curvature = Curvature(mesh_true, Laplacian(mesh_true))
+    curvature.forward()
+    kappa_G = curvature.kappa_G
+    kappa_G_min = min(kappa_G)
+    kappa_G_max = max(kappa_G)
+    kappa_G_bound = max(kappa_G_max, -kappa_G_min)
+
+    return np.array([
+        get_color_from_float(kappa_G[vertex_index_lookup[index]], -kappa_G_bound, kappa_G_bound) if index in vertex_index_lookup else [0.3, 0.3, 0.3]
+        for index in range(width * height)
+    ]).reshape((width, height, 3))
+
+def get_face_colors_curvature_desired(mesh_true: RectangleMesh, network, coordinates_scale):
+    width = mesh_true.get_width()
+    height = mesh_true.get_height()
+    vertex_index_list = mesh_true.get_trim_mapping()
+    vertex_index_lookup = {vertex_index: index for index, vertex_index in enumerate(vertex_index_list)}
+
+    graph_data, _, edge_data = network
+    bounding_box = graph_data['bounding_box']
+    network_edges = graph_data['edges']
+    network_vertices = mesh_true.map_coordinates_to_support(np.array(graph_data['coordinates']), coordinates_scale, bounding_box)
+    epsilon = 1.01 * 2**0.5 * mesh_true.get_scale() / width
+
+    fat_edges = mesh_true.get_fat_edges(
+        network_vertices,
+        network_edges, epsilon
+    )
+
+    desired_curvatures = [[] for _ in range(width * height)]
+    for fat_edge, curvature in zip(fat_edges, edge_data['ricciCurvature']):
+        for vertex in fat_edge:
+            desired_curvatures[vertex_index_list[vertex.index]].append(curvature)
+
+    return np.array([
+        get_color_from_float(np.mean(curvatures), -2, 2) if curvatures else
+        [0.7, 0.7, 0.7] if index in vertex_index_lookup else
+        [0.3, 0.3, 0.3]
+        for index, curvatures in enumerate(desired_curvatures)
+    ]).reshape((width, height, 3))
