@@ -173,9 +173,9 @@ def remove_tivs(graph):
 
     return graph
 
-def compute_ricci_curvatures(graph: nx.Graph, alpha: float = 0.):
+def compute_ricci_curvatures(graph: nx.Graph, alpha: float = 0., weight_label: typing.Optional[str] = None):
     ricci_curvatures = curvature.ricci_curvature_optimal_transport(
-        graph, alpha=alpha
+        graph, alpha=alpha, edge_weight_label=weight_label
     )
     for (source, destination), ricci_curvature in ricci_curvatures.items():
         graph.edges[source, destination]['ricciCurvature'] = ricci_curvature
@@ -188,6 +188,7 @@ def get_graph(
     should_include_latencies=False,
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
+    ricci_curvature_weight_label=None,
     directed=False
 ):
     graph = get_base_graph(probes, latencies, directed)
@@ -203,7 +204,7 @@ def get_graph(
     if clustering_distance is not None:
         graph = cluster_graph(graph, clustering_distance)
     if should_compute_curvatures:
-        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha)
+        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label)
     if should_include_latencies:
         return graph, latencies
     else:
