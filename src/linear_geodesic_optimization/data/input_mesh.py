@@ -4,7 +4,7 @@ import typing
 
 import numpy as np
 
-from linear_geodesic_optimization import convex_hull
+from linear_geodesic_optimization.graph import convex_hull
 from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
