@@ -6,7 +6,6 @@ import sys
 from matplotlib import pyplot as plt
 import numpy as np
 
-from linear_geodesic_optimization import convex_hull
 from linear_geodesic_optimization.data import input_network, input_mesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.geodesic_exact import Computer as GeodesicExact
