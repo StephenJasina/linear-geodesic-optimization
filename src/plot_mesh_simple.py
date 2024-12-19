@@ -18,7 +18,7 @@ from linear_geodesic_optimization.plot import get_rectangular_mesh_plot, \
     get_color_from_float, \
     get_face_colors_curvature_true, \
     get_face_colors_curvature_desired
-from linear_geodesic_optimization.connected_components import compute_holes_vertices
+from linear_geodesic_optimization.mesh.connected_components import compute_holes_vertices
 
 
 # mesh_data_directory = pathlib.PurePath('..', 'outputs', 'test_mesh_scale', 'three_clusters', 'trimmed_0.2', '1.0_0.01_20.0_50_50_0.7')
