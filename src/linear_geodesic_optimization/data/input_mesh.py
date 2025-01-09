@@ -52,7 +52,9 @@ def get_mesh_from_directory(
 
     graph = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
-        epsilon, clustering_distance, should_remove_TIVs
+        epsilon=epsilon,
+        clustering_distance=clustering_distance,
+        should_remove_tivs=should_remove_TIVs
     )
     network_data = input_network.get_network_data(graph)
 

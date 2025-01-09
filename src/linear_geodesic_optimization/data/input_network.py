@@ -37,7 +37,7 @@ def minimize_id_removal(rtt_violation_list):
 
     return ids_to_remove
 
-def get_base_graph(probes, latencies, directed=False):
+def get_base_graph(probes, links, directed=False):
     # Create the graph
     if directed:
         graph = nx.DiGraph()
@@ -72,9 +72,9 @@ def get_base_graph(probes, latencies, directed=False):
     graph.graph['long_max'] = long_max
 
     # Get the edges
-    for latency in latencies:
-        id_source = latency['source_id']
-        id_target = latency['target_id']
+    for link in links:
+        id_source = link['source_id']
+        id_target = link['target_id']
 
         # Skip self loops
         if id_source == id_target:
@@ -93,8 +93,8 @@ def get_base_graph(probes, latencies, directed=False):
             [lat_target, long_target]
         )
 
-        if 'rtt' in latency:
-            rtt = latency['rtt']
+        if 'rtt' in link:
+            rtt = link['rtt']
             # Skip edges with no measured RTT
             if rtt == '':
                 continue
@@ -104,25 +104,31 @@ def get_base_graph(probes, latencies, directed=False):
             # assume the input contains connectivity information)
             rtt = gcl
 
+        throughput = 0
+        if 'throughput' in link and link['throughput'] != '':
+            throughput = float(link['throughput'])
+
         # Check how often the difference is larger than 0
         # TODO: Should this be more lenient?
         if rtt - gcl < 0:
             rtt_violation_list.append((id_source, id_target))
 
-        # If there is multiple sets of RTT data for a single
-        # edge, only pay attention to the minimal one
-        if ((id_source, id_target) not in graph.edges
-                or graph.edges[id_source,id_target]['rtt'] > rtt):
+        if (id_source, id_target) in graph.edges:
+            data_edge = graph.edges[id_source,id_target]
+
+            # If there is multiple sets of RTT data for a single
+            # edge, only pay attention to the minimal one
+            if rtt < data_edge['rtt']:
+                data_edge['rtt'] = rtt
+
+            # Aggregate all recorded throughputs
+            data_edge['throughput'] += throughput
+        else:
             edge_data = {
                 'rtt': rtt,
                 'gcl': gcl,
+                'throughput': throughput
             }
-
-            if 'throughput' in latency:
-                throughput = latency['throughput']
-                if throughput != '':
-                    edge_data['throughput'] = float(throughput)
-
             graph.add_edge(id_source, id_target, **edge_data)
 
     # TODO: Make this less aggressive
@@ -173,7 +179,11 @@ def remove_tivs(graph):
 
     return graph
 
-def compute_ricci_curvatures(graph: nx.Graph, alpha: float = 0., weight_label: typing.Optional[str] = None):
+def compute_ricci_curvatures(
+    graph: nx.Graph,
+    alpha: float=0.,
+    weight_label: typing.Optional[str]=None
+):
     ricci_curvatures = curvature.ricci_curvature_optimal_transport(
         graph, alpha=alpha, edge_weight_label=weight_label
     )
@@ -183,15 +193,18 @@ def compute_ricci_curvatures(graph: nx.Graph, alpha: float = 0., weight_label: t
     return graph
 
 def get_graph(
-    probes, latencies, epsilon=None,
-    clustering_distance=None, should_remove_tivs=False,
+    probes, links,
+    *,
+    epsilon=None,
+    clustering_distance=None,
+    should_remove_tivs=False,
     should_include_latencies=False,
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
     directed=False
 ):
-    graph = get_base_graph(probes, latencies, directed)
+    graph = get_base_graph(probes, links, directed)
     if should_include_latencies:
         latencies = [
             ((source_id, target_id), data['rtt'])
@@ -211,11 +224,16 @@ def get_graph(
         return graph
 
 def get_graph_from_paths(
-    probes_file_path, latencies_file_path, epsilon=None,
-    clustering_distance=None, should_remove_tivs=False,
+    path_probes,
+    path_links,
+    *,
+    epsilon=None,
+    clustering_distance=None,
+    should_remove_tivs=False,
     should_include_latencies=False,
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
+    ricci_curvature_weight_label=None,
     directed=False
 ):
     """
@@ -237,16 +255,19 @@ def get_graph_from_paths(
     Finally, take in a flag indicating whether to return latencies in
     the format [((source_id, target_id), rtt), ...].
     """
-    with open(probes_file_path) as probes_file, open(latencies_file_path) as latencies_file:
-        probes = csv.DictReader(probes_file)
-        latencies = csv.DictReader(latencies_file)
+    with open(path_probes) as file_probes, open(path_links) as file_links:
+        probes = csv.DictReader(file_probes)
+        links = csv.DictReader(file_links)
         return get_graph(
-            probes, latencies, epsilon,
-            clustering_distance, should_remove_tivs,
-            should_include_latencies,
-            should_compute_curvatures,
-            ricci_curvature_alpha,
-            directed
+            probes, links,
+            epsilon=epsilon,
+            clustering_distance=clustering_distance,
+            should_remove_tivs=should_remove_tivs,
+            should_include_latencies=should_include_latencies,
+            should_compute_curvatures=should_compute_curvatures,
+            ricci_curvature_alpha=ricci_curvature_alpha,
+            ricci_curvature_weight_label=ricci_curvature_weight_label,
+            directed=directed
         )
 
 def get_network_data(

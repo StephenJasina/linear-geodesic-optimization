@@ -94,7 +94,9 @@ if __name__ == '__main__':
         latencies_file_path = os.path.join('..', 'data', latencies_filename)
         graph, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
-            epsilon, clustering_distance, should_remove_tivs,
+            epsilon=epsilon,
+            clustering_distance=clustering_distance,
+            should_remove_tivs=should_remove_tivs,
             should_include_latencies=True
         )
     else:

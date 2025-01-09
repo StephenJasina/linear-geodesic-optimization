@@ -8,7 +8,7 @@ import numpy as np
 
 from linear_geodesic_optimization.data import input_network, input_mesh
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
-from linear_geodesic_optimization.optimization.geodesic_exact import Computer as GeodesicExact
+from linear_geodesic_optimization.optimization.geodesic_exact_mesh_utility import Computer as GeodesicExact
 
 max_iterations = np.inf
 use_postprocessing = True
@@ -88,7 +88,8 @@ if __name__ == '__main__':
 
     network = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_path,
-        epsilon, clustering_distance,
+        epsilon=epsilon,
+        clustering_distance=clustering_distance,
         should_remove_tivs=should_remove_tivs
     )
     graph_data, vertex_data, edge_data = input_network.get_network_data(network)

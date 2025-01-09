@@ -30,16 +30,13 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         mesh is composed of square cells with a major diagonal.
 
         For the coordinate computations, the support of the mesh is
-        [-`scale` / 2, `scale` / 2]^2.
+        [0, `scale`]^2.
 
         The z-coordinates are bounded between 0 and `extent`.
         """
         self._width: int = width
         self._height: int = height
         self._scale: np.float64 = scale
-
-        self._center = None
-        self._scale_factor = None
 
         self._topology: dcelmesh.Mesh = self._get_topology()
         """`dcelmesh.Mesh` encoding of this mesh's connectivity."""
@@ -92,8 +89,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         # The vertices are ordered lexicographically as (x, y)
         for i in range(self._width):
             for j in range(self._height):
-                coordinates[i * self._height + j, 0] = (i / (self._width - 1) - 0.5) * self._scale
-                coordinates[i * self._height + j, 1] = (j / (self._height - 1) - 0.5) * self._scale
+                coordinates[i * self._height + j, 0] = i / (self._width - 1) * self._scale
+                coordinates[i * self._height + j, 1] = j / (self._height - 1) * self._scale
 
         return coordinates
 
@@ -200,7 +197,8 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
         Distance is measured solely by x-y coordinates.
 
-        Note that this implementation is rather inefficient.
+        TODO: Note that this implementation is rather inefficient. This
+        can possibly be improved using some modular arithmetic.
         """
         return self._topology.get_vertex(np.argmin(np.linalg.norm(
             self._coordinates - coordinate, axis=1
@@ -244,10 +242,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         divisor[np.where(divisor == 0.)] = 1.
         divisor = np.amax(divisor)
 
-        self._center = (coordinates_min + coordinates_max) / 2
-        self._scale_factor = scale_factor / divisor
-
-        return self._scale * self._scale_factor * (coordinates - self._center)
+        return self._scale * (scale_factor * (coordinates - (coordinates_min + coordinates_max) / 2.) / divisor + 0.5)
 
     def trim_to_graph(
         self,

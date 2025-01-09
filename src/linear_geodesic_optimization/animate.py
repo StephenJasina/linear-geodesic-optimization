@@ -185,7 +185,9 @@ if __name__ == '__main__':
             ricci_curvature_alpha = parameters['ricci_curvature_alpha']
             graph, latencies = input_network.get_graph_from_paths(
                 probes_file_path, latencies_file_path,
-                epsilon, clustering_distance, should_remove_tivs,
+                epsilon=epsilon,
+                clustering_distance=clustering_distance,
+                should_remove_tivs=should_remove_tivs,
                 should_include_latencies=True,
                 ricci_curvature_alpha=ricci_curvature_alpha
             )
@@ -311,7 +313,9 @@ if __name__ == '__main__':
                 ricci_curvature_alpha = parameters['ricci_curvature_alpha']
                 network, latencies = input_network.get_graph_from_paths(
                     probes_file_path, latencies_file_path,
-                    epsilon, clustering_distance, should_remove_tivs,
+                    epsilon=epsilon,
+                    clustering_distance=clustering_distance,
+                    should_remove_tivs=should_remove_tivs,
                     should_include_latencies=True,
                     ricci_curvature_alpha=ricci_curvature_alpha
                 )

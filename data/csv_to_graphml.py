@@ -38,7 +38,9 @@ if __name__ == '__main__':
     output_filename = args.output_filename
 
     graph = input_network.get_graph_from_paths(
-        probes_filename, latencies_filename, epsilon,
-        500000, should_remove_tivs
+        probes_filename, latencies_filename,
+        epsilon=epsilon,
+        clustering_distance=500000,
+        should_remove_tivs=should_remove_tivs
     )
     nx.write_graphml(graph, f'{output_filename}')

@@ -44,7 +44,8 @@ def main(
     ]
     graph = input_network.get_graph_from_paths(
         probes_file_path, latencies_file_paths[0],
-        latency_threshold, clustering_distance,
+        epsilon=latency_threshold,
+        clustering_distance=clustering_distance,
         ricci_curvature_alpha=ricci_curvature_alpha
     )
     network = input_network.get_network_data(graph)
@@ -61,7 +62,8 @@ def main(
             input_network.extract_from_graph_old(
                 input_network.get_graph_from_paths(
                     probes_file_path, latencies_file_path,
-                    latency_threshold, clustering_distance,
+                    epsilon=latency_threshold,
+                    clustering_distance=clustering_distance,
                     ricci_curvature_alpha=ricci_curvature_alpha
                 )
             )

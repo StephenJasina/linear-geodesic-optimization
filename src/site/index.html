@@ -37,36 +37,48 @@
 
     <script src="js/perlin.js"></script>
     <script type="module" src="js/script.js"></script>
+
     <div id="gui">
       <div id="div-vertex" class="gui-box">
         <button type="button" id="btn-add-vertex">Add vertex</button>
       </div>
+
       <div id="div-edge" class="gui-box">
         <button type="button" id="btn-add-edge">Add edge</button>
         <button type="button" id="btn-calc-curv">Calc Curvature</button>
       </div>
+
       <div id="div-extra" class="gui-box">
         <!-- <button type="button" id="btn-scrn">Take screenshot</button> -->
-        <button type="button" id="btn-calculate-geodesics">Calculate Geodesics</button>
+        <!-- <button type="button" id="btn-calculate-geodesics">Calculate Geodesics</button> -->
 
         <div id="dropzone">
           <div id="drop-output" class="drop-box">Drop optimization output here</div>
         </div>
+
+        <div id="animation-controls">
+          <input type="range" id="range-animation" min="0" max="1" step="0.01" value="0">
+          <br />
+          <button type="button" id="button-play">Play</button>
+        </div>
+
         <input type="checkbox" id="show-map" name="show-map">
         <label for="show-map"> Show map</label><br>
+
         <input type="checkbox" id="show-graph" name="show-graph" checked>
         <label for="show-graph"> Show graph</label><br>
+
         <input type="checkbox" id="show-hover-graph" name="show-hover-graph">
         <label for="show-hover-graph"> Show hovering graph</label><br>
+
+        <input type="checkbox" id="show-geodesics" name="show-geodesics">
+        <label for="show-geodesics"> Show geodesics</label><br>
+
         <input type="checkbox" id="show-grid" name="show-grid">
         <label for="show-grid"> Show grid</label><br>
       </div>
-
-
     </div>
-    <div id="display-slider">
 
-    </div>
     <button type="button" id="btn-help"><b>?</b></button>
     <div id="div-help" style="display: none;">
       <ul>

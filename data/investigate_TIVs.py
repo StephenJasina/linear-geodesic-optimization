@@ -51,7 +51,9 @@ if __name__ == '__main__':
         epsilon = float('inf')
 
     graph = input_network.get_graph_from_paths(
-        probes_filename, latencies_filename, epsilon, 500000
+        probes_filename, latencies_filename,
+        epsilon=epsilon,
+        clustering_distance=500000
     )
 
     triangles = tivs.compute_triangles(graph)

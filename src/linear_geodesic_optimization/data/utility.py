@@ -4,11 +4,11 @@ import numpy as np
 
 
 def mercator(
-    longitude: typing.Optional[np.float64] = None,
-    latitude: typing.Optional[np.float64] = None
+    longitude: typing.Optional[float] = None,
+    latitude: typing.Optional[float] = None
 ) -> typing.Union[
-    np.float64,
-    typing.Tuple[np.float64, np.float64]
+    float,
+    typing.Tuple[float, float]
 ]:
     '''
     Given a longitude in [-180, 180] and a latitude in [-90, 90], return
@@ -19,6 +19,9 @@ def mercator(
     x = longitude / 360. if longitude is not None else None
     y = np.log(np.tan(np.pi / 4. + latitude * np.pi / 360.)) / (2. * np.pi) if latitude is not None else None
 
+    x = float(x)
+    y = float(y)
+
     if x is None:
         return y
     if y is None:
@@ -26,14 +29,17 @@ def mercator(
     return (x, y)
 
 def inverse_mercator(
-    x: typing.Optional[np.float64] = None,
-    y: typing.Optional[np.float64] = None
+    x: typing.Optional[float] = None,
+    y: typing.Optional[float] = None
 ) -> typing.Union[
-    np.float64,
-    typing.Tuple[np.float64, np.float64]
+    float,
+    typing.Tuple[float, float]
 ]:
     longitude = x * 360. if x is not None else None
     latitude = np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90. if y is not None else None
+
+    latitude = float(latitude)
+    longitude = float(longitude)
 
     if longitude is None:
         return latitude

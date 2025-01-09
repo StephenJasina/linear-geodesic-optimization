@@ -37,7 +37,8 @@ def main(directory, max_iterations):
         ricci_curvature_alpha = parameters['ricci_curvature_alpha']
         graph, latencies = input_network.get_graph_from_paths(
             probes_file_path, latencies_file_path,
-            epsilon, clustering_distance,
+            epsilon=epsilon,
+            clustering_distance=clustering_distance,
             should_remove_tivs=should_remove_tivs,
             ricci_curvature_alpha=ricci_curvature_alpha
         )

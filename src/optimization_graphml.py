@@ -120,7 +120,7 @@ if __name__ == '__main__':
     graphml_filenames = list(sorted(
         graphml_directory / filename
         for filename in os.listdir(graphml_directory)
-    ))
+    ))[0:1]
 
     count = len(graphml_filenames)
 

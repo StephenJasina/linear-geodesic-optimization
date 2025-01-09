@@ -34,7 +34,8 @@ if __name__ == '__main__':
             sys.exit(-1)
 
         graph = input_network.get_graph_from_paths(
-            probes_filename, latencies_filename, epsilon,
+            probes_filename, latencies_filename,
+            epsilon=epsilon,
             ricci_curvature_alpha=0.9999,
             # clustering_distance=500000,
         )

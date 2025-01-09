@@ -1,6 +1,5 @@
-import os
-# TODO: Convert to plain text
-import pickle
+import json
+import pathlib
 import typing
 
 import numpy as np
@@ -106,13 +105,12 @@ class Computer:
             + f'\tLoss: {loss:.6f}\n'
         )
 
-        if self.directory is not None:
-            with open(os.path.join(self.directory,
-                                   str(self.iterations)), 'wb') as f:
-                pickle.dump({
+        if self.directory is not None and self.iterations % 100 == 0:
+            with open(self.directory / f'{self.iterations}.json', 'w') as file_output:
+                json.dump({
                     'mesh_parameters': Computer.to_float_list(self.mesh.get_parameters()),
                     'L_curvature': float(self.curvature_loss.loss),
                     'L_smooth': float(self.smooth_loss.loss),
-                }, f)
+                }, file_output)
 
         self.iterations += 1
