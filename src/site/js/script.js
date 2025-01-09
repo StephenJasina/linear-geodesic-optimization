@@ -1,7 +1,10 @@
 import { EffectComposer } from "./scripts/EffectComposer.js";
+import { FXAAShader } from "./scripts/FXAAShader.js";
+import { LineSegments2 } from "./scripts/LineSegments2.js";
+import { LineSegmentsGeometry } from "./scripts/LineSegmentsGeometry.js";
+import { LineMaterial } from "./scripts/LineMaterial.js";
 import { RenderPass } from "./scripts/RenderPass.js";
 import { ShaderPass } from "./scripts/ShaderPass.js";
-import { FXAAShader } from "./scripts/FXAAShader.js";
 
 // Colors
 const COLOR_BACKGROUND = "#f3f3f3";
@@ -39,8 +42,6 @@ let timeInitial = null;
 let dateTimeInitial = null;
 let canvasNeedsUpdate = true;
 
-let vertexHeight = 3;
-
 // Scene setup
 let scene = new THREE.Scene();
 scene.background = new THREE.Color(COLOR_BACKGROUND);
@@ -64,6 +65,7 @@ let renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.autoClear = false;
 renderer.setPixelRatio(window.devicePixelRatio);
+let pixelRatio = renderer.getPixelRatio();
 document.body.appendChild(renderer.domElement);
 
 // Material setup
@@ -99,6 +101,7 @@ let planeMaterial = new THREE.MeshPhongMaterial({
 });
 
 // Geometry setup
+// TODO: Remove these
 let ptGeom = new THREE.SphereGeometry(0.02, 32, 32);
 let ptMat = new THREE.MeshBasicMaterial({
   color: COLOR_VERTEX
@@ -119,15 +122,27 @@ scene.add(lightAmbient);
 
 // Network drawing setup
 // TODO: Make this adapt to the animation
+let heightHoverGraph = 6;
+const SIZE_HOVER_VERTEX = 8;
+const SIZE_HOVER_EDGE = 888;
 let vertexCount = 0;
 let edgeCount = 0;
 
-let vertices = {};
-let edges = {};
-let graphs = [];
+const HOVER_VERTEX_MATERIAL = new THREE.PointsMaterial({
+  color: COLOR_VERTEX,
+  size: SIZE_HOVER_VERTEX,
+});
+// TODO: Should this be variable?
+const HOVER_EDGE_MATERIAL = new LineMaterial({
+  color: COLOR_EDGE,
+  linewidth: SIZE_HOVER_EDGE,
+});
+
+let hoveringVertices = {};
+let hoveringEdges = {};
 let names = {};
-let linesDrawn = [];
-let current_edges = {};
+let hoveringVerticesDrawn = [];
+let hoveringEdgesDrawn = [];
 
 const VERTEX_RADIUS = 5;
 const LINE_WIDTH = 10;
@@ -138,7 +153,6 @@ let renderPass = new RenderPass(scene, camera);
 
 let fxaaPass = new ShaderPass(FXAAShader);
 fxaaPass.renderToScreen = false;
-let pixelRatio = renderer.getPixelRatio();
 fxaaPass.material.uniforms["resolution"].value.x = 1 / (window.innerWidth * pixelRatio);
 fxaaPass.material.uniforms["resolution"].value.y = 1 / (window.innerHeight * pixelRatio);
 
@@ -166,45 +180,33 @@ let divDropOutput = document.getElementById("drop-output");
 divDropOutput.addEventListener("dragover", dragOver, false);
 divDropOutput.addEventListener("drop", dropOutput, false);
 
-let buttonShowMap = document.getElementById("show-map");
-buttonShowMap.onchange = function() {
+let checkboxShowMap = document.getElementById("show-map");
+checkboxShowMap.onchange = function() {
   canvasNeedsUpdate = true;
 }
 
-let buttonShowGrid = document.getElementById("show-grid");
-buttonShowGrid.onchange = function() {
+let checkboxShowGrid = document.getElementById("show-grid");
+checkboxShowGrid.onchange = function() {
   canvasNeedsUpdate = true;
 }
 
-let buttonShowGraph = document.getElementById("show-graph");
-let buttonShowHoverGraph = document.getElementById("show-hover-graph");
+let checkboxShowGraph = document.getElementById("show-graph");
+checkboxShowGraph.onchange = function() {
+  canvasNeedsUpdate = true;
+}
+
+let checkboxShowHoverGraph = document.getElementById("show-hover-graph");
 // TODO: This function needs to be seriously rewritten
-function refresh_graph() {
-  if (buttonShowGraph.checked && buttonShowHoverGraph.checked) {
-    for (let id in vertices) {
-      scene.add(vertices[id].mesh);
-      scene.add(vertices[id].label);
-    }
-    for (let line of linesDrawn) {
-      scene.add(line);
-    }
+checkboxShowHoverGraph.onchange = function() {
+  if (checkboxShowHoverGraph.checked) {
+    drawHoverGraph(getCurrentNetworkIndex());
   } else {
-    for (let id in vertices) {
-      scene.remove(vertices[id].mesh);
-      scene.remove(vertices[id].label);
-    }
-    for (let line of linesDrawn) {
-      scene.remove(line);
-    }
+    clearHoverGraph();
   }
-
-  canvasNeedsUpdate = true;
 }
-buttonShowGraph.onchange = refresh_graph;
-buttonShowHoverGraph.onchange = refresh_graph;
 
-let buttonShowGeodesics = document.getElementById("show-geodesics");
-buttonShowGeodesics.onchange = function() {
+let checkboxShowGeodesics = document.getElementById("show-geodesics");
+checkboxShowGeodesics.onchange = function() {
   canvasNeedsUpdate = true;
 }
 
@@ -223,6 +225,7 @@ rangeAnimation.oninput = function() {
   canvasNeedsUpdate = true;
 }
 
+let divAnimationControls = document.getElementById("animation-controls");
 let buttonPlay = document.getElementById("button-play");
 buttonPlay.onclick = function() {
   if (isPlaying) {
@@ -236,7 +239,28 @@ buttonPlay.onclick = function() {
 }
 
 let animate = function() {
-  if (canvasNeedsUpdate || buttonShowMap.checked) {
+  // Update the heights if needed
+  if (isPlaying) {
+    let rangeAnimation = document.getElementById("range-animation");
+    let timeMin = parseFloat(rangeAnimation.min);
+    let timeMax = parseFloat(rangeAnimation.max);
+    let timeRange = timeMax - timeMin;
+
+    let dateTimeNow = Date.now() / 1000;
+    let alpha = ((dateTimeNow - dateTimeInitial) % 10.) / 10.;
+    let timeNow = (timeInitial + alpha * timeRange) % timeRange + timeMin;
+    rangeAnimation.value = timeNow;
+
+    setHeightsWithInterpolation(plane, timeNow, times, heights);
+
+    if (checkboxShowGraph.checked || checkboxShowGeodesics.checked) {
+      canvasNeedsUpdate = true;
+    }
+  }
+
+  // Update the canvas if needed
+  // TODO: Don't update every frame if the map is shown
+  if (canvasNeedsUpdate || checkboxShowMap.checked) {
     canvasNeedsUpdate = false;
 
     let ctx = null;
@@ -258,7 +282,7 @@ let animate = function() {
     }
 
     // Figure out which canvas we're using
-    if (buttonShowMap.checked && canvasMap != null) {
+    if (checkboxShowMap.checked && canvasMap != null) {
       plane.material.map = textureMap;
       textureCurrent = textureMap;
       ctx = canvasMap.getContext("2d");
@@ -269,7 +293,7 @@ let animate = function() {
     }
 
     // Render the bottommost layer
-    if (buttonShowMap.checked) {
+    if (checkboxShowMap.checked) {
       olMap.render();
     } else {
       ctx.fillStyle = COLOR_PLANE;
@@ -277,30 +301,26 @@ let animate = function() {
     }
 
     // Draws grid lines
-    if (buttonShowGrid.checked) {
+    if (checkboxShowGrid.checked) {
       drawGrid(ctx.canvas);
     }
 
     // Draw the graph and geodesics onto the canvas
     if (
       networks != null && networks.length > 0
-      && (buttonShowGraph.checked || buttonShowGeodesics.checked)
+      && (checkboxShowGraph.checked || checkboxShowGeodesics.checked)
     ) {
       ctx.save();
 
       // First, figure out the current network
-      let time = parseFloat(rangeAnimation.value);
-      let index = 0;
-      while (times[index] < time) {
-        ++index;
-      }
+      let index = getCurrentNetworkIndex();
       let network = networks[index];
       let vertices = network.vertices;
       let edges = network.edges;
       let geodesicsCurrent = geodesics[index];
 
       // Draw the edges
-      if (buttonShowGraph.checked) {
+      if (checkboxShowGraph.checked) {
         // Borders first
         for (let indexEdge = 0; indexEdge < edges.length; ++indexEdge) {
           let edge = edges[indexEdge];
@@ -332,7 +352,7 @@ let animate = function() {
       }
 
       // Draw the geodesics
-      if (buttonShowGeodesics.checked) {
+      if (checkboxShowGeodesics.checked) {
         for (let indexGeodesic = 0; indexGeodesic < geodesicsCurrent.length; ++indexGeodesic) {
           let geodesic = geodesicsCurrent[indexGeodesic];
           let vertex = vertexToCanvasCoordinates(ctx, geodesic[0]);
@@ -372,26 +392,9 @@ let animate = function() {
     textureCurrent.needsUpdate = true;
   }
 
-  if (isPlaying) {
-    let rangeAnimation = document.getElementById("range-animation");
-    let timeMin = parseFloat(rangeAnimation.min);
-    let timeMax = parseFloat(rangeAnimation.max);
-    let timeRange = timeMax - timeMin;
-
-    let dateTimeNow = Date.now() / 1000;
-    let alpha = ((dateTimeNow - dateTimeInitial) % 10.) / 10.;
-    let timeNow = (timeInitial + alpha * timeRange) % timeRange + timeMin;
-    rangeAnimation.value = timeNow;
-
-    setHeightsWithInterpolation(plane, timeNow, times, heights);
-
-    if (buttonShowGraph.checked || buttonShowGeodesics.checked) {
-      canvasNeedsUpdate = true;
-    }
-  }
-
   plane.material.needsUpdate = true;
 
+  // TODO: Which of these are needed?
   plane.geometry.groupsNeedUpdate = true;
   plane.geometry.verticesNeedUpdate = true;
   plane.geometry.colorsNeedUpdate = true;
@@ -401,6 +404,43 @@ let animate = function() {
   composer.render();
 }
 renderer.setAnimationLoop(animate);
+
+function drawGrid(canvas) {
+  let ctx = canvas.getContext("2d");
+  let cols = divisions - 1;
+  let rows = divisions - 1;
+
+  let width = canvas.width;
+  let height = canvas.height;
+  let start_i = 0;
+  let start_j = 0;
+
+  ctx.save();
+
+  ctx.beginPath();
+  for (let i = start_i; i <= width; i += (width - start_i) / cols) {
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, canvas.height);
+  }
+  for (let j = start_j; j <= height; j += (height - start_j) / rows) {
+    ctx.moveTo(0, j);
+    ctx.lineTo(canvas.width, j);
+  }
+  ctx.lineWidth = 4;
+  ctx.strokyStyle = "black";
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function getCurrentNetworkIndex() {
+  let time = parseFloat(rangeAnimation.value);
+  let index = 0;
+  while (times[index] < time) {
+    ++index;
+  }
+  return index;
+}
 
 function resetView() {
   gsap.to(camera, {
@@ -446,45 +486,6 @@ document.addEventListener("keydown", function(ev) {
     resetView();
   }
 });
-
-function drawGrid(canvas) {
-  let ctx = canvas.getContext("2d");
-  let cols = divisions - 1;
-  let rows = divisions - 1;
-
-  let width = canvas.width;
-  let height = canvas.height;
-  let start_i = 0;
-  let start_j = 0;
-
-  ctx.save();
-
-  ctx.beginPath();
-  for (let i = start_i; i <= width; i += (width - start_i) / cols) {
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, canvas.height);
-  }
-  for (let j = start_j; j <= height; j += (height - start_j) / rows) {
-    ctx.moveTo(0, j);
-    ctx.lineTo(canvas.width, j);
-  }
-  ctx.lineWidth = 4;
-  ctx.strokyStyle = "black";
-  ctx.stroke();
-
-  ctx.restore();
-}
-
-function updatePlaneHeights(map) {
-  for (let i = 0; i < divisions; i++) {
-    for (let j = 0; j < divisions; j++) {
-      gsap.to(plane.geometry.vertices[i * divisions + j], {
-        duration: 0.25,
-        z: map[i][j],
-      });
-    }
-  }
-}
 
 function helpClick(event) {
   let helpDiv = document.getElementById("div-help");
@@ -576,6 +577,50 @@ function setHeightsWithInterpolation(plane, t, ts, zs) {
   setPlaneHeights(plane, zs[index - 1], zs[index], lambda);
 }
 
+function clearHoverGraph() {
+  for (let hoveringVertex of hoveringVerticesDrawn) {
+    scene.remove(hoveringVertex);
+  }
+  hoveringVerticesDrawn = [];
+
+  for (let hoveringEdge of hoveringEdgesDrawn) {
+    scene.remove(hoveringEdge);
+  }
+  hoveringEdgesDrawn = [];
+}
+
+function drawHoverGraph(index) {
+  clearHoverGraph();
+
+  let vertexArray = [];
+  for (let vertex of networks[index].vertices) {
+    let vertexGlobal = vertexToGlobalCoordinates(vertex);
+    vertexArray.push(vertexGlobal[1], heightHoverGraph, vertexGlobal[0]);
+  }
+  let pointsGeometry = new THREE.BufferGeometry();
+  pointsGeometry.setAttribute("position", new THREE.BufferAttribute(
+    new Float32Array(vertexArray), 3
+  ));
+  let points = new THREE.Points(pointsGeometry, HOVER_VERTEX_MATERIAL);
+  scene.add(points);
+  hoveringVerticesDrawn.push(points);
+
+  let edgeArray = [];
+  for (let edge of networks[index].edges) {
+    let source = vertexToGlobalCoordinates(networks[index].vertices[edge.source]);
+    let target = vertexToGlobalCoordinates(networks[index].vertices[edge.target]);
+    edgeArray.push(source[1], heightHoverGraph, source[0]);
+    edgeArray.push(target[1], heightHoverGraph, target[0]);
+    break;
+  }
+  console.log(edgeArray);
+  let edgesGeometry = new LineSegmentsGeometry();
+  edgesGeometry.setPositions(new Float32Array(edgeArray));
+  let edges = new LineSegments2(edgesGeometry, HOVER_EDGE_MATERIAL);
+  scene.add(edges);
+  hoveringEdgesDrawn.push(edges);
+}
+
 function vertexNameChange() {
   // TODO: Deal with duplicate names
   if (this.value == "") {
@@ -583,12 +628,12 @@ function vertexNameChange() {
   }
   let parentDiv = this.parentElement;
   let id = parentDiv.childNodes[0].textContent;
-  let pt = vertices[id];
+  let pt = hoveringVertices[id];
   let oldName = pt.name;
   pt.name = this.value;
   scene.remove(pt.label);
   pt.label = getNameSprite(this.value);
-  pt.label.position.set(pt.mesh.position.x, vertexHeight + 0.5, pt.mesh.position.z);
+  pt.label.position.set(pt.mesh.position.x, heightHoverGraph + 0.5, pt.mesh.position.z);
   scene.add(pt.label);
   delete names[oldName];
   names[pt.name] = parseInt(id);
@@ -600,7 +645,7 @@ function vertexPositionChange() {
   }
   let parentDiv = this.parentElement;
   let id = parentDiv.childNodes[0].textContent;
-  let pt = vertices[id];
+  let pt = hoveringVertices[id];
   if (this.className == "xPos") {
     gsap.to(pt.mesh.position, {
       duration: 0.25,
@@ -714,7 +759,7 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
   xPos.select();
 
   let newPt = new THREE.Mesh(ptGeom, ptMat);
-  newPt.position.y = vertexHeight;
+  newPt.position.y = heightHoverGraph;
   newPt.position.x = xPos.value;
   newPt.position.z = yPos.value;
   newPt.name = name;
@@ -722,7 +767,7 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
   let showHoverGraph = document.getElementById("show-hover-graph");
   let sprite = getNameSprite(name);
   if (showHoverGraph.checked && drawPoint) {
-    sprite.position.set(xPos.value, vertexHeight + 0.1, yPos.value);
+    sprite.position.set(xPos.value, heightHoverGraph + 0.1, yPos.value);
     scene.add(sprite);
     newPt.scale.set(0.1, 0.1, 0.1);
     scene.add(newPt);
@@ -734,7 +779,7 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
       ease: "elastic"
     });
   }
-  vertices[String(vertexCount)] = new VertexObj(vertexCount, name, newPt, sprite, lat, long);
+  hoveringVertices[String(vertexCount)] = new VertexObj(vertexCount, name, newPt, sprite, lat, long);
   names[name] = vertexCount;
   vertexCount++;
 }
@@ -742,16 +787,16 @@ function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
 function removeVertex() {
   let parentDiv = this.parentElement;
   let name = parentDiv.childNodes[0].textContent;
-  scene.remove(vertices[name].mesh);
-  scene.remove(vertices[name].label);
-  delete vertices[name];
+  scene.remove(hoveringVertices[name].mesh);
+  scene.remove(hoveringVertices[name].label);
+  delete hoveringVertices[name];
   parentDiv.remove();
 }
 
 function drawEdge(edge, lineMat) {
   let points = [
-    new THREE.Vector3(edge.start.mesh.position.x, vertexHeight, edge.start.mesh.position.z),
-    new THREE.Vector3(edge.end.mesh.position.x, vertexHeight, edge.end.mesh.position.z)
+    new THREE.Vector3(edge.start.mesh.position.x, heightHoverGraph, edge.start.mesh.position.z),
+    new THREE.Vector3(edge.end.mesh.position.x, heightHoverGraph, edge.end.mesh.position.z)
   ];
 
   let geom = new THREE.BufferGeometry().setFromPoints(points);
@@ -772,7 +817,7 @@ function drawEdge(edge, lineMat) {
   };
 
   scene.add(line);
-  linesDrawn.push(line);
+  hoveringEdgesDrawn.push(line);
   return line;
 }
 
@@ -842,18 +887,18 @@ function addEdge(obj, start, end, weight) {
   vDiv.appendChild(del);
   document.getElementById("div-edge").appendChild(vDiv);
 
-  let size = Object.keys(vertices).length;
+  let size = Object.keys(hoveringVertices).length;
 
   let s = parseInt(startText.value);
   let e = parseInt(endText.value);
 
   weight = parseFloat(weightText.value);
 
-  let startPt = vertices[s];
-  let endPt = vertices[e];
+  let startPt = hoveringVertices[s];
+  let endPt = hoveringVertices[e];
 
   let edge = new EdgeObj(edgeCount, startPt, endPt, weight);
-  edges[edgeCount] = edge;
+  hoveringEdges[edgeCount] = edge;
   edgeCount++;
 }
 
@@ -867,16 +912,16 @@ function edgeChange() {
   let endId = parentDiv.childNodes[4].value;
   let weight = parseFloat(parentDiv.childNodes[6].value);
   let id = parentDiv.childNodes[0].textContent;
-  let edge = edges[id];
-  edge.start = vertices[startId];
-  edge.end = vertices[endId];
+  let edge = hoveringEdges[id];
+  edge.start = hoveringVertices[startId];
+  edge.end = hoveringVertices[endId];
   edge.weight = weight;
 }
 
 function removeEdge() {
   let parentDiv = this.parentElement;
   let id = parentDiv.childNodes[0].textContent;
-  delete edges[id];
+  delete hoveringEdges[id];
   parentDiv.remove();
 }
 
@@ -977,13 +1022,13 @@ function calculateCurvature() {
     nodes: [],
     links: []
   };
-  for (let id in vertices) {
+  for (let id in hoveringVertices) {
     data.nodes.push({
       id: id
     });
   }
   let current_edges = {
-    ...edges
+    ...hoveringEdges
   };
   for (let id in current_edges) {
     let edge = current_edges[id];
@@ -997,7 +1042,7 @@ function calculateCurvature() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
       data = JSON.parse(xmlHttp.responseText)
       let current_edges = {
-        ...edges
+        ...hoveringEdges
       };
       for (let id in data.links) {
         let link = data.links[id];
@@ -1014,10 +1059,10 @@ function calculateCurvature() {
         }
       }
 
-      for (let line of linesDrawn) {
+      for (let line of hoveringEdgesDrawn) {
         scene.remove(line);
       }
-      linesDrawn = [];
+      hoveringEdgesDrawn = [];
     }
   }
   xmlHttp.open("post", "calc-curvature");
@@ -1052,20 +1097,21 @@ dropReader.onload = function() {
       divisions = heights[0].length;
     }
 
-    let rangeAnimation = document.getElementById("range-animation");
     rangeAnimation.min = animationData[0].time;
     rangeAnimation.max = animationData[animationData.length - 1].time;
     rangeAnimation.step = (rangeAnimation.max - rangeAnimation.min) / 100;
     rangeAnimation.value = rangeAnimation.min;
 
-    let buttonPlay = document.getElementById("button-play");
     buttonPlay.innerText = "Play";
 
-    let divAnimationControls = document.getElementById("animation-controls");
     if (times.length <= 1) {
       divAnimationControls.style.display = 'none';
     } else {
       divAnimationControls.style.display = 'block';
+    }
+
+    if (checkboxShowHoverGraph.checked) {
+      drawHoverGraph(0);
     }
 
     setHeightsWithInterpolation(plane, rangeAnimation.min, times, heights);
@@ -1115,4 +1161,10 @@ function vertexToCanvasCoordinates(ctx, vertex) {
     x * ctx.canvas.width,
     (1 - y) * ctx.canvas.height,
   ];
+}
+
+function vertexToGlobalCoordinates(vertex) {
+  let x = vertex[0] * planeWidth + planeXMin;
+  let y = vertex[1] * planeHeight + planeYMin;
+  return [x, y];
 }

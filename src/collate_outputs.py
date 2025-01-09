@@ -83,8 +83,8 @@ for t, directory_output in directories_outputs:
         ]
         edges = [
             {
-                'source': str(edge[0]),
-                'target': str(edge[1]),
+                'source': edge[0],
+                'target': edge[1],
                 'weight': weight,
             }
             for edge, weight in zip(network_edges, edge_data['throughput'])
