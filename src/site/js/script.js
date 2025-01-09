@@ -15,7 +15,6 @@ const CIRCUMFERENCE_EARTH = 40075016.68557849;
 let mapCenter = [0.0, 0.0];
 let mapZoomFactor = 1.6;
 let mapResolution = 1000
-let mapZoomLevel = 0
 
 // Size of the plane
 let planeXMin = -10;
@@ -26,8 +25,7 @@ let planeWidth = planeXMax - planeXMin;
 let planeHeight = planeYMax - planeYMin;
 
 // Number of points per side
-// TODO: Make this variable
-let divisions = 50;
+let divisions = 20;
 
 // Globals tracking the manifold shape across time
 let times = null;
@@ -39,7 +37,7 @@ let geodesics = null;
 let isPlaying = false;
 let timeInitial = null;
 let dateTimeInitial = null;
-let canvasNeedsUpdate = false;
+let canvasNeedsUpdate = true;
 
 let vertexHeight = 3;
 
@@ -88,14 +86,8 @@ const olMap = createMap();
 
 let textureCurrent = textureBlank;
 
-// let clipPlaneUp = new THREE.Plane(new THREE.Vector3(0, 2, 0), 2);
-// let clipPlaneLeft = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -planeXMin);
-// let clipPlaneRight = new THREE.Plane(new THREE.Vector3(1, 0, 0), planeXMax);
-// let clipPlaneFront = new THREE.Plane(new THREE.Vector3(0, 0, -1), -planeYMin);
-// let clipPlaneBack = new THREE.Plane(new THREE.Vector3(0, 0, 1), planeYMax);
 let planeMaterial = new THREE.MeshPhongMaterial({
   color: COLOR_PLANE,
-  // clippingPlanes: [clipPlaneLeft, clipPlaneRight, clipPlaneFront, clipPlaneBack],
   vertexColors: THREE.VertexColors,
   side: THREE.DoubleSide,
   flatShading: false,
@@ -112,29 +104,18 @@ let ptMat = new THREE.MeshBasicMaterial({
   color: COLOR_VERTEX
 });
 
-let planeGeometry = new THREE.PlaneGeometry(
-  planeWidth, planeHeight,
-  divisions - 1, divisions - 1
-);
-let plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.geometry.dynamic = true;
-plane.rotation.set(-Math.PI / 2, 0, 0);
-for (let face of plane.geometry.faces) {
-  face.vertexColors[0] = new THREE.Color(0xffffff);
-  face.vertexColors[1] = new THREE.Color(0xffffff);
-  face.vertexColors[2] = new THREE.Color(0xffffff);
-}
+let plane = makePlane(divisions);
 scene.add(plane);
 
 // Lighting setup
-let light = new THREE.PointLight(0xffffff, 0.5);
-light.position.set(-7, 8, 0);
-scene.add(light);
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
-directionalLight.position.set(1.5, 0.1, 10);
-scene.add(directionalLight);
-let alight = new THREE.AmbientLight(0x404040); // soft white light
-scene.add(alight);
+let lightPoint = new THREE.PointLight(0xffffff, 0.5);
+lightPoint.position.set(-7, 8, 0);
+scene.add(lightPoint);
+let lightDirectional = new THREE.DirectionalLight(0xffffff, 0.6);
+lightDirectional.position.set(1.5, 0.1, 10);
+scene.add(lightDirectional);
+let lightAmbient = new THREE.AmbientLight(0x404040); // soft white light
+scene.add(lightAmbient);
 
 // Network drawing setup
 // TODO: Make this adapt to the animation
@@ -258,8 +239,9 @@ let animate = function() {
   if (canvasNeedsUpdate || buttonShowMap.checked) {
     canvasNeedsUpdate = false;
 
-    // Figure out which canvas we're using
     let ctx = null;
+
+    // Setup the map if it hasn't been already
     // TODO: Move this somewhere else (using promises? See https://stackoverflow.com/questions/5525071/how-to-wait-until-an-element-exists)
     if (canvasMap == null) {
       canvasMap = document.getElementById("map").getElementsByTagName("canvas")[0];
@@ -274,6 +256,8 @@ let animate = function() {
         canvasNeedsUpdate = true;
       }
     }
+
+    // Figure out which canvas we're using
     if (buttonShowMap.checked && canvasMap != null) {
       plane.material.map = textureMap;
       textureCurrent = textureMap;
@@ -284,6 +268,7 @@ let animate = function() {
       ctx = canvasBlank.getContext("2d");
     }
 
+    // Render the bottommost layer
     if (buttonShowMap.checked) {
       olMap.render();
     } else {
@@ -292,11 +277,11 @@ let animate = function() {
     }
 
     // Draws grid lines
-    if (document.getElementById("show-grid").checked) {
+    if (buttonShowGrid.checked) {
       drawGrid(ctx.canvas);
     }
 
-    // Draw the graph
+    // Draw the graph and geodesics onto the canvas
     if (
       networks != null && networks.length > 0
       && (buttonShowGraph.checked || buttonShowGeodesics.checked)
@@ -313,9 +298,10 @@ let animate = function() {
       let vertices = network.vertices;
       let edges = network.edges;
       let geodesicsCurrent = geodesics[index];
+
       // Draw the edges
-      // Borders first
       if (buttonShowGraph.checked) {
+        // Borders first
         for (let indexEdge = 0; indexEdge < edges.length; ++indexEdge) {
           let edge = edges[indexEdge];
           let source = vertexToCanvasCoordinates(ctx, vertices[edge.source]);
@@ -329,7 +315,6 @@ let animate = function() {
           ctx.lineWidth = LINE_WIDTH + 5;
           ctx.stroke();
         }
-
         // Then the actual edges
         for (let indexEdge = 0; indexEdge < edges.length; ++indexEdge) {
           let edge = edges[indexEdge];
@@ -346,6 +331,7 @@ let animate = function() {
         }
       }
 
+      // Draw the geodesics
       if (buttonShowGeodesics.checked) {
         for (let indexGeodesic = 0; indexGeodesic < geodesicsCurrent.length; ++indexGeodesic) {
           let geodesic = geodesicsCurrent[indexGeodesic];
@@ -363,9 +349,18 @@ let animate = function() {
       }
 
       // Draw the vertices
+      // Borders first
       for (let indexVertex = 0; indexVertex < vertices.length; ++indexVertex) {
         let vertex = vertexToCanvasCoordinates(ctx, vertices[indexVertex]);
-        ctx.fillStyle = "#FF5C5C";
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.arc(vertex[0], vertex[1], VERTEX_RADIUS + 5, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      // Then the actual vertices
+      for (let indexVertex = 0; indexVertex < vertices.length; ++indexVertex) {
+        let vertex = vertexToCanvasCoordinates(ctx, vertices[indexVertex]);
+        ctx.fillStyle = COLOR_VERTEX;
         ctx.beginPath();
         ctx.arc(vertex[0], vertex[1], VERTEX_RADIUS, 0, 2 * Math.PI);
         ctx.fill();
@@ -436,7 +431,6 @@ function resetView() {
   olMap.getView().setZoom(0);
   let mapdiv = document.getElementById("map");
   mapdiv.style.display = "block";
-  mapZoomLevel = 0;
   mapdiv.style.width = mapResolution + "px";
   mapdiv.style.height = mapResolution + "px";
   olMap.updateSize();
@@ -507,13 +501,7 @@ function wheelEvent(event) {
   }
   let mapdiv = document.getElementById("map");
   mapdiv.style.display = "block";
-  if (event.deltaY < 0) {
-    mapZoomLevel += 1;
-  } else if (mapZoomLevel > 0) {
-    mapZoomLevel -= 1;
-  }
-  let effectiveMapZoomLevel = Math.min(mapZoomLevel, 54)
-  let newMapResolution = mapResolution * Math.pow(0.95, -effectiveMapZoomLevel)
+  let newMapResolution = mapResolution * camera.zoom;
   mapdiv.style.width = newMapResolution + "px";
   mapdiv.style.height = newMapResolution + "px";
   olMap.updateSize();
@@ -523,6 +511,22 @@ function wheelEvent(event) {
 
   // TODO: Make this safer (with promises, maybe? The map takes time to load)
   canvasNeedsUpdate = true;
+}
+
+function makePlane(divisions) {
+  let planeGeometry = new THREE.PlaneGeometry(
+    planeWidth, planeHeight,
+    divisions - 1, divisions - 1
+  );
+  let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.geometry.dynamic = true;
+  plane.rotation.set(-Math.PI / 2, 0, 0);
+  for (let face of plane.geometry.faces) {
+    face.vertexColors[0] = new THREE.Color(0xffffff);
+    face.vertexColors[1] = new THREE.Color(0xffffff);
+    face.vertexColors[2] = new THREE.Color(0xffffff);
+  }
+  return plane;
 }
 
 function setPlaneHeights(plane, z_left, z_right, lambda) {
@@ -755,7 +759,6 @@ function drawEdge(edge, lineMat) {
   let mat = new THREE.LineBasicMaterial({
     color: COLOR_EDGE,
     linewidth: 5,
-    // clippingPlanes: [clipPlaneUp, clipPlaneRight, clipPlaneLeft, clipPlaneBack, clipPlaneFront]
   })
   let line = new THREE.Line(geom, mat);
   let color = getCurvatureColor(edge.weight);
@@ -950,17 +953,19 @@ function createMap() {
   mapDiv.style.height = mapResolution + "px";
   document.body.appendChild(mapDiv);
   let map = new ol.Map({
-    target: "map",
+    controls: [],
+    interactions: [],
     layers: [
       new ol.layer.Tile({
         source: new ol.source.OSM(),
       })
     ],
+    target: "map",
     view: new ol.View({
       projection: 'EPSG:3857',
       center: ol.proj.fromLonLat(mapCenter),
       resolution: CIRCUMFERENCE_EARTH / mapResolution / mapZoomFactor
-    })
+    }),
   });
   mapDiv.style.display = "none";
 
@@ -1037,6 +1042,14 @@ dropReader.onload = function() {
       heights[i] = animationData[i].height;
       networks[i] = animationData[i].network;
       geodesics[i] = animationData[i].geodesics;
+    }
+
+    if (heights.length != 0 && heights[0].length != divisions) {
+      scene.remove(plane);
+      plane = makePlane(heights[0].length);
+      scene.add(plane);
+
+      divisions = heights[0].length;
     }
 
     let rangeAnimation = document.getElementById("range-animation");
