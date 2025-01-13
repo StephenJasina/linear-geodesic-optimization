@@ -129,8 +129,13 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         the output of `Mesh.get_coordinates`. This function returns the
         resulting parameters, which should be treated as read only.
         """
+        z = np.copy(z)
+        if z.shape != self._parameters.shape:
+            raise ValueError()
+
+        # TODO: Is this too slow?
         if not np.array_equal(self._parameters, z):
-            self._parameters = np.copy(z)
+            self._parameters = z
             self._updates += 1
         return self._parameters
 
