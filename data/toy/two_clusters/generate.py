@@ -15,7 +15,7 @@ n = 7
 cluster_radius = 0.125
 
 # Generate the first cluster
-cluster_center = np.array([-0.25, 0.])
+cluster_center = np.array([-0.35, 0.])
 for i in range(n):
     xy = cluster_center + cluster_radius * np.array([np.cos(2 * np.pi * i / n), np.sin(2 * np.pi * i / n)])
     long, lat = utility.inverse_mercator(xy[0], xy[1])
@@ -34,7 +34,7 @@ for i in range(n - 1):
         )
 
 # Generate the second cluster
-cluster_center = np.array([0.25, 0.])
+cluster_center = np.array([0.35, 0.])
 for i in range(n):
     xy = cluster_center - cluster_radius * np.array([np.cos(2 * np.pi * i / n), np.sin(2 * np.pi * i / n)])
     long, lat = utility.inverse_mercator(xy[0], xy[1])

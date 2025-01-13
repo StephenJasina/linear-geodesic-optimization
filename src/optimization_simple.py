@@ -21,7 +21,7 @@ from linear_geodesic_optimization.optimization import optimization
 warnings.simplefilter('error')
 
 directory_data = pathlib.PurePath('..', 'data')
-directory_outputs = pathlib.PurePath('..', 'outputs', 'json_test2')
+directory_outputs = pathlib.PurePath('..', 'outputs', 'geodesics')
 
 # TODO: Do we want something like this?
 def rectangularize_parameters(mesh: RectangleMesh) -> typing.List[typing.List[float]]:
@@ -148,7 +148,7 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    directory_links = pathlib.PurePath('toy', 'three_clusters', 'throughputs')
+    directory_links = pathlib.PurePath('toy', 'two_clusters', 'throughputs')
     filenames_links = list(sorted(
         directory_links / filename
         for filename in os.listdir(directory_data / directory_links)
@@ -157,11 +157,11 @@ if __name__ == '__main__':
     count = len(filenames_links)
 
     filenames_probes = [
-        pathlib.PurePath('toy', 'three_clusters', 'probes.csv'),
+        pathlib.PurePath('toy', 'two_clusters', 'probes.csv'),
     ] * count
 
     directories_output = [
-        directory_outputs / pathlib.PurePath('toy', 'three_clusters', filename_links.stem)
+        directory_outputs / pathlib.PurePath('toy', 'two_clusters', filename_links.stem)
         for filename_links in filenames_links
     ]
 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
 
     network_trim_radii = 0.2 * mesh_scales
 
-    max_iters = [1000] * count
+    max_iters = [2000] * count
 
     arguments = list(zip(
         filenames_probes, filenames_links,

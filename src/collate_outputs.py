@@ -1,3 +1,4 @@
+import itertools
 import json
 import os
 import pathlib
@@ -33,7 +34,8 @@ def compute_geodesics(mesh: RectangleMesh, network_vertices, network_edges):
     )
 
     geodesics = []
-    for (index_source, index_target) in network_edges:
+    # for (index_source, index_target) in network_edges:
+    for (index_source, index_target) in itertools.product(range(len(network_vertices)), range(len(network_vertices))):
         source = mesh.nearest_vertex(network_vertices[index_source]).index
         target = mesh.nearest_vertex(network_vertices[index_target]).index
         if source == target:
@@ -94,7 +96,9 @@ for t, directory_output in directories_outputs:
         z_trim_mapping = np.array(output['final']) - np.array(output['initial'])
         z_trim_mapping = z_trim_mapping - np.amin(z_trim_mapping)
         z_trim_mapping = z_trim_mapping / np.amax(z_trim_mapping)
+        # z_trim_mapping = np.array(output['final'])
         z[mesh.get_trim_mapping()] = z_trim_mapping
+        # mesh.set_parameters(z_trim_mapping)
 
         animation_data.append({
             'time': t,
