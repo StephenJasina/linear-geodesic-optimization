@@ -102,12 +102,6 @@ let planeMaterial = new THREE.MeshPhongMaterial({
 });
 
 // Geometry setup
-// TODO: Remove these
-let ptGeom = new THREE.SphereGeometry(0.02, 32, 32);
-let ptMat = new THREE.MeshBasicMaterial({
-  color: COLOR_VERTEX
-});
-
 let plane = makePlane(divisions);
 scene.add(plane);
 
@@ -126,17 +120,12 @@ scene.add(lightAmbient);
 let heightHoverGraph = 6;
 const SIZE_HOVER_VERTEX = 6;
 const SIZE_HOVER_EDGE = 4;
-let vertexCount = 0;
-let edgeCount = 0;
 
 const HOVER_VERTEX_MATERIAL = new THREE.PointsMaterial({
   color: COLOR_VERTEX,
   size: SIZE_HOVER_VERTEX,
 });
 
-let hoveringVertices = {};
-let hoveringEdges = {};
-let names = {};
 let hoveringVerticesDrawn = [];
 let hoveringEdgesDrawn = [];
 
@@ -159,11 +148,6 @@ controls.minZoom = 1;
 window.addEventListener("wheel", wheelEvent, true);
 
 // Interactivity with DOM elements
-let buttonAddVertex = document.getElementById("btn-add-vertex");
-buttonAddVertex.onclick = addVertex;
-
-let buttonAddEdge = document.getElementById("btn-add-edge");
-buttonAddEdge.onclick = addEdge;
 
 let divDropOutput = document.getElementById("drop-output");
 divDropOutput.addEventListener("dragover", dragOver, false);
@@ -190,7 +174,6 @@ checkboxShowGraph.onchange = function() {
 }
 
 let checkboxShowHoverGraph = document.getElementById("show-hover-graph");
-// TODO: This function needs to be seriously rewritten
 checkboxShowHoverGraph.onchange = function() {
   if (checkboxShowHoverGraph.checked) {
     if (times != null) {
@@ -205,9 +188,6 @@ let checkboxShowGeodesics = document.getElementById("show-geodesics");
 checkboxShowGeodesics.onchange = function() {
   canvasNeedsUpdate = true;
 }
-
-let buttonCalculateCurvature = document.getElementById("btn-calc-curv");
-buttonCalculateCurvature.onclick = calculateCurvature;
 
 let buttonHelp = document.getElementById("btn-help");
 buttonHelp.onclick = helpClick;
@@ -688,429 +668,6 @@ function drawHoverGraph(index) {
   hoveringEdgesDrawn.push(edges);
 }
 
-function vertexNameChange() {
-  // TODO: Deal with duplicate names
-  if (this.value == "") {
-    return;
-  }
-  let parentDiv = this.parentElement;
-  let id = parentDiv.childNodes[0].textContent;
-  let pt = hoveringVertices[id];
-  let oldName = pt.name;
-  pt.name = this.value;
-  scene.remove(pt.label);
-  pt.label = getNameSprite(this.value);
-  pt.label.position.set(pt.mesh.position.x, heightHoverGraph + 0.5, pt.mesh.position.z);
-  scene.add(pt.label);
-  delete names[oldName];
-  names[pt.name] = parseInt(id);
-}
-
-function vertexPositionChange() {
-  if (this.value == "" || isNaN(this.value)) {
-    return;
-  }
-  let parentDiv = this.parentElement;
-  let id = parentDiv.childNodes[0].textContent;
-  let pt = hoveringVertices[id];
-  if (this.className == "xPos") {
-    gsap.to(pt.mesh.position, {
-      duration: 0.25,
-      x: this.value,
-      onUpdate: function() {
-        olMap.render();
-      }
-    });
-    pt.lat = this.value * 155 / (planeWidth / 2)
-  } else {
-    gsap.to(pt.mesh.position, {
-      duration: 0.25,
-      z: this.value,
-      onUpdate: function() {
-        olMap.render();
-      }
-    });
-    pt.long = this.value * 180 / (planeHeight / 2)
-  }
-}
-
-function addVertex(obj, x, y, drawPoint, name, lat = null, long = null) {
-  if (typeof drawPoint == "undefined") {
-    drawPoint = true;
-  }
-
-  if (x == undefined) {
-    if (lat != null) {
-      x = lat * (planeWidth / 2) / 155;
-    } else {
-      x = 0;
-    }
-  }
-
-  if (y == undefined) {
-    if (long != null) {
-      y = long * (planeHeight / 2) / 180;
-    } else {
-      if (vertexCount == 0) {
-        y = 5;
-      } else {
-        y = -5;
-      }
-    }
-  }
-  if (lat == null) {
-    lat = x * 155 / (planeWidth / 2);
-  }
-  if (long == null) {
-    long = y * 180 / (planeHeight / 2);
-  }
-
-
-  let vDiv = document.createElement("div");
-  vDiv.id = "vertex" + vertexCount;
-  vDiv.className = "form-box";
-
-  let idLbl = document.createElement("label");
-  idLbl.setAttribute("for", "id");
-  idLbl.textContent = vertexCount;
-
-  if (typeof name == "undefined") {
-    name = vertexCount;
-  }
-
-  let nameLbl = document.createElement("label");
-  nameLbl.setAttribute("for", "name");
-  nameLbl.textContent = "Name:";
-
-  let nameInput = document.createElement("input");
-  nameInput.className = "name";
-  nameInput.setAttribute("type", "text");
-  nameInput.defaultValue = name;
-  nameInput.onchange = vertexNameChange;
-
-  let xPosLbl = document.createElement("label");
-  xPosLbl.setAttribute("for", "xPos");
-  xPosLbl.textContent = "x:";
-
-  let xPos = document.createElement("input");
-  xPos.className = "xPos";
-  xPos.setAttribute("type", "text");
-  xPos.defaultValue = x;
-  xPos.oninput = vertexPositionChange;
-
-  let yPosLbl = document.createElement("label");
-  yPosLbl.setAttribute("for", "yPos");
-  yPosLbl.textContent = "y:";
-
-  let yPos = document.createElement("input");
-  yPos.className = "yPos";
-  yPos.setAttribute("type", "text");
-  yPos.defaultValue = y;
-  yPos.oninput = vertexPositionChange;
-
-  let del = document.createElement("button");
-  del.className = "btn-delete";
-  del.innerHTML = "X";;
-  del.onclick = removeVertex;
-
-  vDiv.appendChild(idLbl);
-  vDiv.appendChild(nameLbl);
-  vDiv.appendChild(nameInput);
-  vDiv.appendChild(xPosLbl);
-  vDiv.appendChild(xPos);
-  vDiv.appendChild(yPosLbl);
-  vDiv.appendChild(yPos);
-  vDiv.appendChild(del);
-  document.getElementById("div-vertex").appendChild(vDiv);
-
-  xPos.select();
-
-  let newPt = new THREE.Mesh(ptGeom, ptMat);
-  newPt.position.y = heightHoverGraph;
-  newPt.position.x = xPos.value;
-  newPt.position.z = yPos.value;
-  newPt.name = name;
-
-  let showHoverGraph = document.getElementById("show-hover-graph");
-  let sprite = getNameSprite(name);
-  if (showHoverGraph.checked && drawPoint) {
-    sprite.position.set(xPos.value, heightHoverGraph + 0.1, yPos.value);
-    scene.add(sprite);
-    newPt.scale.set(0.1, 0.1, 0.1);
-    scene.add(newPt);
-    gsap.to(newPt.scale, {
-      duration: 1.5,
-      x: 1,
-      y: 1,
-      z: 1,
-      ease: "elastic"
-    });
-  }
-  hoveringVertices[String(vertexCount)] = new VertexObj(vertexCount, name, newPt, sprite, lat, long);
-  names[name] = vertexCount;
-  vertexCount++;
-}
-
-function removeVertex() {
-  let parentDiv = this.parentElement;
-  let name = parentDiv.childNodes[0].textContent;
-  scene.remove(hoveringVertices[name].mesh);
-  scene.remove(hoveringVertices[name].label);
-  delete hoveringVertices[name];
-  parentDiv.remove();
-}
-
-function drawEdge(edge, lineMat) {
-  let points = [
-    new THREE.Vector3(edge.start.mesh.position.x, heightHoverGraph, edge.start.mesh.position.z),
-    new THREE.Vector3(edge.end.mesh.position.x, heightHoverGraph, edge.end.mesh.position.z)
-  ];
-
-  let geom = new THREE.BufferGeometry().setFromPoints(points);
-
-  let mat = new THREE.LineBasicMaterial({
-    color: COLOR_EDGE,
-    linewidth: 5,
-  })
-  let line = new THREE.Line(geom, mat);
-  let color = getCurvatureColor(edge.weight);
-  line.material.color.set(color);
-  line.name = edge.start.name + "/" + edge.end.name;
-  line.userData = {
-    weight: edge.weight,
-    neg_mod: edge.neg_mod,
-    nrw_mod: edge.nrw_mod,
-    nheight_mod: edge.nheight_mod
-  };
-
-  scene.add(line);
-  hoveringEdgesDrawn.push(line);
-  return line;
-}
-
-function addEdge(obj, start, end, weight) {
-  if (typeof start == "undefined") {
-    start = 0;
-  }
-
-  if (typeof end == "undefined") {
-    end = 0;
-  }
-
-  if (typeof weight == "undefined") {
-    weight = 0;
-  }
-
-  let vDiv = document.createElement("div");
-  vDiv.id = "edge" + edgeCount;
-  vDiv.className = "form-box";
-
-  let nameLbl = document.createElement("label");
-  nameLbl.setAttribute("for", "name");
-  nameLbl.textContent = edgeCount;
-
-  let startLbl = document.createElement("label");
-  startLbl.setAttribute("for", "start");
-  startLbl.textContent = "start:";
-
-  let startText = document.createElement("input");
-  startText.className = "start";
-  startText.setAttribute("type", "text");
-  startText.defaultValue = start;
-  startText.oninput = edgeChange;
-
-  let endLbl = document.createElement("label");
-  endLbl.setAttribute("for", "start");
-  endLbl.textContent = "end:";
-
-  let endText = document.createElement("input");
-  endText.className = "end";
-  endText.setAttribute("type", "text");
-  endText.defaultValue = end;
-  endText.oninput = edgeChange;
-
-  let weightLbl = document.createElement("label");
-  weightLbl.setAttribute("for", "weight");
-  weightLbl.textContent = "weight:";
-
-  let weightText = document.createElement("input");
-  weightText.className = "weight";
-  weightText.setAttribute("type", "text");
-  weightText.defaultValue = weight;
-  weightText.oninput = edgeChange;
-
-  let del = document.createElement("button");
-  del.className = "btn-delete";
-  del.innerHTML = "X";;
-  del.onclick = removeEdge;
-
-  vDiv.appendChild(nameLbl);
-  vDiv.appendChild(startLbl);
-  vDiv.appendChild(startText);
-  vDiv.appendChild(endLbl);
-  vDiv.appendChild(endText);
-  vDiv.appendChild(weightLbl);
-  vDiv.appendChild(weightText);
-  vDiv.appendChild(del);
-  document.getElementById("div-edge").appendChild(vDiv);
-
-  let size = Object.keys(hoveringVertices).length;
-
-  let s = parseInt(startText.value);
-  let e = parseInt(endText.value);
-
-  weight = parseFloat(weightText.value);
-
-  let startPt = hoveringVertices[s];
-  let endPt = hoveringVertices[e];
-
-  let edge = new EdgeObj(edgeCount, startPt, endPt, weight);
-  hoveringEdges[edgeCount] = edge;
-  edgeCount++;
-}
-
-function edgeChange() {
-  // TODO: Deal with non existent vertices
-  if (this.value == "" || isNaN(this.value)) {
-    return;
-  }
-  let parentDiv = this.parentElement;
-  let startId = parentDiv.childNodes[2].value;
-  let endId = parentDiv.childNodes[4].value;
-  let weight = parseFloat(parentDiv.childNodes[6].value);
-  let id = parentDiv.childNodes[0].textContent;
-  let edge = hoveringEdges[id];
-  edge.start = hoveringVertices[startId];
-  edge.end = hoveringVertices[endId];
-  edge.weight = weight;
-}
-
-function removeEdge() {
-  let parentDiv = this.parentElement;
-  let id = parentDiv.childNodes[0].textContent;
-  delete hoveringEdges[id];
-  parentDiv.remove();
-}
-
-function getNameSprite(name) {
-  let canvas = document.createElement("canvas");
-  let ctx = canvas.getContext("2d");
-
-  let metrics = ctx.measureText(name);
-  let textWidth = metrics.width;
-  let textHeight = metrics.height;
-
-  ctx.canvas.width = textWidth * 30 + 30;
-  ctx.canvas.height = textWidth * 30 + 10;
-
-  ctx.font = "20px Roboto Mono";
-  ctx.fillStyle = "#000000";
-
-  ctx.fillText(name, ctx.canvas.width / 2 - textWidth / 2, ctx.canvas.height / 2);
-
-  let texture = new THREE.CanvasTexture(ctx.canvas);
-  texture.needsUpdate = true;
-
-  let spriteMat = new THREE.SpriteMaterial({
-    map: texture,
-    alphaTest: 0.1
-  });
-  let sprite = new THREE.Sprite(spriteMat);
-  sprite.scale.set(0.05 * textWidth, 0.05 * textWidth, 0.05 * textWidth);
-  return sprite;
-}
-
-let VertexObj = class {
-  start = []; // Edges starting at this vertex
-  end = []; // Edges ending at this vertex
-
-  constructor(id, name, mesh, label, lat = 0, long = 0, start = [], end = []) {
-    this.id = id;
-    this.name = name;
-    this.mesh = mesh;
-    this.label = label;
-    this.start = start;
-    this.end = end;
-    this.lat = lat;
-    this.long = long;
-  }
-}
-
-let EdgeObj = class {
-  constructor(id, start, end, weight) {
-    this.id = id;
-    this.start = start;
-    this.end = end;
-    this.weight = weight;
-    this.neg_mod = 1;
-    this.nrw_mod = 1;
-    this.nheight_mod = 1;
-    this.mesh = null;
-  }
-}
-
-let GraphObj = class {
-  constructor(vertices, edges, heightmap) {
-    this.vertices = vertices;
-    this.heightmap = heightmap;
-    this.edges = edges;
-  }
-}
-
-function calculateCurvature() {
-  let data = {
-    nodes: [],
-    links: []
-  };
-  for (let id in hoveringVertices) {
-    data.nodes.push({
-      id: id
-    });
-  }
-  let current_edges = {
-    ...hoveringEdges
-  };
-  for (let id in current_edges) {
-    let edge = current_edges[id];
-    data.links.push({
-      source: edge.start.id,
-      target: edge.end.id
-    });
-  }
-  let xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      data = JSON.parse(xmlHttp.responseText)
-      let current_edges = {
-        ...hoveringEdges
-      };
-      for (let id in data.links) {
-        let link = data.links[id];
-        for (let id2 in current_edges) {
-          let edge = current_edges[id2];
-          if ((edge.start.id == link.source && edge.end.id == link.target) || (edge.start.id == link.target && edge.end.id == link.source)) {
-            edge.weight = parseFloat(link.ricciCurvature);
-            let edgeDiv = document.getElementById("edge" + id2);
-            if (edgeDiv != null) {
-              edgeDiv.querySelector(".weight").value = parseFloat(link.ricciCurvature);
-            }
-            break;
-          }
-        }
-      }
-
-      for (let line of hoveringEdgesDrawn) {
-        scene.remove(line);
-      }
-      hoveringEdgesDrawn = [];
-    }
-  }
-  xmlHttp.open("post", "calc-curvature");
-  xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-  xmlHttp.send(JSON.stringify(data));
-}
-
 let dropReader = new FileReader();
 dropReader.onload = function() {
   try {
@@ -1166,6 +723,7 @@ dropReader.onload = function() {
     console.error(e);
   }
 }
+
 function dropOutput(evt) {
   evt.stopPropagation();
   evt.preventDefault();

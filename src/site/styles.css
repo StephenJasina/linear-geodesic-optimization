@@ -48,16 +48,6 @@ button.btn-delete:hover {
   background-color: white;
   color: red;
   border-color: red;
-
-}
-svg {
-  float: right;
-}
-#btn-add-edge {
-  display: inline-block;
-}
-#btn-calc-curv {
-  display: inline-block;
 }
 #btn-help {
   border-radius: 50px;
@@ -74,10 +64,6 @@ svg {
   box-shadow: 0px 0px 15px #c2c2c2;
   cursor: pointer;
 }
-span {
-  color: #4CAF50
-}
-
 .slider {
   width: 50%;
   height: 10px;
@@ -89,7 +75,6 @@ span {
   border-radius: 5px;
   margin-bottom: 25px;
 }
-
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -110,7 +95,6 @@ input[type=text] {
   border-radius: 5px;
   padding: 5px;
 }
-
 .gui-box>label {
   margin-right: 0px;
   display: inline-block;
@@ -123,7 +107,6 @@ input[type=text] {
   height: 600px;
   margin-left: 50px;
   /* overflow-y: auto; */
-
 }
 .gui-box {
   margin: 5px;
@@ -145,24 +128,11 @@ input[type=text] {
   padding: 5px;
   margin: 5px;
 }
-#div-extra {
+#div-layers {
   margin-top: 10px;
   display: inline-block;
   overflow-y: auto;
   width: 450px;
-}
-#div-vertex {
-  /* TODO: inline-block and auto scroll */
-  /* display: inline-block; */
-  display: none;
-  overflow-y: auto;
-  width: 450px;
-  /* background-color: #E5E5E5; */
-}
-#div-edge {
-  /* display: block; */
-  display: none;
-  overflow-y: auto;
 }
 #div-help {
   display: none;
@@ -182,11 +152,9 @@ input[type="range"] {
 li {
   padding: 5px;
 }
-
 #animation-controls {
   display: none;
 }
-
 kbd.key {
   border-radius: 3px;
   border: 1px solid black;
@@ -201,7 +169,6 @@ kbd.button {
   padding: 1px 5px;
   font-size: 13px;
 }
-
 .drop-box{
   background-color: #E5E5E5;
   display: inline-block;
@@ -212,18 +179,10 @@ kbd.button {
   border-radius: 5px;
 }
 .selectBox {
-				border: 1px solid #55aaff;
-				background-color: rgba(75, 160, 255, 0.3);
-				position: fixed;
+  border: 1px solid #55aaff;
+  background-color: rgba(75, 160, 255, 0.3);
+  position: fixed;
 }
-
-#map {
-  height: 995px;
-  width: 995px;
-  /* height: 696px;
-  width: 995px; */
-}
-
 label[for=id] {
   color: #4CAF50;
   /* background: white; */
