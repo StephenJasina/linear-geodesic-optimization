@@ -10,6 +10,7 @@ import potpourri3d as pp3d
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.data import input_mesh, utility
 
+# directory_outputs = pathlib.PurePath('..', 'outputs', 'geodesics', 'toy', 'two_clusters')
 directory_outputs = pathlib.PurePath('..', 'outputs', 'json_test', 'toy', 'three_clusters')
 subdirectory_output = '1.0_0.005_20.0_50_50_0.7'
 directories_outputs = list(sorted([
@@ -87,15 +88,16 @@ for t, directory_output in directories_outputs:
             {
                 'source': edge[0],
                 'target': edge[1],
-                'weight': weight,
+                'curvature': curvature,
+                'throughput': throughput,
             }
-            for edge, weight in zip(network_edges, edge_data['throughput'])
+            for edge, curvature, throughput in zip(network_edges, edge_data['ricciCurvature'], edge_data['throughput'])
         ]
 
-        z = np.full(width * height, -0.5)
+        z = np.full(width * height, -0.125)
         z_trim_mapping = np.array(output['final']) - np.array(output['initial'])
         z_trim_mapping = z_trim_mapping - np.amin(z_trim_mapping)
-        z_trim_mapping = z_trim_mapping / np.amax(z_trim_mapping)
+        z_trim_mapping = z_trim_mapping / np.amax(z_trim_mapping) * .25
         # z_trim_mapping = np.array(output['final'])
         z[mesh.get_trim_mapping()] = z_trim_mapping
         # mesh.set_parameters(z_trim_mapping)
