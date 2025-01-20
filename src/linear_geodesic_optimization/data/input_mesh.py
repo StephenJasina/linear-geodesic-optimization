@@ -26,8 +26,8 @@ def get_mesh_from_directory(
     with open(os.path.join(directory, 'parameters'), 'rb') as f:
         parameters = pickle.load(f)
 
-        probes_file_path = os.path.join('..', 'data', parameters['probes_filename'])
-        latencies_file_path = os.path.join('..', 'data', parameters['latencies_filename'])
+        probes_file_path = os.path.join('..', 'data', parameters['filename_probes'])
+        latencies_file_path = os.path.join('..', 'data', parameters['filename_links'])
         epsilon = parameters['epsilon']
         clustering_distance = parameters['clustering_distance']
         should_remove_TIVs = parameters['should_remove_TIVs']

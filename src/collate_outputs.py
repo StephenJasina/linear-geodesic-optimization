@@ -10,9 +10,9 @@ import potpourri3d as pp3d
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.data import input_mesh, utility
 
-# directory_outputs = pathlib.PurePath('..', 'outputs', 'geodesics', 'toy', 'two_clusters')
-directory_outputs = pathlib.PurePath('..', 'outputs', 'json_test', 'toy', 'three_clusters')
-subdirectory_output = '1.0_0.005_20.0_50_50_0.7'
+# Outputs are stored in `directory_outputs` / <output number> / `subdirectory_output`
+directory_outputs = pathlib.PurePath('..', 'outputs', 'geodesics', 'graph_US', '1.0_0.0002_20.0_50_50_1.0', 'graph22')
+subdirectory_output = ''
 directories_outputs = list(sorted([
     (float(directory_output), directory_outputs / directory_output / subdirectory_output)
     for directory_output in os.listdir(directory_outputs)
@@ -84,6 +84,8 @@ for t, directory_output in directories_outputs:
             for network_vertex in network_vertices
             for vertex in (get_nearest_vertex(mesh, network_vertex),)
         ]
+        if 'throughput' not in edge_data:
+            edge_data['throughput'] = itertools.cycle([1])
         edges = [
             {
                 'source': edge[0],
@@ -100,7 +102,7 @@ for t, directory_output in directories_outputs:
         z_trim_mapping = z_trim_mapping / np.amax(z_trim_mapping) * .25
         # z_trim_mapping = np.array(output['final'])
         z[mesh.get_trim_mapping()] = z_trim_mapping
-        # mesh.set_parameters(z_trim_mapping)
+        mesh.set_parameters(z_trim_mapping)
 
         animation_data.append({
             'time': t,

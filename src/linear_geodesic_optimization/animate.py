@@ -173,9 +173,9 @@ if __name__ == '__main__':
             graph = nx.read_graphml(parameters['graphml_filename'])
             latencies = []
         else:
-            probes_filename = parameters['probes_filename']
+            probes_filename = parameters['filename_probes']
             probes_file_path = os.path.join('..', 'data', probes_filename)
-            latencies_filename = parameters['latencies_filenames']
+            latencies_filename = parameters['filename_links']
             if not isinstance(latencies_filename, str):
                 latencies_filename = latencies_filename[0]
             latencies_file_path = os.path.join('..', 'data', latencies_filename)
@@ -301,9 +301,9 @@ if __name__ == '__main__':
                 network = nx.read_graphml(parameters['graphml_filename'])
                 latencies = []
             else:
-                probes_filename = parameters['probes_filename']
+                probes_filename = parameters['filename_probes']
                 probes_file_path = os.path.join('..', 'data', probes_filename)
-                latencies_filename = parameters['latencies_filenames']
+                latencies_filename = parameters['filename_links']
                 if not isinstance(latencies_filename, str):
                     latencies_filename = latencies_filename[0]
                 latencies_file_path = os.path.join('..', 'data', latencies_filename)

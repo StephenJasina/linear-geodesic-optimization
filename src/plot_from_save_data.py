@@ -68,10 +68,10 @@ if __name__ == '__main__':
         latencies_filename = None
         graphml_filename = None
         if 'graphml_filename' in parameters:
-            graphml_filename = parameters['graphml_filename']
+            graphml_filename = parameters['filename_graphml']
         else:
-            probes_filename = parameters['probes_filename']
-            latencies_filename = parameters['latencies_filename']
+            probes_filename = parameters['filename_probes']
+            latencies_filename = parameters['filename_links']
         epsilon = parameters['epsilon']
         clustering_distance = parameters['clustering_distance']
         should_remove_tivs = parameters['should_remove_TIVs']
