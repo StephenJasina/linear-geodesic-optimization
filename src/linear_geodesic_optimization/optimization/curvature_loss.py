@@ -39,8 +39,8 @@ class Computer:
             for i, j in network_edges
         ])
         if edge_weights is None:
-            edge_weights = [1.] * len(network_edges)
-        edge_weights = np.array(edge_weights) * edge_lengths
+            edge_weights = np.array([1.] * len(network_edges))
+        edge_weights = edge_weights * edge_lengths
         self._edge_weights = edge_weights / sum(edge_weights)
 
         self._network_curvatures = network_curvatures
