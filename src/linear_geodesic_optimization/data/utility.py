@@ -35,11 +35,8 @@ def inverse_mercator(
     float,
     typing.Tuple[float, float]
 ]:
-    longitude = x * 360. if x is not None else None
-    latitude = np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90. if y is not None else None
-
-    latitude = float(latitude)
-    longitude = float(longitude)
+    longitude = float(x * 360.) if x is not None else None
+    latitude = float(np.arctan(np.exp(y * 2. * np.pi)) * 360. / np.pi - 90.) if y is not None else None
 
     if longitude is None:
         return latitude
