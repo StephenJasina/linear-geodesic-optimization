@@ -10,10 +10,10 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 
 def get_mesh_from_directory(
-        directory: str,
-        max_iterations: typing.Optional[int] = None,
-        postprocessed: bool = False,
-        initialization_path: typing.Optional[str] = None
+    directory: str,
+    max_iterations: typing.Optional[int] = None,
+    postprocessed: bool = False,
+    initialization_path: typing.Optional[str] = None
 ) -> RectangleMesh:
     """
     Given a directory of output, return a mesh of the final output.
@@ -61,17 +61,17 @@ def get_mesh_from_directory(
     return get_mesh(z, width, height, network_data, postprocessed, z_0)
 
 def get_mesh(
-        z: typing.List[np.float64],
-        width: int,
-        height: int,
-        network_data,
-        coordinates_scale: float,
-        mesh_scale: float = 1.,
-        postprocessed: bool = False,
-        z_0: typing.Optional[typing.List[np.float64]] = None,
-        network_trim_radius: np.float64 = np.inf,
-        z_hole = -0.5,
-        mesh: typing.Optional[RectangleMesh] = None
+    z: typing.List[np.float64],
+    width: int,
+    height: int,
+    network_data,
+    coordinates_scale: float,
+    mesh_scale: float = 1.,
+    postprocessed: bool = False,
+    z_0: typing.Optional[typing.List[np.float64]] = None,
+    network_trim_radius: np.float64 = np.inf,
+    z_hole = -0.5,
+    mesh: typing.Optional[RectangleMesh] = None
 ) -> RectangleMesh:
     """
     Return a mesh with the given parameters.
@@ -89,7 +89,8 @@ def get_mesh(
     network_edges = graph_data['edges']
     network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
 
-    mesh.trim_to_graph(network_vertices, network_edges, network_trim_radius)
+    if network_trim_radius is not None:
+        mesh.trim_to_graph(network_vertices, network_edges, network_trim_radius)
 
     if postprocessed:
         network_convex_hulls = convex_hull.compute_connected_convex_hulls(
@@ -104,12 +105,14 @@ def get_mesh(
             for vertex_coordinate in vertices[:, :2]
         ])
         # Add a small amount of space around the convex hull
+        # distances = np.maximum(distances - 0.15, 0.)
         distances = np.maximum(distances - 0.05, 0.)
         z = z - np.array(z_0)
         z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
             * np.exp(-1000 * distances**2)
         z = z - np.amin(z)
-        z = z * 0.15 / np.amax(z)
+        z = z * 0.25 / np.amax(z)
+        # z = z * 0.15 / np.amax(z)
 
     mesh.set_parameters(z)
     return mesh
