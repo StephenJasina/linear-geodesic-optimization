@@ -7,24 +7,33 @@ import typing
 import numpy as np
 import potpourri3d as pp3d
 
-from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.data import input_mesh, utility
+from linear_geodesic_optimization.graph.convex_hull import get_connected_components
+from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 # Outputs are stored in `directory_outputs` / <output number> / `subdirectory_output`
-directory_outputs = pathlib.PurePath('..', 'outputs', 'geodesics', 'graph_US', '1.0_0.0002_20.0_50_50_1.0', 'graph22')
-subdirectory_output = ''
-directories_outputs = list(sorted([
-    (float(directory_output), directory_outputs / directory_output / subdirectory_output)
-    for directory_output in os.listdir(directory_outputs)
-    if os.path.isdir(directory_outputs / directory_output)
-]))
+# directory_outputs = pathlib.PurePath('..', 'outputs', 'throughputs', 'elbow', 'removed_AG', '0.001_20.0_30_30_1.0')
+# directory_outputs = pathlib.PurePath('..', 'outputs', 'throughputs', 'elbow', 'removed_FL', '0.0004_20.0_30_30_1.0')
+# subdirectory_output = pathlib.PurePath()
+# directories_outputs = list(sorted([
+#     (float(directory_output), directory_outputs / directory_output / subdirectory_output)
+#     for directory_output in os.listdir(directory_outputs)
+#     if os.path.isdir(directory_outputs / directory_output)
+# ]))
+# directories_outputs = [(0., directory_outputs)]
+
+directories_outputs = [
+    (0., pathlib.PurePath('..', 'outputs', 'throughputs', 'elbow', 'full', '0.0002_20.0_30_30_1.0')),
+    (1., pathlib.PurePath('..', 'outputs', 'throughputs', 'elbow', 'removed_IJ', '0.0002_20.0_30_30_1.0')),
+]
 
 def get_nearest_vertex(mesh: RectangleMesh, vertex):
     nearest_vertex = mesh.get_coordinates()[mesh.nearest_vertex(vertex).index]
     return [nearest_vertex[0], nearest_vertex[1]]
 
-def compute_geodesics(mesh: RectangleMesh, network_vertices, network_edges):
+def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges):
     mesh_scale = mesh.get_scale()
+    n_vertices = len(network_vertices)
 
     path_solver = pp3d.EdgeFlipGeodesicSolver(
         mesh.get_coordinates(),
@@ -35,8 +44,7 @@ def compute_geodesics(mesh: RectangleMesh, network_vertices, network_edges):
     )
 
     geodesics = []
-    # for (index_source, index_target) in network_edges:
-    for (index_source, index_target) in itertools.product(range(len(network_vertices)), range(len(network_vertices))):
+    for (index_source, index_target) in network_edges:
         source = mesh.nearest_vertex(network_vertices[index_source]).index
         target = mesh.nearest_vertex(network_vertices[index_target]).index
         if source == target:
@@ -71,7 +79,10 @@ for t, directory_output in directories_outputs:
             output['network'],
             coordinates_scale,
             mesh_scale,
-            network_trim_radius=output['parameters']['network_trim_radius']
+            network_trim_radius=output['parameters']['network_trim_radius'],
+            z_0=output['initial'],
+            postprocessed=True,
+            z_hole=-0.125
         )
 
         graph_data, vertex_data, edge_data = output['network']
@@ -81,6 +92,7 @@ for t, directory_output in directories_outputs:
         network_vertices = mesh.map_coordinates_to_support(coordinates, coordinates_scale, bounding_box)
         vertices = [
             [vertex[0] / mesh_scale, vertex[1] / mesh_scale]
+            # [network_vertex[0] / mesh_scale, network_vertex[1] / mesh_scale]
             for network_vertex in network_vertices
             for vertex in (get_nearest_vertex(mesh, network_vertex),)
         ]
@@ -96,6 +108,8 @@ for t, directory_output in directories_outputs:
             for edge, curvature, throughput in zip(network_edges, edge_data['ricciCurvature'], edge_data['throughput'])
         ]
 
+        z_original = mesh.get_parameters()
+
         z = np.full(width * height, -0.125)
         z_trim_mapping = np.array(output['final']) - np.array(output['initial'])
         z_trim_mapping = z_trim_mapping - np.amin(z_trim_mapping)
@@ -106,12 +120,21 @@ for t, directory_output in directories_outputs:
 
         animation_data.append({
             'time': t,
-            'height': z.reshape((width, height)).tolist(),
+            'height': z_original.reshape((width, height)).tolist(),
             'network': {
                 'vertices': vertices,
                 'edges': edges,
             },
-            'geodesics': compute_geodesics(mesh, network_vertices, network_edges),
+            'geodesics': compute_geodesics_from_graph(
+                mesh, network_vertices,
+                [
+                    (source_index, target_index)
+                    for connected_component in get_connected_components(len(network_vertices), network_edges)
+                    for source_index in connected_component
+                    for target_index in connected_component
+                    if source_index < target_index
+                ]
+            ),
         })
 
         if coordinates_scale is None:
@@ -132,7 +155,8 @@ map_data = {
     'zoomFactor': zoom_factor,
 }
 
-with open(directory_outputs / 'output.json', 'w') as file_output:
+# with open(directory_outputs / '..' / 'output.json', 'w') as file_output:
+with open(pathlib.PurePath('..', 'outputs', 'animations', 'output_IJ.json'), 'w') as file_output:
     json.dump(
         {
             'animation': animation_data,
