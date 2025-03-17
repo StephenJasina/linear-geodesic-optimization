@@ -133,8 +133,8 @@ def get_base_graph(probes, links, directed=False):
 
     # TODO: Make this less aggressive
     # Delete nodes with inconsistent geolocation
-    # for node in minimize_id_removal(rtt_violation_list):
-    #     graph.remove_node(node)
+    for node in minimize_id_removal(rtt_violation_list):
+        graph.remove_node(node)
 
     return graph
 
@@ -185,7 +185,7 @@ def compute_ricci_curvatures(
     weight_label: typing.Optional[str]=None
 ):
     ricci_curvatures = curvature.ricci_curvature_optimal_transport(
-        graph, alpha=alpha, edge_weight_label=weight_label
+        graph, alpha=alpha, edge_weight_label=weight_label, use_augmented_graph=False
     )
     for (source, destination), ricci_curvature in ricci_curvatures.items():
         graph.edges[source, destination]['ricciCurvature'] = ricci_curvature
