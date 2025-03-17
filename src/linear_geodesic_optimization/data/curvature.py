@@ -99,23 +99,22 @@ def compute_augmented_distances(
 
 def get_distribution(
     graph: nx.Graph,
-    node_to_index: typing.Dict[typing.Any, int],
     x: int, alpha: float,
     edge_weight_label: typing.Optional[str] = None
 ) -> npt.NDArray[np.float64]:
     distribution = np.zeros(len(graph.nodes))
 
     for neighbor in graph.neighbors(x):
-        distribution[node_to_index[neighbor]] = 1. if edge_weight_label is None else \
+        distribution[neighbor] = 1. if edge_weight_label is None else \
             graph.edges[x, neighbor][edge_weight_label] if edge_weight_label in graph.edges[x, neighbor] else \
             0.
 
     distribution_sum = sum(distribution)
     if distribution_sum != 0.:
         distribution *= (1 - alpha) / distribution_sum
-        distribution[node_to_index[x]] = alpha
+        distribution[x] = alpha
     else:
-        distribution[node_to_index[x]] = 1.
+        distribution[x] = 1.
 
     return distribution
 
@@ -206,14 +205,12 @@ def ricci_curvature_optimal_transport(
             )
         else:
             distribution_source = get_distribution(
-                graph, node_to_index,
-                source, destination,
-                edge_weight_label
+                graph, source,
+                alpha, edge_weight_label
             )
             distribution_destination = get_distribution(
-                graph, node_to_index,
-                destination, source,
-                edge_weight_label
+                graph, destination,
+                alpha, edge_weight_label
             )
 
         transport_distance = ot.emd2(distribution_source, distribution_destination, distance_matrix_augmented if use_augmented_graph else distance_matrix)
