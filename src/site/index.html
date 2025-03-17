@@ -8,8 +8,6 @@
     <link rel="icon" href="icon.png">
   </head>
   <body>
-    <script scr="{{ url_for('static', filename='node_modules/ol/source.js')}}"></script>
-
     <script type="module" src="main.js"></script>
 
     <div id="gui">
@@ -24,20 +22,26 @@
           <button type="button" id="button-play">Play</button>
         </div>
 
+        <input type="checkbox" id="show-heights" name="show-heights" checked>
+        <label for="show-heights">Show heights</label><br>
+
         <input type="checkbox" id="show-map" name="show-map">
-        <label for="show-map"> Show map</label><br>
+        <label for="show-map">Show map</label><br>
 
         <input type="checkbox" id="show-graph" name="show-graph" checked>
-        <label for="show-graph"> Show graph</label><br>
+        <label for="show-graph">Show graph</label><br>
 
         <input type="checkbox" id="show-hover-graph" name="show-hover-graph">
-        <label for="show-hover-graph"> Show hovering graph</label><br>
+        <label for="show-hover-graph">Show hovering graph</label><br>
+
+        <input type="checkbox" id="show-weight-arcs" name="show-weight-arcs">
+        <label for="show-weight-arcs">Show weight arcs</label><br>
 
         <input type="checkbox" id="show-geodesics" name="show-geodesics">
-        <label for="show-geodesics"> Show geodesics</label><br>
+        <label for="show-geodesics">Show geodesics</label><br>
 
         <input type="checkbox" id="show-grid" name="show-grid">
-        <label for="show-grid"> Show grid</label><br>
+        <label for="show-grid">Show grid</label><br>
       </div>
     </div>
 
