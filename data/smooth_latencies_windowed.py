@@ -13,7 +13,7 @@ data_directory = os.path.join('animation_Europe')
 probes_file_path = os.path.join(data_directory, 'probes.csv')
 latencies_input_directory = os.path.join(data_directory, 'latencies')
 threshold = 5.
-window = 5.
+window = 2.
 latencies_output_directory = os.path.join(data_directory, f'latencies_windowed_{window}')
 
 
