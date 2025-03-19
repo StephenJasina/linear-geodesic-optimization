@@ -19,8 +19,11 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 // Colors
 const COLOR_BACKGROUND = "#f3f3f3";
 const COLOR_PLANE = "#ffffff";
-const COLOR_VERTEX = "#4CAF50";
+const COLOR_VERTEX = "#4caf50";
 const COLOR_EDGE = "#000000";
+const COLOR_OUTAGE = "#00ff00";
+
+const OUTAGE_BLINK_RATE = 2.;
 
 // Globals tracking the world map
 const CIRCUMFERENCE_EARTH = 40075016.68557849;
@@ -44,6 +47,7 @@ let divisions = 10;
 let times = null;
 let heights = null;
 let networks = null;
+let networkEdges = null;
 let geodesics = null;
 
 // Globals tracking the animation state
@@ -52,6 +56,8 @@ let timeInitial = null;
 let dateTimeInitial = null;
 let animationDuration = 5.;
 let canvasNeedsUpdate = true;
+let currentNetworkIndex = null;
+let previousNetworkIndex = null;
 
 // Scene setup
 let scene = new THREE.Scene();
@@ -187,6 +193,8 @@ function setHeights() {
 rangeAnimation.oninput = function() {
   timeInitial = parseFloat(rangeAnimation.value);
   dateTimeInitial = Date.now() / 1000;
+  previousNetworkIndex = currentNetworkIndex;
+  currentNetworkIndex = getCurrentNetworkIndex();
   setHeights();
 
   canvasNeedsUpdate = true;
@@ -215,11 +223,29 @@ checkboxShowGraph.onchange = function() {
   canvasNeedsUpdate = true;
 }
 
+let checkboxShowOutages = document.getElementById("show-outages");
+let divOutages = document.getElementById("div-outages");
+let ulOutages = document.getElementById("ul-outages");
+if (checkboxShowOutages.checked) {
+  divOutages.style.display = "block";
+} else {
+  divOutages.style.display = "none";
+}
+checkboxShowOutages.onchange = function() {
+  if (checkboxShowOutages.checked) {
+    divOutages.style.display = "block";
+  } else {
+    divOutages.style.display = "none";
+  }
+
+  canvasNeedsUpdate = true;
+}
+
 let checkboxShowHoverGraph = document.getElementById("show-hover-graph");
 checkboxShowHoverGraph.onchange = function() {
   if (checkboxShowHoverGraph.checked) {
     if (times != null) {
-      drawHoverGraph(getCurrentNetworkIndex());
+      drawHoverGraph(currentNetworkIndex);
     }
   } else {
     clearHoverGraph();
@@ -274,12 +300,15 @@ let animate = function() {
       setPlaneHeightsWithInterpolation(plane, timeNow, times, heights);
     }
 
+    previousNetworkIndex = currentNetworkIndex;
+    currentNetworkIndex = getCurrentNetworkIndex();
+
     canvasNeedsUpdate = true;
   }
 
   // Update the canvas if needed
   // TODO: Don't update every frame if the map is shown
-  if (canvasNeedsUpdate || checkboxShowMap.checked) {
+  if (canvasNeedsUpdate || checkboxShowMap.checked || checkboxShowOutages.checked) {
     canvasNeedsUpdate = false;
 
     let ctx = null;
@@ -328,26 +357,25 @@ let animate = function() {
       networks != null && networks.length > 0
     ) {
       if (checkboxShowHoverGraph.checked) {
-        drawHoverGraph(getCurrentNetworkIndex());
+        drawHoverGraph(currentNetworkIndex);
       }
       if (checkboxShowWeightArcs.checked) {
         drawHoverArcs();
       }
     }
 
-    // Draw the graph and geodesics onto the canvas
+    // Draw the graph, geodesics, and outages onto the canvas
     if (
       networks != null && networks.length > 0
-      && (checkboxShowGraph.checked || checkboxShowGeodesics.checked)
+      && (checkboxShowGraph.checked || checkboxShowGeodesics.checked || checkboxShowOutages.checked)
     ) {
       ctx.save();
 
       // First, figure out the current network
-      let index = getCurrentNetworkIndex();
-      let network = networks[index];
+      let network = networks[currentNetworkIndex];
       let vertices = network.vertices;
       let edges = network.edges;
-      let geodesicsCurrent = geodesics[index];
+      let geodesicsCurrent = geodesics[currentNetworkIndex];
 
       // Draw the edges
       if (checkboxShowGraph.checked) {
@@ -396,6 +424,72 @@ let animate = function() {
             ctx.lineTo(vertex[0], vertex[1]);
           }
           ctx.stroke();
+        }
+      }
+
+      // Deal with outages
+      if (checkboxShowOutages.checked) {
+        let currentEdges = new Array(network.vertices.length);
+        for (let source = 0; source < network.vertices.length; ++source) {
+          currentEdges[source] = new Set();
+        }
+        for (let edge of network.edges) {
+          currentEdges[edge.source].add(edge.target);
+        }
+
+        // Draw the outages (on top!)
+        if (Math.floor(2 * (Date.now() / 1000) * OUTAGE_BLINK_RATE) % 2 == 0) {
+          // Borders first
+          for (let source = 0; source < network.vertices.length; ++source) {
+            for (let target of networkEdges[source]) {
+              if (!currentEdges[source].has(target)) {
+                let coordinatesSource = vertexToCanvasCoordinates(ctx, vertices[source]);
+                let coordinatesTarget = vertexToCanvasCoordinates(ctx, vertices[target]);
+                // Draw the edge
+                ctx.beginPath();
+                ctx.moveTo(coordinatesSource[0], coordinatesSource[1]);
+                ctx.lineTo(coordinatesTarget[0], coordinatesTarget[1]);
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = LINE_WIDTH + 5;
+                ctx.stroke();
+              }
+            }
+          }
+          // Then the actual edges
+          for (let source = 0; source < network.vertices.length; ++source) {
+            for (let target of networkEdges[source]) {
+              if (!currentEdges[source].has(target)) {
+                let coordinatesSource = vertexToCanvasCoordinates(ctx, vertices[source]);
+                let coordinatesTarget = vertexToCanvasCoordinates(ctx, vertices[target]);
+                // Draw the edge
+                ctx.beginPath();
+                ctx.moveTo(coordinatesSource[0], coordinatesSource[1]);
+                ctx.lineTo(coordinatesTarget[0], coordinatesTarget[1]);
+                ctx.strokeStyle = COLOR_OUTAGE;
+                ctx.lineWidth = LINE_WIDTH;
+                ctx.stroke();
+              }
+            }
+          }
+        }
+
+        // Update the info box
+        if (currentNetworkIndex != previousNetworkIndex) {
+          // Clear out the list first
+          while (ulOutages.firstChild) {
+            ulOutages.removeChild(ulOutages.firstChild);
+          }
+
+          // Add the new edges
+          for (let source = 0; source < network.vertices.length; ++source) {
+            for (let target of networkEdges[source]) {
+              if (!currentEdges[source].has(target)) {
+                let li = document.createElement("li");
+                li.appendChild(document.createTextNode(source.toString() + " -> " + target.toString()));
+                ulOutages.appendChild(li);
+              }
+            }
+          }
         }
       }
 
@@ -471,11 +565,35 @@ function drawGrid(canvas) {
 
 function getCurrentNetworkIndex() {
   let time = parseFloat(rangeAnimation.value);
+  if (times == null) {
+    return null;
+  }
+
+  if (time <= times[0]) {
+    return 0;
+  }
+
+  if (time >= times[times.length - 1]) {
+    return times.length - 1;
+  }
+
+  // TODO: Improve this from a linear search
   let index = 0;
   while (times[index] < time) {
     ++index;
   }
-  return index;
+
+  if (times[index] == time) {
+    return index;
+  }
+
+  // If we reach here ts[index - 1] <= t < ts[index]
+  let lambda = (time - times[index - 1]) / (times[index] - times[index - 1]);
+  if (lambda < 0.5) {
+    return index - 1;
+  } else {
+    return index;
+  }
 }
 
 function resetView() {
@@ -907,7 +1025,7 @@ function drawHoverArcsWithMultipleInterpolation(networks, t, ts, zs) {
   }
 
   // If we reach here ts[index - 1] <= t < ts[index]
-  let lambda = (t - ts[index - 1]) / (ts[index] - ts[index - 1]); 
+  let lambda = (t - ts[index - 1]) / (ts[index] - ts[index - 1]);
   drawHoverArcsWithInterpolation(networks[index - 1], networks[index], zs[index - 1], zs[index], lambda);
 }
 
@@ -924,15 +1042,28 @@ dropReader.onload = function() {
     let animationData = data.animation;
     let mapData = data.map;
 
-    times = Array(animationData.length);
-    heights = Array(animationData.length);
-    networks = Array(animationData.length);
-    geodesics = Array(animationData.length);
+    times = new Array(animationData.length);
+    heights = new Array(animationData.length);
+    networks = new Array(animationData.length);
+    geodesics = new Array(animationData.length);
     for (let i = 0; i < animationData.length; ++i) {
       times[i] = animationData[i].time;
       heights[i] = animationData[i].height;
       networks[i] = animationData[i].network;
       geodesics[i] = animationData[i].geodesics;
+    }
+
+    if (animationData.length != 0) {
+      let nVertices = networks[0].vertices.length;
+      networkEdges = new Array(nVertices);
+      for (let i = 0; i < nVertices; ++i) {
+        networkEdges[i] = new Set();
+      }
+    }
+    for (let i = 0; i < animationData.length; ++i) {
+      for (let edge of networks[i].edges) {
+        networkEdges[edge.source].add(edge.target);
+      }
     }
 
     if (heights.length != 0 && heights[0].length != divisions) {
@@ -951,9 +1082,9 @@ dropReader.onload = function() {
     buttonPlay.innerText = "Play";
 
     if (times.length <= 1) {
-      divAnimationControls.style.display = 'none';
+      divAnimationControls.style.display = "none";
     } else {
-      divAnimationControls.style.display = 'block';
+      divAnimationControls.style.display = "block";
     }
 
     if (checkboxShowHoverGraph.checked) {
@@ -964,6 +1095,10 @@ dropReader.onload = function() {
     }
 
     setHeights();
+
+    currentNetworkIndex = getCurrentNetworkIndex();
+
+    // TODO: Clear out the list of outages
 
     canvasNeedsUpdate = true;
 
