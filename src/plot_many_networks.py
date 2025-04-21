@@ -1,16 +1,24 @@
+import time
 import os
+import pathlib
 import subprocess
 
-probes_path = '../data/animation_Europe/probes.csv'
-latencies_dir = '../data/animation_Europe/latencies_median/'
-for latencies_filename in os.listdir(latencies_dir):
-    latencies_path = os.path.join(latencies_dir, latencies_filename)
+esnet_dir = pathlib.PurePath('/', 'home', 'jasina', 'research', 'esnet', 'data')
+probes_path = esnet_dir / 'probes.csv'
+links = esnet_dir / 'links'
+for latencies_filename in sorted(os.listdir(links)):
+    latencies_path = os.path.join(links, latencies_filename)
+    name = time.strftime(
+        '%Y-%m-%d %H:%M',
+        time.localtime(int(os.path.splitext(latencies_filename)[0]) // 1000)
+    ) + '.png'
     subprocess.run([
         'python',
         'plot_network.py',
-        '-p', probes_path,
-        '-l', latencies_path,
-        '-e', '5',
+        '-p', str(probes_path),
+        '-l', str(latencies_path),
+        '-c', '500000',
+        '-e', '6',
         '-m',
-        '-o', os.path.join('networks_median', os.path.splitext(latencies_filename)[0] + '.png')
+        '-o', str(esnet_dir / 'images' / name)
     ])
