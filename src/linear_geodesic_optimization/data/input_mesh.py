@@ -70,6 +70,7 @@ def get_mesh(
     postprocessed: bool = False,
     z_0: typing.Optional[typing.List[np.float64]] = None,
     network_trim_radius: np.float64 = np.inf,
+    z_max = 0.25,
     z_hole = -0.5,
     mesh: typing.Optional[RectangleMesh] = None
 ) -> RectangleMesh:
@@ -107,12 +108,20 @@ def get_mesh(
         # Add a small amount of space around the convex hull
         # distances = np.maximum(distances - 0.15, 0.)
         distances = np.maximum(distances - 0.05, 0.)
+
+        # Subtract off the initialization
         z = z - np.array(z_0)
-        z = (z - np.amin(z[distances == 0.], initial=np.amin(z))) \
-            * np.exp(-1000 * distances**2)
-        z = z - np.amin(z)
-        z = z * 0.25 / np.amax(z)
-        # z = z * 0.15 / np.amax(z)
+
+        # Set the bottom of the non-flattened part of the manifold to be
+        # at height 0
+        z = (z - np.amin(z[distances == 0.], initial=np.amin(z)))
+
+        # Scale the surface vertically
+        # z = z * z_max / np.amax(z)
+        z = z * z_max * 40
+
+        # Flatten out the parts not in the convex hulls
+        z = (z - z_hole) * np.exp(-1000 * distances**2) + z_hole
 
     mesh.set_parameters(z)
     return mesh
