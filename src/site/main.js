@@ -46,8 +46,9 @@ let divisions = 10;
 // Globals tracking the manifold shape across time
 let times = null;
 let heights = null;
-let networks = null;
+let networkVertices = null;
 let networkEdges = null;
+let networkEdgesAll = null;
 let geodesics = null;
 
 // Globals tracking the animation state
@@ -354,7 +355,7 @@ let animate = function() {
 
     // Draw hover graphs if needed
     if (
-      networks != null && networks.length > 0
+      networkEdges != null && networkEdges.length > 0
     ) {
       if (checkboxShowHoverGraph.checked) {
         drawHoverGraph(currentNetworkIndex);
@@ -366,15 +367,13 @@ let animate = function() {
 
     // Draw the graph, geodesics, and outages onto the canvas
     if (
-      networks != null && networks.length > 0
+      networkEdges != null && networkEdges.length > 0
       && (checkboxShowGraph.checked || checkboxShowGeodesics.checked || checkboxShowOutages.checked)
     ) {
       ctx.save();
 
       // First, figure out the current network
-      let network = networks[currentNetworkIndex];
-      let vertices = network.vertices;
-      let edges = network.edges;
+      let edges = networkEdges[currentNetworkIndex];
       let geodesicsCurrent = geodesics[currentNetworkIndex];
 
       // Draw the edges
@@ -382,8 +381,8 @@ let animate = function() {
         // Borders first
         for (let indexEdge = 0; indexEdge < edges.length; ++indexEdge) {
           let edge = edges[indexEdge];
-          let source = vertexToCanvasCoordinates(ctx, vertices[edge.source]);
-          let target = vertexToCanvasCoordinates(ctx, vertices[edge.target]);
+          let source = vertexToCanvasCoordinates(ctx, networkVertices[edge.source].coordinates);
+          let target = vertexToCanvasCoordinates(ctx, networkVertices[edge.target].coordinates);
 
           // Draw the edge
           ctx.beginPath();
@@ -396,8 +395,8 @@ let animate = function() {
         // Then the actual edges
         for (let indexEdge = 0; indexEdge < edges.length; ++indexEdge) {
           let edge = edges[indexEdge];
-          let source = vertexToCanvasCoordinates(ctx, vertices[edge.source]);
-          let target = vertexToCanvasCoordinates(ctx, vertices[edge.target]);
+          let source = vertexToCanvasCoordinates(ctx, networkVertices[edge.source].coordinates);
+          let target = vertexToCanvasCoordinates(ctx, networkVertices[edge.target].coordinates);
 
           // Draw the edge
           ctx.beginPath();
@@ -429,22 +428,22 @@ let animate = function() {
 
       // Deal with outages
       if (checkboxShowOutages.checked) {
-        let currentEdges = new Array(network.vertices.length);
-        for (let source = 0; source < network.vertices.length; ++source) {
+        let currentEdges = new Array(networkVertices.length);
+        for (let source = 0; source < networkVertices.length; ++source) {
           currentEdges[source] = new Set();
         }
-        for (let edge of network.edges) {
+        for (let edge of edges) {
           currentEdges[edge.source].add(edge.target);
         }
 
         // Draw the outages (on top!)
         if (Math.floor(2 * (Date.now() / 1000) * OUTAGE_BLINK_RATE) % 2 == 0) {
           // Borders first
-          for (let source = 0; source < network.vertices.length; ++source) {
-            for (let target of networkEdges[source]) {
+          for (let source = 0; source < networkVertices.length; ++source) {
+            for (let target of networkEdgesAll[source]) {
               if (!currentEdges[source].has(target)) {
-                let coordinatesSource = vertexToCanvasCoordinates(ctx, vertices[source]);
-                let coordinatesTarget = vertexToCanvasCoordinates(ctx, vertices[target]);
+                let coordinatesSource = vertexToCanvasCoordinates(ctx, networkVertices[source].coordinates);
+                let coordinatesTarget = vertexToCanvasCoordinates(ctx, networkVertices[target].coordinates);
                 // Draw the edge
                 ctx.beginPath();
                 ctx.moveTo(coordinatesSource[0], coordinatesSource[1]);
@@ -456,11 +455,11 @@ let animate = function() {
             }
           }
           // Then the actual edges
-          for (let source = 0; source < network.vertices.length; ++source) {
-            for (let target of networkEdges[source]) {
+          for (let source = 0; source < networkVertices.length; ++source) {
+            for (let target of networkEdgesAll[source]) {
               if (!currentEdges[source].has(target)) {
-                let coordinatesSource = vertexToCanvasCoordinates(ctx, vertices[source]);
-                let coordinatesTarget = vertexToCanvasCoordinates(ctx, vertices[target]);
+                let coordinatesSource = vertexToCanvasCoordinates(ctx, networkVertices[source].coordinates);
+                let coordinatesTarget = vertexToCanvasCoordinates(ctx, networkVertices[target].coordinates);
                 // Draw the edge
                 ctx.beginPath();
                 ctx.moveTo(coordinatesSource[0], coordinatesSource[1]);
@@ -481,11 +480,11 @@ let animate = function() {
           }
 
           // Add the new edges
-          for (let source = 0; source < network.vertices.length; ++source) {
-            for (let target of networkEdges[source]) {
+          for (let source = 0; source < networkVertices.length; ++source) {
+            for (let target of networkEdgesAll[source]) {
               if (!currentEdges[source].has(target)) {
                 let li = document.createElement("li");
-                li.appendChild(document.createTextNode(source.toString() + " -> " + target.toString()));
+                li.appendChild(document.createTextNode(networkVertices[source].label + " ↔ " + networkVertices[target].label));
                 ulOutages.appendChild(li);
               }
             }
@@ -495,16 +494,16 @@ let animate = function() {
 
       // Draw the vertices
       // Borders first
-      for (let indexVertex = 0; indexVertex < vertices.length; ++indexVertex) {
-        let vertex = vertexToCanvasCoordinates(ctx, vertices[indexVertex]);
+      for (let indexVertex = 0; indexVertex < networkVertices.length; ++indexVertex) {
+        let vertex = vertexToCanvasCoordinates(ctx, networkVertices[indexVertex].coordinates);
         ctx.fillStyle = "#000000";
         ctx.beginPath();
         ctx.arc(vertex[0], vertex[1], VERTEX_RADIUS + 5, 0, 2 * Math.PI);
         ctx.fill();
       }
       // Then the actual vertices
-      for (let indexVertex = 0; indexVertex < vertices.length; ++indexVertex) {
-        let vertex = vertexToCanvasCoordinates(ctx, vertices[indexVertex]);
+      for (let indexVertex = 0; indexVertex < networkVertices.length; ++indexVertex) {
+        let vertex = vertexToCanvasCoordinates(ctx, networkVertices[indexVertex].coordinates);
         ctx.fillStyle = COLOR_VERTEX;
         ctx.beginPath();
         ctx.arc(vertex[0], vertex[1], VERTEX_RADIUS, 0, 2 * Math.PI);
@@ -843,8 +842,8 @@ function drawHoverGraph(index) {
   clearHoverGraph();
 
   let vertexArray = [];
-  for (let vertex of networks[index].vertices) {
-    let vertexGlobal = vertexToGlobalCoordinates(vertex);
+  for (let vertex of networkVertices) {
+    let vertexGlobal = vertexToGlobalCoordinates(vertex.coordinates);
     vertexArray.push(vertexGlobal[1], HEIGHT_HOVER_GRAPH, vertexGlobal[0]);
   }
   let pointsGeometry = new THREE.BufferGeometry();
@@ -855,10 +854,10 @@ function drawHoverGraph(index) {
   scene.add(points);
   hoverVerticesDrawn.push(points);
 
-  for (let edge of networks[index].edges) {
+  for (let edge of networkEdges[index]) {
     let edgeArray = [];
-    let source = vertexToGlobalCoordinates(networks[index].vertices[edge.source]);
-    let target = vertexToGlobalCoordinates(networks[index].vertices[edge.target]);
+    let source = vertexToGlobalCoordinates(networkVertices[edge.source].coordinates);
+    let target = vertexToGlobalCoordinates(networkVertices[edge.target].coordinates);
     edgeArray.push(source[1], HEIGHT_HOVER_GRAPH, source[0]);
     edgeArray.push(target[1], HEIGHT_HOVER_GRAPH, target[0]);
 
@@ -906,15 +905,15 @@ function getMeshHeightAtCoordinates(vertex, zs) {
   ) * planeWidth;
 }
 
-function drawHoverArcsWithInterpolation(networkLeft, networkRight, zLeft, zRight, lambda) {
+function drawHoverArcsWithInterpolation(networkVertices, networkEdgesLeft, networkEdgesRight, zLeft, zRight, lambda) {
   clearHoverArcs();
 
   // Compute edge weights
   let edgeWeightsLeft = new Array();
-  for (const vertex of networkLeft.vertices) {
+  for (const vertex of networkVertices) {
     edgeWeightsLeft.push(new Map());
   }
-  for (const edge of networkLeft.edges) {
+  for (const edge of networkEdgesLeft) {
     let source = edge.source;
     let target = edge.target;
 
@@ -922,10 +921,10 @@ function drawHoverArcsWithInterpolation(networkLeft, networkRight, zLeft, zRight
   }
 
   let edgeWeights = new Array();
-  for (let vertex of networkLeft.vertices) {
+  for (let vertex of networkVertices) {
     edgeWeights.push(new Map());
   }
-  for (let edge of networkRight.edges) {
+  for (let edge of networkEdgesRight) {
     let source = edge.source;
     let target = edge.target;
 
@@ -935,7 +934,7 @@ function drawHoverArcsWithInterpolation(networkLeft, networkRight, zLeft, zRight
         edgeWeights[source].set(target, (2. * lambda - 1.) * edge.throughput);
     }
   }
-  for (let edge of networkLeft.edges) {
+  for (let edge of networkEdgesLeft) {
     let source = edge.source;
     let target = edge.target;
 
@@ -945,9 +944,9 @@ function drawHoverArcsWithInterpolation(networkLeft, networkRight, zLeft, zRight
   }
 
   // Compute network coordinates
-  let coordinates = new Array(networkLeft.vertices.length);
+  let coordinates = new Array(networkVertices.length);
   for (let i = 0; i < coordinates.length; ++i) {
-    let vertex = networkLeft.vertices[i];
+    let vertex = networkVertices[i].coordinates;
 
     let coordinatesXY = vertexToGlobalCoordinates(vertex);
 
@@ -998,18 +997,18 @@ function drawHoverArcsWithInterpolation(networkLeft, networkRight, zLeft, zRight
   }
 }
 
-function drawHoverArcsWithMultipleInterpolation(networks, t, ts, zs) {
+function drawHoverArcsWithMultipleInterpolation(networkVertices, networkEdges, t, ts, zs) {
   if (ts == null) {
     return;
   }
 
   if (t <= ts[0]) {
-    drawHoverArcsWithInterpolation(networks[0], networks[0], zs[0], zs[0], 0.);
+    drawHoverArcsWithInterpolation(networkVertices, networkEdges[0], networkEdges[0], zs[0], zs[0], 0.);
     return;
   }
 
   if (t >= ts[ts.length - 1]) {
-    drawHoverArcsWithInterpolation(networks[ts.length - 1], networks[ts.length - 1], zs[ts.length - 1], zs[ts.length - 1], 0.);
+    drawHoverArcsWithInterpolation(networkVertices, networkEdges[ts.length - 1], networkEdges[ts.length - 1], zs[ts.length - 1], zs[ts.length - 1], 0.);
     return;
   }
 
@@ -1020,18 +1019,18 @@ function drawHoverArcsWithMultipleInterpolation(networks, t, ts, zs) {
   }
 
   if (ts[index] == t) {
-    drawHoverArcsWithInterpolation(networks[index], networks[index], zs[index], zs[index], 0.);
+    drawHoverArcsWithInterpolation(networkVertices, networkEdges[index], networkEdges[index], zs[index], zs[index], 0.);
     return index;
   }
 
   // If we reach here ts[index - 1] <= t < ts[index]
   let lambda = (t - ts[index - 1]) / (ts[index] - ts[index - 1]);
-  drawHoverArcsWithInterpolation(networks[index - 1], networks[index], zs[index - 1], zs[index], lambda);
+  drawHoverArcsWithInterpolation(networkVertices, networkEdges[index - 1], networkEdges[index], zs[index - 1], zs[index], lambda);
 }
 
 function drawHoverArcs() {
   if (times != null) {
-    drawHoverArcsWithMultipleInterpolation(networks, rangeAnimation.value, times, heights);
+    drawHoverArcsWithMultipleInterpolation(networkVertices, networkEdges, rangeAnimation.value, times, heights);
   }
 }
 
@@ -1042,27 +1041,28 @@ dropReader.onload = function() {
     let animationData = data.animation;
     let mapData = data.map;
 
+    networkVertices = data.nodes;
     times = new Array(animationData.length);
     heights = new Array(animationData.length);
-    networks = new Array(animationData.length);
+    networkEdges = new Array(animationData.length);
     geodesics = new Array(animationData.length);
     for (let i = 0; i < animationData.length; ++i) {
       times[i] = animationData[i].time;
       heights[i] = animationData[i].height;
-      networks[i] = animationData[i].network;
+      networkEdges[i] = animationData[i].edges;
       geodesics[i] = animationData[i].geodesics;
     }
 
     if (animationData.length != 0) {
-      let nVertices = networks[0].vertices.length;
-      networkEdges = new Array(nVertices);
+      let nVertices = networkVertices.length;
+      networkEdgesAll = new Array(nVertices);
       for (let i = 0; i < nVertices; ++i) {
-        networkEdges[i] = new Set();
+        networkEdgesAll[i] = new Set();
       }
     }
     for (let i = 0; i < animationData.length; ++i) {
-      for (let edge of networks[i].edges) {
-        networkEdges[edge.source].add(edge.target);
+      for (let edge of networkEdges[i]) {
+        networkEdgesAll[edge.source].add(edge.target);
       }
     }
 

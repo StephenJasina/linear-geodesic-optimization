@@ -4,8 +4,8 @@ import json
 import os
 import pathlib
 import shutil
-import time
-import typing
+import sys
+import traceback
 import warnings
 
 import networkx as nx
@@ -21,7 +21,7 @@ from linear_geodesic_optimization.optimization import optimization
 warnings.simplefilter('error')
 
 directory_data = pathlib.PurePath('..', 'data')
-directory_outputs = pathlib.PurePath('..', 'outputs', 'geodesics')
+directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet')
 
 def main(
     *,  # All parameters are keyword only
@@ -57,7 +57,7 @@ def main(
             epsilon=latency_threshold,
             clustering_distance=clustering_distance,
             ricci_curvature_alpha=ricci_curvature_alpha,
-            ricci_curvature_weight_label='throughput'
+            # ricci_curvature_weight_label='throughput'
         )
     else:
         raise ValueError('Need either a graphml file or two csv files as input')
@@ -79,7 +79,7 @@ def main(
     parameters = {
         'filename_probes': str(filename_probes) if filename_probes is not None else None,
         'filename_links':str(filename_links) if filename_links is not None else None,
-        'filename_graphml':str(filename_links) if filename_links is not None else None,
+        'filename_graphml':str(filename_graphml) if filename_graphml is not None else None,
         'epsilon': float(latency_threshold) if latency_threshold is not None else None,
         'clustering_distance': float(clustering_distance) if clustering_distance is not None else None,
         'should_remove_TIVs': False, # TODO: Pass this as a parameter?
@@ -91,7 +91,7 @@ def main(
         'height': int(height),
         'mesh_scale': float(mesh_scale),
         'coordinates_scale': float(coordinates_scale),
-        'network_trim_radius': float(network_trim_radius),
+        'network_trim_radius': float(network_trim_radius) if network_trim_radius is not None else None,
     }
 
     with open(directory_output / 'parameters.json', 'w') as file_parameters:
@@ -149,65 +149,57 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    # directory_links = pathlib.PurePath('toy', 'three_clusters', 'throughputs')
+    directory_links = pathlib.PurePath('esnet', 'links')
+    filenames_links = list(sorted(
+        directory_links / filename
+        for filename in sorted(os.listdir(directory_data / directory_links))
+    ))[21:35]
+    # directory_links = pathlib.PurePath('toy', 'esnet', 'outage', 'links')
     # filenames_links = list(sorted(
     #     directory_links / filename
-    #     for filename in os.listdir(directory_data / directory_links)
-    # ))
+    #     for filename in sorted(os.listdir(directory_data / directory_links))
+    # )) * 4
+    count = len(filenames_links)
 
-    # count = len(filenames_links)
-
+    filenames_probes = [
+        pathlib.PurePath('esnet', 'probes.csv')
+    ] * count
     # filenames_probes = [
-    #     pathlib.PurePath('toy', 'three_clusters', 'probes.csv'),
+    #     pathlib.PurePath('toy', 'esnet', 'outage', 'probes.csv')
     # ] * count
 
-    directory_graphml = pathlib.PurePath('ipv4', 'graph_US')
-    # filenames_graphml = [
-    #     directory_graphml / filename
-    #     for filename in os.listdir(directory_data / directory_graphml)
-    # ]
-    filenames_graphml = [
-        directory_graphml / 'graph10.graphml',
-        directory_graphml / 'graph22.graphml',
-    ]
-    count = len(filenames_graphml)
+    filenames_graphml = [None] * count
 
-    filenames_links = [None] * count
-    filenames_probes = [None] * count
-
-    latency_thresholds = [0] * count
+    latency_thresholds = [10] * count
     clustering_distances = [None] * count
 
     lambdas_curvature = [1.] * count
     lambdas_smooth = [0.0002] * count
-    ricci_curvature_alphas = [0.9999] * count
+    ricci_curvature_alphas = [0.] * count
     initial_radii = [20.] * count
     sides = [50] * count
-    mesh_scales = np.array([1.] * count)
-    coordinates_scales = np.array([0.8] * count)
+    mesh_scales = [1.] * count
+    coordinates_scales = [0.8] * count
 
-    network_trim_radii = 0.2 * mesh_scales
-
-    directories_output = [
-        directory_outputs / 'graph_US' \
-            / f'{lambda_curvature}_{lambda_smooth}_{initial_radius}_{width}_{height}_{mesh_scale}' \
-            / filename_graphml.stem
-        for filename_graphml, lambda_curvature, lambda_smooth, initial_radius, width, height, mesh_scale \
-            in zip(filenames_graphml, lambdas_curvature, lambdas_smooth, initial_radii, sides, sides, mesh_scales)
+    network_trim_radii = [
+        # 0.2 * mesh_scale
+        None
+        for mesh_scale in mesh_scales
     ]
 
-    maxiters = [1000] * count
+    directories_output = [
+        directory_outputs
+            / filename_links.stem
+            / f'{latency_threshold}_{lambda_smooth}_{width}_{height}'
+        for index, (filename_probes, filename_links, filename_graphml, lambda_smooth, latency_threshold, initial_radius, width, height, mesh_scale) \
+            in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
+    ]
 
-    arguments = list(zip(
-        filenames_probes, filenames_links,
-        latency_thresholds, clustering_distances, ricci_curvature_alphas,
-        lambdas_curvature, lambdas_smooth,
-        initial_radii, sides, mesh_scales, coordinates_scales, network_trim_radii,
-        directories_output, maxiters,
-    ))
+    maxiters = [2000] * count
+
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses
-    with concurrent.futures.ProcessPoolExecutor(9) as executor:
+    with concurrent.futures.ProcessPoolExecutor(14) as executor:
         futures = []
         for (
             filename_probes, filename_links, filename_graphml,
@@ -241,4 +233,9 @@ if __name__ == '__main__':
                 maxiter = maxiter,
             )
             futures.append(future)
-        concurrent.futures.wait(futures)
+        futures = concurrent.futures.wait(futures, return_when = 'FIRST_EXCEPTION')
+        for future in futures.done:
+            try:
+                future.result()
+            except Exception as exc:
+                print(traceback.format_exc())
