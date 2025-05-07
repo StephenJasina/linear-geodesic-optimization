@@ -1,4 +1,4 @@
-"""File containing utility go generate a graphml file."""
+"""File containing utility to generate a graphml file."""
 
 import argparse
 import csv
