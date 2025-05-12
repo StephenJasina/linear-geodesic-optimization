@@ -1,7 +1,6 @@
 import typing
 
 import networkx as nx
-import matplotlib.pyplot as plt
 
 
 def compute_triangles(graph: nx.Graph, weight: str = 'rtt') \
