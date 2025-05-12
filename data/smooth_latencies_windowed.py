@@ -1,59 +1,79 @@
 import csv
+import enum
 import itertools
 import os
+import pathlib
 import sys
 
 import numpy as np
 
-sys.path.append(os.path.join('..', 'src'))
+sys.path.append(str(pathlib.PurePath('..', 'src')))
 from linear_geodesic_optimization.data import utility
 
 
-data_directory = os.path.join('animation_Europe')
-probes_file_path = os.path.join(data_directory, 'probes.csv')
-latencies_input_directory = os.path.join(data_directory, 'latencies')
-threshold = 5.
+data_directory = pathlib.PurePath('esnet')
+probes_file_path = data_directory / 'probes.csv'
+links_input_directory = data_directory / 'links'
+threshold = 10
 window = 2.
-latencies_output_directory = os.path.join(data_directory, f'latencies_windowed_{window}')
+links_output_directory = data_directory / 'links_windowed' / f'{threshold}'
 
+def smooth_windowed(zs, window_center, window_lower, window_upper):
+    """
+    Smooth a single time series of data.
 
-def smooth_windowed(z, window_center, window_lower, window_upper):
-    z = list(z)
-    if not z:
-        return []
+    The idea is that for particular threshold (window_center), we don't
+    want the z values to oscillate above and below that value due to
+    random instability. So we only allow the time series to cross the
+    threshold value when it is sufficiently low (window_lower) or
+    sufficiently high (window_upper).
+    """
 
-    z_smooth = []
-    # Store whether the previous value of z was labeled as being below
-    # the window center
-    z_state = None
-    for z_current in z:
-        if z_current is None:
-            z_state = None
-            z_smooth.append(None)
-        else:
-            if z_state is None:
-                if z_current <= window_center:
-                    z_state = True
-                    z_smooth.append(window_lower)
-                else:
-                    z_state = False
-                    z_smooth.append(window_upper)
-            elif z_state:
-                if z_current < window_upper:
-                    z_smooth.append(window_lower)
-                else:
-                    z_state = False
-                    z_smooth.append(window_upper)
+    # Essentially do a 3-state DFA
+    State = enum.Enum('State', [('UNKNOWN', 0), ('LOW', 1), ('HIGH', 2)])
+    state = State.UNKNOWN
+
+    zs_smooth = []
+    for z in zs:
+        if z is None:
+            # This represents a gap in the data. No smoothing needed
+            zs_smooth.append(None)
+            state = State.UNKNOWN
+        elif state == State.UNKNOWN:
+            # If this is the first point in the series (or first point
+            # after a gap), just add the point and set the state
+            if z <= window_center:
+                zs_smooth.append(min(z, window_lower))
+                state = State.LOW
             else:
-                if z_current <= window_lower:
-                    z_state = True
-                    z_smooth.append(window_lower)
-                else:
-                    z_smooth.append(window_upper)
+                zs_smooth.append(max(z, window_upper))
+                state = State.HIGH
+        elif state == State.LOW:
+            # If we're on a run of values we believe to be below the
+            # threshold, only change states if the value exceeds the
+            # upper edge of the window
+            if z <= window_upper:
+                zs_smooth.append(min(z, window_lower))
+            else:
+                zs_smooth.append(max(z, window_upper))
+                state = State.HIGH
+        else:
+            # We have state == State.HIGH
+            # If we're on a run of values we believe to be above the
+            # threshold, only change states if the value is under the
+            # lower edge of the window
+            if z <= window_lower:
+                zs_smooth.append(min(z, window_lower))
+                state = State.LOW
+            else:
+                zs_smooth.append(max(z, window_upper))
 
-    return z_smooth
+    return zs_smooth
 
 # Read the inputs
+
+# For probes, we need a map from probe ids to lat-long pairs (for the
+# purpose of computing GCLs)
 probes_dict = {}
 with open(probes_file_path) as f:
     reader = csv.DictReader(f)
@@ -63,62 +83,60 @@ with open(probes_file_path) as f:
             float(row['longitude'])
         )
 
-latencies_filenames = list(sorted(os.listdir(latencies_input_directory)))
-latencies_input_file_paths = [
-    os.path.join(latencies_input_directory, latencies_filename)
-    for latencies_filename in latencies_filenames
+links_filenames = list(sorted(os.listdir(links_input_directory)))
+links_input_file_paths = [
+    links_input_directory / links_filename
+    for links_filename in links_filenames
 ]
 edges = set()
-latencies = []
-for latencies_input_file_path in latencies_input_file_paths:
-    print(f'reading {latencies_input_file_path}')
-    with open(latencies_input_file_path, 'r') as f:
-        latencies_dict = {}
+headers = set()
+links = []
+for links_input_file_path in links_input_file_paths:
+    print(f'reading {links_input_file_path}')
+    with open(links_input_file_path, 'r') as f:
+        link_dict = {}
         reader = csv.DictReader(f)
+        headers = headers.union(reader.fieldnames)
         for row in reader:
-            if not row['rtt']:
-                continue
             edge = (row['source_id'], row['target_id'])
-            if edge[0] not in probes_dict or edge[1] not in probes_dict:
-                continue
             edges.add(edge)
-            latencies_dict[edge] = float(row['rtt'])
-        latencies.append(latencies_dict)
+            link_dict[edge] = row
+        links.append(link_dict)
 edges = list(sorted(edges))
+# For debugging purposes, make sure that source_id and target_id are the
+# first two columns
+headers.remove('source_id')
+headers.remove('target_id')
+headers = ['source_id', 'target_id'] + list(sorted(headers))
 
 # Smooth
 for edge in edges:
     print(f'smoothing {edge}')
-    z = [
-        latency_dict[edge] if edge in latency_dict else None
-        for latency_dict in latencies
+    zs = [
+        float(link_dict[edge]['rtt']) if edge in link_dict and link_dict[edge]['rtt'] else None
+        for link_dict in links
     ]
     gcl = utility.get_GCL(probes_dict[edge[0]], probes_dict[edge[1]])
-    z_smooth = smooth_windowed(
-        z,
+    zs_smooth = smooth_windowed(
+        zs,
         gcl + threshold,
-        max(gcl + threshold - window / 2., 0.),
+        max(gcl + threshold - window / 2., 0.), # Should not have a negative RTT
         gcl + threshold + window / 2.
     )
-    for rtt_smoothed, latency_dict in zip(z_smooth, latencies):
-        latency_dict[edge] = rtt_smoothed
+    for z_smooth, link_dict in zip(zs_smooth, links):
+        if edge in link_dict:
+            link_dict[edge]['rtt'] = z_smooth
 
 # Write the outputs
-os.makedirs(latencies_output_directory, exist_ok=True)
+os.makedirs(links_output_directory, exist_ok=True)
 latencies_output_file_paths = [
-    os.path.join(latencies_output_directory, latencies_filename)
-    for latencies_filename in latencies_filenames
+    links_output_directory / latencies_filename
+    for latencies_filename in links_filenames
 ]
-for latencies_output_file_path, latencies_dict in zip(latencies_output_file_paths, latencies):
+for latencies_output_file_path, link_dict in zip(latencies_output_file_paths, links):
     print(f'writing {latencies_output_file_path}')
     with open(latencies_output_file_path, 'w') as f:
-        writer = csv.DictWriter(f, ['source_id', 'target_id', 'rtt'])
+        writer = csv.DictWriter(f, headers)
         writer.writeheader()
         for edge in edges:
-            rtt = latencies_dict[edge]
-            if rtt is not None:
-                writer.writerow({
-                    'source_id': edge[0],
-                    'target_id': edge[1],
-                    'rtt': rtt
-                })
+            writer.writerow(link_dict[edge])
