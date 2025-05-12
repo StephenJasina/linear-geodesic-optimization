@@ -8,6 +8,8 @@ import numpy.typing as npt
 from linear_geodesic_optimization.mesh.mesh import Mesh
 from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
+# from linear_geodesic_optimization.optimization.curvature_loss_gridded \
+#     import Computer as CurvatureLoss
 from linear_geodesic_optimization.optimization.curvature_loss \
     import Computer as CurvatureLoss
 from linear_geodesic_optimization.optimization.laplacian \
@@ -65,7 +67,7 @@ class Computer:
             mesh, network_vertices,
             network_edges, network_curvatures,
             epsilon, self.curvature,
-            edge_weights
+            # edge_weights
         )
         self.smooth_loss = SmoothLoss(mesh, self.laplacian, self.curvature)
 

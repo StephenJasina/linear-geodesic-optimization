@@ -21,7 +21,7 @@ from linear_geodesic_optimization.optimization import optimization
 warnings.simplefilter('error')
 
 directory_data = pathlib.PurePath('..', 'data')
-directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet')
+directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet_windowed')
 
 def main(
     *,  # All parameters are keyword only
@@ -149,11 +149,12 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    directory_links = pathlib.PurePath('esnet', 'links')
+    epsilon = 7
+    directory_links = pathlib.PurePath('esnet', 'links_windowed', f'{epsilon}')
     filenames_links = list(sorted(
         directory_links / filename
         for filename in sorted(os.listdir(directory_data / directory_links))
-    ))[21:35]
+    ))
     # directory_links = pathlib.PurePath('toy', 'esnet', 'outage', 'links')
     # filenames_links = list(sorted(
     #     directory_links / filename
@@ -170,8 +171,8 @@ if __name__ == '__main__':
 
     filenames_graphml = [None] * count
 
-    latency_thresholds = [10] * count
-    clustering_distances = [None] * count
+    latency_thresholds = [epsilon] * count
+    clustering_distances = [500000] * count
 
     lambdas_curvature = [1.] * count
     lambdas_smooth = [0.0002] * count
@@ -199,7 +200,7 @@ if __name__ == '__main__':
 
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses
-    with concurrent.futures.ProcessPoolExecutor(14) as executor:
+    with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = []
         for (
             filename_probes, filename_links, filename_graphml,

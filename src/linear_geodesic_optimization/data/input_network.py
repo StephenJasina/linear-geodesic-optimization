@@ -60,6 +60,8 @@ def get_base_graph(probes, links, directed=False):
             city=probe['city'], country=probe['country'],
             lat=lat, long=long
         )
+
+        # TODO: Make this more robust (in the case longitude "wraps around")
         lat_min = min(lat_min, lat)
         lat_max = max(lat_max, lat)
         long_min = min(long_min, long)
@@ -133,8 +135,8 @@ def get_base_graph(probes, links, directed=False):
 
     # TODO: Make this less aggressive
     # Delete nodes with inconsistent geolocation
-    for node in minimize_id_removal(rtt_violation_list):
-        graph.remove_node(node)
+    # for node in minimize_id_removal(rtt_violation_list):
+    #     graph.remove_node(node)
 
     return graph
 
