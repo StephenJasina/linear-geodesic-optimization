@@ -7,48 +7,36 @@ import typing
 import numpy as np
 import potpourri3d as pp3d
 
-from linear_geodesic_optimization.data import input_mesh, utility
+from linear_geodesic_optimization.data import utility
 from linear_geodesic_optimization.graph import convex_hull
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 # Outputs are stored in `directory_outputs` / <output number> / `subdirectory_output`
-# directory_outputs = pathlib.PurePath('..', 'outputs', 'throughputs', 'elbow', 'removed_AG', '0.001_20.0_30_30_1.0')
-# directory_outputs = pathlib.PurePath('..', 'outputs', 'throughputs', 'elbow', 'removed_FL', '0.0004_20.0_30_30_1.0')
-# subdirectory_output = pathlib.PurePath()
+# epsilon = 7
+# directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet_windowed')
+# subdirectory_output = pathlib.PurePath(f'{epsilon}_0.0002_50_50')
 # directories_outputs = list(sorted([
-#     (float(directory_output), directory_outputs / directory_output / subdirectory_output)
-#     for directory_output in os.listdir(directory_outputs)
+#     (
+#         # float(directory_output),
+#         i,
+#         directory_outputs / directory_output / subdirectory_output,
+#     )
+#     for i, directory_output in enumerate(sorted(os.listdir(directory_outputs)))
 #     if os.path.isdir(directory_outputs / directory_output)
 # ]))
-# directories_outputs = [(0., directory_outputs)]
 
-# For ESnet data
-epsilon = 10
-directories_outputs = [
-    (0., pathlib.PurePath('..', 'outputs', 'esnet', '1742868000000', f'{epsilon}_0.0002_50_50')),
-    (1., pathlib.PurePath('..', 'outputs', 'esnet', '1742871600000', f'{epsilon}_0.0002_50_50')),
-    (2., pathlib.PurePath('..', 'outputs', 'esnet', '1742875200000', f'{epsilon}_0.0002_50_50')),
-    (3., pathlib.PurePath('..', 'outputs', 'esnet', '1742878800000', f'{epsilon}_0.0002_50_50')),
-    (4., pathlib.PurePath('..', 'outputs', 'esnet', '1742882400000', f'{epsilon}_0.0002_50_50')),
-    (5., pathlib.PurePath('..', 'outputs', 'esnet', '1742886000000', f'{epsilon}_0.0002_50_50')),
-    (6., pathlib.PurePath('..', 'outputs', 'esnet', '1742889600000', f'{epsilon}_0.0002_50_50')),
-    (7., pathlib.PurePath('..', 'outputs', 'esnet', '1742893200000', f'{epsilon}_0.0002_50_50')),
-    (8., pathlib.PurePath('..', 'outputs', 'esnet', '1742896800000', f'{epsilon}_0.0002_50_50')),
-    (9., pathlib.PurePath('..', 'outputs', 'esnet', '1742900400000', f'{epsilon}_0.0002_50_50')),
-    (10., pathlib.PurePath('..', 'outputs', 'esnet', '1742904000000', f'{epsilon}_0.0002_50_50')),
-    (11., pathlib.PurePath('..', 'outputs', 'esnet', '1742907600000', f'{epsilon}_0.0002_50_50')),
-    (12., pathlib.PurePath('..', 'outputs', 'esnet', '1742911200000', f'{epsilon}_0.0002_50_50')),
-    (13., pathlib.PurePath('..', 'outputs', 'esnet', '1742914800000', f'{epsilon}_0.0002_50_50')),
-]
-
-# For ESnet toy data
+# directory_outputs = pathlib.PurePath('..', 'outputs', 'MASCOTS')
 # directories_outputs = [
-#     (0., pathlib.PurePath('..', 'outputs', 'toy', 'esnet', '0', '0.001_30_30')),
-#     (1., pathlib.PurePath('..', 'outputs', 'toy', 'esnet', '1', '0.001_30_30')),
-#     (2., pathlib.PurePath('..', 'outputs', 'toy', 'esnet', '2', '0.001_30_30')),
+#     (0., directory_outputs / 'graph_US' / '0.0002_20.0_50_50_1.0' / 'graph22')
 # ]
+# path_output_collated = directory_outputs / 'output_US_22.json'
+directory_outputs = pathlib.PurePath('..', 'outputs', 'MASCOTS')
+directories_outputs = [
+    (0., directory_outputs / 'elbow' / '0.0002_20.0_30_30_1.0')
+]
+path_output_collated = directory_outputs / 'output_elbow.json'
 
-path_output_collated = pathlib.PurePath('..', 'outputs', 'esnet', f'output_geodesics_{epsilon}.json')
+height_scale = 0.15
 
 def get_nearest_vertex(mesh: RectangleMesh, vertex):
     """
@@ -60,6 +48,10 @@ def get_nearest_vertex(mesh: RectangleMesh, vertex):
 def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges):
     mesh_scale = mesh.get_scale()
     n_vertices = len(network_vertices)
+    for network_vertex in network_vertices:
+        # TODO: Make a check here so that duplicate vertices are not
+        # added
+        mesh.add_vertex_at_coordinates(network_vertex)
 
     path_solver = pp3d.EdgeFlipGeodesicSolver(
         mesh.get_coordinates(),
@@ -193,9 +185,8 @@ network_vertices = mesh.map_coordinates_to_support(np.array(node_coordinates), c
 animation_vertices = [
     {
         'label': '/'.join(sorted(node_representatives_to_labels[label])),
-        'coordinates': [vertex[0] / mesh_scale, vertex[1] / mesh_scale],
+        'coordinates': [network_vertex[0] / mesh_scale, network_vertex[1] / mesh_scale],
     }
-    # [network_vertex[0] / mesh_scale, network_vertex[1] / mesh_scale]
     for network_vertex, label in zip(network_vertices, node_indices_to_labels)
     for vertex in (get_nearest_vertex(mesh, network_vertex),)
 ]
@@ -242,10 +233,16 @@ for z, hull in zip(zs, convex_hulls):
     z_min = min(z_min, np.min(z[hull]))
 
 animation_data = []
+geodesic_clusters = [
+    ('A', 'B', 'C', 'D'),
+    ('E', 'F', 'G', 'H'),
+    ('I', 'J', 'K', 'L'),
+]
+# geodesic_clusters = []
 for t, z, distance_to_convex_hull, edges in zip(times, zs, distances_to_convex_hulls, animation_edges):
     distance_to_convex_hull = np.maximum(distance_to_convex_hull - 0.05, 0.)
     z = z - z_min
-    z = z / (z_max - z_min) * 0.25  # TODO: Finalize height scaling
+    z = z / (z_max - z_min) * height_scale  # TODO: Finalize height scaling
     z = (z + 0.05) * np.exp(-1000 * distance_to_convex_hull**2) - 0.05
 
     mesh.set_parameters(z)
@@ -262,10 +259,13 @@ for t, z, distance_to_convex_hull, edges in zip(times, zs, distances_to_convex_h
             #     ('SAND', 'ATLA'),
             #     ('SAND', 'WASH'),
             # ]
-            for (node_source, node_target) in itertools.product(
-                ['SALT', 'SAND', 'SACR', 'DENV', 'SEAT'],
-                ['WASH', 'NEWY32AOA', 'CHIC', 'ATLA', 'HOUS']
-            )
+            # for (node_source, node_target) in itertools.product(
+            #     ['SALT', 'SAND', 'SACR', 'DENV', 'SEAT'],
+            #     ['WASH', 'NEWY32AOA', 'CHIC', 'ATLA', 'HOUS']
+            # )
+            for cluster_source, cluster_target in itertools.combinations(geodesic_clusters, 2)
+            for node_source in cluster_source
+            for node_target in cluster_target
         ]
     )
 

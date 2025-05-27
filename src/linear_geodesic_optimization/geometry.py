@@ -29,3 +29,21 @@ def distance_to_line_segment(
         # In this case, `r` is closest to one of the endpoints of the
         # segment
         return np.sqrt(min(ru @ ru, rv @ rv))
+
+def is_in_triangle(
+    a: npt.NDArray[np.float64],
+    b: npt.NDArray[np.float64],
+    c: npt.NDArray[np.float64],
+    p: npt.NDArray[np.float64]
+):
+    """
+    Determine whether p is in the triangle abc.
+
+    This function assumes inputs are 2-D coordinates.
+    """
+    def cross2d(x, y):
+        return x[..., 0] * y[..., 1] - x[..., 1] * y[..., 0]
+    ab = cross2d(b - a, p - a)
+    bc = cross2d(c - b, p - b)
+    ca = cross2d(a - c, p - c)
+    return (ab >= 0 and bc >= 0 and ca >= 0) or (ab <= 0 and bc <= 0 and ca <= 0)

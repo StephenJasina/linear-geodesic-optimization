@@ -66,6 +66,7 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
     def _get_topology(self) -> dcelmesh.Mesh:
         topology = dcelmesh.Mesh(self._width * self._height)
+        vertices = list(topology.vertices())
 
         # Add faces cell-by-cell
         for i in range(self._width - 1):
@@ -76,10 +77,10 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
                 v11 = (i + 1) * self._height + j + 1  # Top-right
 
                 # Add the top-left triangle
-                topology.add_face([v00, v11, v01])
+                topology.add_face([vertices[v00], vertices[v11], vertices[v01]])
 
                 # Add the bottom-right triangle
-                topology.add_face([v00, v10, v11])
+                topology.add_face([vertices[v00], vertices[v10], vertices[v11]])
 
         return topology
 
@@ -264,13 +265,13 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
             for fat_edge in fat_edges
             for vertex in fat_edge
         )
-        excluded_vertex_indices = [
-            vertex.index
+        excluded_vertices = [
+            vertex
             for vertex in self._topology.vertices()
             if vertex.index not in included_vertex_indices
         ]
-        for index in excluded_vertex_indices:
-            self._topology.remove_vertex(index)
+        for vertex in excluded_vertices:
+            self._topology.remove_vertex(vertex)
 
         mapping = self._topology.reindex()
         self._coordinates = self._coordinates[mapping, :]
@@ -283,3 +284,29 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
 
     def get_trim_mapping(self) -> typing.List[int]:
         return self._trim_mapping
+
+    def add_vertex_at_coordinates(self, p) -> dcelmesh.Mesh.Vertex:
+        # TODO: Consider when a vertex already exists or lies on an edge
+        for face in self._topology.faces():
+            va, vb, vc = face.vertices()
+            a = self._coordinates[va.index]
+            b = self._coordinates[vb.index]
+            c = self._coordinates[vc.index]
+            if geometry.is_in_triangle(a, b, c, p):
+                # Treat a as the origin and use Graham-Schmidt
+                ba = np.append(b - a, [self._parameters[vb.index] - self._parameters[va.index]], 0)
+                ba = ba / np.linalg.norm(ba[:2])
+                ca = np.append(c - a, [self._parameters[vc.index] - self._parameters[va.index]], 0)
+                ca = ca - (ca[:2] @ ba[:2]) * ba
+                ca = ca / np.linalg.norm(ca[:2])
+                pa = p - a
+                lambda_b = pa @ ba[:2]
+                lambda_c = pa @ ca[:2]
+                z = lambda_b * ba[2] + lambda_c * ca[2] + self._parameters[va.index]
+
+                vertex = self._topology.add_vertex_into_face(face)
+                self._coordinates = np.append(self._coordinates, p.reshape((1, 2)), 0)
+                self._parameters = np.append(self._parameters, [z], 0)
+                self._partials = np.append(self._partials, [[0., 0., 1.]], 0)
+                return vertex
+        raise ValueError('Point does not lie inside mesh support')
