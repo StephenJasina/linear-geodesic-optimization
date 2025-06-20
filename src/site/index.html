@@ -10,7 +10,7 @@
   <body>
     <script type="module" src="main.js"></script>
 
-    <div id="gui">
+    <div id="gui" style="z-index: 100;">
       <div id="div-layers" class="gui-box">
         <div id="dropzone">
           <div id="drop-output" class="drop-box">Drop optimization output here</div>
@@ -31,7 +31,7 @@
         <input type="checkbox" id="show-graph" name="show-graph" checked>
         <label for="show-graph">Show graph</label><br>
 
-        <input type="checkbox" id="show-outages" name="show-outages" checked>
+        <input type="checkbox" id="show-outages" name="show-outages">
         <label for="show-outages">Show outages</label><br>
 
         <input type="checkbox" id="show-hover-graph" name="show-hover-graph">
@@ -64,11 +64,12 @@
         <li> Scroll to zoom </li>
         <li> <kbd class="key">Esc</kbd> to reset zoom </li>
       </ul>
-      <p style="padding: 10px;">Map tiles by <a href="http://stamen.com">Stamen Design</a>,
+      <!-- TODO: Fix citation -->
+      <!-- <p style="padding: 10px;">Map tiles by <a href="http://stamen.com">Stamen Design</a>,
         under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
         Data by <a href="http://openstreetmap.org">OpenStreetMap</a>,
         under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.
-      </p>
+      </p> -->
     </div>
   </body>
 </html>
