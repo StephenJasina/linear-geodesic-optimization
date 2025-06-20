@@ -8,35 +8,36 @@ import numpy as np
 import potpourri3d as pp3d
 
 from linear_geodesic_optimization.data import utility
-from linear_geodesic_optimization.graph import convex_hull
+from linear_geodesic_optimization.graph import boundary
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 # Outputs are stored in `directory_outputs` / <output number> / `subdirectory_output`
-# epsilon = 7
-# directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet_windowed')
-# subdirectory_output = pathlib.PurePath(f'{epsilon}_0.0002_50_50')
-# directories_outputs = list(sorted([
-#     (
-#         # float(directory_output),
-#         i,
-#         directory_outputs / directory_output / subdirectory_output,
-#     )
-#     for i, directory_output in enumerate(sorted(os.listdir(directory_outputs)))
-#     if os.path.isdir(directory_outputs / directory_output)
-# ]))
+epsilon = 10
+directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet_windowed')
+subdirectory_output = pathlib.PurePath(f'{epsilon}_0.0002_50_50')
+directories_outputs = list(sorted([
+    (
+        float(directory_output),
+        directory_outputs / directory_output / subdirectory_output,
+    )
+    for i, directory_output in enumerate(sorted(os.listdir(directory_outputs)))
+    if os.path.isdir(directory_outputs / directory_output)
+]))
+path_output_collated = directory_outputs / f'output_{epsilon}_border.json'
 
+# For MASCOTS submission
 # directory_outputs = pathlib.PurePath('..', 'outputs', 'MASCOTS')
 # directories_outputs = [
-#     (0., directory_outputs / 'graph_US' / '0.0002_20.0_50_50_1.0' / 'graph22')
+#     (0., directory_outputs / 'graph_US' / '0.0002_50_50' / 'graph16')
 # ]
-# path_output_collated = directory_outputs / 'output_US_22.json'
-directory_outputs = pathlib.PurePath('..', 'outputs', 'MASCOTS')
-directories_outputs = [
-    (0., directory_outputs / 'elbow' / '0.0002_20.0_30_30_1.0')
-]
-path_output_collated = directory_outputs / 'output_elbow.json'
+# path_output_collated = directory_outputs / 'output_US_16.json'
+# directory_outputs = pathlib.PurePath('..', 'outputs', 'MASCOTS')
+# directories_outputs = [
+#     (0., directory_outputs / 'elbow' / '0.0002_20.0_30_30_1.0')
+# ]
+# path_output_collated = directory_outputs / 'output_elbow.json'
 
-height_scale = 0.15
+height_scale = 0.20
 
 def get_nearest_vertex(mesh: RectangleMesh, vertex):
     """
@@ -49,9 +50,9 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
     mesh_scale = mesh.get_scale()
     n_vertices = len(network_vertices)
     for network_vertex in network_vertices:
-        # TODO: Make a check here so that duplicate vertices are not
-        # added
-        mesh.add_vertex_at_coordinates(network_vertex)
+        if network_vertex.tolist() not in (mesh.get_coordinates()[:, :2].tolist()):
+            pass
+            # mesh.add_vertex_at_coordinates(network_vertex)
 
     path_solver = pp3d.EdgeFlipGeodesicSolver(
         mesh.get_coordinates(),
@@ -207,45 +208,66 @@ animation_edges = [
 ]
 
 # Compute the network convex hulls
-convex_hulls = []
-distances_to_convex_hulls = []
+# convex_hulls = []
+borders = []
+# distances_to_convex_hulls = []
+distances_to_borders = []
 for output in outputs:
     network = output['network']
     graph_data, vertex_data, edge_data = network
 
     network_edges = graph_data['edges']
-    network_convex_hulls = convex_hull.compute_connected_convex_hulls(network_vertices, network_edges)
-    distances_to_convex_hulls.append(np.array([
-        convex_hull.distance_to_convex_hulls(
+    # network_convex_hulls = boundary.compute_connected_convex_hulls(network_vertices, network_edges)
+    network_border = boundary.compute_border(network_vertices, network_edges)
+    # distances_to_convex_hulls.append(np.array([
+    #     boundary.distance_to_convex_hulls(
+    #         np.array(vertex_coordinate),
+    #         network_vertices,
+    #         network_convex_hulls
+    #     )
+    #     for vertex_coordinate in mesh.get_coordinates()[:, :2]
+    # ]))
+    distances_to_borders.append(np.array([
+        boundary.distance_to_border(
             np.array(vertex_coordinate),
-            network_vertices,
-            network_convex_hulls
+            network_border
         )
         for vertex_coordinate in mesh.get_coordinates()[:, :2]
     ]))
-    convex_hulls.append(np.where(distances_to_convex_hulls[-1] == 0.)[0])
+    # convex_hulls.append(np.where(distances_to_convex_hulls[-1] == 0.)[0])
+    borders.append(np.where(distances_to_borders[-1] == 0.)[0])
 
 # Determine values for vertical scaling
 z_max = -np.inf
 z_min = np.inf
-for z, hull in zip(zs, convex_hulls):
+# for z, hull in zip(zs, convex_hulls):
+for z, hull in zip(zs, borders):
     z_max = max(z_max, np.max(z[hull]))
     z_min = min(z_min, np.min(z[hull]))
 
 animation_data = []
-geodesic_clusters = [
-    ('A', 'B', 'C', 'D'),
-    ('E', 'F', 'G', 'H'),
-    ('I', 'J', 'K', 'L'),
-]
+# geodesic_clusters = [
+#     ('A', 'B', 'C', 'D'),
+#     ('E', 'F', 'G', 'H'),
+#     ('I', 'J', 'K', 'L'),
+# ]
 # geodesic_clusters = []
-for t, z, distance_to_convex_hull, edges in zip(times, zs, distances_to_convex_hulls, animation_edges):
-    distance_to_convex_hull = np.maximum(distance_to_convex_hull - 0.05, 0.)
+# for t, z, distance_to_convex_hull, edges in zip(times, zs, distances_to_convex_hulls, animation_edges):
+for t, z, distance_to_network, edges in zip(times, zs, distances_to_borders, animation_edges):
+    z_original = np.copy(z)
+
+    hull = [index for index in range(mesh.get_topology().n_vertices) if distance_to_network[index] < 0.025]
+    distance_to_network = np.maximum(distance_to_network - 0.025, 0.)
     z = z - z_min
-    z = z / (z_max - z_min) * height_scale  # TODO: Finalize height scaling
-    z = (z + 0.05) * np.exp(-1000 * distance_to_convex_hull**2) - 0.05
+    z = z / (z_max - z_min) * height_scale
+    z = (z + 0.05) * np.exp(-1000 * distance_to_network**2) - 0.05
+
+    antihull = [index for index in range(mesh.get_topology().n_vertices) if distance_to_network[index] >= 0.025]
+    z_geodesics = np.copy(z_original)
+    z_geodesics[antihull] = -1000.
 
     mesh.set_parameters(z)
+    mesh.trim_to_set(hull)
     geodesics = compute_geodesics_from_graph(
         mesh, network_vertices,
         [
@@ -253,21 +275,20 @@ for t, z, distance_to_convex_hull, edges in zip(times, zs, distances_to_convex_h
                 node_labels_to_indices[node_source],
                 node_labels_to_indices[node_target]
             )
-            # for (node_source, node_target) in [
-            #     ('SALT', 'CHIC'),
-            #     ('NEWY32AOA', 'LASV'),
-            #     ('SAND', 'ATLA'),
-            #     ('SAND', 'WASH'),
-            # ]
+            for (node_source, node_target) in [
+                ('CHIC', 'SALT'),
+            ]
             # for (node_source, node_target) in itertools.product(
             #     ['SALT', 'SAND', 'SACR', 'DENV', 'SEAT'],
             #     ['WASH', 'NEWY32AOA', 'CHIC', 'ATLA', 'HOUS']
             # )
-            for cluster_source, cluster_target in itertools.combinations(geodesic_clusters, 2)
-            for node_source in cluster_source
-            for node_target in cluster_target
+            # for cluster_source, cluster_target in itertools.combinations(geodesic_clusters, 2)
+            # for node_source in cluster_source
+            # for node_target in cluster_target
         ]
     )
+    mesh.remove_added_vertices()
+    mesh.restore_removed_vertices()
 
     animation_data.append({
         'time': t,

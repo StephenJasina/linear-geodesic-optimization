@@ -4,7 +4,7 @@ import typing
 
 import numpy as np
 
-from linear_geodesic_optimization.graph import convex_hull
+from linear_geodesic_optimization.graph import boundary
 from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
@@ -94,11 +94,11 @@ def get_mesh(
         mesh.trim_to_graph(network_vertices, network_edges, network_trim_radius)
 
     if postprocessed:
-        network_convex_hulls = convex_hull.compute_connected_convex_hulls(
+        network_convex_hulls = boundary.compute_connected_convex_hulls(
             network_vertices, network_edges)
         vertices = mesh.get_coordinates()
         distances = np.array([
-            convex_hull.distance_to_convex_hulls(
+            boundary.distance_to_convex_hulls(
                 np.array(vertex_coordinate),
                 network_vertices,
                 network_convex_hulls

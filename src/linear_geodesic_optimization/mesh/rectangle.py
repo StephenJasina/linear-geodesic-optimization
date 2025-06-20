@@ -1,5 +1,6 @@
 """Module containing an implementation of a rectangluar mesh."""
 
+import itertools
 import typing
 
 import dcelmesh
@@ -265,6 +266,10 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
             for fat_edge in fat_edges
             for vertex in fat_edge
         )
+        self.trim_to_set(included_vertex_indices)
+
+    def trim_to_set(self, indices: typing.Iterable[int]):
+        included_vertex_indices = set(indices)
         excluded_vertices = [
             vertex
             for vertex in self._topology.vertices()
@@ -281,6 +286,14 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
             self._trim_mapping[index]
             for index in mapping
         ]
+
+    def restore_removed_vertices(self):
+        self._topology = self._get_topology()
+        self._coordinates = self._get_coordinates()
+        self._parameters = np.zeros(self._width * self._height)
+        self._partials: npt.NDArray[np.float64] = np.zeros((self._width * self._height, 3))
+        self._partials[:, 2] = 1.
+        self._trim_mapping = list(range(self._topology.n_vertices))
 
     def get_trim_mapping(self) -> typing.List[int]:
         return self._trim_mapping
@@ -310,3 +323,17 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
                 self._partials = np.append(self._partials, [[0., 0., 1.]], 0)
                 return vertex
         raise ValueError('Point does not lie inside mesh support')
+
+    def remove_added_vertices(self) -> None:
+        n_vertices = self._width * self._height
+        added_vertices = reversed(list(itertools.islice(
+            self._topology.vertices(),
+            n_vertices, None
+        )))
+        for vertex in added_vertices:
+            self._topology.remove_vertex_out_of_face(vertex)
+        self._topology.reindex()
+
+        self._coordinates = self._coordinates[:n_vertices,:]
+        self._parameters = self._parameters[:n_vertices]
+        self._partials = self._partials[:n_vertices,:]
