@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import networkx as nx
 import numpy as np
 
-from linear_geodesic_optimization.graph import convex_hull
+from linear_geodesic_optimization.graph import boundary
 from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization.curvature \
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
     network_vertices = mesh.map_coordinates_to_support(
         np.array(network_coordinates), coordinates_scale, bounding_box)
-    network_convex_hulls = convex_hull.compute_connected_convex_hulls(
+    network_convex_hulls = boundary.compute_connected_convex_hulls(
         network_vertices, network_edges)
     if leaveout_count > 0:
         rng = np.random.default_rng(leaveout_seed)
