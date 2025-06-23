@@ -208,8 +208,6 @@ checkboxShowHeights.onchange = setHeights;
 let checkboxShowMap = document.getElementById("show-map");
 checkboxShowMap.onchange = function() {
 	if (checkboxShowMap.checked) {
-		// TODO: Fix the bug where zooming out before checking the box
-		// causes the map to be drawn on a small part of the canvas
 		updateOLMap(olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
 	} else {
 		setCanvasZoom();
