@@ -572,5 +572,5 @@ def distance_to_border(
     return min([
         np.linalg.norm(point - project_to_line_segment(point, left, right))
         for polygon in border
-        for left, right in itertools.islice(itertools.cycle(itertools.pairwise(polygon)), len(polygon))
+        for left, right in itertools.islice(itertools.pairwise(itertools.cycle(polygon)), len(polygon))
     ])
