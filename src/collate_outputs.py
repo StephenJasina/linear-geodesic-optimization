@@ -2,6 +2,7 @@ import itertools
 import json
 import os
 import pathlib
+import sys
 import typing
 
 import numpy as np
@@ -12,7 +13,7 @@ from linear_geodesic_optimization.graph import boundary
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 # Outputs are stored in `directory_outputs` / <output number> / `subdirectory_output`
-epsilon = 10
+epsilon = 7
 directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet_windowed')
 subdirectory_output = pathlib.PurePath(f'{epsilon}_0.0002_50_50')
 directories_outputs = list(sorted([
@@ -23,19 +24,7 @@ directories_outputs = list(sorted([
     for i, directory_output in enumerate(sorted(os.listdir(directory_outputs)))
     if os.path.isdir(directory_outputs / directory_output)
 ]))
-path_output_collated = directory_outputs / f'output_{epsilon}_border.json'
-
-# For MASCOTS submission
-# directory_outputs = pathlib.PurePath('..', 'outputs', 'MASCOTS')
-# directories_outputs = [
-#     (0., directory_outputs / 'graph_US' / '0.0002_50_50' / 'graph16')
-# ]
-# path_output_collated = directory_outputs / 'output_US_16.json'
-# directory_outputs = pathlib.PurePath('..', 'outputs', 'MASCOTS')
-# directories_outputs = [
-#     (0., directory_outputs / 'elbow' / '0.0002_20.0_30_30_1.0')
-# ]
-# path_output_collated = directory_outputs / 'output_elbow.json'
+path_output_collated = directory_outputs / f'output_{epsilon}_single_geodesic.json'
 
 height_scale = 0.20
 
@@ -46,13 +35,21 @@ def get_nearest_vertex(mesh: RectangleMesh, vertex):
     nearest_vertex = mesh.get_coordinates()[mesh.nearest_vertex(vertex).index]
     return [nearest_vertex[0], nearest_vertex[1]]
 
-def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges):
+def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_index_pairs):
     mesh_scale = mesh.get_scale()
-    n_vertices = len(network_vertices)
-    for network_vertex in network_vertices:
+
+    network_indices = set()
+    bad_indices = set()
+    for (index_source, index_target) in geodesic_index_pairs:
+        network_indices.add(index_source)
+        network_indices.add(index_target)
+    for network_index in network_indices:
+        network_vertex = network_vertices[network_index]
         if network_vertex.tolist() not in (mesh.get_coordinates()[:, :2].tolist()):
-            pass
-            # mesh.add_vertex_at_coordinates(network_vertex)
+            try:
+                mesh.add_vertex_at_coordinates(network_vertex)
+            except ValueError:
+                bad_indices.add(network_index)
 
     path_solver = pp3d.EdgeFlipGeodesicSolver(
         mesh.get_coordinates(),
@@ -63,11 +60,15 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
     )
 
     geodesics = []
-    for (index_source, index_target) in network_edges:
+    for (index_source, index_target) in geodesic_index_pairs:
+        if index_source in bad_indices or index_target in bad_indices:
+            continue
+
         source = mesh.nearest_vertex(network_vertices[index_source]).index
         target = mesh.nearest_vertex(network_vertices[index_target]).index
+
         if source == target:
-            geodesics.append([(mesh.get_coordinates()[source] / mesh_scale)[:2].tolist()])
+            continue
         else:
             geodesic = path_solver.find_geodesic_path(source, target)
             geodesics.append((geodesic[:, :2] / mesh_scale).tolist())
@@ -207,26 +208,15 @@ animation_edges = [
     for (graph_data, vertex_data, edge_data) in (output['network'],)
 ]
 
-# Compute the network convex hulls
-# convex_hulls = []
+# Compute the network borders
 borders = []
-# distances_to_convex_hulls = []
 distances_to_borders = []
 for output in outputs:
     network = output['network']
     graph_data, vertex_data, edge_data = network
 
     network_edges = graph_data['edges']
-    # network_convex_hulls = boundary.compute_connected_convex_hulls(network_vertices, network_edges)
     network_border = boundary.compute_border(network_vertices, network_edges)
-    # distances_to_convex_hulls.append(np.array([
-    #     boundary.distance_to_convex_hulls(
-    #         np.array(vertex_coordinate),
-    #         network_vertices,
-    #         network_convex_hulls
-    #     )
-    #     for vertex_coordinate in mesh.get_coordinates()[:, :2]
-    # ]))
     distances_to_borders.append(np.array([
         boundary.distance_to_border(
             np.array(vertex_coordinate),
@@ -234,25 +224,113 @@ for output in outputs:
         )
         for vertex_coordinate in mesh.get_coordinates()[:, :2]
     ]))
-    # convex_hulls.append(np.where(distances_to_convex_hulls[-1] == 0.)[0])
     borders.append(np.where(distances_to_borders[-1] == 0.)[0])
 
 # Determine values for vertical scaling
 z_max = -np.inf
 z_min = np.inf
-# for z, hull in zip(zs, convex_hulls):
 for z, hull in zip(zs, borders):
     z_max = max(z_max, np.max(z[hull]))
     z_min = min(z_min, np.min(z[hull]))
 
-animation_data = []
-# geodesic_clusters = [
-#     ('A', 'B', 'C', 'D'),
-#     ('E', 'F', 'G', 'H'),
-#     ('I', 'J', 'K', 'L'),
+# rng = np.random.default_rng(0)
+# geodesic_label_pairs = []
+# for source in graph_data['labels']:
+#     for _ in range(5):
+#         target = rng.choice(graph_data['labels'])
+#         geodesic_label_pairs.append((source, target))
+# geodesic_label_color_pairs = [
+#     (('ALBQ', 'SALT'), [31, 119, 180]),
+#     (('ALBQ', 'SAND'), [31, 119, 180]),
+#     (('ALBQ', 'FNALGCC'), [31, 119, 180]),
+#     (('EQXDC4', 'WASH'), [31, 119, 180]),
+#     (('EQXDC4', 'SAND'), [31, 119, 180]),
+#     (('EQXDC4', 'FNALGCC'), [174, 199, 232]),
+#     (('ATLA', 'SAND'), [174, 199, 232]),
+#     (('LBNL50', 'LBNL59'), [174, 199, 232]),
+#     (('LBNL50', 'STAR'), [174, 199, 232]),
+#     (('LBNL59', 'SAND'), [255, 127, 14]),
+#     (('BOIS', 'EQXCH2'), [255, 127, 14]),
+#     (('BOIS', 'DENV'), [255, 127, 14]),
+#     (('BOIS', 'KANS'), [255, 127, 14]),
+#     (('BOIS', 'GA'), [255, 187, 120]),
+#     (('BOST', 'SAND'), [255, 187, 120]),
+#     (('CHAT', 'CHIC'), [255, 187, 120]),
+#     (('CHAT', 'SAND'), [255, 187, 120]),
+#     (('EQXCH2', 'LBNL50'), [44, 160, 44]),
+#     (('EQXCH2', 'STAR'), [44, 160, 44]),
+#     (('EQXCH2', 'INLEIL'), [44, 160, 44]),
+#     (('CHIC', 'NASH'), [44, 160, 44]),
+#     (('EQXCH2', 'ORNL1064'), [152, 223, 138]),
+#     (('EQXCH2', 'SACR'), [152, 223, 138]),
+#     (('CHIC', 'SALT'), [152, 223, 138]),
+#     (('EQXCH2', 'SAND'), [152, 223, 138]),
+#     (('CHIC', 'SEAT'), [214, 39, 40]),
+#     (('EQXCH2', 'FNALGCC'), [214, 39, 40]),
+#     (('DENV', 'LBNL50'), [214, 39, 40]),
+#     (('DENV', 'INLEIL'), [214, 39, 40]),
+#     (('DENV', 'LASV'), [255, 152, 150]),
+#     (('DENV', 'SACR'), [255, 152, 150]),
+#     (('DENV', 'SALT'), [255, 152, 150]),
+#     (('DENV', 'SAND'), [255, 152, 150]),
+#     (('DENV', 'SEAT'), [148, 103, 189]),
+#     (('DENV', 'FNALGCC'), [148, 103, 189]),
+#     (('FRIB', 'ORNL5600'), [148, 103, 189]),
+#     (('ELPA', 'GA'), [148, 103, 189]),
+#     (('ELPA', 'FNALGCC'), [197, 176, 213]),
+#     (('HOUS', 'SAND'), [197, 176, 213]),
+#     (('KANS', 'LBNL50'), [197, 176, 213]),
+#     (('KANS', 'SACR'), [197, 176, 213]),
+#     (('KANS', 'SALT'), [140, 86, 75]),
+#     (('KANS', 'SAND'), [140, 86, 75]),
+#     (('KANS', 'SEAT'), [140, 86, 75]),
+#     (('LASV', 'SAND'), [140, 86, 75]),
+#     (('ANL541B', 'LBNL50'), [196, 156, 148]),
+#     (('ANL541B', 'INLEIL'), [196, 156, 148]),
+#     (('ANL221', 'ANL541B'), [196, 156, 148]),
+#     (('ANL221', 'ORAU'), [196, 156, 148]),
+#     (('ANL221', 'FNALFCC'), [227, 119, 194]),
+#     (('LLNL', 'SAND'), [227, 119, 194]),
+#     (('LANLTA50', 'LBNL50'), [227, 119, 194]),
+#     (('LOSA', 'SAND'), [227, 119, 194]),
+#     (('SLAC50N', 'SLAC50S'), [247, 182, 210]),
+#     (('NASH', 'STAR'), [247, 182, 210]),
+#     (('NASH', 'SAND'), [247, 182, 210]),
+#     (('NEWY1118TH', 'NEWY32AOA'), [247, 182, 210]),
+#     (('NEWY32AOA', 'SAND'), [127, 127, 127]),
+#     (('ORAU', 'STAR'), [127, 127, 127]),
+#     (('ORNL1064', 'ORNL5600'), [127, 127, 127]),
+#     (('ORAU', 'SAND'), [127, 127, 127]),
+#     (('PANTEX', 'SAND'), [199, 199, 199]),
+#     (('SACR', 'STAR'), [199, 199, 199]),
+#     (('SACR', 'SAND'), [199, 199, 199]),
+#     (('SALT', 'STAR'), [199, 199, 199]),
+#     (('SALT', 'SAND'), [188, 189, 34]),
+#     (('GA', 'LBNL59'), [188, 189, 34]),
+#     (('SAND', 'STAR'), [188, 189, 34]),
+#     (('GA', 'LASV'), [188, 189, 34]),
+#     (('GA', 'LLNL'), [219, 219, 141]),
+#     (('SAND', 'WASH'), [219, 219, 141]),
+#     (('GA', 'SALT'), [219, 219, 141]),
+#     (('GA', 'SAND'), [219, 219, 141]),
+#     (('SAND', 'SEAT'), [23, 190, 207]),
+#     (('EQXSV5', 'SAND'), [23, 190, 207]),
+#     (('EQXSV5', 'FNALGCC'), [23, 190, 207]),
+#     (('BNL515', 'SAND'), [23, 190, 207]),
+#     (('BNL515', 'BNL725'), [158, 218, 229]),
+#     (('FNALGCC', 'LBNL59'), [158, 218, 229]),
+#     (('FNALGCC', 'SLAC50S'), [158, 218, 229]),
+#     (('FNALFCC', 'ORNL5600'), [158, 218, 229]),
+#     (('FORRESTAL', 'GERMANTOWN'), [158, 218, 229]),
 # ]
-# geodesic_clusters = []
-# for t, z, distance_to_convex_hull, edges in zip(times, zs, distances_to_convex_hulls, animation_edges):
+geodesic_label_color_pairs = [
+    # (('BOST', 'SACR'), [0, 0, 0]),
+    (('BOST', 'SEAT'), [0, 0, 0]),
+]
+geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
+edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
+
+animation_data = []
 for t, z, distance_to_network, edges in zip(times, zs, distances_to_borders, animation_edges):
     z_original = np.copy(z)
 
@@ -262,29 +340,20 @@ for t, z, distance_to_network, edges in zip(times, zs, distances_to_borders, ani
     z = z / (z_max - z_min) * height_scale
     z = (z + 0.05) * np.exp(-1000 * distance_to_network**2) - 0.05
 
-    antihull = [index for index in range(mesh.get_topology().n_vertices) if distance_to_network[index] >= 0.025]
-    z_geodesics = np.copy(z_original)
-    z_geodesics[antihull] = -1000.
-
     mesh.set_parameters(z)
     mesh.trim_to_set(hull)
     geodesics = compute_geodesics_from_graph(
         mesh, network_vertices,
+        network_edges,
         [
             (
                 node_labels_to_indices[node_source],
                 node_labels_to_indices[node_target]
             )
-            for (node_source, node_target) in [
-                ('CHIC', 'SALT'),
-            ]
-            # for (node_source, node_target) in itertools.product(
-            #     ['SALT', 'SAND', 'SACR', 'DENV', 'SEAT'],
-            #     ['WASH', 'NEWY32AOA', 'CHIC', 'ATLA', 'HOUS']
-            # )
-            # for cluster_source, cluster_target in itertools.combinations(geodesic_clusters, 2)
-            # for node_source in cluster_source
-            # for node_target in cluster_target
+            for (node_source, node_target) in geodesic_labels
+            # for (node_source, node_target) in [
+            #     ('CHIC', 'SALT'),
+            # ]
         ]
     )
     mesh.remove_added_vertices()
@@ -294,7 +363,8 @@ for t, z, distance_to_network, edges in zip(times, zs, distances_to_borders, ani
         'time': t,
         'height': z.reshape((width, height)).tolist(),
         'edges': edges,
-        'geodesics': geodesics
+        'geodesics': geodesics,
+        'edgeColors': edge_colors,
     })
 
 # Set the map data
