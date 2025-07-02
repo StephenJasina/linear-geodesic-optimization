@@ -1,10 +1,12 @@
 import { vertexToCanvasCoordinates } from "./utils";
 
 /**
+ * @param {CanvasRenderingContext2D} context
  * @param {Array<Array<Array<number>>>} geodesics
  * @param {number} geodesicsWidth
+ * @param {Array<Array<number>>} colors
  */
-export default function(context, geodesics, geodesicsWidth = 3) {
+export default function(context, geodesics, geodesicsWidth = 3, colors = null) {
 	context.save();
 
 	for (let index = 0; index < geodesics.length; ++index) {
@@ -12,7 +14,12 @@ export default function(context, geodesics, geodesicsWidth = 3) {
 		let vertex = vertexToCanvasCoordinates(context, geodesic[0]);
 		context.beginPath();
 		context.moveTo(vertex[0], vertex[1]);
-		context.strokeStyle = "#000000";
+		if (colors == null) {
+			context.strokeStyle = "#000000";
+		} else {
+			let color = colors[index];
+			context.strokeStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+		}
 		context.lineWidth = geodesicsWidth;
 		for (let i = 1; i < geodesic.length; ++i) {
 			vertex = vertexToCanvasCoordinates(context, geodesic[i]);

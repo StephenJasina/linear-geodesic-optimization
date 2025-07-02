@@ -28,6 +28,8 @@ import { default as drawEdges } from "./modules/layers/edges.js";
 import { default as drawGrid } from "./modules/layers/grid.js";
 import { default as drawGeodesics } from "./modules/layers/geodesics.js";
 import { resetPlaneHeights, setPlaneHeightsWithInterpolation } from "./modules/layers/heights.js";
+import { default as drawHeightChanges } from "./modules/layers/height_changes.js";
+import { default as drawOutages } from "./modules/layers/outages.js";
 import { default as drawVertices } from "./modules/layers/vertices.js";
 
 // Colors
@@ -59,10 +61,12 @@ let divisions = 10;
 // Globals tracking the manifold shape across time
 let times = null;
 let heights = null;
+let heightsEWMA = null;
 let networkVertices = null;
 let networkEdges = null;
 let networkEdgesAll = null;
 let geodesics = null;
+let edgeColors = null;
 
 // Globals tracking the animation state
 let isPlaying = false;
@@ -287,7 +291,7 @@ buttonPlay.onclick = function() {
 /**
  * Draw every layer above the base layer (i.e., excluding the map)
  */
-function drawLayers() {
+function drawLayers(time) {
 	// Figure out which canvas we're using
 	let context = null;
 	if (checkboxShowMap.checked) {
@@ -310,9 +314,8 @@ function drawLayers() {
 		networkEdges != null && networkEdges.length > 0
 		&& (checkboxShowGraph.checked || checkboxShowGeodesics.checked || checkboxShowOutages.checked)
 	) {
-		// First, figure out the current network
+		// First, figure out the edges of the current network
 		let edges = networkEdges[currentNetworkIndex];
-		let geodesicsCurrent = geodesics[currentNetworkIndex];
 
 		// Draw the edges
 		if (checkboxShowGraph.checked) {
@@ -321,80 +324,28 @@ function drawLayers() {
 
 		// Draw the geodesics
 		if (checkboxShowGeodesics.checked) {
-			drawGeodesics(context, geodesicsCurrent, GEODESICS_WIDTH);
+			drawGeodesics(context, geodesics[currentNetworkIndex], GEODESICS_WIDTH, edgeColors[currentNetworkIndex]);
 		}
 
 		// Deal with outages
-		context.save();
 		if (checkboxShowOutages.checked) {
-			let currentEdges = new Array(networkVertices.length);
-			for (let source = 0; source < networkVertices.length; ++source) {
-				currentEdges[source] = new Set();
-			}
-			for (let edge of edges) {
-				currentEdges[edge.source].add(edge.target);
-			}
-
-			// Draw the outages (on top!)
-			if (Math.floor(2 * (Date.now() / 1000) * OUTAGE_BLINK_RATE) % 2 == 0) {
-				// Borders first
-				for (let source = 0; source < networkVertices.length; ++source) {
-					for (let target of networkEdgesAll[source]) {
-						if (!currentEdges[source].has(target)) {
-							let coordinatesSource = vertexToCanvasCoordinates(context, networkVertices[source].coordinates);
-							let coordinatesTarget = vertexToCanvasCoordinates(context, networkVertices[target].coordinates);
-							// Draw the edge
-							context.beginPath();
-							context.moveTo(coordinatesSource[0], coordinatesSource[1]);
-							context.lineTo(coordinatesTarget[0], coordinatesTarget[1]);
-							context.strokeStyle = "#000000";
-							context.lineWidth = LINE_WIDTH + 5;
-							context.stroke();
-						}
-					}
-				}
-				// Then the actual edges
-				for (let source = 0; source < networkVertices.length; ++source) {
-					for (let target of networkEdgesAll[source]) {
-						if (!currentEdges[source].has(target)) {
-							let coordinatesSource = vertexToCanvasCoordinates(context, networkVertices[source].coordinates);
-							let coordinatesTarget = vertexToCanvasCoordinates(context, networkVertices[target].coordinates);
-							// Draw the edge
-							context.beginPath();
-							context.moveTo(coordinatesSource[0], coordinatesSource[1]);
-							context.lineTo(coordinatesTarget[0], coordinatesTarget[1]);
-							context.strokeStyle = COLOR_OUTAGE;
-							context.lineWidth = LINE_WIDTH;
-							context.stroke();
-						}
-					}
-				}
-			}
-
-			// Update the info box
-			if (currentNetworkIndex != previousNetworkIndex) {
-				// Clear out the list first
-				while (ulOutages.firstChild) {
-					ulOutages.removeChild(ulOutages.firstChild);
-				}
-
-				// Add the new edges
-				for (let source = 0; source < networkVertices.length; ++source) {
-					for (let target of networkEdgesAll[source]) {
-						if (!currentEdges[source].has(target)) {
-							let li = document.createElement("li");
-							li.appendChild(document.createTextNode(networkVertices[source].label + " ↔ " + networkVertices[target].label));
-							ulOutages.appendChild(li);
-						}
-					}
-				}
-			}
+			drawOutages(
+				context,
+				networkVertices, edges, networkEdgesAll,
+				currentNetworkIndex != previousNetworkIndex ? ulOutages : null
+			);
 		}
-		context.restore();
 
 		// Draw the vertices
 		drawVertices(context, networkVertices, VERTEX_RADIUS, COLOR_VERTEX);
+
+		drawHeightChanges(context, heights, heightsEWMA, time, times);
 	}
+
+	// // Draw the height changes
+	// if (true) {
+	// 	drawHeightChanges(context, heights, heightsEWMA, time, times);
+	// }
 
 	textureCurrent.needsUpdate = true;
 }
@@ -447,7 +398,7 @@ function animate() {
 			context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 		}
 
-		drawLayers();
+		drawLayers((times == null || times.length == 0) ? null : (times.length == 1 ? times[0] : rangeAnimation.value));
 
 		textureCurrent.needsUpdate = true;
 	}
@@ -830,8 +781,6 @@ function drawHoverArcs() {
 let dropReader = new FileReader();
 dropReader.onload = function() {
 	try {
-		// renderer.setAnimationLoop(null);
-
 		let data = JSON.parse(dropReader.result);
 		let animationData = data.animation;
 		let mapData = data.map;
@@ -841,11 +790,33 @@ dropReader.onload = function() {
 		heights = new Array(animationData.length);
 		networkEdges = new Array(animationData.length);
 		geodesics = new Array(animationData.length);
+		edgeColors = new Array(animationData.length);
 		for (let i = 0; i < animationData.length; ++i) {
 			times[i] = animationData[i].time;
 			heights[i] = animationData[i].height;
 			networkEdges[i] = animationData[i].edges;
 			geodesics[i] = animationData[i].geodesics;
+			edgeColors[i] = animationData[i].edgeColors;
+		}
+
+		animationDuration = (animationData.length - 1) / 2.;
+		heightsEWMA = new Array();
+		if (animationData.length != 0) {
+			let tRange = times[animationData.length - 1] - times[0]
+			heightsEWMA[0] = heights[0];
+			for (let i = 1; i < animationData.length; ++i) {
+				let realtimePassed = animationDuration * (times[i] - times[i - 1]) / tRange;
+				let alpha = 1 - Math.exp(-0.5 * realtimePassed);
+				let heightEWMA = new Array();
+				for (let j = 0; j < heightsEWMA[i - 1].length; ++j) {
+					let heightEWMARow = new Array();
+					for (let k = 0; k < heightsEWMA[i - 1][j].length; ++k) {
+						heightEWMARow.push(alpha * heights[i][j][k] + (1 - alpha) * heightsEWMA[i - 1][j][k]);
+					}
+					heightEWMA.push(heightEWMARow);
+				}
+				heightsEWMA.push(heightEWMA);
+			}
 		}
 
 		if (animationData.length != 0) {
@@ -873,7 +844,6 @@ dropReader.onload = function() {
 		rangeAnimation.max = animationData[animationData.length - 1].time;
 		rangeAnimation.step = (rangeAnimation.max - rangeAnimation.min) / 100;
 		rangeAnimation.value = rangeAnimation.min;
-		animationDuration = animationData.length / 2.;
 
 		buttonPlay.innerText = "Play";
 
@@ -927,16 +897,6 @@ function dragOver(evt) {
 	evt.stopPropagation();
 	evt.preventDefault();
 	evt.dataTransfer.dropEffect = "copy"; // Explicitly show this is a copy.
-}
-
-function vertexToCanvasCoordinates(ctx, vertex) {
-	let x = vertex[0];
-	let y = vertex[1];
-
-	return [
-		x * ctx.canvas.width,
-		(1 - y) * ctx.canvas.height,
-	];
 }
 
 function vertexToGlobalCoordinates(vertex) {
