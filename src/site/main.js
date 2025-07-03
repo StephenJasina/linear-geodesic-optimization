@@ -209,6 +209,11 @@ rangeAnimation.oninput = function() {
 }
 checkboxShowHeights.onchange = setHeights;
 
+let checkboxShowHeightChanges = document.getElementById("show-height-changes");
+checkboxShowHeightChanges.onchange = function() {
+	canvasNeedsUpdate = true;
+}
+
 let checkboxShowMap = document.getElementById("show-map");
 checkboxShowMap.onchange = function() {
 	if (checkboxShowMap.checked) {
@@ -339,13 +344,11 @@ function drawLayers(time) {
 		// Draw the vertices
 		drawVertices(context, networkVertices, VERTEX_RADIUS, COLOR_VERTEX);
 
-		drawHeightChanges(context, heights, heightsEWMA, time, times);
 	}
 
-	// // Draw the height changes
-	// if (true) {
-	// 	drawHeightChanges(context, heights, heightsEWMA, time, times);
-	// }
+	if (checkboxShowHeightChanges.checked) {
+		drawHeightChanges(context, heights, heightsEWMA, time, times);
+	}
 
 	textureCurrent.needsUpdate = true;
 }
