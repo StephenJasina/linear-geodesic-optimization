@@ -14,7 +14,7 @@ from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
 # Outputs are stored in `directory_outputs` / <output number> / `subdirectory_output`
 epsilon = 7
-directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet_windowed')
+directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet')
 subdirectory_output = pathlib.PurePath(f'{epsilon}_0.0002_50_50')
 directories_outputs = list(sorted([
     (
@@ -24,16 +24,9 @@ directories_outputs = list(sorted([
     for i, directory_output in enumerate(sorted(os.listdir(directory_outputs)))
     if os.path.isdir(directory_outputs / directory_output)
 ]))
-path_output_collated = directory_outputs / f'output_{epsilon}_single_geodesic.json'
+path_output_collated = directory_outputs / '..' / 'animations' / f'{epsilon}_BOST_SEAT.json'
 
 height_scale = 0.20
-
-def get_nearest_vertex(mesh: RectangleMesh, vertex):
-    """
-    Find the xy-coordinates of the nearest mesh point to some coordinates.
-    """
-    nearest_vertex = mesh.get_coordinates()[mesh.nearest_vertex(vertex).index]
-    return [nearest_vertex[0], nearest_vertex[1]]
 
 def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_index_pairs):
     mesh_scale = mesh.get_scale()
@@ -190,7 +183,6 @@ animation_vertices = [
         'coordinates': [network_vertex[0] / mesh_scale, network_vertex[1] / mesh_scale],
     }
     for network_vertex, label in zip(network_vertices, node_indices_to_labels)
-    for vertex in (get_nearest_vertex(mesh, network_vertex),)
 ]
 
 # Figure out the edges for the frontend
@@ -233,12 +225,6 @@ for z, hull in zip(zs, borders):
     z_max = max(z_max, np.max(z[hull]))
     z_min = min(z_min, np.min(z[hull]))
 
-# rng = np.random.default_rng(0)
-# geodesic_label_pairs = []
-# for source in graph_data['labels']:
-#     for _ in range(5):
-#         target = rng.choice(graph_data['labels'])
-#         geodesic_label_pairs.append((source, target))
 # geodesic_label_color_pairs = [
 #     (('ALBQ', 'SALT'), [31, 119, 180]),
 #     (('ALBQ', 'SAND'), [31, 119, 180]),
@@ -324,7 +310,6 @@ for z, hull in zip(zs, borders):
 #     (('FORRESTAL', 'GERMANTOWN'), [158, 218, 229]),
 # ]
 geodesic_label_color_pairs = [
-    # (('BOST', 'SACR'), [0, 0, 0]),
     (('BOST', 'SEAT'), [0, 0, 0]),
 ]
 geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
@@ -351,9 +336,6 @@ for t, z, distance_to_network, edges in zip(times, zs, distances_to_borders, ani
                 node_labels_to_indices[node_target]
             )
             for (node_source, node_target) in geodesic_labels
-            # for (node_source, node_target) in [
-            #     ('CHIC', 'SALT'),
-            # ]
         ]
     )
     mesh.remove_added_vertices()
