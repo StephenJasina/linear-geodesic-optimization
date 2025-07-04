@@ -1,5 +1,5 @@
-// GSAP
-import { gsap } from "gsap";
+// // GSAP
+// import { gsap } from "gsap";
 
 // OpenLayers
 import OLMap from "ol/Map.js";
@@ -48,15 +48,14 @@ let mapZoomFactor = 1.6;
 let canvasResolution = 1000;
 
 // Size of the plane
-let planeXMin = -10;
-let planeXMax = 10;
-let planeYMin = -10;
-let planeYMax = 10;
-let planeWidth = planeXMax - planeXMin;
-let planeHeight = planeYMax - planeYMin;
+let planeSideLength = 20.;
+let planeXMin = -planeSideLength / 2;
+let planeXMax = planeSideLength / 2;
+let planeYMin = -planeSideLength / 2;
+let planeYMax = planeSideLength / 2;
 
 // Number of points per side
-let divisions = 10;
+let divisions = 5;
 
 // Globals tracking the manifold shape across time
 let times = null;
@@ -82,11 +81,17 @@ let scene = new THREE.Scene();
 scene.background = new THREE.Color(COLOR_BACKGROUND);
 
 // Camera setup
-let frustrumScale = 64;
+// let frustumScale = 64;
+// let camera = new THREE.OrthographicCamera(
+// 	window.innerWidth / -frustumScale, window.innerWidth / frustumScale,
+// 	window.innerHeight / frustumScale, window.innerHeight / -frustumScale,
+// 	1, 1000
+// );
+let frustumScale = 2.5 * planeSideLength / Math.max(window.innerWidth, window.innerHeight);
 let camera = new THREE.OrthographicCamera(
-	window.innerWidth / -frustrumScale, window.innerWidth / frustrumScale,
-	window.innerHeight / frustrumScale, window.innerHeight / -frustrumScale,
-	0, 1000
+	-window.innerWidth / 2. * frustumScale, window.innerWidth / 2. * frustumScale,
+	window.innerHeight / 2. * frustumScale, -window.innerHeight / 2. * frustumScale,
+	1, 1000
 );
 camera.position.x = -15;
 camera.position.z = 20;
@@ -426,10 +431,11 @@ olMap.on("postrender", function(event) {
 });
 
 window.addEventListener("resize", function() {
-	camera.left = window.innerWidth / -frustrumScale;
-	camera.right = window.innerWidth / frustrumScale;
-	camera.top = window.innerHeight / frustrumScale;
-	camera.bottom = window.innerHeight / -frustrumScale;
+	frustumScale = 2.5 * planeSideLength / Math.max(window.innerWidth, window.innerHeight);
+	camera.left = -window.innerWidth / 2. * frustumScale;
+	camera.right = window.innerWidth / 2. * frustumScale;
+	camera.top = window.innerHeight / 2. * frustumScale;
+	camera.bottom = -window.innerHeight / 2. * frustumScale;
 	camera.updateProjectionMatrix();
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -469,30 +475,30 @@ function getCurrentNetworkIndex() {
 }
 
 function resetView() {
-	gsap.to(camera, {
-		duration: 1,
-		zoom: 1,
-		onUpdate: function() {
-			camera.updateProjectionMatrix();
-		}
-	});
-	gsap.to(controls.target, {
-		duration: 1,
-		x: 0,
-		y: 0,
-		z: 0,
-		onUpdate: function() {
-			controls.update();
-		}
-	});
-	gsap.to(plane.position, {
-		duration: 1,
-		y: 0,
-		onStart: function() {
-			plane.visible = true;
-		},
-		onUpdate: function() {}
-	});
+	// gsap.to(camera, {
+	// 	duration: 1,
+	// 	zoom: 1,
+	// 	onUpdate: function() {
+	// 		camera.updateProjectionMatrix();
+	// 	}
+	// });
+	// gsap.to(controls.target, {
+	// 	duration: 1,
+	// 	x: 0,
+	// 	y: 0,
+	// 	z: 0,
+	// 	onUpdate: function() {
+	// 		controls.update();
+	// 	}
+	// });
+	// gsap.to(plane.position, {
+	// 	duration: 1,
+	// 	y: 0,
+	// 	onStart: function() {
+	// 		plane.visible = true;
+	// 	},
+	// 	onUpdate: function() {}
+	// });
 
 	if (checkboxShowMap.checked) {
 		updateOLMap(olMap, canvasResolution, mapCenter, mapZoomFactor);
@@ -562,7 +568,7 @@ function wheelEvent(event) {
 
 function makePlane(divisions) {
 	let planeGeometry = new THREE.PlaneGeometry(
-		planeWidth, planeHeight,
+		planeSideLength, planeSideLength,
 		divisions - 1, divisions - 1
 	);
 	let plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -649,7 +655,7 @@ function getMeshHeightAtCoordinates(vertex, zs) {
 	return (
 		(1. - alpha) * ((1. - beta) * z00 + beta * z01)
 		+ alpha * ((1. - beta) * z10 + beta * z11)
-	) * planeWidth;
+	) * planeSideLength;
 }
 
 function drawHoverArcsWithInterpolation(networkVertices, networkEdgesLeft, networkEdgesRight, zLeft, zRight, lambda) {
@@ -903,7 +909,7 @@ function dragOver(evt) {
 }
 
 function vertexToGlobalCoordinates(vertex) {
-	let x = vertex[0] * planeWidth + planeXMin;
-	let y = vertex[1] * planeHeight + planeYMin;
+	let x = vertex[0] * planeSideLength + planeXMin;
+	let y = vertex[1] * planeSideLength + planeYMin;
 	return [x, y];
 }

@@ -21,7 +21,7 @@ function getView(resolution, mapCenter, mapZoomFactor) {
 	return new View({
 		projection: 'EPSG:3857',
 		center: fromLonLat(mapCenter),
-		resolution: CIRCUMFERENCE_EARTH / resolution / mapZoomFactor / window.devicePixelRatio
+		resolution: CIRCUMFERENCE_EARTH / resolution / mapZoomFactor
 	});
 }
 
@@ -36,9 +36,10 @@ function createOLMap(resolution, mapCenter, mapZoomFactor) {
 	let divMap = document.createElement("div");
 	divMap.id = "map";
 	divMap.class = "map-div";
-	divMap.style.width = (resolution / window.devicePixelRatio) + "px";
-	divMap.style.height = (resolution / window.devicePixelRatio) + "px";
+	divMap.style.width = resolution + "px";
+	divMap.style.height = resolution + "px";
 	// Hide and draw on the bottom
+	// TODO: Is this needed?
 	divMap.style.visibility = "hidden";
 	divMap.style.zIndex = 0;
 	document.body.appendChild(divMap);
@@ -84,8 +85,8 @@ function isReadyOLMap(olMap) {
  */
 function updateOLMap(olMap, resolution, mapCenter, mapZoomFactor) {
 	let divMap = olMap.getTargetElement();
-	divMap.style.width = (resolution / window.devicePixelRatio) + "px";
-	divMap.style.height = (resolution / window.devicePixelRatio) + "px";
+	divMap.style.width = resolution + "px";
+	divMap.style.height = resolution + "px";
 	olMap.updateSize();
 	olMap.setView(getView(resolution, mapCenter, mapZoomFactor));
 }
