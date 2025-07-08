@@ -350,6 +350,7 @@ for t, z, distance_to_network, edges in zip(times, zs, distances_to_borders, ani
     })
 
 # Set the map data
+# TODO: Make this more robust
 coordinates = np.array(node_coordinates)
 center_xy = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
 center = utility.inverse_mercator(*center_xy)
