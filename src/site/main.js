@@ -1,6 +1,3 @@
-// // GSAP
-// import { gsap } from "gsap";
-
 // OpenLayers
 import OLMap from "ol/Map.js";
 import TileLayer from "ol/layer/Tile";
@@ -81,27 +78,22 @@ let scene = new THREE.Scene();
 scene.background = new THREE.Color(COLOR_BACKGROUND);
 
 // Camera setup
-// let frustumScale = 64;
-// let camera = new THREE.OrthographicCamera(
-// 	window.innerWidth / -frustumScale, window.innerWidth / frustumScale,
-// 	window.innerHeight / frustumScale, window.innerHeight / -frustumScale,
-// 	1, 1000
-// );
 let frustumScale = 2.5 * planeSideLength / Math.max(window.innerWidth, window.innerHeight);
 let camera = new THREE.OrthographicCamera(
 	-window.innerWidth / 2. * frustumScale, window.innerWidth / 2. * frustumScale,
 	window.innerHeight / 2. * frustumScale, -window.innerHeight / 2. * frustumScale,
 	1, 1000
 );
-camera.position.x = -15;
-camera.position.z = 20;
-camera.position.y = 15;
+camera.position.x = -15.;  // North
+camera.position.y = 15.;   // Up
+camera.position.z = 20;    // East
 
 // Renderer setup
 let canvasMain = document.createElement("canvas");
 canvasMain.style.zIndex = 50;
 let renderer = new THREE.WebGLRenderer({
-	canvas: canvasMain
+	canvas: canvasMain,
+	preserveDrawingBuffer: true
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -186,6 +178,8 @@ controls.panSpeed = 1;
 controls.enableRotate = true;
 controls.enableZoom = true;
 controls.minZoom = 1;
+// controls.target = new THREE.Vector3(0., 0., camera.position.z);
+// controls.update();
 window.addEventListener("wheel", wheelEvent, true);
 
 // Interactivity with DOM elements
@@ -345,10 +339,11 @@ function drawLayers(time) {
 				currentNetworkIndex != previousNetworkIndex ? ulOutages : null
 			);
 		}
+	}
 
-		// Draw the vertices
+	// Draw the vertices
+	if (networkVertices != null) {
 		drawVertices(context, networkVertices, VERTEX_RADIUS, COLOR_VERTEX);
-
 	}
 
 	if (checkboxShowHeightChanges.checked) {
@@ -475,33 +470,21 @@ function getCurrentNetworkIndex() {
 }
 
 function resetView() {
-	// gsap.to(camera, {
-	// 	duration: 1,
-	// 	zoom: 1,
-	// 	onUpdate: function() {
-	// 		camera.updateProjectionMatrix();
-	// 	}
-	// });
-	// gsap.to(controls.target, {
-	// 	duration: 1,
-	// 	x: 0,
-	// 	y: 0,
-	// 	z: 0,
-	// 	onUpdate: function() {
-	// 		controls.update();
-	// 	}
-	// });
-	// gsap.to(plane.position, {
-	// 	duration: 1,
-	// 	y: 0,
-	// 	onStart: function() {
-	// 		plane.visible = true;
-	// 	},
-	// 	onUpdate: function() {}
-	// });
+	// Front view
+	camera.position.set(-15., 15., 0.)
+	camera.zoom = 2.;
+	controls.update();
+	camera.updateProjectionMatrix();
+
+	// Overhead view
+	// camera.position.set(-Number.EPSILON, 15., 0.);
+	// camera.zoom = 1.5;
+	// controls.update();
+	// camera.updateProjectionMatrix();
 
 	if (checkboxShowMap.checked) {
 		updateOLMap(olMap, canvasResolution, mapCenter, mapZoomFactor);
+		textureMap = makeTextureOLMap(olMap);
 	} else {
 		setCanvasZoom(canvasResolution);
 	}
@@ -509,9 +492,23 @@ function resetView() {
 	canvasNeedsUpdate = true;
 }
 
-document.addEventListener("keydown", function(ev) {
-	if (ev.key == "Escape") {
+document.addEventListener("keydown", function(event) {
+	if (event.key == "Escape") {
 		resetView();
+	} else if (event.key == "h") {
+		let guiDiv = document.getElementById("gui");
+		if (guiDiv.style.display != "none") {
+			guiDiv.style.display = "none";
+		} else {
+			guiDiv.style.display = "block";
+		}
+	} else if (event.key == "s") {
+		let anchor = document.createElement("a");
+		anchor.href = canvasMain.toDataURL();
+		anchor.download = "manifold.png";
+		anchor.click();
+	} else if (event.key == "g") {
+		buttonPlay.click();
 	}
 });
 
@@ -558,10 +555,10 @@ function wheelEvent(event) {
 
 	if (checkboxShowMap.checked) {
 		updateOLMap(olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
+		textureMap = makeTextureOLMap(olMap);
 	} else {
 		setCanvasZoom();
 	}
-	textureMap = makeTextureOLMap(olMap);
 
 	canvasNeedsUpdate = true;
 }
