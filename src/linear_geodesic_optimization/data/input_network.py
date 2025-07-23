@@ -135,8 +135,8 @@ def get_base_graph(probes, links, directed=False):
 
     # TODO: Make this less aggressive
     # Delete nodes with inconsistent geolocation
-    # for node in minimize_id_removal(rtt_violation_list):
-    #     graph.remove_node(node)
+    for node in minimize_id_removal(rtt_violation_list):
+        graph.remove_node(node)
 
     return graph
 
