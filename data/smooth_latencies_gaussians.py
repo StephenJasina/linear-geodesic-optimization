@@ -37,8 +37,6 @@ def get_changepoints(z, max_count=None):
     # At this point, dp_log_likelihood[i, j] is the log-likelihood of the
     # MLE of z[i:j].
 
-    dp_bics = []
-    dp_changepoints = []
     k_max = max_count if max_count is not None else n
     # Element (l, i) is the best BIC score with l changepoints and i
     # elements (that is, looking at z[:i])
