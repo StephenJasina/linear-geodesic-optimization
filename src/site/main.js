@@ -470,20 +470,22 @@ function getCurrentNetworkIndex() {
 }
 
 function resetView() {
+	// Reset the panning
+	controls.reset();
+
 	// Front view
 	camera.position.set(-15., 15., 0.)
-	camera.zoom = 2.;
-	controls.update();
-	camera.updateProjectionMatrix();
+	camera.zoom = 1.7;
 
 	// Overhead view
 	// camera.position.set(-Number.EPSILON, 15., 0.);
 	// camera.zoom = 1.5;
-	// controls.update();
-	// camera.updateProjectionMatrix();
+
+	controls.update();
+	camera.updateProjectionMatrix();
 
 	if (checkboxShowMap.checked) {
-		updateOLMap(olMap, canvasResolution, mapCenter, mapZoomFactor);
+		updateOLMap(olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
 		textureMap = makeTextureOLMap(olMap);
 	} else {
 		setCanvasZoom(canvasResolution);
