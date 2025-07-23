@@ -21,7 +21,7 @@ from linear_geodesic_optimization.optimization import optimization
 warnings.simplefilter('error')
 
 directory_data = pathlib.PurePath('..', 'data')
-directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet_windowed')
+directory_outputs = pathlib.PurePath('..', 'outputs', 'ripe', 'high_variation_US')
 
 def main(
     *,  # All parameters are keyword only
@@ -149,25 +149,17 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    epsilon = 7
-    directory_links = pathlib.PurePath('esnet', 'links_windowed', f'{epsilon}')
+    epsilon = 10
+    directory_links = pathlib.PurePath('ripe', 'high_variation_US', 'links_windowed', f'{epsilon}')
     filenames_links = list(sorted(
         directory_links / filename
         for filename in sorted(os.listdir(directory_data / directory_links))
     ))
-    # directory_links = pathlib.PurePath('toy', 'esnet', 'outage', 'links')
-    # filenames_links = list(sorted(
-    #     directory_links / filename
-    #     for filename in sorted(os.listdir(directory_data / directory_links))
-    # )) * 4
     count = len(filenames_links)
 
     filenames_probes = [
-        pathlib.PurePath('esnet', 'probes.csv')
+        pathlib.PurePath('ripe', 'high_variation_US', 'probes.csv')
     ] * count
-    # filenames_probes = [
-    #     pathlib.PurePath('toy', 'esnet', 'outage', 'probes.csv')
-    # ] * count
 
     filenames_graphml = [None] * count
 
@@ -200,7 +192,7 @@ if __name__ == '__main__':
 
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses
-    with concurrent.futures.ProcessPoolExecutor() as executor:
+    with concurrent.futures.ProcessPoolExecutor(7) as executor:
         futures = []
         for (
             filename_probes, filename_links, filename_graphml,
