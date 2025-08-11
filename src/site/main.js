@@ -1,10 +1,3 @@
-// OpenLayers
-import OLMap from "ol/Map.js";
-import TileLayer from "ol/layer/Tile";
-import View from "ol/View";
-import { fromLonLat } from "ol/proj";
-import { OSM } from "ol/source";
-
 // Three.js
 import * as THREE from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
@@ -20,23 +13,18 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { getCurvatureColor, getWeightedColor } from "./modules/colors.js";
 
 // Layers
-import { createOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMap, isReadyOLMap } from "./modules/layers/map.js";
+import { createOLMap, destroyOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMap } from "./modules/layers/map.js";
 import { default as drawEdges } from "./modules/layers/edges.js";
 import { default as drawGrid } from "./modules/layers/grid.js";
 import { default as drawGeodesics } from "./modules/layers/geodesics.js";
 import { resetPlaneHeights, setPlaneHeightsWithInterpolation } from "./modules/layers/heights.js";
 import { default as drawHeightChanges } from "./modules/layers/height_changes.js";
-import { default as drawOutages } from "./modules/layers/outages.js";
+import { drawOutages } from "./modules/layers/outages.js";
 import { default as drawVertices } from "./modules/layers/vertices.js";
 
 // Colors
 const COLOR_BACKGROUND = "#f3f3f3";
 const COLOR_PLANE = "#ffffff";
-const COLOR_VERTEX = "#4caf50";
-const COLOR_EDGE = "#000000";
-const COLOR_OUTAGE = "#00ff00";
-
-const OUTAGE_BLINK_RATE = 2.;
 
 // Globals tracking the world map
 let mapCenter = [0.0, 0.0];
@@ -51,6 +39,8 @@ let planeXMax = planeSideLength / 2;
 let planeYMin = -planeSideLength / 2;
 let planeYMax = planeSideLength / 2;
 
+let spacingBetweenPlanes = 0.45;
+
 // Number of points per side
 let divisions = 5;
 
@@ -61,6 +51,9 @@ let heightsEWMA = null;
 let networkVertices = null;
 let networkEdges = null;
 let networkEdgesAll = null;
+let networkEdgesAdded = null;
+let networkEdgesRemoved = null;
+let networkBoundaries = null;
 let geodesics = null;
 let edgeColors = null;
 
@@ -69,7 +62,6 @@ let isPlaying = false;
 let timeInitial = null;
 let dateTimeInitial = null;
 let animationDuration = null;
-let canvasNeedsUpdate = true;
 let currentNetworkIndex = null;
 let previousNetworkIndex = null;
 
@@ -97,34 +89,7 @@ let renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
-let pixelRatio = renderer.getPixelRatio();
 document.body.appendChild(renderer.domElement);
-
-// Material setup
-const canvasBlank = document.createElement("canvas");
-let contextBlank = canvasBlank.getContext("2d");
-contextBlank.canvas.width = canvasResolution;
-contextBlank.canvas.height = canvasResolution;
-contextBlank.fillStyle = COLOR_PLANE;
-contextBlank.fillRect(0, 0, contextBlank.canvas.width, contextBlank.canvas.height);
-let textureBlank = makeTextureBlank();
-
-let canvasMap = null;
-let textureMap = null;
-let olMap = createOLMap(canvasResolution, mapCenter, mapZoomFactor);
-
-let textureCurrent = textureBlank;
-
-let planeMaterial = new THREE.MeshStandardMaterial({
-	side: THREE.DoubleSide,
-	map: textureCurrent,
-	transparent: true,
-	opacity: 1.0,
-})
-
-// Geometry setup
-let plane = makePlane(divisions);
-scene.add(plane);
 
 // Lighting setup
 let lightDirectional = new THREE.DirectionalLight(0xffffff, 1.);
@@ -139,7 +104,7 @@ const SIZE_HOVER_VERTEX = 6;
 const SIZE_HOVER_EDGE = 4;
 
 const HOVER_VERTEX_MATERIAL = new THREE.PointsMaterial({
-	color: COLOR_VERTEX,
+	color: "#4caf50",
 	size: SIZE_HOVER_VERTEX,
 });
 
@@ -154,17 +119,12 @@ const SIZE_HOVER_ARC_EDGE = 4;
 const HOVER_ARC_DIVISIONS = 31;
 
 const HOVER_ARC_VERTEX_MATERIAL = new THREE.PointsMaterial({
-	color: COLOR_VERTEX,
+	color: "#4caf50",
 	size: SIZE_HOVER_VERTEX,
 });
 
 let hoverArcVerticesDrawn = [];
 let hoverArcEdgesDrawn = [];
-
-// Canvas drawing constants
-const VERTEX_RADIUS = 4;
-const LINE_WIDTH = 6;
-const GEODESICS_WIDTH = 3;
 
 // Renderers
 let renderPass = new RenderPass(scene, camera);
@@ -184,17 +144,21 @@ window.addEventListener("wheel", wheelEvent, true);
 
 // Interactivity with DOM elements
 
-let divDropOutput = document.getElementById("drop-output");
+// let divDropOutput = document.getElementById("div-drop-output");
+let divDropOutput = document.body;
 divDropOutput.addEventListener("dragover", dragOver, false);
 divDropOutput.addEventListener("drop", dropOutput, false);
 
 let rangeAnimation = document.getElementById("range-animation");
 let checkboxShowHeights = document.getElementById("show-heights");
 function setHeights() {
-	if (checkboxShowHeights.checked && heights != null) {
-		setPlaneHeightsWithInterpolation(plane, heights, rangeAnimation.value, times);
-	} else {
-		resetPlaneHeights(plane);
+	for (let i = 0; i < elementsByTab.length; ++i) {
+		let options = elementsByTab[i];
+		if (heights != null && options.showHeights) {
+			setPlaneHeightsWithInterpolation(options.plane, heights, rangeAnimation.value, times);
+		} else {
+			resetPlaneHeights(options.plane);
+		}
 	}
 }
 rangeAnimation.oninput = function() {
@@ -204,33 +168,36 @@ rangeAnimation.oninput = function() {
 	currentNetworkIndex = getCurrentNetworkIndex();
 	setHeights();
 
-	canvasNeedsUpdate = true;
+	for (let i = 0; i < elementsByTab.length; ++i) {
+		elementsByTab[i].canvasNeedsUpdate = true;
+	}
 }
-checkboxShowHeights.onchange = setHeights;
+checkboxShowHeights.onchange = function() {
+	elementsByTab[indexTabCurrent].showHeights = checkboxShowHeights.checked;
+	setHeights();
+}
 
 let checkboxShowHeightChanges = document.getElementById("show-height-changes");
 checkboxShowHeightChanges.onchange = function() {
-	canvasNeedsUpdate = true;
+	elementsByTab[indexTabCurrent].showHeightChanges = checkboxShowHeightChanges.checked;
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
 let checkboxShowMap = document.getElementById("show-map");
 checkboxShowMap.onchange = function() {
 	if (checkboxShowMap.checked) {
-		updateOLMap(olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
+		updateOLMap(elementsByTab[indexTabCurrent].olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
 	} else {
-		setCanvasZoom();
+		setCanvasZoom(elementsByTab[indexTabCurrent], getCurrentResolution());
 	}
-	canvasNeedsUpdate = true;
-}
-
-let checkboxShowGrid = document.getElementById("show-grid");
-checkboxShowGrid.onchange = function() {
-	canvasNeedsUpdate = true;
+	elementsByTab[indexTabCurrent].showMap = checkboxShowMap.checked;
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
 let checkboxShowGraph = document.getElementById("show-graph");
 checkboxShowGraph.onchange = function() {
-	canvasNeedsUpdate = true;
+	elementsByTab[indexTabCurrent].showGraph = checkboxShowGraph.checked;
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
 let checkboxShowOutages = document.getElementById("show-outages");
@@ -242,24 +209,27 @@ if (checkboxShowOutages.checked) {
 	divOutages.style.display = "none";
 }
 checkboxShowOutages.onchange = function() {
+	// TODO: show the div if _any_ of the tabs have this selected
 	if (checkboxShowOutages.checked) {
 		divOutages.style.display = "block";
 	} else {
 		divOutages.style.display = "none";
 	}
 
-	canvasNeedsUpdate = true;
+	elementsByTab[indexTabCurrent].showOutages = checkboxShowOutages.checked;
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
-let checkboxShowHoverGraph = document.getElementById("show-hover-graph");
-checkboxShowHoverGraph.onchange = function() {
-	if (checkboxShowHoverGraph.checked) {
+let checkboxShowHoveringGraph = document.getElementById("show-hover-graph");
+checkboxShowHoveringGraph.onchange = function() {
+	if (checkboxShowHoveringGraph.checked) {
 		if (times != null) {
-			drawHoverGraph(currentNetworkIndex);
+			drawHoveringGraph(Math.round(currentNetworkIndex));
 		}
 	} else {
-		clearHoverGraph();
+		clearHoveringGraph();
 	}
+	elementsByTab[indexTabCurrent].showHoveringGraph = checkboxShowHoveringGraph.checked;
 }
 
 let checkboxShowWeightArcs = document.getElementById("show-weight-arcs");
@@ -269,17 +239,25 @@ checkboxShowWeightArcs.onchange = function() {
 	} else {
 		clearHoverArcs();
 	}
+	elementsByTab[indexTabCurrent].showWeightArcs = checkboxShowWeightArcs.checked;
 }
 
 let checkboxShowGeodesics = document.getElementById("show-geodesics");
 checkboxShowGeodesics.onchange = function() {
-	canvasNeedsUpdate = true;
+	elementsByTab[indexTabCurrent].showGeodesics = checkboxShowGeodesics.checked;
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
-let buttonHelp = document.getElementById("btn-help");
+let checkboxShowGrid = document.getElementById("show-grid");
+checkboxShowGrid.onchange = function() {
+	elementsByTab[indexTabCurrent].showGrid = checkboxShowGrid.checked;
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
+}
+
+let buttonHelp = document.getElementById("button-help");
 buttonHelp.onclick = helpClick;
 
-let divAnimationControls = document.getElementById("animation-controls");
+let divAnimationControls = document.getElementById("div-animation-controls");
 let buttonPlay = document.getElementById("button-play");
 buttonPlay.onclick = function() {
 	if (isPlaying) {
@@ -292,50 +270,224 @@ buttonPlay.onclick = function() {
 	isPlaying = !isPlaying;
 }
 
+let divTabs = document.getElementById("div-tabs");
+let elementsByTab = [];
+let indexTabCurrent = 0;
+function swapToTab(button) {
+	// TODO: Make this safer against spamming click
+	let indexNew = Number(button.target.id.substring(11));
+
+	// Reset the style of the previous button
+	let buttonPrevious = elementsByTab[indexTabCurrent].buttonTab;
+	let indexPrevious = Number(buttonPrevious.id.substring(11));
+	while (buttonPrevious.firstChild) {
+		buttonPrevious.removeChild(buttonPrevious.lastChild);
+	}
+	buttonPrevious.appendChild(document.createTextNode(String(indexPrevious + 1)));
+
+	// Determine the current tab index
+	for (let indexTab = 0; indexTab < elementsByTab.length; ++indexTab) {
+		if (button.target.id == elementsByTab[indexTab].buttonTab.id) {
+			indexTabCurrent = indexTab;
+			break;
+		}
+	}
+
+	// Update the style of the next button
+	let buttonNew = elementsByTab[indexTabCurrent].buttonTab;
+	while (buttonNew.firstChild) {
+		buttonNew.removeChild(buttonNew.lastChild);
+	}
+	let bNode = document.createElement("b");
+	let emNode = document.createElement("em");
+	bNode.appendChild(document.createTextNode(String(indexNew + 1)))
+	emNode.appendChild(bNode);
+	buttonNew.appendChild(emNode);
+
+	// Load the state of the checkboxes
+	// TODO: Is this the best way to do this, or should separate copies
+	// of each DOM element be stored per-tab?
+	checkboxShowHeights.checked = elementsByTab[indexTabCurrent].showHeights;
+	checkboxShowHeights.dispatchEvent(new Event("change"));
+	checkboxShowHeightChanges.checked = elementsByTab[indexTabCurrent].showHeightChanges;
+	checkboxShowHeightChanges.dispatchEvent(new Event("change"));
+	checkboxShowMap.checked = elementsByTab[indexTabCurrent].showMap;
+	checkboxShowMap.dispatchEvent(new Event("change"));
+	checkboxShowGraph.checked = elementsByTab[indexTabCurrent].showGraph;
+	checkboxShowGraph.dispatchEvent(new Event("change"));
+	checkboxShowOutages.checked = elementsByTab[indexTabCurrent].showOutages;
+	checkboxShowOutages.dispatchEvent(new Event("change"));
+	checkboxShowHoveringGraph.checked = elementsByTab[indexTabCurrent].showHoveringGraph;
+	checkboxShowHoveringGraph.dispatchEvent(new Event("change"));
+	checkboxShowWeightArcs.checked = elementsByTab[indexTabCurrent].showWeightArcs;
+	checkboxShowWeightArcs.dispatchEvent(new Event("change"));
+	checkboxShowGeodesics.checked = elementsByTab[indexTabCurrent].showGeodesics;
+	checkboxShowGeodesics.dispatchEvent(new Event("change"));
+	checkboxShowGrid.checked = elementsByTab[indexTabCurrent].showGrid;
+	checkboxShowGrid.dispatchEvent(new Event("change"));
+}
+let buttonAddTab = document.getElementById("button-add-tab");
+let buttonRemoveTab = document.getElementById("button-remove-tab");
+function addTab() {
+	buttonRemoveTab.style.display = "inline-block";
+
+	let indexNew = 0;
+	if (elementsByTab.length != 0) {
+		indexNew = Number(elementsByTab[elementsByTab.length - 1].buttonTab.id.substring(11)) + 1;
+	}
+	let buttonNew = document.createElement("button");
+	buttonNew.type = "button";
+	buttonNew.id = "button-tab-" + String(indexNew);
+	buttonNew.classList.add("button-tab");
+	buttonNew.appendChild(document.createTextNode(String(indexNew + 1)))
+	buttonNew.onclick = swapToTab;
+	divTabs.insertBefore(buttonNew, buttonAddTab);
+
+	let plane = makePlane(divisions);
+	// plane.visible = false;
+	scene.add(plane);
+
+	let contextBlank = document.createElement("canvas").getContext("2d");
+	contextBlank.canvas.width = canvasResolution;
+	contextBlank.canvas.height = canvasResolution;
+	contextBlank.fillStyle = COLOR_PLANE;
+	contextBlank.fillRect(0, 0, contextBlank.canvas.width, contextBlank.canvas.height);
+	let textureBlank = makeTextureBlank(contextBlank);
+
+	let olMap = createOLMap(canvasResolution, mapCenter, mapZoomFactor);
+
+	let options = {
+		"plane": plane,
+		"contextBlank": contextBlank,
+		"textureBlank": textureBlank,
+		"contextMap": null,
+		"textureMap": null,
+		"olMap": olMap,
+
+		"buttonTab": buttonNew,
+
+		"showHeights": true,
+		"showHeightChanges": true,
+		"showMap": false,
+		"showGraph": true,
+		"showOutages": false,
+		"showHoveringGraph": false,
+		"showWeightArcs": false,
+		"showGeodesics": false,
+		"showGrid": false,
+
+		"canvasNeedsUpdate": true,
+	};
+	elementsByTab.push(options);
+
+	olMap.once("postrender", function(event) {
+		options.contextMap = getCanvasOLMap(olMap).getContext("2d");
+		options.textureMap = makeTextureOLMap(olMap);
+	});
+	// Update the map texture whenever the map changes
+	olMap.on("postrender", function(event) {
+		options.canvasNeedsUpdate = true;
+	});
+
+	setPlaneCenters(true);
+
+	buttonNew.dispatchEvent(new Event("click"));
+}
+addTab();
+buttonAddTab.onclick = addTab;
+function removeTab() {
+	elementsByTab[indexTabCurrent].buttonTab.remove();
+
+	scene.remove(elementsByTab[indexTabCurrent].plane);
+	elementsByTab[indexTabCurrent].textureBlank.dispose();
+	elementsByTab[indexTabCurrent].textureMap.dispose();
+	destroyOLMap(elementsByTab[indexTabCurrent].olMap);
+
+	elementsByTab.splice(indexTabCurrent, 1);
+
+	if (elementsByTab.length == 0) {
+		addTab();
+	} else {
+		if (indexTabCurrent >= elementsByTab.length) {
+			indexTabCurrent = elementsByTab.length - 1;
+		}
+		elementsByTab[indexTabCurrent].buttonTab.dispatchEvent(new Event("click"));
+		setPlaneCenters(true);
+	}
+}
+buttonRemoveTab.onclick = removeTab;
+
+function getPlaneScaleFactor(n) {
+	return 1 / (n + (n - 1) * spacingBetweenPlanes);
+}
+function setPlaneCenters(setScales = false) {
+	let n = elementsByTab.length;
+	let scaleFactor = getPlaneScaleFactor(n);
+	for (let i = 0; i < n; ++i) {
+		// Location of the center from left to right
+		let r = (- 1 / 2 + scaleFactor / 2 + i * (1 + spacingBetweenPlanes) * scaleFactor) * planeSideLength;
+		// Current direction of looking
+		let d = (new THREE.Vector3()).subVectors(controls.target, camera.position);
+		let theta = Math.atan2(d.x, d.z);
+
+		elementsByTab[i].plane.position.set(-r * Math.cos(theta), 0, r * Math.sin(theta));
+
+		if (setScales) {
+			elementsByTab[i].plane.scale.set(scaleFactor, scaleFactor, scaleFactor);
+		}
+	}
+}
+
+controls.addEventListener("change", function() {
+	setPlaneCenters();
+});
+
 /**
  * Draw every layer above the base layer (i.e., excluding the map)
  */
-function drawLayers(time) {
+function drawLayers(time, options) {
+	let plane = options.plane;
+
 	// Figure out which canvas we're using
 	let context = null;
-	if (checkboxShowMap.checked) {
-		plane.material.map = textureMap;
-		textureCurrent = textureMap;
-		context = canvasMap.getContext("2d");
+	if (options.showMap && options.contextMap != null) {
+		context = options.contextMap;
 	} else {
-		plane.material.map = textureBlank;
-		textureCurrent = textureBlank;
-		context = canvasBlank.getContext("2d");
+		context = options.contextBlank;
 	}
 
 	// Draw grid lines
-	if (checkboxShowGrid.checked) {
+	if (options.showGrid) {
 		drawGrid(context, divisions);
 	}
 
 	// Draw the graph, geodesics, and outages onto the canvas
 	if (
 		networkEdges != null && networkEdges.length > 0
-		&& (checkboxShowGraph.checked || checkboxShowGeodesics.checked || checkboxShowOutages.checked)
+		&& (options.showGraph || options.showGeodesics || options.showOutages)
 	) {
-		// First, figure out the edges of the current network
-		let edges = networkEdges[currentNetworkIndex];
+		// First, figure out the current timing and indexing information
+		let currentNetworkIndexInt = Math.round(currentNetworkIndex);
 
 		// Draw the edges
-		if (checkboxShowGraph.checked) {
-			drawEdges(context, networkVertices, edges);
+		if (options.showGraph) {
+			drawEdges(context, networkVertices, networkEdges[currentNetworkIndexInt]);
 		}
 
 		// Draw the geodesics
-		if (checkboxShowGeodesics.checked) {
-			drawGeodesics(context, geodesics[currentNetworkIndex], GEODESICS_WIDTH, edgeColors[currentNetworkIndex]);
+		if (options.showGeodesics) {
+			drawGeodesics(
+				context, geodesics[currentNetworkIndexInt],
+				6, edgeColors[currentNetworkIndexInt]);
 		}
 
 		// Deal with outages
-		if (checkboxShowOutages.checked) {
+		if (options.showOutages) {
 			drawOutages(
-				context,
-				networkVertices, edges, networkEdgesAll,
+				context, networkVertices,
+				networkEdgesAdded[Math.floor(currentNetworkIndex)],
+				networkEdgesRemoved[Math.floor(currentNetworkIndex)],
+				currentNetworkIndex % 1.,
 				currentNetworkIndex != previousNetworkIndex ? ulOutages : null
 			);
 		}
@@ -343,20 +495,17 @@ function drawLayers(time) {
 
 	// Draw the vertices
 	if (networkVertices != null) {
-		drawVertices(context, networkVertices, VERTEX_RADIUS, COLOR_VERTEX);
+		drawVertices(context, networkVertices);
 	}
 
-	if (checkboxShowHeightChanges.checked) {
-		drawHeightChanges(context, heights, heightsEWMA, time, times);
+	if (options.showHeightChanges) {
+		drawHeightChanges(context, heights, heightsEWMA, time, times, networkBoundaries);
 	}
-
-	textureCurrent.needsUpdate = true;
 }
 
 function animate() {
 	// Update the slider if necessary
 	if (isPlaying) {
-		let rangeAnimation = document.getElementById("range-animation");
 		let timeMin = parseFloat(rangeAnimation.min);
 		let timeMax = parseFloat(rangeAnimation.max);
 		let timeRange = timeMax - timeMin;
@@ -367,63 +516,63 @@ function animate() {
 		rangeAnimation.value = timeNow;
 
 		// Update the heights if necessary
-		if (checkboxShowHeights.checked) {
-			setPlaneHeightsWithInterpolation(plane, heights, timeNow, times);
+		for (let i = 0; i < elementsByTab.length; ++i) {
+			if (elementsByTab[i].showHeights) {
+				setPlaneHeightsWithInterpolation(elementsByTab[i].plane, heights, timeNow, times);
+			}
 		}
 
 		previousNetworkIndex = currentNetworkIndex;
 		currentNetworkIndex = getCurrentNetworkIndex();
 
-		canvasNeedsUpdate = true;
+		for (let i = 0; i < elementsByTab.length; ++i) {
+			elementsByTab[i].canvasNeedsUpdate = true;
+		}
 	}
 
-	// Update the canvas if needed
-	if (canvasNeedsUpdate || checkboxShowOutages.checked) {
-		canvasNeedsUpdate = false;
+	// Update the canvases if needed
+	for (let i = 0; i < elementsByTab.length; ++i) {
+		let options = elementsByTab[i];
+		let plane = options.plane;
+		if (options.canvasNeedsUpdate) {
+			options.canvasNeedsUpdate = false;
 
-		// Figure out which canvas we're using
-		let context = null;
-		if (checkboxShowMap.checked) {
-			plane.material.map = textureMap;
-			textureCurrent = textureMap;
-			context = canvasMap.getContext("2d");
-		} else {
-			plane.material.map = textureBlank;
-			textureCurrent = textureBlank;
-			context = canvasBlank.getContext("2d");
+			// Figure out which canvas we're using
+			let context = null;
+			let texture = null;
+			if (options.showMap) {
+				context = options.contextMap;
+				texture = options.textureMap;
+			} else {
+				context = options.contextBlank;
+				texture = options.textureBlank;
+			}
+			plane.material.map = texture;
+
+			// Draw the bottommost layer
+			if (options.showMap) {
+				options.olMap.renderSync();
+				options.canvasNeedsUpdate = false;  // Hack to avoid endlessly rendering
+			} else {
+				context.fillStyle = COLOR_PLANE;
+				context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+			}
+
+			drawLayers(
+				(times == null || times.length == 0) ? null : (times.length == 1 ? times[0] : rangeAnimation.value),
+				options
+			);
+
+			texture.needsUpdate = true;
 		}
-
-		// Draw the bottommost layer
-		if (checkboxShowMap.checked) {
-			olMap.renderSync();
-		} else {
-			context.fillStyle = COLOR_PLANE;
-			context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-		}
-
-		drawLayers((times == null || times.length == 0) ? null : (times.length == 1 ? times[0] : rangeAnimation.value));
-
-		textureCurrent.needsUpdate = true;
+		plane.geometry.computeVertexNormals();
+		plane.material.needsUpdate = true;
 	}
-
-	plane.geometry.computeVertexNormals();
-	plane.material.needsUpdate = true;
 
 	// Render
 	composer.render();
 }
-// Start the animation loop once the map canvas exists
-olMap.once("postrender", function(event) {
-	canvasMap = getCanvasOLMap(olMap);
-	textureMap = makeTextureOLMap(olMap);
-
-	renderer.setAnimationLoop(animate);
-});
-// Update the map texture whenever the map changes
-olMap.on("postrender", function(event) {
-	drawLayers();
-	textureMap.needsUpdate = true;
-});
+renderer.setAnimationLoop(animate);
 
 window.addEventListener("resize", function() {
 	frustumScale = 2.5 * planeSideLength / Math.max(window.innerWidth, window.innerHeight);
@@ -462,11 +611,7 @@ function getCurrentNetworkIndex() {
 
 	// If we reach here ts[index - 1] <= t < ts[index]
 	let lambda = (time - times[index - 1]) / (times[index] - times[index - 1]);
-	if (lambda < 0.5) {
-		return index - 1;
-	} else {
-		return index;
-	}
+	return index - 1 + lambda;
 }
 
 function resetView() {
@@ -484,26 +629,36 @@ function resetView() {
 	controls.update();
 	camera.updateProjectionMatrix();
 
-	if (checkboxShowMap.checked) {
-		updateOLMap(olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-		textureMap = makeTextureOLMap(olMap);
-	} else {
-		setCanvasZoom(canvasResolution);
+	for (let i = 0; i < elementsByTab.length; ++i) {
+		let options = elementsByTab[i];
+		if (options.showMap) {
+			updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
+			options.textureMap = makeTextureOLMap(options.olMap);
+		} else {
+			setCanvasZoom(options, getCurrentResolution());
+		}
 	}
 
-	canvasNeedsUpdate = true;
+	for (let i = 0; i < elementsByTab.length; ++i) {
+		elementsByTab[i].canvasNeedsUpdate = true;
+	}
 }
 
 document.addEventListener("keydown", function(event) {
 	if (event.key == "Escape") {
 		resetView();
 	} else if (event.key == "h") {
-		let guiDiv = document.getElementById("gui");
-		if (guiDiv.style.display != "none") {
-			guiDiv.style.display = "none";
-		} else {
-			guiDiv.style.display = "block";
+		let elementIDs = ["div-gui", "button-help"];
+		for (let elementID of elementIDs) {
+			let element = document.getElementById(elementID);
+			if (element.style.display != "none") {
+				element.style.display = "none";
+			} else {
+				element.style.display = "block";
+			}
 		}
+
+		document.getElementById("div-help").style.display = "none";
 	} else if (event.key == "s") {
 		let anchor = document.createElement("a");
 		anchor.href = canvasMain.toDataURL();
@@ -511,6 +666,18 @@ document.addEventListener("keydown", function(event) {
 		anchor.click();
 	} else if (event.key == "g") {
 		buttonPlay.click();
+	} else if (event.key == "-") {
+		removeTab();
+	} else if (event.key == "=" || event.key == "+") {
+		addTab();
+	} else if (event.key == "ArrowLeft") {
+		if (indexTabCurrent > 0) {
+			elementsByTab[indexTabCurrent - 1].buttonTab.dispatchEvent(new Event("click"));
+		}
+	} else if (event.key == "ArrowRight") {
+		if (indexTabCurrent < elementsByTab.length - 1) {
+			elementsByTab[indexTabCurrent + 1].buttonTab.dispatchEvent(new Event("click"));
+		}
 	}
 });
 
@@ -523,31 +690,25 @@ function helpClick(event) {
 	}
 }
 
-function makeTextureBlank() {
-	let textureBlank = new THREE.CanvasTexture(contextBlank.canvas);
-	textureBlank.minFilter = THREE.LinearFilter;
-	textureBlank.center = new THREE.Vector2(0.5, 0.5);
-	textureBlank.rotation = -Math.PI / 2;
-	return textureBlank;
+function makeTextureBlank(contextBlank) {
+	let texture = new THREE.CanvasTexture(contextBlank.canvas);
+	texture.minFilter = THREE.LinearFilter;
+	texture.center = new THREE.Vector2(0.5, 0.5);
+	texture.rotation = -Math.PI / 2;
+	return texture;
 }
 
 function getCurrentResolution() {
-	return canvasResolution * Math.min(camera.zoom, 4.);
+	let planeScaleFactor = getPlaneScaleFactor(elementsByTab.length);
+	return canvasResolution * Math.min(camera.zoom * planeScaleFactor, 4.);
 }
 
-function setCanvasZoom(resolution = null) {
-	if (resolution == null) {
-		resolution = getCurrentResolution();
-	}
-
-	textureBlank.dispose();
-	contextBlank.canvas.width = resolution;
-	contextBlank.canvas.height = resolution;
-	textureBlank = makeTextureBlank();
-	plane.material.map = textureBlank;
-	textureCurrent = textureBlank;
-
-	canvasNeedsUpdate = true;
+function setCanvasZoom(options, resolution) {
+	options.textureBlank.dispose();
+	options.contextBlank.canvas.width = resolution;
+	options.contextBlank.canvas.height = resolution;
+	options.textureBlank = makeTextureBlank(options.contextBlank);
+	options.plane.material.map = options.textureBlank;
 }
 
 function wheelEvent(event) {
@@ -555,27 +716,37 @@ function wheelEvent(event) {
 		return;
 	}
 
-	if (checkboxShowMap.checked) {
-		updateOLMap(olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-		textureMap = makeTextureOLMap(olMap);
-	} else {
-		setCanvasZoom();
+	for (let i = 0; i < elementsByTab.length; ++i) {
+		let options = elementsByTab[i];
+		if (options.showMap) {
+			updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
+			options.textureMap = makeTextureOLMap(options.olMap);
+		} else {
+			setCanvasZoom(options, getCurrentResolution());
+		}
 	}
 
-	canvasNeedsUpdate = true;
+	for (let i = 0; i < elementsByTab.length; ++i) {
+		elementsByTab[i].canvasNeedsUpdate = true;
+	}
 }
 
 function makePlane(divisions) {
-	let planeGeometry = new THREE.PlaneGeometry(
+	let geometry = new THREE.PlaneGeometry(
 		planeSideLength, planeSideLength,
 		divisions - 1, divisions - 1
 	);
-	let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+	let material = new THREE.MeshStandardMaterial({
+		side: THREE.DoubleSide,
+		transparent: true,
+		opacity: 1.0,
+	})
+	let plane = new THREE.Mesh(geometry, material);
 	plane.rotation.set(-Math.PI / 2, 0, 0);
 	return plane;
 }
 
-function clearHoverGraph() {
+function clearHoveringGraph() {
 	for (let hoveringVertex of hoverVerticesDrawn) {
 		scene.remove(hoveringVertex);
 		hoveringVertex.geometry.dispose();
@@ -590,8 +761,8 @@ function clearHoverGraph() {
 	hoverEdgesDrawn = [];
 }
 
-function drawHoverGraph(index) {
-	clearHoverGraph();
+function drawHoveringGraph(index) {
+	clearHoveringGraph();
 
 	let vertexArray = [];
 	for (let vertex of networkVertices) {
@@ -797,12 +968,14 @@ dropReader.onload = function() {
 		times = new Array(animationData.length);
 		heights = new Array(animationData.length);
 		networkEdges = new Array(animationData.length);
+		networkBoundaries = new Array(animationData.length);
 		geodesics = new Array(animationData.length);
 		edgeColors = new Array(animationData.length);
 		for (let i = 0; i < animationData.length; ++i) {
 			times[i] = animationData[i].time;
 			heights[i] = animationData[i].height;
 			networkEdges[i] = animationData[i].edges;
+			networkBoundaries[i] = animationData[i].boundary;
 			geodesics[i] = animationData[i].geodesics;
 			edgeColors[i] = animationData[i].edgeColors;
 		}
@@ -828,9 +1001,8 @@ dropReader.onload = function() {
 		}
 
 		if (animationData.length != 0) {
-			let nVertices = networkVertices.length;
-			networkEdgesAll = new Array(nVertices);
-			for (let i = 0; i < nVertices; ++i) {
+			networkEdgesAll = new Array(networkVertices.length);
+			for (let i = 0; i < networkVertices.length; ++i) {
 				networkEdgesAll[i] = new Set();
 			}
 		}
@@ -840,17 +1012,56 @@ dropReader.onload = function() {
 			}
 		}
 
+		if (animationData.length > 1) {
+			// Make sets of edges for each network graph
+			let networkEdgesSets = new Array(animationData.length);
+			for (let i = 0; i < animationData.length; ++i) {
+				networkEdgesSets[i] = new Array(networkVertices.length);
+				for (let j = 0; j < networkVertices.length; ++j) {
+					networkEdgesSets[i][j] = new Set();
+				}
+				for (let edge of networkEdges[i]) {
+					networkEdgesSets[i][edge.source].add(edge.target);
+				}
+			}
+
+			// Figure out the diff between consecutive pairs of network graphs
+			networkEdgesAdded = new Array(animationData.length - 1);
+			networkEdgesRemoved = new Array(animationData.length - 1);
+			for (let i = 0; i < animationData.length - 1; ++i) {
+				networkEdgesAdded[i] = new Array(networkVertices.length);
+				networkEdgesRemoved[i] = new Array(networkVertices.length);
+				for (let j = 0; j < networkVertices.length; ++j) {
+					networkEdgesAdded[i][j] = new Set();
+					networkEdgesRemoved[i][j] = new Set();
+				}
+				for (let edge of networkEdges[i + 1]) {
+					if (!networkEdgesSets[i][edge.source].has(edge.target)) {
+						networkEdgesAdded[i][edge.source].add(edge.target);
+					}
+				}
+				for (let edge of networkEdges[i]) {
+					if (!networkEdgesSets[i + 1][edge.source].has(edge.target)) {
+						networkEdgesRemoved[i][edge.source].add(edge.target);
+					}
+				}
+			}
+		}
+
 		if (heights.length != 0 && heights[0].length != divisions) {
-			scene.remove(plane);
-			plane = makePlane(heights[0].length);
-			scene.add(plane);
+			for (let i = 0; i < elementsByTab.length; ++i) {
+				scene.remove(elementsByTab[i].plane);
+				elementsByTab[i].plane = makePlane(heights[0].length);
+				scene.add(elementsByTab[i].plane);
+			}
+			setPlaneCenters(true);
 
 			divisions = heights[0].length;
 		}
 
 		rangeAnimation.min = animationData[0].time;
 		rangeAnimation.max = animationData[animationData.length - 1].time;
-		rangeAnimation.step = (rangeAnimation.max - rangeAnimation.min) / 100;
+		rangeAnimation.step = (rangeAnimation.max - rangeAnimation.min) / (Math.max(animationData.length * 10, 100));
 		rangeAnimation.value = rangeAnimation.min;
 
 		buttonPlay.innerText = "Play";
@@ -861,8 +1072,8 @@ dropReader.onload = function() {
 			divAnimationControls.style.display = "block";
 		}
 
-		if (checkboxShowHoverGraph.checked) {
-			drawHoverGraph(0);
+		if (checkboxShowHoveringGraph.checked) {
+			drawHoveringGraph(0);
 		}
 		if (checkboxShowWeightArcs.checked) {
 			drawHoverArcs();
@@ -876,12 +1087,19 @@ dropReader.onload = function() {
 
 		mapCenter = mapData.center;
 		mapZoomFactor = mapData.zoomFactor;
-		updateOLMap(olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-		textureMap = makeTextureOLMap(olMap);
+		for (let i = 0; i < elementsByTab.length; ++i) {
+			let options = elementsByTab[i];
+			if (options.showMap) {
+				updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
+				options.textureMap = makeTextureOLMap(options.olMap)
+			}
+		}
 
 		resetView();
 
-		canvasNeedsUpdate = true;
+		for (let i = 0; i < elementsByTab.length; ++i) {
+			elementsByTab[i].canvasNeedsUpdate = true;
+		}
 	} catch (e) {
 		console.error("Failed to read JSON");
 		console.error(e);

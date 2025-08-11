@@ -7,7 +7,7 @@ import { getCurvatureColor } from "../colors.js";
  * @param {Array<{source: number, target: number, curvature: number}>} edges
  * @param {number} lineWidth
  */
-export default function(context, networkVertices, edges, lineWidth = 6) {
+export default function(context, networkVertices, edges, lineWidth = 6, colorEdge = "#000000") {
 	context.save();
 
 	// Borders first
@@ -20,7 +20,7 @@ export default function(context, networkVertices, edges, lineWidth = 6) {
 		context.beginPath();
 		context.moveTo(source[0], source[1]);
 		context.lineTo(target[0], target[1]);
-		context.strokeStyle = "#000000";
+		context.strokeStyle = colorEdge;
 		context.lineWidth = lineWidth + 5;
 		context.stroke();
 	}

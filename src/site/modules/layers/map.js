@@ -56,23 +56,14 @@ function createOLMap(resolution, mapCenter, mapZoomFactor) {
 		view: getView(resolution, mapCenter, mapZoomFactor),
 	});
 
-	olMap.setProperties({
-		'MatisseReady': false
-	});
-	layerTile.once("postrender", function(event) {
-		olMap.setProperties({
-			'MatisseReady': true
-		});
-	});
-
 	return olMap;
 }
 
 /**
  * @param {Map} olMap
  */
-function isReadyOLMap(olMap) {
-	return olMap.getProperties()['MatisseReady'];
+function destroyOLMap(olMap) {
+	olMap.getTargetElement().remove();
 }
 
 /**
@@ -111,4 +102,4 @@ function makeTextureOLMap(olMap) {
 	return textureMap;
 }
 
-export { createOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMap, isReadyOLMap };
+export { createOLMap, destroyOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMap };

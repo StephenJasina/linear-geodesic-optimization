@@ -10,16 +10,20 @@
   <body>
     <script type="module" src="main.js"></script>
 
-    <div id="gui" style="z-index: 100;">
-      <div id="div-layers" class="gui-box">
-        <div id="dropzone">
-          <div id="drop-output" class="drop-box">Drop optimization output here</div>
+    <div id="div-gui" style="z-index: 100;">
+      <div id="div-layers" class="div-gui-box">
+        <div id="div-tabs" class="div-button-tab">
+          <button type="button" id="button-add-tab" class="button-tab">+</button>
+          <!-- <button type="button" id="button-remove-tab" class="button-tab" style="display: none;">-</button> -->
+          <button type="button" id="button-remove-tab" class="button-tab">-</button>
         </div>
 
-        <div id="animation-controls">
+        <!-- <div id="div-drop-output" class="div-drop-box">Drop optimization output here</div> -->
+
+        <div id="div-animation-controls" style="display: none;">
           <input type="range" id="range-animation" min="0" max="1" step="0.01" value="0">
           <br />
-          <button type="button" id="button-play">Play</button>
+          <button type="button" id="button-play" class="button-gui">Play</button>
         </div>
 
         <input type="checkbox" id="show-heights" name="show-heights" checked>
@@ -50,7 +54,7 @@
         <label for="show-grid">Show grid</label><br>
       </div>
 
-      <div id="div-outages" class="gui-box">
+      <div id="div-outages" class="div-gui-box">
         <p>
           Outages:
         </p>
@@ -59,20 +63,26 @@
       </div>
     </div>
 
-    <button type="button" id="btn-help"><b>?</b></button>
+    <button type="button" id="button-help" class="button-gui"><b>?</b></button>
     <div id="div-help" style="display: none;">
       <ul>
-        <li> Left click + drag to rotate </li>
-        <li> Right click + drag to pan </li>
-        <li> Scroll to zoom </li>
-        <li> <kbd class="key">Esc</kbd> to reset zoom </li>
+        <li>Left click + drag to rotate</li>
+        <li>Right click + drag to pan</li>
+        <li>Scroll to zoom</li>
+        <li><kbd class="key">Esc</kbd> to reset zoom</li>
+        <li><kbd class="key">S</kbd> to save a screenshot</li>
+        <li><kbd class="key">G</kbd> to play/stop the animation</li>
+        <li><kbd class="key">H</kbd> to hide/show the GUI</li>
+        <li><kbd class="key">+</kbd> to add a new tab</li>
+        <li><kbd class="key">-</kbd> to remove the current tab</li>
+        <li><kbd class="key">←</kbd> to move one tab to the left</li>
+        <li><kbd class="key">→</kbd> to move one tab to the right</li>
       </ul>
-      <!-- TODO: Fix citation -->
-      <!-- <p style="padding: 10px;">Map tiles by <a href="http://stamen.com">Stamen Design</a>,
-        under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
-        Data by <a href="http://openstreetmap.org">OpenStreetMap</a>,
+      <p style="padding: 10px;">Map tiles by <a href="https://openlayers.org/">OpenLayers</a>,
+        under <a href="https://www.tldrlegal.com/license/bsd-2-clause-license-freebsd">2-Clause BSD</a>.
+        Data by <a href="https://openstreetmap.org/">OpenStreetMap</a>,
         under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.
-      </p> -->
+      </p>
     </div>
   </body>
 </html>

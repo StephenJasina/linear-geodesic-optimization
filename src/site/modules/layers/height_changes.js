@@ -8,7 +8,7 @@ import { xToCanvasCoordinates, yToCanvasCoordinates, lengthToCanvasCoordinates }
  * @param {Array<number>} ts
  * @param {number} [sensitivity]
  */
-export default function(context, zs, zsEWMA, t, ts, sensitivity = 0.02) {
+export default function(context, zs, zsEWMA, t, ts, boundaries, sensitivity = 0.02) {
 	if (t == null || ts == null || t <= ts[0] || t > ts[ts.length - 1]) {
 		return;
 	}
@@ -108,7 +108,15 @@ export default function(context, zs, zsEWMA, t, ts, sensitivity = 0.02) {
 		}
 	}
 
+	// context.fillStyle = "rgba(0, 0, 0, 0)";
+	// context.fill();
+
+	// context.save()
+	// context.globalCompositeOperation = "source-in";
+	// context.rect(0, 0, 500, 500);
+	// context.fillStyle = "#0000FF";
 	context.fill();
+	// context.restore();
 
 	context.restore();
 }

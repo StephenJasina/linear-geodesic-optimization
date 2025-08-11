@@ -2,13 +2,11 @@
   --main-bg-color: #f3f3f3;
   font-family: 'Roboto Mono', monospace;
 }
-/* ::selection { */
-  /* background: #4CAF50;
-  color: white; */
-/* } */
 body {
   margin: 0;
+  overflow: hidden;
 }
+
 canvas {
   display: block;
   position: fixed;
@@ -16,122 +14,109 @@ canvas {
   top: 0;
   z-index: -1;
 }
-button {
+
+#div-gui {
+  font-size: 15px;
+  position: absolute;
+  z-index:1;
+  margin: 20px;
+
+  .div-gui-box {
+    margin-top: 10px;
+    display: inline-block;
+    overflow-y: auto;
+    width: 450px;
+    margin: 5px;
+    padding-left: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-style: solid;
+    border-color: #E5E5E5;
+    border-width: 5px;
+    border-radius: 5px;
+    background-color: rgb(229, 229, 229, 0.2);
+
+    .div-button-tab {
+      display: flex;
+      column-gap: 0px;
+      width: 450px;
+      padding-bottom: 15px;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .button-tab {
+      min-width: 40px;
+      background-color: white;
+      color: #4CAF50;
+      border: 0px;
+    }
+    .button-tab:hover {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    label {
+      margin-right: 0px;
+      display: inline-block;
+    }
+
+    .button-gui {
+      font-family: 'Roboto Mono', monospace;
+      background-color: white;
+      color: #4CAF50;
+      border: 2px solid #4CAF50;
+      min-width: 120px;
+      height: 40px;
+      margin: 5px;
+      font-size: 15px;
+      transition-duration: 0.2s;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+    .button-gui:hover {
+      background-color: #4CAF50;
+      color: white;
+    }
+    input[type="range"] {
+      width: 300px;
+    }
+
+    .div-drop-box{
+      background-color: #E5E5E5;
+      height: 100px;
+      width: 150px;
+      text-align: center;
+      padding-top: 60px;
+      border-radius: 5px;
+    }
+  }
+}
+
+#button-help {
   font-family: 'Roboto Mono', monospace;
   background-color: white;
   color: #4CAF50;
-  border: 2px solid #4CAF50; /* Green */
-  min-width: 120px;
-  height: 40px;
+  border: 2px solid #4CAF50;
   margin: 5px;
   font-size: 15px;
   transition-duration: 0.2s;
   margin-bottom: 15px;
-  border-radius: 5px;
-}
-button:hover {
-  background-color: #4CAF50; /* Green */
-  color: white;
-}
-button.btn-delete {
-  min-width: 30px;
-  height: 30px;
-  margin-bottom: 0px;
-  position: relative;
-  top: 2.5px;
-  background-color: red;
-  color: white;
-  border-color: red;
-  font-weight: bold;
-}
-button.btn-delete:hover {
-  background-color: white;
-  color: red;
-  border-color: red;
-}
-#btn-help {
   border-radius: 50px;
   min-width: 50px;
   height: 50px;
-  margin: 20px;
   border-color: #E5E5E5;
   outline: none;
-  float: right;
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 100;
 }
-#btn-help:hover {
+#button-help:hover {
   background-color: #ffffff;
   color: #4CAF50;
   box-shadow: 0px 0px 15px #c2c2c2;
   cursor: pointer;
-}
-.slider {
-  width: 50%;
-  height: 10px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-  border-radius: 5px;
-  margin-bottom: 25px;
-}
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #4CAF50;
-  cursor: pointer;
-}
-.name {
-  min-width: 80px;
-}
-input[type=text] {
-  width: 30px;
-  /* background-color: var(--main-bg-color) */
-  margin-left: 0px;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-}
-.gui-box>label {
-  margin-right: 0px;
-  display: inline-block;
-}
-#gui {
-  font-size: 15px;
-  position: absolute;
-  z-index:1;
-  margin: 10px;
-  height: 600px;
-  margin-left: 50px;
-  /* overflow-y: auto; */
-}
-.gui-box {
-  margin: 5px;
-  padding-left: 20px;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  border-style: solid;
-  border-color: #E5E5E5;
-  border-width: 5px;
-  border-radius: 5px;
-  background-color: rgb(229, 229, 229, 0.2);
-  /* box-shadow: 0 0 0 13px #E5E5E5 inset; */
-}
-.gui-box>*{
-  display: block;
-}
-.form-box *{
-  padding: 5px;
-  margin: 5px;
-}
-#div-layers {
-  margin-top: 10px;
-  display: inline-block;
-  overflow-y: auto;
-  width: 450px;
 }
 #div-help {
   display: none;
@@ -141,52 +126,16 @@ input[type=text] {
   float: right;
   position: relative;
   top: 90px;
-  right: -60px;
+  right: 25px;
   box-shadow: 0px 0px 15px #c2c2c2;
   padding: 10px;
-}
-input[type="range"] {
-  width: 300px;
-}
-li {
-  padding: 5px;
-}
-#animation-controls {
-  display: none;
-}
-kbd.key {
-  border-radius: 3px;
-  border: 1px solid black;
-  padding: 2px;
-}
-kbd.button {
-  font-family: 'Roboto Mono', monospace;
-  background-color: white;
-  color: #4CAF50;
-  border: 2px solid #4CAF50; /* Green */
-  border-radius: 5px;
-  padding: 1px 5px;
-  font-size: 13px;
-}
-.drop-box{
-  background-color: #E5E5E5;
-  display: inline-block;
-  height: 100px;
-  width: 150px;
-  text-align: center;
-  padding-top: 60px;
-  border-radius: 5px;
-}
-.selectBox {
-  border: 1px solid #55aaff;
-  background-color: rgba(75, 160, 255, 0.3);
-  position: fixed;
-}
-label[for=id] {
-  color: #4CAF50;
-  /* background: white; */
-  margin: 0px;
-}
-input[type="checkbox"] {
-  display: inline-block;
+  z-index: 100;
+  li {
+    padding: 5px;
+  }
+  kbd.key {
+    border-radius: 3px;
+    border: 1px solid black;
+    padding: 2px;
+  }
 }
