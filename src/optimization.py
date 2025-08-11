@@ -21,7 +21,6 @@ from linear_geodesic_optimization.optimization import optimization
 warnings.simplefilter('error')
 
 directory_data = pathlib.PurePath('..', 'data')
-directory_outputs = pathlib.PurePath('..', 'outputs', 'ripe', 'high_variation_US')
 
 def main(
     *,  # All parameters are keyword only
@@ -149,8 +148,10 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    epsilon = 10
-    directory_links = pathlib.PurePath('ripe', 'high_variation_US', 'links_windowed', f'{epsilon}')
+    directory_outputs = pathlib.PurePath('..', 'outputs', 'ripe', 'ASN_20473')
+
+    epsilon = 16
+    directory_links = pathlib.PurePath('ripe', 'ASN_20473', 'links')
     filenames_links = list(sorted(
         directory_links / filename
         for filename in sorted(os.listdir(directory_data / directory_links))
@@ -158,7 +159,7 @@ if __name__ == '__main__':
     count = len(filenames_links)
 
     filenames_probes = [
-        pathlib.PurePath('ripe', 'high_variation_US', 'probes.csv')
+        pathlib.PurePath('ripe', 'ASN_20473', 'probes.csv')
     ] * count
 
     filenames_graphml = [None] * count
@@ -167,7 +168,7 @@ if __name__ == '__main__':
     clustering_distances = [500000] * count
 
     lambdas_curvature = [1.] * count
-    lambdas_smooth = [0.0002] * count
+    lambdas_smooth = [0.002] * count
     ricci_curvature_alphas = [0.] * count
     initial_radii = [20.] * count
     sides = [50] * count
@@ -192,7 +193,7 @@ if __name__ == '__main__':
 
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses
-    with concurrent.futures.ProcessPoolExecutor(7) as executor:
+    with concurrent.futures.ProcessPoolExecutor(14) as executor:
         futures = []
         for (
             filename_probes, filename_links, filename_graphml,
