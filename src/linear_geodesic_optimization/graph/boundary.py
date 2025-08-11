@@ -553,7 +553,7 @@ def compute_border(
         polygon_count += 1
 
     return [
-        [intersections[intersection_index] for intersection_index in polygon]
+        [list(intersections[intersection_index]) for intersection_index in polygon]
         for polygon in polygons.values()
     ]
 
@@ -570,7 +570,7 @@ def distance_to_border(
         return 0.
 
     return min([
-        np.linalg.norm(point - project_to_line_segment(point, left, right))
+        np.linalg.norm(point - project_to_line_segment(point, np.array(left), np.array(right)))
         for polygon in border
         for left, right in itertools.islice(itertools.pairwise(itertools.cycle(polygon)), len(polygon))
     ])
