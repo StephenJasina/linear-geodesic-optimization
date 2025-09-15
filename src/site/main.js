@@ -344,7 +344,6 @@ function addTab() {
 	divTabs.insertBefore(buttonNew, buttonAddTab);
 
 	let plane = makePlane(divisions);
-	// plane.visible = false;
 	scene.add(plane);
 
 	let contextBlank = document.createElement("canvas").getContext("2d");
@@ -353,6 +352,7 @@ function addTab() {
 	contextBlank.fillStyle = COLOR_PLANE;
 	contextBlank.fillRect(0, 0, contextBlank.canvas.width, contextBlank.canvas.height);
 	let textureBlank = makeTextureBlank(contextBlank);
+	plane.material.map = textureBlank;
 
 	let olMap = createOLMap(canvasResolution, mapCenter, mapZoomFactor);
 
@@ -392,6 +392,17 @@ function addTab() {
 	setPlaneCenters(true);
 
 	buttonNew.dispatchEvent(new Event("click"));
+
+	// for (let i = 0; i < elementsByTab.length; ++i) {
+	// 	let options = elementsByTab[i];
+	// 	if (options.showMap) {
+	// 		updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
+	// 		options.textureMap = makeTextureOLMap(options.olMap);
+	// 	} else {
+	// 		setCanvasZoom(options, getCurrentResolution());
+	// 		console.log("test");
+	// 	}
+	// }
 }
 addTab();
 buttonAddTab.onclick = addTab;
@@ -487,6 +498,8 @@ function drawLayers(time, options) {
 				context, networkVertices,
 				networkEdgesAdded[Math.floor(currentNetworkIndex)],
 				networkEdgesRemoved[Math.floor(currentNetworkIndex)],
+				networkEdges[Math.floor(currentNetworkIndex)],
+				networkEdgesAll,
 				currentNetworkIndex % 1.,
 				currentNetworkIndex != previousNetworkIndex ? ulOutages : null
 			);
