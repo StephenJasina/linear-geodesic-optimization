@@ -372,9 +372,10 @@ def compute_border(
         for new_id2 in (id_to_id[edge[1]],)
         if new_id1 != new_id2
     ]
+    edges = list(set(edges))
 
     # TODO: Join edges that overlap? Is this necessary? It seems
-    # unlikely
+    # possible if things are particularly degenerate.
 
     # Points on the border are either at one of the input points or at
     # the intersection of two edges. The border of the graph is stored
