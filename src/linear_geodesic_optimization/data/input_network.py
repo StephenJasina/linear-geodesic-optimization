@@ -194,6 +194,17 @@ def compute_ricci_curvatures(
 
     return graph
 
+def compute_curvatures_from_throughputs(graph: nx.Graph):
+    throughput_edge_tuples = list(sorted([
+        (throughput, (source, destination))
+        for source, destination, throughput in graph.edges.data('throughput')
+    ]))
+    for index, (throughput, (source, destination)) in enumerate(throughput_edge_tuples):
+        # Naive strategy to linearly space from -1 to 1
+        graph.edges[source, destination]['ricciCurvature'] = 1 - 2 * index / (graph.number_of_edges() - 1)
+
+    return graph
+
 def get_graph(
     probes, links,
     *,
@@ -204,6 +215,7 @@ def get_graph(
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
+    throughputs_for_curvature=False,
     directed=False
 ):
     graph = get_base_graph(probes, links, directed)
@@ -219,7 +231,10 @@ def get_graph(
     if clustering_distance is not None:
         graph = cluster_graph(graph, clustering_distance)
     if should_compute_curvatures:
-        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label)
+        if throughputs_for_curvature:
+            graph = compute_curvatures_from_throughputs(graph)
+        else:
+            graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label)
     if should_include_latencies:
         return graph, latencies
     else:
@@ -236,6 +251,7 @@ def get_graph_from_paths(
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
+    throughputs_for_curvature=False,
     directed=False
 ):
     """
@@ -269,6 +285,7 @@ def get_graph_from_paths(
             should_compute_curvatures=should_compute_curvatures,
             ricci_curvature_alpha=ricci_curvature_alpha,
             ricci_curvature_weight_label=ricci_curvature_weight_label,
+            throughputs_for_curvature=throughputs_for_curvature,
             directed=directed
         )
 
