@@ -24,8 +24,11 @@ if __name__ == '__main__':
     parser.add_argument('--epsilon', '-e', type=float, required=False,
                         dest='epsilon', metavar='<epsilon>',
                         help='Residual threshold')
-    parser.add_argument('--no-tivs', '-t', action='store_true',
-                        dest='should_remove_tivs')
+    parser.add_argument('--clustering-distance', '-c', type=float,
+                        required=False, dest='clustering_distance',
+                        metavar='<clustering distance>')
+    parser.add_argument('--throughputs-for-curvature', '-t',
+                        action='store_true', dest='throughputs_for_curvature')
     parser.add_argument('--output', '-o', metavar='<filename>',
                         dest='output_filename', required=True)
     args = parser.parse_args()
@@ -34,13 +37,14 @@ if __name__ == '__main__':
     epsilon = args.epsilon
     if epsilon is None:
         epsilon = np.inf
-    should_remove_tivs = args.should_remove_tivs
+    clustering_distance = args.clustering_distance
+    throughputs_for_curvature = args.throughputs_for_curvature
     output_filename = args.output_filename
 
     graph = input_network.get_graph_from_paths(
         probes_filename, latencies_filename,
         epsilon=epsilon,
-        clustering_distance=500000,
-        should_remove_tivs=should_remove_tivs
+        clustering_distance=clustering_distance,
+        throughputs_for_curvature=throughputs_for_curvature
     )
     nx.write_graphml(graph, f'{output_filename}')

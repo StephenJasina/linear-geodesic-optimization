@@ -148,27 +148,34 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    directory_outputs = pathlib.PurePath('..', 'outputs', 'ripe', 'ASN_20473')
+    directory_outputs = pathlib.PurePath('..', 'outputs', 'Internet2', 'throughput_testing')
 
-    epsilon = 16
-    directory_links = pathlib.PurePath('ripe', 'ASN_20473', 'links')
-    filenames_links = list(sorted(
-        directory_links / filename
-        for filename in sorted(os.listdir(directory_data / directory_links))
-    ))
-    count = len(filenames_links)
+    # epsilon = 16
+    # directory_links = pathlib.PurePath('ripe', 'ASN_20473', 'links')
+    # filenames_links = list(sorted(
+    #     directory_links / filename
+    #     for filename in sorted(os.listdir(directory_data / directory_links))
+    # ))
+    # count = len(filenames_links)
 
-    filenames_probes = [
-        pathlib.PurePath('ripe', 'ASN_20473', 'probes.csv')
-    ] * count
+    # filenames_probes = [
+    #     pathlib.PurePath('ripe', 'ASN_20473', 'probes.csv')
+    # ] * count
 
-    filenames_graphml = [None] * count
+    # filenames_graphml = [None] * count
 
-    latency_thresholds = [epsilon] * count
+    filenames_graphml = [pathlib.PurePath('fs', 'graph_300.graphml')] * 9
+    count = len(filenames_graphml)
+    filenames_probes = [None] * count
+    filenames_links = [None] * count
+
+    # latency_thresholds = [epsilon] * count
+    latency_thresholds = [None] * count
     clustering_distances = [500000] * count
 
     lambdas_curvature = [1.] * count
-    lambdas_smooth = [0.002] * count
+    # lambdas_smooth = [0.002] * count
+    lambdas_smooth = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05]
     ricci_curvature_alphas = [0.] * count
     initial_radii = [20.] * count
     sides = [50] * count
@@ -183,8 +190,9 @@ if __name__ == '__main__':
 
     directories_output = [
         directory_outputs
-            / filename_links.stem
-            / f'{latency_threshold}_{lambda_smooth}_{width}_{height}'
+            # / filename_links.stem
+            # / f'{latency_threshold}_{lambda_smooth}_{width}_{height}'
+            / f'{lambda_smooth}_{width}_{height}'
         for index, (filename_probes, filename_links, filename_graphml, lambda_smooth, latency_threshold, initial_radius, width, height, mesh_scale) \
             in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
     ]
