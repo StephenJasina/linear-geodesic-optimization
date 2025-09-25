@@ -5,7 +5,7 @@ Implementation of some standard optimization-related methods.
 import itertools
 
 import numpy as np
-from scipy import sparse
+
 
 def wolfe(f, g, x, d, c_1=1e-4, c_2=0.9, max_iterations=100, epsilon=1e-6):
     '''
