@@ -30,8 +30,9 @@ if __name__ == '__main__':
 
     if graphml_filename is not None:
         graph = nx.graphml.read_graphml(graphml_filename)
-        # graph = input_network.cluster_graph(graph, 10)
+        # graph = input_network.cluster_graph(graph, 500000)
         # graph = input_network.compute_ricci_curvatures(graph)
+        # graph = input_network.compute_curvatures_from_throughputs(graph)
         curvatures = [edge_data['ricciCurvature'] for _, _, edge_data in graph.edges(data=True)]
         print(min(curvatures), max(curvatures))
     else:
