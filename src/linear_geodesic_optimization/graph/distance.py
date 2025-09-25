@@ -51,7 +51,7 @@ def compute_random_walk_distance_matrix(
     expected random walk path length going from u to v back to u.
 
     Random walk transition probabilities are decided by the edge weights
-    with the given wegiht label (by default, a uniform choice between
+    with the given weight label (by default, a uniform choice between
     edges), and distances are decided by the given distance label (by
     default, all 1).
     """
