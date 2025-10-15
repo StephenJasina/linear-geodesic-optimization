@@ -92,6 +92,9 @@ def get_network_plot(
 
     # Plot the edges
     for u, v, d in graph.edges(data=True):
+        if weight_label not in d:
+            continue
+
         color = mpl.colormaps['RdBu']((d[weight_label] - color_min) / (color_max - color_min))
 
         x_u, y_u = utility.mercator(graph.nodes[u]['long'],

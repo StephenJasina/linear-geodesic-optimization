@@ -8,6 +8,7 @@ import sys
 
 import networkx as nx
 import numpy as np
+import ot
 from scipy import optimize, sparse
 
 sys.path.insert(0, str(pathlib.PurePath('..', '..', 'src')))
@@ -109,7 +110,7 @@ def get_routes(graph):
         for source in graph.nodes
     }
 
-def compute_tomography(graph):
+def compute_tomography(graph, routes):
     index_to_link_id = []
     link_id_to_index = {}
     traffic_out_per_node = collections.defaultdict(float)
@@ -222,7 +223,7 @@ def compute_tomography(graph):
         for source, destination, x in zip(sources, destinations, x_opt)
     }
 
-def compute_curvature(graph, tomography):
+def compute_curvature_old(graph, routes, tomography):
     # Both of these are mappings from s-t pairs to their associated values
     # (denominator and numerator)
     x_sum = collections.defaultdict(float)
@@ -235,6 +236,7 @@ def compute_curvature(graph, tomography):
                 continue
 
             x_p = tomography[(source, destination)]
+
             for index_s, s in enumerate(route[:-1]):
                 d_p_s_t = 0.
                 for t_previous, t in itertools.pairwise(route[index_s:]):
@@ -256,12 +258,130 @@ def compute_curvature(graph, tomography):
 
                 denominator += x_sum[(s, t)]
                 numerator += xd_sum[(s, t)]
-        transportation_costs[(u, v)] = numerator / denominator if denominator != 0. else 3. * graph.edges[u, v]['latency']
-        if denominator == 0.:
-            sys.stderr.write(f'Manually setting curvature of {u} -> {v} to {-2.}\n')
+
+        if denominator != 0.:
+            transportation_cost = numerator / denominator
+            graph.edges[(u, v)]['curvature'] = 1. - transportation_cost / graph.edges[(u, v)]['latency']
+        else:
+            print(f'Skipping edge {u} -> {v}')
+
+    return graph
+
+def compute_curvature(graph, routes, tomography):
+    for u, v in graph.edges:
+        denominator = 0.
+        numerator = 0.
+
+        # Find which routes are relevant
+        for source, routes_source in routes.items():
+            for destination, route in routes_source.items():
+                s_index = 0
+                while True:
+                    if s_index == len(route) or (route[s_index], u) in graph.edges:
+                        break
+                    s_index += 1
+                if s_index == len(route) or route[s_index] == v:
+                    continue
+
+                t_index = len(route) - 1
+                while True:
+                    if t_index == -1 or (v, route[t_index]) in graph.edges:
+                        break
+                    t_index -= 1
+                if t_index == -1 or route[t_index] == u:
+                    continue
+
+                if s_index > t_index:
+                    continue
+
+                if (source, destination) not in tomography:
+                    # In this case, x_p = 0
+                    continue
+                x_p = tomography[(source, destination)]
+
+                # At this point, we have a (non-zero) flow from source to
+                # destination that passes through s (a predecessor of u) and
+                # t (a successor of v)
+
+                d_p_s_t = sum([
+                    graph.edges[(x, y)]['latency']
+                    for x, y in itertools.pairwise(route[s_index:t_index+1])
+                ])
+
+                denominator += x_p
+                numerator += x_p * d_p_s_t
+
+        if denominator != 0.:
+            transportation_cost = numerator / denominator
+            graph.edges[(u, v)]['curvature'] = 1. - transportation_cost / graph.edges[(u, v)]['latency']
+        else:
+            print(f'Skipping edge {u} -> {v}')
+
+    return graph
+
+def compute_curvature_optimal_transport(graph: nx.Graph, routes, tomography):
+    index_to_node = list(graph.nodes)
+    node_to_index = {node: index for index, node in enumerate(graph.nodes)}
+
+    n = graph.number_of_nodes()
+    distance_matrix = np.full((n, n), np.inf)
+    for source, routes_source in routes.items():
+        index_source = node_to_index[source]
+        for destination, route in routes_source.items():
+            index_destination = node_to_index[destination]
+
+            distance_route = sum([
+                graph.edges[(x, y)]['latency']
+                for x, y in itertools.pairwise(route)
+            ])
+
+            if distance_route < distance_matrix[index_source, index_destination]:
+                distance_matrix[index_source, index_destination] = distance_route
+                # distance_matrix[index_destination, index_source] = distance_route  # For symmetrization
 
     for u, v in graph.edges:
-        graph.edges[u, v]['curvature'] = 1. - transportation_costs[(u, v)] / graph.edges[u, v]['latency']
+        distribution_u = np.zeros(n)
+        distribution_v = np.zeros(n)
+
+        for source, routes_source in routes.items():
+            for destination, route in routes_source.items():
+                s_index = 0
+                while True:
+                    if s_index == len(route) or (route[s_index], u) in graph.edges:
+                        break
+                    s_index += 1
+                if s_index == len(route) or route[s_index] == v:
+                    continue
+
+                t_index = len(route) - 1
+                while True:
+                    if t_index == -1 or (v, route[t_index]) in graph.edges:
+                        break
+                    t_index -= 1
+                if t_index == -1 or route[t_index] == u:
+                    continue
+
+                if s_index > t_index:
+                    continue
+
+                if (source, destination) not in tomography:
+                    continue
+                x_p = tomography[(source, destination)]
+
+                distribution_u[node_to_index[route[s_index]]] += x_p
+                distribution_v[node_to_index[route[t_index]]] += x_p
+
+        normalization_factor = np.sum(distribution_u)
+        if normalization_factor == 0.:
+            print(f'Skipping edge {u} -> {v}')
+            continue
+
+        transportation_cost = ot.emd2(
+            distribution_u / normalization_factor,
+            distribution_v / normalization_factor,
+            distance_matrix
+        )
+        graph.edges[(u, v)]['curvature'] = 1. - transportation_cost / graph.edges[(u, v)]['latency']
 
     return graph
 
@@ -276,13 +396,16 @@ def write_undirected_graphml(graph, file_path_output):
     for u, v, data in graph.edges(data=True):
         if (u, v) in graph_graphml.edges:
             graph_graphml.edges[u, v]['gcl'] = min(graph_graphml.edges[u, v]['gcl'], data['latency'])
-            graph_graphml.edges[u, v]['ricciCurvature'] = (graph_graphml.edges[u, v]['ricciCurvature'] + data['curvature']) / 2.
+
+            if 'curvature' in data:
+                graph_graphml.edges[u, v]['ricciCurvature'] = (graph_graphml.edges[u, v]['ricciCurvature'] + data['curvature']) / 2.
         else:
-            graph_graphml.add_edge(
-                u, v,
-                gcl=data['latency'],
-                ricciCurvature=data['curvature']
-            )
+            data_to_add = {
+                'gcl': data['latency']
+            }
+            if 'curvature' in data:
+                data_to_add['ricciCurvature'] = data['curvature']
+            graph_graphml.add_edge(u, v, **data_to_add)
     nx.write_graphml(graph_graphml, file_path_output)
 
 if __name__ == '__main__':
@@ -290,11 +413,13 @@ if __name__ == '__main__':
     parser.add_argument('--pobes', '-p', metavar='probes-file', dest='file_path_probes', type=str, required=True)
     parser.add_argument('--links', '-l', metavar='latencies_file', dest='file_path_links', type=str, required=True)
     parser.add_argument('--output', '-o', metavar='output_file', dest='file_path_output', type=str, required=True)
+    parser.add_argument('--optimal-transport', '-t', dest='use_optimal_transport', action='store_true')
     args = parser.parse_args()
 
     file_path_probes = pathlib.PurePath(args.file_path_probes)
     file_path_links = pathlib.PurePath(args.file_path_links)
     file_path_output = pathlib.PurePath(args.file_path_output)
+    use_optimal_transport = args.use_optimal_transport
 
     if not os.path.exists(file_path_probes):
         sys.stderr.write('Probes file does not exist')
@@ -305,6 +430,9 @@ if __name__ == '__main__':
 
     graph = get_graph(file_path_probes, file_path_links)
     routes = get_routes(graph)
-    tomography = compute_tomography(graph)
-    graph = compute_curvature(graph, tomography)
+    tomography = compute_tomography(graph, routes)
+    if use_optimal_transport:
+        graph = compute_curvature_optimal_transport(graph, routes, tomography)
+    else:
+        graph = compute_curvature(graph, routes, tomography)
     write_undirected_graphml(graph, file_path_output)

@@ -353,28 +353,28 @@ def get_network_data(
         graph_data['bounding_box'] = None
 
     vertex_data = {}
-    vertex_attributes = {}  # Mapping from name to type
+    vertex_attributes = set()
     for _, data in graph.nodes(data=True):
-        for attribute_name, attribute_value in data.items():
-            vertex_attributes[attribute_name] = type(attribute_value)
-    for attribute_name, attribute_type in vertex_attributes.items():
+        for attribute_name in data:
+            vertex_attributes.add(attribute_name)
+    for attribute_name in vertex_attributes:
         vertex_data[attribute_name] = [
             data[attribute_name]
             if attribute_name in data
-            else attribute_type()
+            else None
             for _, data in graph.nodes(data=True)
         ]
 
     edge_data = {}
-    edge_attributes = {}  # Mapping from name to type
+    edge_attributes = set()
     for _, _, data in graph.edges(data=True):
-        for attribute_name, attribute_type in data.items():
-            edge_attributes[attribute_name] = attribute_type
-    for attribute_name, attribute_type in edge_attributes.items():
+        for attribute_name in data:
+            edge_attributes.add(attribute_name)
+    for attribute_name in edge_attributes:
         edge_data[attribute_name] = [
             data[attribute_name]
             if attribute_name in data
-            else attribute_type()
+            else None
             for _, _, data in graph.edges(data=True)
         ]
 
