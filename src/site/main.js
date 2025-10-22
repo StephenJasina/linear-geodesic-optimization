@@ -353,6 +353,7 @@ function addTab() {
 	contextBlank.fillRect(0, 0, contextBlank.canvas.width, contextBlank.canvas.height);
 	let textureBlank = makeTextureBlank(contextBlank);
 	plane.material.map = textureBlank;
+	// plane.material.needsUpdate = true;
 
 	let olMap = createOLMap(canvasResolution, mapCenter, mapZoomFactor);
 
@@ -392,17 +393,6 @@ function addTab() {
 	setPlaneCenters(true);
 
 	buttonNew.dispatchEvent(new Event("click"));
-
-	// for (let i = 0; i < elementsByTab.length; ++i) {
-	// 	let options = elementsByTab[i];
-	// 	if (options.showMap) {
-	// 		updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-	// 		options.textureMap = makeTextureOLMap(options.olMap);
-	// 	} else {
-	// 		setCanvasZoom(options, getCurrentResolution());
-	// 		console.log("test");
-	// 	}
-	// }
 }
 addTab();
 buttonAddTab.onclick = addTab;
@@ -447,6 +437,7 @@ function setPlaneCenters(setScales = false) {
 			elementsByTab[i].plane.scale.set(scaleFactor, scaleFactor, scaleFactor);
 		}
 	}
+	setCanvasResolutions();
 }
 
 controls.addEventListener("change", function() {
@@ -482,7 +473,7 @@ function drawLayers(time, options) {
 
 		// Draw the edges
 		if (options.showGraph) {
-			drawEdges(context, networkVertices, networkEdges[currentNetworkIndexInt]);
+			drawEdges(context, networkVertices, networkEdges[currentNetworkIndexInt], 3);
 		}
 
 		// Draw the geodesics
@@ -493,7 +484,7 @@ function drawLayers(time, options) {
 		}
 
 		// Deal with outages
-		if (options.showOutages) {
+		if (options.showOutages && times.length > 1) {
 			drawOutages(
 				context, networkVertices,
 				networkEdgesAdded[Math.floor(currentNetworkIndex)],
@@ -508,7 +499,7 @@ function drawLayers(time, options) {
 
 	// Draw the vertices
 	if (networkVertices != null) {
-		drawVertices(context, networkVertices);
+		drawVertices(context, networkVertices, 2);
 	}
 
 	if (options.showHeightChanges) {
@@ -632,12 +623,16 @@ function resetView() {
 	controls.reset();
 
 	// Front view
-	camera.position.set(-15., 15., 0.)
-	camera.zoom = 1.7;
+	// camera.position.set(-15., 10., 0.)
+	// camera.zoom = 1.7;
 
 	// Overhead view
-	// camera.position.set(-Number.EPSILON, 15., 0.);
-	// camera.zoom = 1.5;
+	camera.position.set(-Number.EPSILON, 15., 0.);
+	camera.zoom = 1.4;
+
+	// Diagonal View
+	// camera.position.set(-15., 8., -5.);
+	// camera.zoom = 1.6;
 
 	controls.update();
 	camera.updateProjectionMatrix();
@@ -729,6 +724,9 @@ function wheelEvent(event) {
 		return;
 	}
 
+	setCanvasResolutions();
+}
+function setCanvasResolutions() {
 	for (let i = 0; i < elementsByTab.length; ++i) {
 		let options = elementsByTab[i];
 		if (options.showMap) {
