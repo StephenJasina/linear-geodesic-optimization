@@ -189,7 +189,7 @@ if __name__ == '__main__':
             in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
     ]
 
-    maxiters = [1] * count
+    maxiters = [2000] * count
 
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses
