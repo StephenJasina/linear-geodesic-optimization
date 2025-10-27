@@ -223,50 +223,6 @@ def compute_tomography(graph, routes):
         for source, destination, x in zip(sources, destinations, x_opt)
     }
 
-def compute_curvature_old(graph, routes, tomography):
-    # Both of these are mappings from s-t pairs to their associated values
-    # (denominator and numerator)
-    x_sum = collections.defaultdict(float)
-    xd_sum = collections.defaultdict(float)
-
-    for source, routes_source in routes.items():
-        for destination, route in routes_source.items():
-            if (source, destination) not in tomography:
-                # In this case, x_p = 0
-                continue
-
-            x_p = tomography[(source, destination)]
-
-            for index_s, s in enumerate(route[:-1]):
-                d_p_s_t = 0.
-                for t_previous, t in itertools.pairwise(route[index_s:]):
-                    d_p_s_t += graph.edges[t_previous, t]['latency']
-
-                    x_sum[(s, t)] += x_p
-                    xd_sum[(s, t)] += x_p * d_p_s_t
-
-    transportation_costs = {}
-    for u, v in graph.edges:
-        denominator = 0.
-        numerator = 0.
-        for s in graph.predecessors(u):
-            if s == v:
-                continue
-            for t in graph.successors(v):
-                if t == u:
-                    continue
-
-                denominator += x_sum[(s, t)]
-                numerator += xd_sum[(s, t)]
-
-        if denominator != 0.:
-            transportation_cost = numerator / denominator
-            graph.edges[(u, v)]['curvature'] = 1. - transportation_cost / graph.edges[(u, v)]['latency']
-        else:
-            print(f'Skipping edge {u} -> {v}')
-
-    return graph
-
 def compute_curvature(graph, routes, tomography):
     for u, v in graph.edges:
         denominator = 0.

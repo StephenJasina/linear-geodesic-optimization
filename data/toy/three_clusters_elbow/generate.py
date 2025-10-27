@@ -100,7 +100,7 @@ with open('probes.csv', 'w') as f:
         })
 
 # Write the throughputs and graphml
-ricci_curvatures = curvature.ricci_curvature_optimal_transport(graph, edge_weight_label = 'throughput')
+ricci_curvatures = curvature.compute_ricci_curvature(graph, edge_weight_label = 'throughput')
 for (source, target), ricci_curvature in ricci_curvatures.items():
     graph.edges[source, target]['ricciCurvature'] = ricci_curvature
 

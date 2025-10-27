@@ -1,11 +1,15 @@
+import collections
+import itertools
 import typing
 
 import networkx as nx
 import numpy as np
 import numpy.typing as npt
 import ot
+from scipy import optimize, sparse
 
-import linear_geodesic_optimization.graph.distance as graph_distance
+from linear_geodesic_optimization.graph import distance as graph_distance
+from linear_geodesic_optimization.data import tomography
 
 
 def get_augmented_graph(
@@ -23,7 +27,7 @@ def get_augmented_graph(
     The labels of the nodes in the augmented graph are either:
     * Integers, if the node correspond to nodes in the original graph
     * Pairs (i, j) if the node is newly added and is connected to node i
-      in the "direction" if node j
+      in the "direction" of node j
 
     Attributes of the duplicated nodes and edges will be identical.
     """
@@ -58,7 +62,7 @@ def compute_augmented_distances(
 
     As output, return a new distance matrix that is describes a metric
     on the augmented graph. The new metric space will have the old one
-    as a subspac
+    as a subspace
 
     TODO: It would be nice if the nodes duplicated from the original
     graph would behave nearly identically to the original nodes. That
@@ -144,13 +148,66 @@ def get_augmented_distribution(
 
     return distribution
 
-def ricci_curvature_optimal_transport(
+def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix):
+    for u, v in graph.edges:
+        denominator = 0.
+        numerator = 0.
+
+        # Find which routes are relevant
+        for source, routes_source in routes.items():
+            for destination, route in routes_source.items():
+                s_index = 0
+                while True:
+                    if s_index == len(route) or (route[s_index], u) in graph.edges:
+                        break
+                    s_index += 1
+                if s_index == len(route) or route[s_index] == v:
+                    continue
+
+                t_index = len(route) - 1
+                while True:
+                    if t_index == -1 or (v, route[t_index]) in graph.edges:
+                        break
+                    t_index -= 1
+                if t_index == -1 or route[t_index] == u:
+                    continue
+
+                if s_index > t_index:
+                    continue
+
+                if (source, destination) not in traffic_matrix:
+                    # In this case, x_p = 0
+                    continue
+                x_p = traffic_matrix[(source, destination)]
+
+                # At this point, we have a (non-zero) flow from source to
+                # destination that passes through s (a predecessor of u) and
+                # t (a successor of v)
+
+                d_p_s_t = sum([
+                    graph.edges[(x, y)]['latency']
+                    for x, y in itertools.pairwise(route[s_index:t_index+1])
+                ])
+
+                denominator += x_p
+                numerator += x_p * d_p_s_t
+
+        if denominator != 0.:
+            transportation_cost = numerator / denominator
+            graph.edges[(u, v)]['curvature'] = 1. - transportation_cost / graph.edges[(u, v)]['latency']
+        else:
+            print(f'Skipping edge {u} -> {v}')
+
+    return graph
+
+def compute_ricci_curvature(
     graph: nx.Graph,
     *,
     edge_weight_label: typing.Optional[str] = None,
     edge_distance_label: typing.Optional[str] = None,
-    alpha: float = 0.9999,
-    use_augmented_graph: bool = False
+    alpha: float = 0.,
+    use_augmented_graph: bool = False,
+    use_tomography: bool = False
 ) -> typing.Dict[typing.Tuple[typing.Any, typing.Any], float]:
     """
     Compute the Ricci curvature for each edge in a graph.
@@ -180,19 +237,14 @@ def ricci_curvature_optimal_transport(
     graph = nx.relabel_nodes(graph, node_to_index)
     distance_matrix = graph_distance.compute_distance_matrix(graph, edge_distance_label)
 
+    ricci_curvatures = {}
     if use_augmented_graph:
         graph_augmented = get_augmented_graph(graph, node_to_index)
         index_to_node_augmented = [node for node in graph_augmented.nodes]
         node_to_index_augmented = {node: index for index, node in enumerate(index_to_node_augmented)}
-        distance_matrix_augmented = compute_augmented_distances(graph_augmented, distance_matrix)
-    else:
-        graph_augmented = graph
-        node_to_index_augmented = node_to_index
-        distance_matrix_augmented = distance_matrix
+        distance_matrix = compute_augmented_distances(graph_augmented, distance_matrix)
 
-    ricci_curvatures = {}
-    for source, destination in graph.edges:
-        if use_augmented_graph:
+        for source, destination in graph.edges:
             distribution_source = get_augmented_distribution(
                 graph, graph_augmented, node_to_index_augmented,
                 source, destination,
@@ -203,7 +255,20 @@ def ricci_curvature_optimal_transport(
                 destination, source,
                 alpha, edge_weight_label
             )
-        else:
+
+            transport_distance = ot.emd2(
+                distribution_source,
+                distribution_destination,
+                distance_matrix
+            )
+            edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
+            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
+    elif use_tomography:
+        routes = tomography.get_shortest_routes(graph)
+        traffic_matrix = tomography.compute_traffic_matrix(graph, routes)
+        # TODO: Extract output from compute_ricci_curvature_from_traffic_matrix
+    else:
+        for source, destination in graph.edges:
             distribution_source = get_distribution(
                 graph, source,
                 alpha, edge_weight_label
@@ -213,8 +278,12 @@ def ricci_curvature_optimal_transport(
                 alpha, edge_weight_label
             )
 
-        transport_distance = ot.emd2(distribution_source, distribution_destination, distance_matrix_augmented if use_augmented_graph else distance_matrix)
-        edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
-        ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
+            transport_distance = ot.emd2(
+                distribution_source,
+                distribution_destination,
+                distance_matrix
+            )
+            edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
+            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
 
     return ricci_curvatures

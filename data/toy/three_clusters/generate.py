@@ -104,7 +104,7 @@ os.makedirs('throughputs', exist_ok=True)
 os.makedirs('graphml', exist_ok=True)
 for index, center_throughput in enumerate(np.linspace(1., 0., 25)):
     graph.edges['b3', 'c0']['throughput'] = float(center_throughput)
-    ricci_curvatures = curvature.ricci_curvature_optimal_transport(graph, edge_weight_label = 'throughput')
+    ricci_curvatures = curvature.compute_ricci_curvature(graph, edge_weight_label = 'throughput')
     for (source, target), ricci_curvature in ricci_curvatures.items():
         graph.edges[source, target]['ricciCurvature'] = ricci_curvature
 

@@ -186,7 +186,7 @@ def compute_ricci_curvatures(
     alpha: float=0.,
     weight_label: typing.Optional[str]=None
 ):
-    ricci_curvatures = curvature.ricci_curvature_optimal_transport(
+    ricci_curvatures = curvature.compute_ricci_curvature(
         graph, alpha=alpha, edge_weight_label=weight_label, use_augmented_graph=False
     )
     for (source, destination), ricci_curvature in ricci_curvatures.items():

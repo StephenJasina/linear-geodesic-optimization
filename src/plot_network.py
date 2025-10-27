@@ -33,7 +33,7 @@ if __name__ == '__main__':
         # graph = input_network.cluster_graph(graph, 500000)
         # graph = input_network.compute_ricci_curvatures(graph)
         # graph = input_network.compute_curvatures_from_throughputs(graph)
-        curvatures = [edge_data['ricciCurvature'] for _, _, edge_data in graph.edges(data=True)]
+        curvatures = [edge_data['ricciCurvature'] for _, _, edge_data in graph.edges(data=True) if 'ricciCurvature' in edge_data]
         print(min(curvatures), max(curvatures))
     else:
         if probes_filename is None or latencies_filename is None:
