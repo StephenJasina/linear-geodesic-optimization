@@ -148,7 +148,8 @@ def get_augmented_distribution(
 
     return distribution
 
-def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix):
+def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix, edge_distance_label):
+    ricci_curvatures = {}
     for u, v in graph.edges:
         denominator = 0.
         numerator = 0.
@@ -156,6 +157,10 @@ def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix):
         # Find which routes are relevant
         for source, routes_source in routes.items():
             for destination, route in routes_source.items():
+                if (source, destination) not in traffic_matrix:
+                    # In this case, x_p = 0, so there is no work to do
+                    continue
+
                 s_index = 0
                 while True:
                     if s_index == len(route) or (route[s_index], u) in graph.edges:
@@ -175,17 +180,16 @@ def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix):
                 if s_index > t_index:
                     continue
 
-                if (source, destination) not in traffic_matrix:
-                    # In this case, x_p = 0
-                    continue
                 x_p = traffic_matrix[(source, destination)]
 
-                # At this point, we have a (non-zero) flow from source to
-                # destination that passes through s (a predecessor of u) and
-                # t (a successor of v)
+                # At this point, we have a (non-zero) flow from source
+                # to destination that passes through s (a predecessor of
+                # u) and t (a successor of v)
 
                 d_p_s_t = sum([
-                    graph.edges[(x, y)]['latency']
+                    graph.edges[(x, y)][edge_distance_label]
+                    if edge_distance_label in graph.edges[(x, y)]
+                    else 1.
                     for x, y in itertools.pairwise(route[s_index:t_index+1])
                 ])
 
@@ -194,11 +198,10 @@ def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix):
 
         if denominator != 0.:
             transportation_cost = numerator / denominator
-            graph.edges[(u, v)]['curvature'] = 1. - transportation_cost / graph.edges[(u, v)]['latency']
-        else:
-            print(f'Skipping edge {u} -> {v}')
+            edge_distance = graph.edges[(u, v)][edge_distance_label] if edge_distance_label in graph.edges[(u, v)] else 1.
+            ricci_curvatures[(u, v)] = 1. - transportation_cost / edge_distance
 
-    return graph
+    return ricci_curvatures
 
 def compute_ricci_curvature(
     graph: nx.Graph,
@@ -256,17 +259,22 @@ def compute_ricci_curvature(
                 alpha, edge_weight_label
             )
 
-            transport_distance = ot.emd2(
+            transportation_cost = ot.emd2(
                 distribution_source,
                 distribution_destination,
                 distance_matrix
             )
             edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
-            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
+            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transportation_cost / edge_distance) / (1. - alpha)
     elif use_tomography:
-        routes = tomography.get_shortest_routes(graph)
-        traffic_matrix = tomography.compute_traffic_matrix(graph, routes)
-        # TODO: Extract output from compute_ricci_curvature_from_traffic_matrix
+        routes = tomography.get_shortest_routes(graph, edge_distance_label=edge_distance_label)
+        traffic_matrix = tomography.compute_traffic_matrix(graph, routes, edge_weight_label)
+        ricci_curvatures = {
+            (index_to_node[source], index_to_node[destination]): curvature
+            for (source, destination), curvature in compute_ricci_curvature_from_traffic_matrix(
+                graph, routes, traffic_matrix, edge_distance_label
+            ).items()
+        }
     else:
         for source, destination in graph.edges:
             distribution_source = get_distribution(
@@ -278,12 +286,12 @@ def compute_ricci_curvature(
                 alpha, edge_weight_label
             )
 
-            transport_distance = ot.emd2(
+            transportation_cost = ot.emd2(
                 distribution_source,
                 distribution_destination,
                 distance_matrix
             )
             edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
-            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
+            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transportation_cost / edge_distance) / (1. - alpha)
 
     return ricci_curvatures
