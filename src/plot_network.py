@@ -13,6 +13,7 @@ from linear_geodesic_optimization import plot
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--graphml', '-g', dest='graphml_filename', metavar='graphml-file')
+    parser.add_argument('--json', '-j', dest='json_filename', metavar='json-file')
     parser.add_argument('--probes', '-p', dest='probes_filename', metavar='probes-file')
     parser.add_argument('--latencies', '-l', dest='latencies_filename', metavar='latencies-file')
     parser.add_argument('--epsilon', '-e', dest='epsilon', metavar='epsilon', type=float)
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', '-o', dest='output_filename', metavar='filename')
     args = parser.parse_args()
     graphml_filename = args.graphml_filename
+    json_filename = args.json_filename
     probes_filename = args.probes_filename
     latencies_filename = args.latencies_filename
     epsilon = args.epsilon
@@ -35,12 +37,18 @@ if __name__ == '__main__':
         # graph = input_network.compute_curvatures_from_throughputs(graph)
         curvatures = [edge_data['ricciCurvature'] for _, _, edge_data in graph.edges(data=True) if 'ricciCurvature' in edge_data]
         print(min(curvatures), max(curvatures))
+    elif json_filename is not None:
+        graph = input_network.get_graph_from_json(
+            json_filename,
+            epsilon=epsilon,
+            clustering_distance=clustering_distance
+        )
     else:
         if probes_filename is None or latencies_filename is None:
             print('Need to supply input files', file=sys.stderr)
             sys.exit(-1)
 
-        graph = input_network.get_graph_from_paths(
+        graph = input_network.get_graph_from_csvs(
             probes_filename, latencies_filename,
             epsilon=epsilon,
             ricci_curvature_alpha=0.,

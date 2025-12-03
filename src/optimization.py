@@ -27,6 +27,7 @@ def main(
     filename_probes = None,
     filename_links = None,
     filename_graphml = None,
+    filename_json = None,
     latency_threshold = None,
     clustering_distance = None,
     ricci_curvature_alpha = 0.9999,
@@ -48,10 +49,17 @@ def main(
     # Construct the networkx graph
     if filename_graphml is not None:
         graph = nx.read_graphml(directory_data / filename_graphml)
+    elif filename_json is not None:
+        file_path_json = directory_data / filename_json
+        graph = input_network.get_graph_from_json(
+            file_path_json,
+            epsilon=latency_threshold,
+            clustering_distance=clustering_distance,
+        )
     elif filename_probes is not None and filename_links is not None:
         file_path_probes = directory_data / filename_probes
         file_path_links = directory_data / filename_links
-        graph = input_network.get_graph_from_paths(
+        graph = input_network.get_graph_from_csvs(
             file_path_probes, file_path_links,
             epsilon=latency_threshold,
             clustering_distance=clustering_distance,
@@ -59,7 +67,7 @@ def main(
             # ricci_curvature_weight_label='throughput'
         )
     else:
-        raise ValueError('Need either a graphml file or two csv files as input')
+        raise ValueError('Need a graphml file, a json file, or two csv files as input')
 
     # Get the data from the networkx graph
     network = input_network.get_network_data(graph)
@@ -148,27 +156,52 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    directory_outputs = pathlib.PurePath('..', 'outputs', 'esnet')
+    directory_outputs = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes')
     n_cores = 14  # How many processes to use
 
-    epsilon = 7
-    directory_links = pathlib.PurePath('esnet', 'links_windowed', f'{epsilon}')
-    filenames_links = list(sorted(
-        directory_links / filename
-        for filename in sorted(os.listdir(directory_data / directory_links))
-    ))
-    count = len(filenames_links)
+    # epsilon = 7
+    # directory_links = pathlib.PurePath('esnet', 'links_windowed', f'{epsilon}')
+    # filenames_links = list(sorted(
+    #     directory_links / filename
+    #     for filename in sorted(os.listdir(directory_data / directory_links))
+    # ))
+    # count = len(filenames_links)
 
-    filenames_probes = [
-        pathlib.PurePath('esnet', 'probes.csv')
-    ] * count
+    # filenames_probes = [
+    #     pathlib.PurePath('esnet', 'probes.csv')
+    # ] * count
+    # filenames_graphml = [None] * count
+
+    # epsilon = 0
+    # count = 6
+    # filenames_links = [
+    #     pathlib.PurePath('toy', 'elbow_latencies.csv')
+    # ] * count
+
+    # filenames_probes = [
+    #     pathlib.PurePath('toy', 'elbow_probes.csv')
+    # ] * count
+    # filenames_graphml = [None] * count
+
+    epsilon = None
+    directory_json = pathlib.PurePath('toy', 'routing_with_volumes', 'graphs')
+    filenames_json = list(sorted(
+        directory_json / filename
+        for filename in sorted(os.listdir(directory_data / directory_json))
+    ))
+    # filenames_json = [
+    #     pathlib.PurePath('toy', 'routing_with_volumes', 'graphs', '0.json'),
+    # ] * 10
+    count = len(filenames_json)
+    filenames_probes = [None] * count
+    filenames_links = [None] * count
     filenames_graphml = [None] * count
 
     latency_thresholds = [epsilon] * count
     clustering_distances = [None] * count
 
     lambdas_curvature = [1.] * count
-    lambdas_smooth = [0.0002] * count
+    lambdas_smooth = [0.002] * count
     ricci_curvature_alphas = [0.] * count
     initial_radii = [20.] * count
     sides = [50] * count
@@ -183,26 +216,27 @@ if __name__ == '__main__':
 
     directories_output = [
         directory_outputs
-            / filename_links.stem
+            # / filename_links.stem
+            / pathlib.Path(filename_json).stem
             / f'{lambda_smooth}_{width}_{height}'
-        for index, (filename_probes, filename_links, filename_graphml, lambda_smooth, latency_threshold, initial_radius, width, height, mesh_scale) \
-            in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
+        for index, (filename_probes, filename_links, filename_graphml, filename_json, lambda_smooth, latency_threshold, initial_radius, width, height, mesh_scale) \
+            in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, filenames_json, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
     ]
 
-    maxiters = [2000] * count
+    maxiters = [1000] * count
 
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses
     with concurrent.futures.ProcessPoolExecutor(n_cores) as executor:
         futures = []
         for (
-            filename_probes, filename_links, filename_graphml,
+            filename_probes, filename_links, filename_graphml, filename_json,
             latency_threshold, clustering_distance, ricci_curvature_alpha,
             lambda_curvature, lambda_smooth,
             initial_radius, side, mesh_scale, coordinates_scale, network_trim_radius,
             directory_output, maxiter
         ) in zip(
-            filenames_probes, filenames_links, filenames_graphml,
+            filenames_probes, filenames_links, filenames_graphml, filenames_json,
             latency_thresholds, clustering_distances, ricci_curvature_alphas,
             lambdas_curvature, lambdas_smooth,
             initial_radii, sides, mesh_scales, coordinates_scales, network_trim_radii,
@@ -213,6 +247,7 @@ if __name__ == '__main__':
                 filename_probes = filename_probes,
                 filename_links = filename_links,
                 filename_graphml = filename_graphml,
+                filename_json = filename_json,
                 latency_threshold = latency_threshold,
                 clustering_distance = clustering_distance,
                 ricci_curvature_alpha = ricci_curvature_alpha,

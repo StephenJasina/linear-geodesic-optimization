@@ -92,7 +92,7 @@ if __name__ == '__main__':
     if graphml_filename is None:
         probes_file_path = os.path.join('..', 'data', probes_filename)
         latencies_file_path = os.path.join('..', 'data', latencies_filename)
-        graph, latencies = input_network.get_graph_from_paths(
+        graph, latencies = input_network.get_graph_from_csvs(
             probes_file_path, latencies_file_path,
             epsilon=epsilon,
             clustering_distance=clustering_distance,

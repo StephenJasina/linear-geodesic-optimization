@@ -41,7 +41,7 @@ if __name__ == '__main__':
     throughputs_for_curvature = args.throughputs_for_curvature
     output_filename = args.output_filename
 
-    graph = input_network.get_graph_from_paths(
+    graph = input_network.get_graph_from_csvs(
         probes_filename, latencies_filename,
         epsilon=epsilon,
         clustering_distance=clustering_distance,

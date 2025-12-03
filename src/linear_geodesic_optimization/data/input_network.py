@@ -1,5 +1,7 @@
 import collections
 import csv
+import itertools
+import json
 import typing
 
 import networkx as nx
@@ -57,9 +59,12 @@ def get_base_graph(probes, links, directed=False):
         long = float(probe['longitude'])
         graph.add_node(
             probe['id'],
-            city=probe['city'], country=probe['country'],
             lat=lat, long=long
         )
+        if 'city' in probe:
+            graph[probe['id']] = probe['city']
+        if 'country' in probe:
+            graph[probe['id']] = probe['country']
 
         # TODO: Make this more robust (in the case longitude "wraps around")
         lat_min = min(lat_min, lat)
@@ -82,7 +87,7 @@ def get_base_graph(probes, links, directed=False):
         if id_source == id_target:
             continue
 
-        # Skip maesurements we're missing the nodes for
+        # Skip measurements we're missing the nodes for
         if id_source not in graph.nodes or id_target not in graph.nodes:
             continue
 
@@ -106,7 +111,7 @@ def get_base_graph(probes, links, directed=False):
             # assume the input contains connectivity information)
             rtt = gcl
 
-        throughput = 0
+        throughput = 0.
         if 'throughput' in link and link['throughput'] != '':
             throughput = float(link['throughput'])
 
@@ -184,11 +189,18 @@ def remove_tivs(graph):
 def compute_ricci_curvatures(
     graph: nx.Graph,
     alpha: float=0.,
-    weight_label: typing.Optional[str]=None
+    weight_label: typing.Optional[str]=None,
+    routes=None, traffic_matrix=None
 ):
-    ricci_curvatures = curvature.compute_ricci_curvature(
-        graph, alpha=alpha, edge_weight_label=weight_label, use_augmented_graph=False
-    )
+    ricci_curvatures = {}
+    if routes is not None and traffic_matrix is not None:
+        ricci_curvatures = curvature.compute_ricci_curvature_from_traffic_matrix(
+            graph, routes, traffic_matrix, 'rtt'
+        )
+    else:
+        ricci_curvatures = curvature.compute_ricci_curvature(
+            graph, alpha=alpha, edge_weight_label=weight_label, use_augmented_graph=False
+        )
     for (source, destination), ricci_curvature in ricci_curvatures.items():
         graph.edges[source, destination]['ricciCurvature'] = ricci_curvature
 
@@ -216,7 +228,8 @@ def get_graph(
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
     throughputs_for_curvature=False,
-    directed=False
+    directed=False,
+    routes=None, traffic_matrix=None
 ):
     graph = get_base_graph(probes, links, directed)
     if should_include_latencies:
@@ -234,13 +247,13 @@ def get_graph(
         if throughputs_for_curvature:
             graph = compute_curvatures_from_throughputs(graph)
         else:
-            graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label)
+            graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic_matrix)
     if should_include_latencies:
         return graph, latencies
     else:
         return graph
 
-def get_graph_from_paths(
+def get_graph_from_csvs(
     path_probes,
     path_links,
     *,
@@ -287,6 +300,57 @@ def get_graph_from_paths(
             ricci_curvature_weight_label=ricci_curvature_weight_label,
             throughputs_for_curvature=throughputs_for_curvature,
             directed=directed
+        )
+
+def get_graph_from_json(
+    path,
+    *,
+    epsilon=None,
+    clustering_distance=None,
+    should_remove_tivs=False,
+    should_include_latencies=False,
+    should_compute_curvatures=True,
+    ricci_curvature_alpha=0.,
+    ricci_curvature_weight_label=None,
+    throughputs_for_curvature=False,
+    directed=False
+):
+    with open(path) as file:
+        blob = json.load(file)
+
+        probes = blob['nodes']
+        links = {
+            (link['source_id'], link['target_id']): link
+            for link in blob['links']
+        }
+        routes = None
+        traffic_matrix = None
+        if 'routes' in blob:
+            routes = {}
+            traffic_matrix = {}
+            for link in links.values():
+                link['throughput'] = 0.
+            for route_info in blob['routes']:
+                route = route_info['route']
+                volume = route_info['volume']
+                for u, v in itertools.pairwise(route):
+                    links[(u, v)]['throughput'] += volume
+                routes[route[0], route[-1]] = route
+                traffic_matrix[route[0], route[-1]] = volume
+
+        return get_graph(
+            probes, links.values(),
+            epsilon=epsilon,
+            clustering_distance=clustering_distance,
+            should_remove_tivs=should_remove_tivs,
+            should_include_latencies=should_include_latencies,
+            should_compute_curvatures=should_compute_curvatures,
+            ricci_curvature_alpha=ricci_curvature_alpha,
+            ricci_curvature_weight_label=ricci_curvature_weight_label,
+            throughputs_for_curvature=throughputs_for_curvature,
+            directed=directed,
+            routes=routes,
+            traffic_matrix=traffic_matrix,
         )
 
 def get_network_data(

@@ -50,7 +50,7 @@ def get_mesh_from_directory(
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
-    graph = input_network.get_graph_from_paths(
+    graph = input_network.get_graph_from_csvs(
         probes_file_path, latencies_file_path,
         epsilon=epsilon,
         clustering_distance=clustering_distance,

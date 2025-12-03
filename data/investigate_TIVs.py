@@ -50,7 +50,7 @@ if __name__ == '__main__':
     if epsilon is None:
         epsilon = float('inf')
 
-    graph = input_network.get_graph_from_paths(
+    graph = input_network.get_graph_from_csvs(
         probes_filename, latencies_filename,
         epsilon=epsilon,
         clustering_distance=500000
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     long_edge_counts = []
     for i in range(0, len(thresholds), len(thresholds) // 100):
         threshold = thresholds[i]
-        graph = input_network.get_graph_from_paths(
+        graph = input_network.get_graph_from_csvs(
             probes_filename, latencies_filename, threshold, 500000
         )
 

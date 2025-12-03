@@ -183,7 +183,7 @@ if __name__ == '__main__':
             clustering_distance = parameters['clustering_distance']
             should_remove_tivs = parameters['should_remove_TIVs']
             ricci_curvature_alpha = parameters['ricci_curvature_alpha']
-            graph, latencies = input_network.get_graph_from_paths(
+            graph, latencies = input_network.get_graph_from_csvs(
                 probes_file_path, latencies_file_path,
                 epsilon=epsilon,
                 clustering_distance=clustering_distance,
@@ -311,7 +311,7 @@ if __name__ == '__main__':
                 clustering_distance = parameters['clustering_distance']
                 should_remove_tivs = parameters['should_remove_TIVs']
                 ricci_curvature_alpha = parameters['ricci_curvature_alpha']
-                network, latencies = input_network.get_graph_from_paths(
+                network, latencies = input_network.get_graph_from_csvs(
                     probes_file_path, latencies_file_path,
                     epsilon=epsilon,
                     clustering_distance=clustering_distance,

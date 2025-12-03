@@ -17,7 +17,7 @@ edges_to_remove = [
 output_directory = pathlib.PurePath('_'.join(itertools.chain(['removed'], [''.join(pair) for pair in edges_to_remove])))
 
 # Create the network in NetworkX
-network = input_network.get_graph_from_paths(
+network = input_network.get_graph_from_csvs(
     pathlib.PurePath('elbow_probes.csv'),
     pathlib.PurePath('elbow_links.csv'),
 )

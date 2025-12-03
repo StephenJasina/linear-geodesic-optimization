@@ -86,7 +86,7 @@ if __name__ == '__main__':
         iteration_data = pickle.load(f)
         z = np.array(iteration_data['mesh_parameters'])
 
-    network = input_network.get_graph_from_paths(
+    network = input_network.get_graph_from_csvs(
         probes_file_path, latencies_file_path,
         epsilon=epsilon,
         clustering_distance=clustering_distance,

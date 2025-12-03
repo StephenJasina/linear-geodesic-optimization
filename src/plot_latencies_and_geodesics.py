@@ -23,7 +23,7 @@ if __name__ == '__main__':
         epsilon = parameters['epsilon']
         clustering_distance = parameters['clustering_distance']
 
-        graph = input_network.get_graph_from_paths(
+        graph = input_network.get_graph_from_csvs(
             probes_file_path, latencies_file_path,
             epsilon=epsilon,
             clustering_distance=clustering_distance
