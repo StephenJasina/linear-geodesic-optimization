@@ -257,17 +257,22 @@ def compute_ricci_curvature(
                 alpha, edge_weight_label
             )
 
-            transport_distance = ot.emd2(
+            transportation_cost = ot.emd2(
                 distribution_source,
                 distribution_destination,
                 distance_matrix
             )
             edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
-            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
+            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transportation_cost / edge_distance) / (1. - alpha)
     elif use_tomography:
-        routes = tomography.get_shortest_routes(graph)
-        traffic_matrix = tomography.compute_traffic_matrix(graph, routes)
-        # TODO: Extract output from compute_ricci_curvature_from_traffic_matrix
+        routes = tomography.get_shortest_routes(graph, edge_distance_label=edge_distance_label)
+        traffic_matrix = tomography.compute_traffic_matrix(graph, routes, edge_weight_label)
+        ricci_curvatures = {
+            (index_to_node[source], index_to_node[destination]): curvature
+            for (source, destination), curvature in compute_ricci_curvature_from_traffic_matrix(
+                graph, routes, traffic_matrix, edge_distance_label
+            ).items()
+        }
     else:
         for source, destination in graph.edges:
             distribution_source = get_distribution(
@@ -279,12 +284,12 @@ def compute_ricci_curvature(
                 alpha, edge_weight_label
             )
 
-            transport_distance = ot.emd2(
+            transportation_cost = ot.emd2(
                 distribution_source,
                 distribution_destination,
                 distance_matrix
             )
             edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
-            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transport_distance / edge_distance) / (1. - alpha)
+            ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transportation_cost / edge_distance) / (1. - alpha)
 
     return ricci_curvatures

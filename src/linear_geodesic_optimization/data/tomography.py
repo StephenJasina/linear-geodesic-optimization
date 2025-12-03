@@ -6,22 +6,21 @@ import numpy as np
 from scipy import optimize, sparse
 
 
-def get_shortest_routes(graph, weight_label='latency'):
+def get_shortest_routes(graph, edge_distance_label=None):
     # Compute routes between each source-destination pair. Assume shortest
     # path routing for this example.
     return {
         (source, destination): route
         for source in graph.nodes
-        for destination, route in nx.single_source_dijkstra_path(graph, source, weight=weight_label).items()
+        for destination, route in nx.single_source_dijkstra_path(graph, source, weight=edge_distance_label).items()
     }
 
-def compute_traffic_matrix(graph, routes, weight_label='throughput'):
     index_to_link_id = []
     link_id_to_index = {}
     traffic_out_per_node = collections.defaultdict(float)
     traffic_in_per_node = collections.defaultdict(float)
     traffic_total = 0.
-    for index, (id_source, id_target, throughput) in enumerate(graph.edges.data(weight_label)):
+    for index, (id_source, id_target, throughput) in enumerate(graph.edges.data(edge_weight_label)):
         index_to_link_id.append((id_source, id_target))
         link_id_to_index[(id_source, id_target)] = index
 
@@ -31,7 +30,7 @@ def compute_traffic_matrix(graph, routes, weight_label='throughput'):
 
     # This is a scaling of y by the total traffic in the system
     traffic_counts = np.array([
-        graph.edges[source_id, target_id][weight_label]
+        graph.edges[source_id, target_id][edge_weight_label]
         for source_id, target_id in index_to_link_id
     ])
 
