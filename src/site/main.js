@@ -1106,8 +1106,6 @@ dropReader.onload = function() {
 			}
 		}
 
-		resetView();
-
 		for (let i = 0; i < elementsByTab.length; ++i) {
 			elementsByTab[i].canvasNeedsUpdate = true;
 		}
