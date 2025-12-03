@@ -10,8 +10,9 @@ def get_shortest_routes(graph, weight_label='latency'):
     # Compute routes between each source-destination pair. Assume shortest
     # path routing for this example.
     return {
-        source: nx.single_source_dijkstra_path(graph, source, weight=weight_label)
+        (source, destination): route
         for source in graph.nodes
+        for destination, route in nx.single_source_dijkstra_path(graph, source, weight=weight_label).items()
     }
 
 def compute_traffic_matrix(graph, routes, weight_label='throughput'):

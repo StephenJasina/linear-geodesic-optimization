@@ -148,57 +148,58 @@ def get_augmented_distribution(
 
     return distribution
 
-def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix):
+def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix, edge_distance_label='latency'):
+    ricci_curvatures = {}
     for u, v in graph.edges:
         denominator = 0.
         numerator = 0.
 
         # Find which routes are relevant
-        for source, routes_source in routes.items():
-            for destination, route in routes_source.items():
-                s_index = 0
-                while True:
-                    if s_index == len(route) or (route[s_index], u) in graph.edges:
-                        break
-                    s_index += 1
-                if s_index == len(route) or route[s_index] == v:
-                    continue
+        for (source, destination), route in routes.items():
+            s_index = 0
+            while True:
+                if s_index == len(route) or (route[s_index], u) in graph.edges:
+                    break
+                s_index += 1
+            if s_index == len(route) or route[s_index] == v:
+                continue
 
-                t_index = len(route) - 1
-                while True:
-                    if t_index == -1 or (v, route[t_index]) in graph.edges:
-                        break
-                    t_index -= 1
-                if t_index == -1 or route[t_index] == u:
-                    continue
+            t_index = len(route) - 1
+            while True:
+                if t_index == -1 or (v, route[t_index]) in graph.edges:
+                    break
+                t_index -= 1
+            if t_index == -1 or route[t_index] == u:
+                continue
 
-                if s_index > t_index:
-                    continue
+            if s_index > t_index:
+                continue
 
-                if (source, destination) not in traffic_matrix:
-                    # In this case, x_p = 0
-                    continue
-                x_p = traffic_matrix[(source, destination)]
+            if (source, destination) not in traffic_matrix:
+                # In this case, x_p = 0
+                continue
+            x_p = traffic_matrix[(source, destination)]
 
-                # At this point, we have a (non-zero) flow from source to
-                # destination that passes through s (a predecessor of u) and
-                # t (a successor of v)
+            # At this point, we have a (non-zero) flow from source to
+            # destination that passes through s (a predecessor of u) and
+            # t (a successor of v)
 
-                d_p_s_t = sum([
-                    graph.edges[(x, y)]['latency']
-                    for x, y in itertools.pairwise(route[s_index:t_index+1])
-                ])
+            d_p_s_t = sum([
+                graph.edges[(x, y)][edge_distance_label]
+                for x, y in itertools.pairwise(route[s_index:t_index+1])
+            ])
 
-                denominator += x_p
-                numerator += x_p * d_p_s_t
+            denominator += x_p
+            numerator += x_p * d_p_s_t
 
         if denominator != 0.:
             transportation_cost = numerator / denominator
-            graph.edges[(u, v)]['curvature'] = 1. - transportation_cost / graph.edges[(u, v)]['latency']
+            ricci_curvatures[(u, v)] = 1. - transportation_cost / graph.edges[(u, v)][edge_distance_label]
         else:
-            print(f'Skipping edge {u} -> {v}')
+            pass
+            # print(f'Skipping edge {u} -> {v}')
 
-    return graph
+    return ricci_curvatures
 
 def compute_ricci_curvature(
     graph: nx.Graph,
