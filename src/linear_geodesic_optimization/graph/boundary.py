@@ -558,17 +558,21 @@ def compute_border(
         for polygon in polygons.values()
     ]
 
-def distance_to_border(
+def distance_to_network(
     point: npt.NDArray[np.float64],
     border: typing.List[typing.List[float]]
 ) -> float:
     """
-    Compute the distance from a point to a graph's border.
+    Compute the distance from a point to a graph.
 
-    If the point lies inside the graph, the distance is 0.
+    If the point lies inside the graph, the distance is 0. Otherwise, it
+    is the distance to the border.
     """
     if is_in_interior_of_polygons(point, border):
         return 0.
+
+    if not border:
+        return np.inf
 
     return min([
         np.linalg.norm(point - project_to_line_segment(point, np.array(left), np.array(right)))

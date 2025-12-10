@@ -60,7 +60,7 @@ def collate_outputs(
     geodesic_label_color_pairs=[],
     height_scale=0.15,
     use_convex_hull=False,
-    bubble_size = 0.,
+    bubble_size = np.inf,
 ):
     """
     Join many optimization outputs into a single animation.
@@ -170,8 +170,6 @@ def collate_outputs(
     zs = []
     for output in outputs:
         z = np.array(output['final']) - np.array(output['initial'])
-        z = z * 0.
-        # z = np.array(output['final'])
         zs.append(z - np.mean(z))
 
     # Assume most parameters don't change across snapshots
@@ -205,7 +203,11 @@ def collate_outputs(
                 'curvature': curvature,
                 'throughput': throughput,
             }
-            for edge, curvature, throughput in zip(graph_data['edges'], edge_data['ricciCurvature'], edge_data['throughput'] if 'throughput' in edge_data else itertools.repeat(1.))
+            for edge, curvature, throughput in zip(
+                graph_data['edges'],
+                edge_data['ricciCurvature'] if 'ricciCurvature' in edge_data else itertools.repeat(0.),
+                edge_data['throughput'] if 'throughput' in edge_data else itertools.repeat(1.)
+            )
         ]
         for output in outputs
         for (graph_data, vertex_data, edge_data) in (output['network'],)
@@ -214,7 +216,7 @@ def collate_outputs(
     # Compute the network borders
     network_borders = []
     hulls = []
-    distances_to_borders = []
+    distances_to_networks = []
     for output in outputs:
         network = output['network']
         graph_data, vertex_data, edge_data = network
@@ -233,14 +235,14 @@ def collate_outputs(
             network_border = boundary.compute_border(network_vertices, network_edges)
 
         network_borders.append(network_border)
-        distances_to_borders.append(np.array([
-            boundary.distance_to_border(
+        distances_to_networks.append(np.array([
+            boundary.distance_to_network(
                 np.array(vertex_coordinate),
                 network_border
             )
             for vertex_coordinate in mesh.get_coordinates()[:, :2]
         ]))
-        hulls.append(np.where(distances_to_borders[-1] == 0.)[0])
+        hulls.append(np.where(distances_to_networks[-1] / mesh_scale <= bubble_size)[0])
 
     # Determine values for vertical scaling
     z_max = -np.inf
@@ -253,19 +255,18 @@ def collate_outputs(
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
     animation_data = []
-    for t, z, distance_to_network, edges, network_border in zip(times, zs, distances_to_borders, animation_edges, network_borders):
+    for t, z, distance_to_network, hull, edges, network_border in zip(times, zs, distances_to_networks, hulls, animation_edges, network_borders):
         z_original = np.copy(z)
 
-        hull = [index for index in range(mesh.get_topology().n_vertices) if distance_to_network[index] < bubble_size]
-        distance_to_network = np.maximum(distance_to_network - bubble_size, 0.)
+        distance_to_bubble = np.zeros(distance_to_network.shape) if np.isposinf(bubble_size) else np.maximum(distance_to_network / mesh_scale - bubble_size, 0.)
         z = z - z_min
-        if z_max != z_min:
+        if z_max != z_min and height_scale is not None:
             z = z / (z_max - z_min) * height_scale
-        z = (z + 0.05) * np.exp(-1000 * distance_to_network**2) - 0.05
+        z = (z + 0.05) * np.exp(-1000 * distance_to_bubble**2) - 0.05
 
         mesh.set_parameters(z)
         # TODO: Make this safer
-        # mesh.trim_to_set(hull)
+        mesh.trim_to_set(hull)
         geodesics = compute_geodesics_from_graph(
             mesh, network_vertices,
             network_edges,
@@ -291,17 +292,24 @@ def collate_outputs(
 
     # Set the map data
     # TODO: Make this more robust
-    coordinates = np.array(node_coordinates)
-    center_xy = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
-    center = utility.inverse_mercator(*center_xy)
-    left, _ = utility.inverse_mercator(np.amin(coordinates[:,0]), 0)
-    right, _ = utility.inverse_mercator(np.amax(coordinates[:,0]), 0)
-    zoom_factor = coordinates_scale * 360. / (right - left)
-    map_data = {
-        'center': center,
-        'zoomFactor': zoom_factor,
-    }
+    if node_coordinates:
+        coordinates = np.array(node_coordinates)
+        center_xy = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
+        center = utility.inverse_mercator(*center_xy)
+        left, _ = utility.inverse_mercator(np.amin(coordinates[:,0]), 0)
+        right, _ = utility.inverse_mercator(np.amax(coordinates[:,0]), 0)
+        zoom_factor = coordinates_scale * 360. / (right - left)
+        map_data = {
+            'center': center,
+            'zoomFactor': zoom_factor,
+        }
+    else:
+        map_data = {
+            'center': (0., 0.),
+            'zoomFactor': 1.,
+        }
 
+    os.makedirs(path_output_collated.parent, exist_ok=True)
     with open(path_output_collated, 'w') as file_output:
         json.dump(
             {
@@ -312,38 +320,90 @@ def collate_outputs(
             file_output, ensure_ascii=False
         )
 
-if __name__ == '__main__':
-    # directories_outputs = [
-    #     (0., pathlib.PurePath('..', 'outputs', 'toy', 'test_mesh_size', '0', '2.0_0.0002_50_50')),
-    # ]
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes')
+def main_test_mesh_size():
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'test_mesh_size')
+    directories_outputs = [
+        superdirectory / directory
+        for directory in sorted(os.listdir(superdirectory))
+    ]
+
+    geodesic_label_color_pairs = [
+        ((u, v), [0, 0, 0])
+        for u in 'ABCDEF'
+        for v in 'ABCDEF'
+        if u != v
+    ]
+
+    for directory in directories_outputs:
+        collate_outputs(
+            [directory],
+            pathlib.PurePath('..', 'outputs', 'animations', 'test_mesh_size', f'{directory.stem}.json'),
+            geodesic_label_color_pairs=geodesic_label_color_pairs,
+            bubble_size=0.05,
+            # height_scale=None,
+        )
+
+def main_routing_with_volumes():
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes_small_mesh')
+    directories_outputs = [
+        superdirectory / directory / '0.002_50_50'
+        for directory in sorted(os.listdir(superdirectory))
+    ]
+
+    geodesic_label_color_pairs = [
+        ((u, v), [0, 0, 0])
+        for u in 'ABCDEF'
+        for v in 'ABCDEF'
+        if u != v
+    ]
+
+    for directory in directories_outputs:
+        collate_outputs(
+            [directory],
+            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes_small_mesh', f'{directory.parent.stem}.json'),
+            geodesic_label_color_pairs=geodesic_label_color_pairs,
+            bubble_size=0.05,
+            # height_scale=None,
+        )
+
+def test():
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes_small_mesh')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
         for directory in sorted(os.listdir(superdirectory))
     ][:1]
 
-    # path_output_collated = pathlib.PurePath('..', 'outputs', 'animations', 'test_mesh_size.json')
-
-    # geodesic_label_color_pairs = [
-    #     ((u, v), [0, 0, 0])
-    #     for u in 'ABCDEF'
-    #     for v in 'ABCDEF'
-    #     if u != v
-    # ]
     geodesic_label_color_pairs = [
-        (('F', 'C'), [0, 0, 0])
+        ((u, v), [0, 0, 0])
+        for u in 'ABCDEF'
+        for v in 'ABCDEF'
+        if u != v
     ]
 
-    # collate_outputs(
-    #     directories_outputs,
-    #     path_output_collated,
-    #     geodesic_label_color_pairs,
-    #     bubble_size=0.02
-    # )
     for directory in directories_outputs:
         collate_outputs(
             [directory],
-            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'{directory.parent.name}.json'),
+            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes_small_mesh', f'{directory.parent.stem}.json'),
             geodesic_label_color_pairs=geodesic_label_color_pairs,
             bubble_size=0.05,
+            # height_scale=None,
         )
+
+def main_from_function():
+    collate_outputs(
+        [
+            pathlib.PurePath('..', 'outputs', 'from_function', 'positive')
+        ],
+        pathlib.PurePath('..', 'outputs', 'animations', 'positive.json'),
+    )
+    collate_outputs(
+        [
+            pathlib.PurePath('..', 'outputs', 'from_function', 'negative')
+        ],
+        pathlib.PurePath('..', 'outputs', 'animations', 'negative.json'),
+    )
+
+if __name__ == '__main__':
+    # main_test_mesh_size()
+    main_routing_with_volumes()
+    # main_from_function()
