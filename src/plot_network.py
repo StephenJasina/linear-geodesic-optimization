@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--clustering-distance', '-c', dest='clustering_distance', metavar='clustering-distance', type=float)
     parser.add_argument('--show-map', '-m', dest='show_map', action='store_true')
     parser.add_argument('--output', '-o', dest='output_filename', metavar='filename')
+    parser.add_argument('--quiet', '-q', dest='quiet', action='store_true')
     args = parser.parse_args()
     graphml_filename = args.graphml_filename
     json_filename = args.json_filename
@@ -29,6 +30,7 @@ if __name__ == '__main__':
     clustering_distance = args.clustering_distance
     show_map = args.show_map
     output_filename = args.output_filename
+    quiet = args.quiet
 
     if graphml_filename is not None:
         graph = nx.graphml.read_graphml(graphml_filename)
@@ -72,7 +74,8 @@ if __name__ == '__main__':
         # weight_label='throughput', color_min=-1., color_max=1.
     )
 
-    if output_filename is None:
-        plt.show()
-    else:
-        fig.savefig(output_filename, dpi=200, bbox_inches='tight')
+    if not quiet:
+        if output_filename is None:
+            plt.show()
+        else:
+            fig.savefig(output_filename, dpi=200, bbox_inches='tight')
