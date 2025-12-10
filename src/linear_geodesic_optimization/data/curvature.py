@@ -148,21 +148,58 @@ def get_augmented_distribution(
 
     return distribution
 
-def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix, edge_distance_label='latency'):
+def compute_ricci_curvature_from_traffic_matrix(graph: nx.Graph, routes, traffic_matrix, edge_distance_label='latency'):
     ricci_curvatures = {}
     for u, v in graph.edges:
-        denominator = 0.
-        numerator = 0.
+        # Some running totals used to compute transportation costs. In
+        # most cases, we should only expect to use the s_t variant, but
+        # we compute all of them to avoid having to use more for loops.
+        denominator_s_v = 0.
+        numerator_s_v = 0.
+        denominator_s_t = 0.
+        numerator_s_t = 0.
+        denominator_u_v = 0.
+        numerator_u_v = 0.
+        denominator_u_t = 0.
+        numerator_u_t = 0.
 
         # Find which routes are relevant
         for (source, destination), route in routes.items():
+            x_p = traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
+            if x_p == 0.:
+                # In this case, nothing would be accumulated, so we can
+                # skip investigating the route
+                continue
+
+            # Find:
+            # * The first time a predecessor s of u shows up
+            # * The first time u shows up
+            # * The last time v shows up
+            # * The last time a successor t of v shows up
+
             s_index = 0
             while True:
                 if s_index == len(route) or (route[s_index], u) in graph.edges:
                     break
                 s_index += 1
             if s_index == len(route) or route[s_index] == v:
-                continue
+                s_index = None
+
+            u_index = 0
+            while True:
+                if u_index == len(route) or route[u_index] == u:
+                    break
+                u_index += 1
+            if u_index == len(route):
+                u_index = None
+
+            v_index = len(route) - 1
+            while True:
+                if v_index == -1 or route[v_index] == v:
+                    break
+                v_index -= 1
+            if v_index == -1:
+                v_index = None
 
             t_index = len(route) - 1
             while True:
@@ -170,34 +207,80 @@ def compute_ricci_curvature_from_traffic_matrix(graph, routes, traffic_matrix, e
                     break
                 t_index -= 1
             if t_index == -1 or route[t_index] == u:
-                continue
+                t_index = None
 
-            if s_index > t_index:
-                continue
+            # Now update the running totals used to compute
+            # transportation costs
 
-            if (source, destination) not in traffic_matrix:
-                # In this case, x_p = 0
-                continue
-            x_p = traffic_matrix[(source, destination)]
+            if s_index is not None and v_index is not None and s_index <= v_index:
+                # The flow passes through s then v
+                d_p = sum([
+                    graph.edges[(x, y)][edge_distance_label]
+                    for x, y in itertools.pairwise(route[s_index:v_index+1])
+                ]) if edge_distance_label is not None else float(v_index - s_index)
+                denominator_s_v += x_p
+                numerator_s_v += x_p * d_p
 
-            # At this point, we have a (non-zero) flow from source to
-            # destination that passes through s (a predecessor of u) and
-            # t (a successor of v)
+            if s_index is not None and t_index is not None and s_index <= t_index:
+                # The flow passes through s then t
+                d_p = sum([
+                    graph.edges[(x, y)][edge_distance_label]
+                    for x, y in itertools.pairwise(route[s_index:t_index+1])
+                ]) if edge_distance_label is not None else float(t_index - s_index)
+                denominator_s_t += x_p
+                numerator_s_t += x_p * d_p
 
-            d_p_s_t = sum([
-                graph.edges[(x, y)][edge_distance_label]
-                for x, y in itertools.pairwise(route[s_index:t_index+1])
-            ])
+            if u_index is not None and v_index is not None and u_index <= v_index:
+                # The flow passes through u then v
+                d_p = sum([
+                    graph.edges[(x, y)][edge_distance_label]
+                    for x, y in itertools.pairwise(route[u_index:v_index+1])
+                ]) if edge_distance_label is not None else float(v_index - u_index)
+                denominator_s_v += x_p
+                numerator_s_v += x_p * d_p
 
-            denominator += x_p
-            numerator += x_p * d_p_s_t
+            if u_index is not None and t_index is not None and u_index <= t_index:
+                # The flow passes through u then  t
+                d_p = sum([
+                    graph.edges[(x, y)][edge_distance_label]
+                    for x, y in itertools.pairwise(route[u_index:t_index+1])
+                ]) if edge_distance_label is not None else float(t_index - u_index)
+                denominator_u_t += x_p
+                numerator_u_t += x_p * d_p
 
-        if denominator != 0.:
-            transportation_cost = numerator / denominator
-            ricci_curvatures[(u, v)] = 1. - transportation_cost / graph.edges[(u, v)][edge_distance_label]
+        d_u_v = graph.edges[(u, v)][edge_distance_label] if edge_distance_label is not None else 1.
+        if denominator_s_t != 0.:
+            # Prioritize the case where we have data describing
+            # transportation between neighborhoods of u and v
+            transportation_cost = numerator_s_t / denominator_s_t
+            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
+        elif denominator_s_v != 0.:
+            # If that data doesn't exist, check whether we have routes
+            # from u's neighborhood to v
+            transportation_cost = numerator_s_v / denominator_s_v
+            # This will probably be negative unless there is some
+            # strange routing
+            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
+        elif denominator_u_t != 0.:
+            # If that data doesn't exist, check whether we have routes
+            # from u to v's neighborhood
+            transportation_cost = numerator_u_t / denominator_u_t
+            # This will probably be negative unless there is some
+            # strange routing
+            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
+        elif denominator_u_v != 0.:
+            # If that data doesn't exist, check whether we have routes
+            # from u to v
+            transportation_cost = numerator_u_v / denominator_u_v
+            # This will probably be 0. unless there is some strange
+            # routing
+            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
         else:
+            # If we get here, we don't have enough information to
+            # compute the curvature. For now, let's just not set the
+            # curvature to anything
+            # TODO: Is this the right approach?
             pass
-            # print(f'Skipping edge {u} -> {v}')
 
     return ricci_curvatures
 
