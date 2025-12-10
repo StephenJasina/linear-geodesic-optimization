@@ -9,7 +9,7 @@ import { xToCanvasCoordinates, yToCanvasCoordinates, lengthToCanvasCoordinates }
  * @param {number} [sensitivity]
  */
 export default function(context, zs, zsEWMA, t, ts, boundaries, sensitivity = 0.02) {
-	if (t == null || ts == null || t <= ts[0] || t > ts[ts.length - 1]) {
+	if (t === null || ts === null || t <= ts[0] || t > ts[ts.length - 1]) {
 		return;
 	}
 

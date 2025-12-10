@@ -563,7 +563,7 @@ function animate() {
 			}
 
 			drawLayers(
-				(times == null || times.length == 0) ? null : (times.length == 1 ? times[0] : rangeAnimation.value),
+				(times === null || times.length == 0) ? null : (times.length == 1 ? times[0] : rangeAnimation.value),
 				options
 			);
 
@@ -591,7 +591,7 @@ window.addEventListener("resize", function() {
 
 function getCurrentNetworkIndex() {
 	let time = parseFloat(rangeAnimation.value);
-	if (times == null) {
+	if (times === null) {
 		return null;
 	}
 
@@ -932,7 +932,7 @@ function drawHoverArcsWithInterpolation(networkVertices, networkEdgesLeft, netwo
 }
 
 function drawHoverArcsWithMultipleInterpolation(networkVertices, networkEdges, t, ts, zs) {
-	if (ts == null) {
+	if (ts === null) {
 		return;
 	}
 

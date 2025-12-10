@@ -14,7 +14,7 @@ export default function(context, geodesics, geodesicsWidth = 3, colors = null) {
 		let vertex = vertexToCanvasCoordinates(context, geodesic[0]);
 		context.beginPath();
 		context.moveTo(vertex[0], vertex[1]);
-		if (colors == null) {
+		if (colors === null) {
 			context.strokeStyle = "#000000";
 		} else {
 			let color = colors[index];

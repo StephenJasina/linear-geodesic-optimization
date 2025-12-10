@@ -24,14 +24,14 @@ function setPlaneHeights(plane, zLeft, zRight = null, lambda = null) {
 	let bufferedHeights = plane.geometry.getAttribute('position');
 	let divisions = plane.geometry.parameters.widthSegments + 1;
 
-	if (zRight == null) {
+	if (zRight === null) {
 		zRight = zLeft;
 		lambda = 0.;
 	}
 
 	for (let i = 0; i < divisions; i++) {
 		for (let j = 0; j < divisions; j++) {
-			if (zLeft[i][j] == null || zRight[i][j] == null) {
+			if (zLeft[i][j] === null || zRight[i][j] === null) {
 			} else {
 				bufferedHeights.setZ(i * divisions + j, ((1 - lambda) * zLeft[i][j] + lambda * zRight[i][j]) * plane.geometry.parameters.width);
 			}
@@ -48,7 +48,7 @@ function setPlaneHeights(plane, zLeft, zRight = null, lambda = null) {
  */
 function setPlaneHeightsWithInterpolation(plane, zs, t, ts) {
 	// Assume ts are sorted. ts and zs are parallel.
-	if (ts == null) {
+	if (ts === null) {
 		return;
 	}
 

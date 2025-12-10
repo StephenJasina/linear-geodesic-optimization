@@ -13,6 +13,11 @@ export default function(context, networkVertices, edges, lineWidth = 6, colorEdg
 	// Borders first
 	for (let indexEdge = 0; indexEdge < edges.length; ++indexEdge) {
 		let edge = edges[indexEdge];
+
+		if (edge.curvature === null) {
+			continue;
+		}
+
 		let source = vertexToCanvasCoordinates(context, networkVertices[edge.source].coordinates);
 		let target = vertexToCanvasCoordinates(context, networkVertices[edge.target].coordinates);
 
@@ -27,6 +32,11 @@ export default function(context, networkVertices, edges, lineWidth = 6, colorEdg
 	// Then the actual edges
 	for (let indexEdge = 0; indexEdge < edges.length; ++indexEdge) {
 		let edge = edges[indexEdge];
+
+		if (edge.curvature === null) {
+			continue;
+		}
+
 		let source = vertexToCanvasCoordinates(context, networkVertices[edge.source].coordinates);
 		let target = vertexToCanvasCoordinates(context, networkVertices[edge.target].coordinates);
 
