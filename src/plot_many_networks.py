@@ -5,6 +5,8 @@ import subprocess
 
 data_dir = pathlib.PurePath('..', 'data', 'toy', 'routing_with_volumes')
 json_dir = data_dir / 'graphs'
+output_dir = data_dir / 'images'
+os.makedirs(output_dir, exist_ok=True)
 for json_filename in sorted(os.listdir(json_dir)):
     json_path = json_dir / json_filename
     name = f'{json_path.stem}.png'
@@ -12,5 +14,5 @@ for json_filename in sorted(os.listdir(json_dir)):
         'python',
         'plot_network.py',
         '-j', str(json_path),
-        '-o', str(data_dir / 'images' / name)
+        '-o', str(output_dir / name)
     ])
