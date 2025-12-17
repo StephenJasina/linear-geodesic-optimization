@@ -5,7 +5,7 @@ import pathlib
 import sys
 import typing
 
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import numpy as np
 import potpourri3d as pp3d
 
@@ -29,14 +29,14 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
             except ValueError:
                 bad_indices.add(network_index)
 
-    fig, ax = plt.subplots(1, 1)
-    topology = mesh.get_topology()
-    coordinates = mesh.get_coordinates()
-    for edge in topology.edges():
-        u, v = edge.vertices()
-        ax.plot([coordinates[u.index][0], coordinates[v.index][0]], [coordinates[u.index][1], coordinates[v.index][1]], 'k-')
-    ax.set_aspect('equal')
-    plt.show()
+    # fig, ax = plt.subplots(1, 1)
+    # topology = mesh.get_topology()
+    # coordinates = mesh.get_coordinates()
+    # for edge in topology.edges():
+    #     u, v = edge.vertices()
+    #     ax.plot([coordinates[u.index][0], coordinates[v.index][0]], [coordinates[u.index][1], coordinates[v.index][1]], 'k-')
+    # ax.set_aspect('equal')
+    # plt.show()
 
     path_solver = pp3d.EdgeFlipGeodesicSolver(
         mesh.get_coordinates(),
