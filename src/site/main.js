@@ -480,7 +480,7 @@ function drawLayers(time, options) {
 		if (options.showGeodesics) {
 			drawGeodesics(
 				context, geodesics[currentNetworkIndexInt],
-				6, edgeColors[currentNetworkIndexInt]);
+				3, edgeColors[currentNetworkIndexInt]);
 		}
 
 		// Deal with outages
