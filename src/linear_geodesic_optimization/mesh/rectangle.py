@@ -298,8 +298,50 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
     def get_trim_mapping(self) -> typing.List[int]:
         return self._trim_mapping
 
-    def add_vertex_at_coordinates(self, p) -> dcelmesh.Mesh.Vertex:
-        # TODO: Consider when a vertex already exists or lies on an edge
+    def add_vertex_at_coordinates(self, p, epsilon=0.) -> dcelmesh.Mesh.Vertex:
+        """
+        Add a vertex into the mesh at the given x-y coordinates.
+        """
+        # Check whether `p` is very close to one of the vertices `a`
+        for va in self._topology.vertices():
+            a = self._coordinates[va.index]
+            if np.linalg.norm(p - a) <= epsilon * self._scale:
+                # If `p` and `a` are sufficiently close, there is
+                # nothing to do
+                return va
+
+        # Check whether `p` is very close to one of the edges `a`-`b`
+        # We first find the closest edge, which is slow, but will
+        # produce better results in the case that epsilon is too large
+        closest_edge = None
+        closest_edge_distance = np.inf
+        for edge in self._topology.edges():
+            va, vb = edge.vertices()
+            a = self._coordinates[va.index]
+            b = self._coordinates[vb.index]
+            distance = geometry.distance_to_line_segment(a, b, p)
+            if distance < closest_edge_distance:
+                closest_edge = edge
+                closest_edge_distance = distance
+        if closest_edge_distance <= epsilon:
+            # If `p` is nearly on one of the edges, add it an ensure
+            # the mesh remains a triangulation
+            va, vb = closest_edge.vertices()
+            a = self._coordinates[va.index]
+            b = self._coordinates[vb.index]
+            ba = np.append(b - a, [self._parameters[vb.index] - self._parameters[va.index]], 0)
+            ba = ba / np.linalg.norm(ba[:2])
+            pa = p - a
+            lambda_ = pa @ ba[:2]
+            z = lambda_ * ba[2] + self._parameters[va.index]
+
+            vp = self._topology.add_vertex_into_edge(closest_edge)
+            self._coordinates = np.append(self._coordinates, p.reshape((1, 2)), 0)
+            self._parameters = np.append(self._parameters, [z], 0)
+            self._partials = np.append(self._partials, [[0., 0., 1.]], 0)
+            return vp
+
+        # Add `p` to the face it lies in, if such a face exists
         for face in self._topology.faces():
             va, vb, vc = face.vertices()
             a = self._coordinates[va.index]
@@ -317,11 +359,12 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
                 lambda_c = pa @ ca[:2]
                 z = lambda_b * ba[2] + lambda_c * ca[2] + self._parameters[va.index]
 
-                vertex = self._topology.add_vertex_into_face(face)
+                vp = self._topology.add_vertex_into_face(face)
                 self._coordinates = np.append(self._coordinates, p.reshape((1, 2)), 0)
                 self._parameters = np.append(self._parameters, [z], 0)
                 self._partials = np.append(self._partials, [[0., 0., 1.]], 0)
-                return vertex
+                return vp
+
         raise ValueError('Point does not lie inside mesh support')
 
     def remove_added_vertices(self) -> None:

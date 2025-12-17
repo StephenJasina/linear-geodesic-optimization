@@ -5,6 +5,7 @@ import pathlib
 import sys
 import typing
 
+from matplotlib import pyplot as plt
 import numpy as np
 import potpourri3d as pp3d
 
@@ -24,9 +25,18 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
         network_vertex = network_vertices[network_index]
         if network_vertex.tolist() not in (mesh.get_coordinates()[:, :2].tolist()):
             try:
-                mesh.add_vertex_at_coordinates(network_vertex)
+                mesh.add_vertex_at_coordinates(network_vertex, 0.0001)
             except ValueError:
                 bad_indices.add(network_index)
+
+    fig, ax = plt.subplots(1, 1)
+    topology = mesh.get_topology()
+    coordinates = mesh.get_coordinates()
+    for edge in topology.edges():
+        u, v = edge.vertices()
+        ax.plot([coordinates[u.index][0], coordinates[v.index][0]], [coordinates[u.index][1], coordinates[v.index][1]], 'k-')
+    ax.set_aspect('equal')
+    plt.show()
 
     path_solver = pp3d.EdgeFlipGeodesicSolver(
         mesh.get_coordinates(),
@@ -320,53 +330,7 @@ def collate_outputs(
             file_output, ensure_ascii=False
         )
 
-def main_test_mesh_size():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'test_mesh_size')
-    directories_outputs = [
-        superdirectory / directory
-        for directory in sorted(os.listdir(superdirectory))
-    ]
-
-    geodesic_label_color_pairs = [
-        ((u, v), [0, 0, 0])
-        for u in 'ABCDEF'
-        for v in 'ABCDEF'
-        if u != v
-    ]
-
-    for directory in directories_outputs:
-        collate_outputs(
-            [directory],
-            pathlib.PurePath('..', 'outputs', 'animations', 'test_mesh_size', f'{directory.stem}.json'),
-            geodesic_label_color_pairs=geodesic_label_color_pairs,
-            bubble_size=0.05,
-            # height_scale=None,
-        )
-
 def main_routing_with_volumes():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes_small_mesh')
-    directories_outputs = [
-        superdirectory / directory / '0.002_50_50'
-        for directory in sorted(os.listdir(superdirectory))
-    ]
-
-    geodesic_label_color_pairs = [
-        ((u, v), [0, 0, 0])
-        for u in 'ABCDEF'
-        for v in 'ABCDEF'
-        if u != v
-    ]
-
-    for directory in directories_outputs:
-        collate_outputs(
-            [directory],
-            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes_small_mesh', f'{directory.parent.stem}.json'),
-            geodesic_label_color_pairs=geodesic_label_color_pairs,
-            bubble_size=0.05,
-            # height_scale=None,
-        )
-
-def test():
     superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes_small_mesh')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
@@ -389,6 +353,9 @@ def test():
             # height_scale=None,
         )
 
+def test():
+    pass
+
 def main_from_function():
     collate_outputs(
         [
@@ -404,6 +371,5 @@ def main_from_function():
     )
 
 if __name__ == '__main__':
-    # main_test_mesh_size()
     main_routing_with_volumes()
     # main_from_function()

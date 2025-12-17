@@ -85,8 +85,8 @@ def main(
 
     parameters = {
         'filename_probes': str(filename_probes) if filename_probes is not None else None,
-        'filename_links':str(filename_links) if filename_links is not None else None,
-        'filename_graphml':str(filename_graphml) if filename_graphml is not None else None,
+        'filename_links': str(filename_links) if filename_links is not None else None,
+        'filename_graphml': str(filename_graphml) if filename_graphml is not None else None,
         'epsilon': float(latency_threshold) if latency_threshold is not None else None,
         'clustering_distance': float(clustering_distance) if clustering_distance is not None else None,
         'should_remove_TIVs': False, # TODO: Pass this as a parameter?
@@ -156,7 +156,7 @@ def main(
         }, file_output, ensure_ascii=False)
 
 if __name__ == '__main__':
-    directory_outputs = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes')
+    directory_outputs = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes_small_mesh')
     n_cores = 14  # How many processes to use
 
     # epsilon = 7
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         for filename in sorted(os.listdir(directory_data / directory_json))
     ))
     # filenames_json = [
-    #     pathlib.PurePath('toy', 'routing_with_volumes', 'graphs', '0.json'),
+    #     pathlib.PurePath('toy', 'routing_with_volumes', 'graphs', 'graph.json'),
     # ] * 10
     count = len(filenames_json)
     filenames_probes = [None] * count
@@ -203,9 +203,9 @@ if __name__ == '__main__':
     lambdas_curvature = [1.] * count
     lambdas_smooth = [0.002] * count
     ricci_curvature_alphas = [0.] * count
-    initial_radii = [20.] * count
     sides = [50] * count
-    mesh_scales = [1.] * count
+    mesh_scales = [0.25] * count
+    initial_radii = [20. / mesh_scale for mesh_scale in mesh_scales]
     coordinates_scales = [0.8] * count
 
     network_trim_radii = [
@@ -216,8 +216,7 @@ if __name__ == '__main__':
 
     directories_output = [
         directory_outputs
-            # / filename_links.stem
-            / pathlib.Path(filename_json).stem
+            / filename_json.stem
             / f'{lambda_smooth}_{width}_{height}'
         for index, (filename_probes, filename_links, filename_graphml, filename_json, lambda_smooth, latency_threshold, initial_radius, width, height, mesh_scale) \
             in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, filenames_json, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
