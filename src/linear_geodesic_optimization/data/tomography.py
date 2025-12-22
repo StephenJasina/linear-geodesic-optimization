@@ -15,6 +15,7 @@ def get_shortest_routes(graph, edge_distance_label=None):
         for destination, route in nx.single_source_dijkstra_path(graph, source, weight=edge_distance_label).items()
     }
 
+def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
     index_to_link_id = []
     link_id_to_index = {}
     traffic_out_per_node = collections.defaultdict(float)
