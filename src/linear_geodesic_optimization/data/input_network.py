@@ -7,10 +7,12 @@ import typing
 import networkx as nx
 import numpy as np
 
-from linear_geodesic_optimization.data import clustering, curvature
-from linear_geodesic_optimization.data \
-    import triangle_inequality_violations as tivs
-from linear_geodesic_optimization.data import utility
+from linear_geodesic_optimization.data import \
+    clustering, \
+    curvature, \
+    tomography, \
+    triangle_inequality_violations as tivs, \
+    utility
 
 
 def minimize_id_removal(rtt_violation_list):
@@ -39,7 +41,7 @@ def minimize_id_removal(rtt_violation_list):
 
     return ids_to_remove
 
-def get_base_graph(probes, links, directed=False):
+def get_base_graph(probes, links, directed=False, symmetrize=False):
     # Create the graph
     if directed:
         graph = nx.DiGraph()
@@ -62,9 +64,9 @@ def get_base_graph(probes, links, directed=False):
             lat=lat, long=long
         )
         if 'city' in probe:
-            graph[probe['id']] = probe['city']
+            graph.nodes[probe['id']]['city'] = probe['city']
         if 'country' in probe:
-            graph[probe['id']] = probe['country']
+            graph.nodes[probe['id']]['country'] = probe['country']
 
         # TODO: Make this more robust (in the case longitude "wraps around")
         lat_min = min(lat_min, lat)
@@ -82,6 +84,8 @@ def get_base_graph(probes, links, directed=False):
     for link in links:
         id_source = link['source_id']
         id_target = link['target_id']
+        if symmetrize:
+            id_source, id_target = min(id_source, id_target), max(id_source, id_target)
 
         # Skip self loops
         if id_source == id_target:
@@ -142,6 +146,12 @@ def get_base_graph(probes, links, directed=False):
     # Delete nodes with inconsistent geolocation
     for node in minimize_id_removal(rtt_violation_list):
         graph.remove_node(node)
+
+    if directed and symmetrize:
+        graph.add_edges_from([
+            (id_target, id_source, data)
+            for id_source, id_target, data in graph.edges(data=True)
+        ])
 
     return graph
 
@@ -206,17 +216,6 @@ def compute_ricci_curvatures(
 
     return graph
 
-def compute_curvatures_from_throughputs(graph: nx.Graph):
-    throughput_edge_tuples = list(sorted([
-        (throughput, (source, destination))
-        for source, destination, throughput in graph.edges.data('throughput')
-    ]))
-    for index, (throughput, (source, destination)) in enumerate(throughput_edge_tuples):
-        # Naive strategy to linearly space from -1 to 1
-        graph.edges[source, destination]['ricciCurvature'] = 1 - 2 * index / (graph.number_of_edges() - 1)
-
-    return graph
-
 def get_graph(
     probes, links,
     *,
@@ -227,11 +226,10 @@ def get_graph(
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
-    throughputs_for_curvature=False,
-    directed=False,
+    directed=False, symmetrize=False,
     routes=None, traffic_matrix=None
 ):
-    graph = get_base_graph(probes, links, directed)
+    graph = get_base_graph(probes, links, directed, symmetrize)
     if should_include_latencies:
         latencies = [
             ((source_id, target_id), data['rtt'])
@@ -244,10 +242,7 @@ def get_graph(
     if clustering_distance is not None:
         graph = cluster_graph(graph, clustering_distance)
     if should_compute_curvatures:
-        if throughputs_for_curvature:
-            graph = compute_curvatures_from_throughputs(graph)
-        else:
-            graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic_matrix)
+        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic_matrix)
     if should_include_latencies:
         return graph, latencies
     else:
@@ -265,7 +260,8 @@ def get_graph_from_csvs(
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
     throughputs_for_curvature=False,
-    directed=False
+    directed=False,
+    symmetrize=False
 ):
     """
     Generate a NetworkX graph and optionally a list of latencies.
@@ -289,6 +285,12 @@ def get_graph_from_csvs(
     with open(path_probes) as file_probes, open(path_links) as file_links:
         probes = csv.DictReader(file_probes)
         links = csv.DictReader(file_links)
+
+        routes = None
+        traffic_matrix = None
+        # if throughputs_for_curvature:
+        #     routes = tomography.get_shortest_routes()
+
         return get_graph(
             probes, links,
             epsilon=epsilon,
@@ -298,8 +300,8 @@ def get_graph_from_csvs(
             should_compute_curvatures=should_compute_curvatures,
             ricci_curvature_alpha=ricci_curvature_alpha,
             ricci_curvature_weight_label=ricci_curvature_weight_label,
-            throughputs_for_curvature=throughputs_for_curvature,
-            directed=directed
+            directed=directed, symmetrize=symmetrize,
+            routes=routes, traffic_matrix=traffic_matrix
         )
 
 def get_graph_from_json(
@@ -312,8 +314,8 @@ def get_graph_from_json(
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
-    throughputs_for_curvature=False,
-    directed=False
+    directed=False,
+    symmetrize=False
 ):
     with open(path) as file:
         blob = json.load(file)
@@ -335,7 +337,9 @@ def get_graph_from_json(
                 volume = route_info['volume']
                 for u, v in itertools.pairwise(route):
                     links[(u, v)]['throughput'] += volume
-                routes[route[0], route[-1]] = route
+                if route[0] not in routes:
+                    routes[route[0]] = {}
+                routes[route[0]][route[-1]] = route
                 traffic_matrix[route[0], route[-1]] = volume
 
         return get_graph(
@@ -347,8 +351,8 @@ def get_graph_from_json(
             should_compute_curvatures=should_compute_curvatures,
             ricci_curvature_alpha=ricci_curvature_alpha,
             ricci_curvature_weight_label=ricci_curvature_weight_label,
-            throughputs_for_curvature=throughputs_for_curvature,
             directed=directed,
+            symmetrize=symmetrize,
             routes=routes,
             traffic_matrix=traffic_matrix,
         )
