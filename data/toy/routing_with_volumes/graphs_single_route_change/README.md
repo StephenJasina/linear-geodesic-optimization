@@ -1,0 +1,1 @@
+The only change between these examples is the amount of traffic through the AD route (which traverses A-B-E-D).

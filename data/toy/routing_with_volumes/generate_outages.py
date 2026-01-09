@@ -10,7 +10,7 @@ import networkx as nx
 import numpy as np
 
 sys.path.append(str(pathlib.PurePath('..', '..', '..', 'src')))
-from linear_geodesic_optimization.data import tomography, utility
+from linear_geodesic_optimization.data import utility
 
 
 class PriorityQueue:
@@ -157,7 +157,8 @@ def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath)
 
 
 if __name__ == '__main__':
-    os.makedirs('graphs', exist_ok=True)
+    directory_output = pathlib.PurePath('graphs_outage')
+    os.makedirs(directory_output, exist_ok=True)
 
     graph = nx.Graph()
 
@@ -204,7 +205,7 @@ if __name__ == '__main__':
     graph.add_edge('B', 'E', latency=10000000.)
     graph.add_edge('C', 'F', latency=10000000.)
     routes = compute_routes(graph, 'latency')
-    write_graph(graph, routes, traffic_matrix, pathlib.PurePath('graphs', 'graph.json'))
+    write_graph(graph, routes, traffic_matrix, directory_output / 'graph.json')
 
     for removals in [
         [('A', 'B')],
@@ -222,7 +223,7 @@ if __name__ == '__main__':
         graph_original = graph.copy()
         graph.remove_edges_from(removals)
         routes = compute_routes(graph, 'latency')
-        write_graph(graph_original, routes, traffic_matrix, pathlib.PurePath('graphs', f"graph_{'_'.join(''.join(edge) for edge in removals)}.json"))
-        write_graph(graph, routes, traffic_matrix, pathlib.PurePath('graphs', f"graph_{'_'.join(''.join(edge) for edge in removals)}_alt.json"))
+        write_graph(graph_original, routes, traffic_matrix, directory_output / f"graph_{'_'.join(''.join(edge) for edge in removals)}.json")
+        write_graph(graph, routes, traffic_matrix, directory_output / f"graph_{'_'.join(''.join(edge) for edge in removals)}_alt.json")
 
         graph = graph_original
