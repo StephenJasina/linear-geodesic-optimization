@@ -1,19 +1,97 @@
 import collections
+import heapq
 import itertools
+import typing
 
 import networkx as nx
 import numpy as np
 from scipy import optimize, sparse
 
 
-def get_shortest_routes(graph, edge_distance_label=None):
-    # Compute routes between each source-destination pair. Assume shortest
-    # path routing for this example.
-    return {
-        (source, destination): route
-        for source in graph.nodes
-        for destination, route in nx.single_source_dijkstra_path(graph, source, weight=edge_distance_label).items()
-    }
+class PriorityQueue:
+    """
+    A simple wrapper for Python's heapq utilities.
+
+    Based on https://docs.python.org/3/library/heapq.html#priority-queue-implementation-notes
+    """
+    def __init__(self):
+        self.pq = []
+        self.entry_finder = {}
+        self.counter = itertools.count()
+
+    def add(self, value: str, priority: float):
+        'Add a new task or update the priority of an existing task'
+        if value in self.entry_finder:
+            self.remove(value)
+        id = next(self.counter)
+        entry = [priority, value, id, True]
+        self.entry_finder[value] = entry
+        heapq.heappush(self.pq, entry)
+
+    def remove(self, value: str):
+        entry = self.entry_finder.pop(value)
+        entry[3] = False
+
+    def pop(self) -> typing.Tuple[str, float]:
+        'Remove and return the lowest priority task. Raise KeyError if empty.'
+        while self.pq:
+            priority, value, _, is_valid = heapq.heappop(self.pq)
+            if is_valid:
+                del self.entry_finder[value]
+                return value, priority
+        raise KeyError('pop from an empty priority queue')
+
+def get_shortest_routes(graph: nx.Graph, edge_distance_label: typing.Optional[str]=None):
+    """
+    Run Dijkstra's algorithm.
+
+    This is necessary ensure tie-breaking is always done in the same
+    way.
+    """
+    routes = {}
+    for source in graph.nodes:
+        tree = {
+            node: {
+                'distance': np.inf,
+                'predecessor': None
+            }
+            for node in graph.nodes
+        }
+        tree[source]['distance'] = 0.
+        order_visited = []
+
+        queue = PriorityQueue()
+        for node in graph.nodes:
+            queue.add(node, 0. if node == source else np.inf)
+        while len(order_visited) < graph.number_of_nodes():
+            node, distance = queue.pop()
+            if np.isposinf(distance):
+                break
+            order_visited.append(node)
+            for successor in graph.neighbors(node):
+                d_node_successor = graph.edges[node, successor][edge_distance_label] if edge_distance_label is not None else 1.
+                distance_candidate = tree[node]['distance'] + d_node_successor
+                if distance_candidate < tree[successor]['distance']:
+                    tree[successor] = {
+                        'distance': distance_candidate,
+                        'predecessor': node,
+                    }
+                    queue.add(successor, distance_candidate)
+
+        routes_from_source = {}
+        for node in order_visited:
+            predecessor = tree[node]['predecessor']
+            if predecessor is None:
+                routes_from_source[node] = [node]
+            else:
+                routes_from_source[node] = routes_from_source[predecessor] + [node]
+        routes[source] = routes_from_source
+    # return {
+    #     (source, destination): route
+    #     for soure, routes_from_source in routes.items()
+    #     for destination, route in routes_from_source.items()
+    # }
+    return routes
 
 def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
     index_to_link_id = []
@@ -36,7 +114,8 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
     ])
 
     # Determine the ordering of the columns of A, ignoring
-    # source-destination pairs with no possible traffic
+    # source-destination pairs with no possible traffic (either due to
+    # traffic measurements or lack of possible routes)
     sources, destinations = zip(*[
         (source, destination)
         for source in graph.nodes
@@ -45,6 +124,8 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
             source != destination
             and traffic_out_per_node[source] > 0.
             and traffic_in_per_node[destination] > 0.
+            and source in routes
+            and destination in routes[source]
         )
     ])
 
