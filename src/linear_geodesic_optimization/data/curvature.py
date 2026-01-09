@@ -164,89 +164,90 @@ def compute_ricci_curvature_from_traffic_matrix(graph: nx.Graph, routes, traffic
         numerator_u_t = 0.
 
         # Find which routes are relevant
-        for (source, destination), route in routes.items():
-            x_p = traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
-            if x_p == 0.:
-                # In this case, nothing would be accumulated, so we can
-                # skip investigating the route
-                continue
+        for source, routes_source in routes.items():
+            for destination, route in routes_source.items():
+                x_p = traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
+                if x_p == 0.:
+                    # In this case, nothing would be accumulated, so we can
+                    # skip investigating the route
+                    continue
 
-            # Find:
-            # * The first time a predecessor s of u shows up
-            # * The first time u shows up
-            # * The last time v shows up
-            # * The last time a successor t of v shows up
+                # Find:
+                # * The first time a predecessor s of u shows up
+                # * The first time u shows up
+                # * The last time v shows up
+                # * The last time a successor t of v shows up
 
-            s_index = 0
-            while True:
-                if s_index == len(route) or (route[s_index], u) in graph.edges:
-                    break
-                s_index += 1
-            if s_index == len(route) or route[s_index] == v:
-                s_index = None
+                s_index = 0
+                while True:
+                    if s_index == len(route) or (route[s_index], u) in graph.edges:
+                        break
+                    s_index += 1
+                if s_index == len(route) or route[s_index] == v:
+                    s_index = None
 
-            u_index = 0
-            while True:
-                if u_index == len(route) or route[u_index] == u:
-                    break
-                u_index += 1
-            if u_index == len(route):
-                u_index = None
+                u_index = 0
+                while True:
+                    if u_index == len(route) or route[u_index] == u:
+                        break
+                    u_index += 1
+                if u_index == len(route):
+                    u_index = None
 
-            v_index = len(route) - 1
-            while True:
-                if v_index == -1 or route[v_index] == v:
-                    break
-                v_index -= 1
-            if v_index == -1:
-                v_index = None
+                v_index = len(route) - 1
+                while True:
+                    if v_index == -1 or route[v_index] == v:
+                        break
+                    v_index -= 1
+                if v_index == -1:
+                    v_index = None
 
-            t_index = len(route) - 1
-            while True:
-                if t_index == -1 or (v, route[t_index]) in graph.edges:
-                    break
-                t_index -= 1
-            if t_index == -1 or route[t_index] == u:
-                t_index = None
+                t_index = len(route) - 1
+                while True:
+                    if t_index == -1 or (v, route[t_index]) in graph.edges:
+                        break
+                    t_index -= 1
+                if t_index == -1 or route[t_index] == u:
+                    t_index = None
 
-            # Now update the running totals used to compute
-            # transportation costs
+                # Now update the running totals used to compute
+                # transportation costs
 
-            if s_index is not None and v_index is not None and s_index <= v_index:
-                # The flow passes through s then v
-                d_p = sum([
-                    graph.edges[(x, y)][edge_distance_label]
-                    for x, y in itertools.pairwise(route[s_index:v_index+1])
-                ]) if edge_distance_label is not None else float(v_index - s_index)
-                denominator_s_v += x_p
-                numerator_s_v += x_p * d_p
+                if s_index is not None and v_index is not None and s_index <= v_index:
+                    # The flow passes through s then v
+                    d_p = sum([
+                        graph.edges[(x, y)][edge_distance_label]
+                        for x, y in itertools.pairwise(route[s_index:v_index+1])
+                    ]) if edge_distance_label is not None else float(v_index - s_index)
+                    denominator_s_v += x_p
+                    numerator_s_v += x_p * d_p
 
-            if s_index is not None and t_index is not None and s_index <= t_index:
-                # The flow passes through s then t
-                d_p = sum([
-                    graph.edges[(x, y)][edge_distance_label]
-                    for x, y in itertools.pairwise(route[s_index:t_index+1])
-                ]) if edge_distance_label is not None else float(t_index - s_index)
-                denominator_s_t += x_p
-                numerator_s_t += x_p * d_p
+                if s_index is not None and t_index is not None and s_index <= t_index:
+                    # The flow passes through s then t
+                    d_p = sum([
+                        graph.edges[(x, y)][edge_distance_label]
+                        for x, y in itertools.pairwise(route[s_index:t_index+1])
+                    ]) if edge_distance_label is not None else float(t_index - s_index)
+                    denominator_s_t += x_p
+                    numerator_s_t += x_p * d_p
 
-            if u_index is not None and v_index is not None and u_index <= v_index:
-                # The flow passes through u then v
-                d_p = sum([
-                    graph.edges[(x, y)][edge_distance_label]
-                    for x, y in itertools.pairwise(route[u_index:v_index+1])
-                ]) if edge_distance_label is not None else float(v_index - u_index)
-                denominator_s_v += x_p
-                numerator_s_v += x_p * d_p
+                if u_index is not None and v_index is not None and u_index <= v_index:
+                    # The flow passes through u then v
+                    d_p = sum([
+                        graph.edges[(x, y)][edge_distance_label]
+                        for x, y in itertools.pairwise(route[u_index:v_index+1])
+                    ]) if edge_distance_label is not None else float(v_index - u_index)
+                    denominator_s_v += x_p
+                    numerator_s_v += x_p * d_p
 
-            if u_index is not None and t_index is not None and u_index <= t_index:
-                # The flow passes through u then  t
-                d_p = sum([
-                    graph.edges[(x, y)][edge_distance_label]
-                    for x, y in itertools.pairwise(route[u_index:t_index+1])
-                ]) if edge_distance_label is not None else float(t_index - u_index)
-                denominator_u_t += x_p
-                numerator_u_t += x_p * d_p
+                if u_index is not None and t_index is not None and u_index <= t_index:
+                    # The flow passes through u then  t
+                    d_p = sum([
+                        graph.edges[(x, y)][edge_distance_label]
+                        for x, y in itertools.pairwise(route[u_index:t_index+1])
+                    ]) if edge_distance_label is not None else float(t_index - u_index)
+                    denominator_u_t += x_p
+                    numerator_u_t += x_p * d_p
 
         d_u_v = graph.edges[(u, v)][edge_distance_label] if edge_distance_label is not None else 1.
         if denominator_s_t != 0.:
