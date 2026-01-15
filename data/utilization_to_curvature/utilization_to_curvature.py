@@ -113,12 +113,14 @@ if __name__ == '__main__':
     parser.add_argument('--links', '-l', metavar='latencies_file', dest='file_path_links', type=str, required=True)
     parser.add_argument('--output', '-o', metavar='output_file', dest='file_path_output', type=str, required=True)
     parser.add_argument('--optimal-transport', '-t', dest='use_optimal_transport', action='store_true')
+    parser.add_argument('--symmetrize', '-s', dest='symmetrize', action='store_true')
     args = parser.parse_args()
 
     file_path_probes = pathlib.PurePath(args.file_path_probes)
     file_path_links = pathlib.PurePath(args.file_path_links)
     file_path_output = pathlib.PurePath(args.file_path_output)
     use_optimal_transport = args.use_optimal_transport
+    symmetrize = args.symmetrize
 
     if not os.path.exists(file_path_probes):
         sys.stderr.write('Probes file does not exist')
@@ -127,15 +129,21 @@ if __name__ == '__main__':
         sys.stderr.write('Links file does not exist')
         sys.exit(0)
 
-    graph = input_network.get_graph_from_paths(
+    graph = input_network.get_graph_from_csvs(
         file_path_probes, file_path_links,
         clustering_distance=np.finfo(np.float64).eps,
         should_compute_curvatures=False,
-        directed=True
+        directed=True,
+        symmetrize=symmetrize
     )
     if use_optimal_transport:
         graph = compute_curvature_optimal_transport(graph)
     else:
+        graph.remove_edges_from([
+            (u, v)
+            for u, v, data in graph.edges(data=True)
+            if 'throughput' not in data or data['throughput'] == 0.
+        ])
         curvatures = curvature.compute_ricci_curvature(
             graph,
             use_tomography=True,
