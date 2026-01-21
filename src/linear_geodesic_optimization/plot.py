@@ -84,9 +84,10 @@ def get_network_plot(
     ax = None
 ):
     if ax is None:
-        fig, ax = plt.subplots(1, 1, facecolor='#808080')
+        fig, ax = plt.subplots(1, 1)
     else:
         fig = ax.get_figure()
+    ax.patch.set_facecolor('#808080')
     ax.set_aspect('equal')
     ax.axis('off')
 
