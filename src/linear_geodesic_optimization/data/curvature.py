@@ -148,140 +148,222 @@ def get_augmented_distribution(
 
     return distribution
 
-def compute_ricci_curvature_from_traffic_matrix(graph: nx.Graph, routes, traffic_matrix, edge_distance_label='latency'):
+def compute_ricci_curvature_from_traffic_matrix(
+    graph: nx.Graph, routes, traffic_matrix,
+    edge_distance_label='latency',
+    use_optimal_transport=False
+):
+    # Throughout, have some special variables for if we want to use
+    # optimal transport to compute the data flow. This places masses on
+    # relevant predecessors and successors, then discards routing
+    # information.
+    if use_optimal_transport:
+        node_to_index = {node: index for index, node in enumerate(graph.nodes)}
+        distance_matrix = graph_distance.compute_distance_matrix(graph, edge_distance_label)
+    else:
+        node_to_index = None
+        distance_matrix = None
+
     ricci_curvatures = {}
     for u, v in graph.edges:
         # Some running totals used to compute transportation costs. In
         # most cases, we should only expect to use the s_t variant, but
         # we compute all of them to avoid having to use more for loops.
-        denominator_s_v = 0.
-        numerator_s_v = 0.
-        denominator_s_t = 0.
-        numerator_s_t = 0.
+        denominator_p_s = 0.
+        numerator_p_s = 0.
+        denominator_p_v = 0.
+        numerator_p_v = 0.
+        denominator_u_s = 0.
+        numerator_u_s = 0.
         denominator_u_v = 0.
         numerator_u_v = 0.
-        denominator_u_t = 0.
-        numerator_u_t = 0.
+
+        if use_optimal_transport:
+            distribution_u_p_s = np.zeros(graph.number_of_nodes())
+            distribution_v_p_s = np.zeros(graph.number_of_nodes())
+            distribution_u_p_v = np.zeros(graph.number_of_nodes())
+            distribution_v_p_v = np.zeros(graph.number_of_nodes())
+            distribution_u_u_s = np.zeros(graph.number_of_nodes())
+            distribution_v_u_s = np.zeros(graph.number_of_nodes())
+            distribution_u_u_v = np.zeros(graph.number_of_nodes())
+            distribution_v_u_v = np.zeros(graph.number_of_nodes())
+        else:
+            distribution_u_p_s = None
+            distribution_v_p_s = None
+            distribution_u_p_v = None
+            distribution_v_p_v = None
+            distribution_u_u_s = None
+            distribution_v_u_s = None
+            distribution_u_u_v = None
+            distribution_v_u_v = None
 
         # Find which routes are relevant
         for source, routes_source in routes.items():
             for destination, route in routes_source.items():
-                x_p = traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
-                if x_p == 0.:
+                traffic_route = traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
+                if traffic_route == 0.:
                     # In this case, nothing would be accumulated, so we can
                     # skip investigating the route
                     continue
 
-                # Find:
-                # * The first time a predecessor s of u shows up
-                # * The first time u shows up
-                # * The last time v shows up
-                # * The last time a successor t of v shows up
+                has_p_something = False
+                has_u_something = False
 
-                s_index = 0
-                while True:
-                    if s_index == len(route) or (route[s_index], u) in graph.edges:
+                has_p_s = False
+                has_p_v = False
+                has_u_s = False
+                has_u_v = False
+
+                for node in route:
+                    if node != v and (node, u) in graph.edges:
+                        has_p_something = True
+                    if node == u:
+                        has_u_something = True
+
+                    if has_p_something:
+                        if node != u and (v, node) in graph.edges:
+                            has_p_s = True
+                        if node == v:
+                            has_p_v = True
+                    if has_u_something:
+                        if node != u and (v, node) in graph.edges:
+                            has_u_s = True
+                        if node == v:
+                            has_u_v = True
+
+                if has_p_s or has_p_v:
+                    has_u_s = False
+                    has_u_v = False
+                if has_p_s or has_u_s:
+                    has_p_v = False
+                    has_u_v = False
+
+                # Flags for whether we use fall under edge cases
+                has_p = has_p_s or has_p_v
+                has_s = has_p_s or has_u_s
+
+                # At this point, at most one of has_p_s, has_p_v,
+                # has_u_s, and has_u_v is True
+                if not (has_p_s or has_p_v or has_u_s or has_u_v):
+                    # Irrelevant route in this case
+                    continue
+
+                distance_route = np.inf
+
+                p = None
+                s = None
+
+                # Check all length-0 segments of the route
+                for node in route:
+                    is_left = (has_p and node != v and (node, u) in graph.edges) or (not has_p and node == u)
+                    is_right = (has_s and node!= u and (v, node) in graph.edges) or (not has_s and node == v)
+                    if is_left and is_right:
+                        distance_route = 0.
+                        p = node
+                        s = node
                         break
-                    s_index += 1
-                if s_index == len(route) or route[s_index] == v:
-                    s_index = None
 
-                u_index = 0
-                while True:
-                    if u_index == len(route) or route[u_index] == u:
-                        break
-                    u_index += 1
-                if u_index == len(route):
-                    u_index = None
+                # Check all non-length-0 segments of the route
+                if distance_route != 0.:
+                    distance_route_candidate = np.inf
+                    p_candidate = None
+                    for a, b in itertools.pairwise(route):
+                        d_a_b = graph.edges[a, b][edge_distance_label] if edge_distance_label is not None else 1.
 
-                v_index = len(route) - 1
-                while True:
-                    if v_index == -1 or route[v_index] == v:
-                        break
-                    v_index -= 1
-                if v_index == -1:
-                    v_index = None
+                        if (has_p and a != v and (a, u) in graph.edges) or (not has_p and a == u):
+                            distance_route_candidate = 0.
+                            p_candidate = a
 
-                t_index = len(route) - 1
-                while True:
-                    if t_index == -1 or (v, route[t_index]) in graph.edges:
-                        break
-                    t_index -= 1
-                if t_index == -1 or route[t_index] == u:
-                    t_index = None
+                        distance_route_candidate += d_a_b
 
-                # Now update the running totals used to compute
-                # transportation costs
+                        if (has_s and b != u and (v, b) in graph.edges) or (not has_s and b == v):
+                            if distance_route_candidate < distance_route:
+                                distance_route = distance_route_candidate
+                                p = p_candidate
+                                s = b
 
-                if s_index is not None and v_index is not None and s_index <= v_index:
-                    # The flow passes through s then v
-                    d_p = sum([
-                        graph.edges[(x, y)][edge_distance_label]
-                        for x, y in itertools.pairwise(route[s_index:v_index+1])
-                    ]) if edge_distance_label is not None else float(v_index - s_index)
-                    denominator_s_v += x_p
-                    numerator_s_v += x_p * d_p
+                if use_optimal_transport:
+                    if has_p:
+                        if has_s:
+                            distribution_u_p_s[node_to_index[p]] += traffic_route
+                            distribution_v_p_s[node_to_index[s]] += traffic_route
+                        else:
+                            distribution_u_p_v[node_to_index[p]] += traffic_route
+                            distribution_v_p_v[node_to_index[s]] += traffic_route
+                    else:
+                        if has_s:
+                            distribution_u_u_s[node_to_index[p]] += traffic_route
+                            distribution_v_u_s[node_to_index[s]] += traffic_route
+                        else:
+                            distribution_u_u_v[node_to_index[p]] += traffic_route
+                            distribution_v_u_v[node_to_index[s]] += traffic_route
 
-                if s_index is not None and t_index is not None and s_index <= t_index:
-                    # The flow passes through s then t
-                    d_p = sum([
-                        graph.edges[(x, y)][edge_distance_label]
-                        for x, y in itertools.pairwise(route[s_index:t_index+1])
-                    ]) if edge_distance_label is not None else float(t_index - s_index)
-                    denominator_s_t += x_p
-                    numerator_s_t += x_p * d_p
+                if has_p:
+                    if has_s:
+                        denominator_p_s += traffic_route
+                        numerator_p_s += traffic_route * distance_route
+                    else:
+                        denominator_p_v += traffic_route
+                        numerator_p_v += traffic_route * distance_route
+                else:
+                    if has_s:
+                        denominator_u_s += traffic_route
+                        numerator_u_s += traffic_route * distance_route
+                    else:
+                        denominator_u_v += traffic_route
+                        numerator_u_v += traffic_route * distance_route
 
-                if u_index is not None and v_index is not None and u_index <= v_index:
-                    # The flow passes through u then v
-                    d_p = sum([
-                        graph.edges[(x, y)][edge_distance_label]
-                        for x, y in itertools.pairwise(route[u_index:v_index+1])
-                    ]) if edge_distance_label is not None else float(v_index - u_index)
-                    denominator_s_v += x_p
-                    numerator_s_v += x_p * d_p
-
-                if u_index is not None and t_index is not None and u_index <= t_index:
-                    # The flow passes through u then  t
-                    d_p = sum([
-                        graph.edges[(x, y)][edge_distance_label]
-                        for x, y in itertools.pairwise(route[u_index:t_index+1])
-                    ]) if edge_distance_label is not None else float(t_index - u_index)
-                    denominator_u_t += x_p
-                    numerator_u_t += x_p * d_p
-
-        d_u_v = graph.edges[(u, v)][edge_distance_label] if edge_distance_label is not None else 1.
-        if denominator_s_t != 0.:
-            # Prioritize the case where we have data describing
-            # transportation between neighborhoods of u and v
-            transportation_cost = numerator_s_t / denominator_s_t
-            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
-        elif denominator_s_v != 0.:
-            # If that data doesn't exist, check whether we have routes
-            # from u's neighborhood to v
-            transportation_cost = numerator_s_v / denominator_s_v
-            # This will probably be negative unless there is some
-            # strange routing
-            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
-        elif denominator_u_t != 0.:
-            # If that data doesn't exist, check whether we have routes
-            # from u to v's neighborhood
-            transportation_cost = numerator_u_t / denominator_u_t
-            # This will probably be negative unless there is some
-            # strange routing
-            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
-        elif denominator_u_v != 0.:
-            # If that data doesn't exist, check whether we have routes
-            # from u to v
-            transportation_cost = numerator_u_v / denominator_u_v
-            # This will probably be 0. unless there is some strange
-            # routing
-            ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
+        d_u_v = graph.edges[u, v][edge_distance_label] if edge_distance_label is not None else 1.
+        if use_optimal_transport:
+            if denominator_p_s != 0.:
+                transportation_cost = ot.emd2(
+                    distribution_u_p_s,
+                    distribution_v_p_s,
+                    distance_matrix
+                ) / denominator_p_s
+            elif denominator_p_v != 0.:
+                transportation_cost = ot.emd2(
+                    distribution_u_p_v,
+                    distribution_v_p_v,
+                    distance_matrix
+                ) / denominator_p_v
+            elif denominator_u_s != 0.:
+                transportation_cost = ot.emd2(
+                    distribution_u_u_s,
+                    distribution_v_u_s,
+                    distance_matrix
+                ) / denominator_u_s
+            elif denominator_u_v != 0.:
+                transportation_cost = ot.emd2(
+                    distribution_u_u_v,
+                    distribution_v_u_v,
+                    distance_matrix
+                ) / denominator_u_v
+            else:
+                continue
         else:
-            # If we get here, we don't have enough information to
-            # compute the curvature. For now, let's just not set the
-            # curvature to anything
-            # TODO: Is this the right approach?
-            pass
+            if denominator_p_s != 0.:
+                # Prioritize the case where we have data describing
+                # transportation between neighborhoods of u and v
+                transportation_cost = numerator_p_s / denominator_p_s
+            elif denominator_p_v != 0.:
+                # If that data doesn't exist, check whether we have routes
+                # from u's neighborhood to v
+                transportation_cost = numerator_p_v / denominator_p_v
+            elif denominator_u_s != 0.:
+                # If that data doesn't exist, check whether we have routes
+                # from u to v's neighborhood
+                transportation_cost = numerator_u_s / denominator_u_s
+            elif denominator_u_v != 0.:
+                # If that data doesn't exist, check whether we have routes
+                # from u to v
+                transportation_cost = numerator_u_v / denominator_u_v
+            else:
+                # If we get here, we don't have enough information to
+                # compute the curvature. For now, let's just not set the
+                # curvature to anything
+                continue
+        ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
 
     return ricci_curvatures
 

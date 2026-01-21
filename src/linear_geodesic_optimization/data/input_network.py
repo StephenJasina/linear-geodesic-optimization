@@ -200,12 +200,12 @@ def compute_ricci_curvatures(
     graph: nx.Graph,
     alpha: float=0.,
     weight_label: typing.Optional[str]=None,
-    routes=None, traffic_matrix=None
+    routes=None, traffic_matrix=None, force_optimal_transport=False
 ):
     ricci_curvatures = {}
     if routes is not None and traffic_matrix is not None:
         ricci_curvatures = curvature.compute_ricci_curvature_from_traffic_matrix(
-            graph, routes, traffic_matrix, 'rtt'
+            graph, routes, traffic_matrix, 'rtt', force_optimal_transport
         )
     else:
         ricci_curvatures = curvature.compute_ricci_curvature(
@@ -227,7 +227,7 @@ def get_graph(
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
     directed=False, symmetrize=False,
-    routes=None, traffic_matrix=None
+    routes=None, traffic_matrix=None, force_optimal_transport=False
 ):
     graph = get_base_graph(probes, links, directed, symmetrize)
     if should_include_latencies:
@@ -242,7 +242,7 @@ def get_graph(
     if clustering_distance is not None:
         graph = cluster_graph(graph, clustering_distance)
     if should_compute_curvatures:
-        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic_matrix)
+        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic_matrix, force_optimal_transport)
     if should_include_latencies:
         return graph, latencies
     else:
@@ -261,7 +261,8 @@ def get_graph_from_csvs(
     ricci_curvature_weight_label=None,
     throughputs_for_curvature=False,
     directed=False,
-    symmetrize=False
+    symmetrize=False,
+    force_optimal_transport=False  # Unused, but kept for consistent interface
 ):
     """
     Generate a NetworkX graph and optionally a list of latencies.
@@ -301,7 +302,7 @@ def get_graph_from_csvs(
             ricci_curvature_alpha=ricci_curvature_alpha,
             ricci_curvature_weight_label=ricci_curvature_weight_label,
             directed=directed, symmetrize=symmetrize,
-            routes=routes, traffic_matrix=traffic_matrix
+            routes=routes, traffic_matrix=traffic_matrix, force_optimal_transport=force_optimal_transport
         )
 
 def get_graph_from_json(
@@ -315,7 +316,8 @@ def get_graph_from_json(
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
     directed=False,
-    symmetrize=False
+    symmetrize=False,
+    force_optimal_transport=False,
 ):
     with open(path) as file:
         blob = json.load(file)
@@ -355,6 +357,7 @@ def get_graph_from_json(
             symmetrize=symmetrize,
             routes=routes,
             traffic_matrix=traffic_matrix,
+            force_optimal_transport=force_optimal_transport,
         )
 
 def get_network_data(
