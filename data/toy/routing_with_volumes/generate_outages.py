@@ -155,7 +155,6 @@ def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath)
     with open(path, 'w') as f:
         json.dump(data, f, indent=4)
 
-
 if __name__ == '__main__':
     directory_output = pathlib.PurePath('graphs_outage')
     os.makedirs(directory_output, exist_ok=True)
@@ -223,7 +222,7 @@ if __name__ == '__main__':
         graph_original = graph.copy()
         graph.remove_edges_from(removals)
         routes = compute_routes(graph, 'latency')
-        write_graph(graph_original, routes, traffic_matrix, directory_output / f"graph_{'_'.join(''.join(edge) for edge in removals)}.json")
-        write_graph(graph, routes, traffic_matrix, directory_output / f"graph_{'_'.join(''.join(edge) for edge in removals)}_alt.json")
+        # write_graph(graph_original, routes, traffic_matrix, directory_output / f"graph_{'_'.join(''.join(edge) for edge in removals)}.json")
+        write_graph(graph, routes, traffic_matrix, directory_output / f"graph_{'_'.join(''.join(edge) for edge in removals)}.json")
 
         graph = graph_original
