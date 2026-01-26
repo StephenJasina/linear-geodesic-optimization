@@ -39,7 +39,7 @@ export default function(context, zs, zsEWMA, t, ts, boundaries, sensitivity = 0.
 		for (let j = 0; j < divisionsY; ++j) {
 			let y = yToCanvasCoordinates(context, j / (divisionsY - 1));
 
-			if (Math.abs(zs[index][i][j] - zsEWMA[index][i][j]) > 0.02) {
+			if (Math.abs(zs[index][i][j] - zsEWMA[index][i][j]) > sensitivity) {
 				context.moveTo(x, y);
 				context.arc(x, y, r, 0, 2 * Math.PI);
 
