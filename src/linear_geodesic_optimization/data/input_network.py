@@ -318,6 +318,7 @@ def get_graph_from_json(
     directed=False,
     symmetrize=False,
     force_optimal_transport=False,
+    return_traffic_matrix=True,
 ):
     with open(path) as file:
         blob = json.load(file)
@@ -329,6 +330,7 @@ def get_graph_from_json(
         }
         routes = None
         traffic_matrix = None
+        # TODO: Allow multiple routes to have the same source and destination
         if 'routes' in blob:
             routes = {}
             traffic_matrix = {}
@@ -344,21 +346,26 @@ def get_graph_from_json(
                 routes[route[0]][route[-1]] = route
                 traffic_matrix[route[0], route[-1]] = volume
 
-        return get_graph(
-            probes, links.values(),
-            epsilon=epsilon,
-            clustering_distance=clustering_distance,
-            should_remove_tivs=should_remove_tivs,
-            should_include_latencies=should_include_latencies,
-            should_compute_curvatures=should_compute_curvatures,
-            ricci_curvature_alpha=ricci_curvature_alpha,
-            ricci_curvature_weight_label=ricci_curvature_weight_label,
-            directed=directed,
-            symmetrize=symmetrize,
-            routes=routes,
-            traffic_matrix=traffic_matrix,
-            force_optimal_transport=force_optimal_transport,
-        )
+    graph = get_graph(
+        probes, links.values(),
+        epsilon=epsilon,
+        clustering_distance=clustering_distance,
+        should_remove_tivs=should_remove_tivs,
+        should_include_latencies=should_include_latencies,
+        should_compute_curvatures=should_compute_curvatures,
+        ricci_curvature_alpha=ricci_curvature_alpha,
+        ricci_curvature_weight_label=ricci_curvature_weight_label,
+        directed=directed,
+        symmetrize=symmetrize,
+        routes=routes,
+        traffic_matrix=traffic_matrix,
+        force_optimal_transport=force_optimal_transport,
+    )
+
+    if return_traffic_matrix:
+        return graph, traffic_matrix
+    else:
+        return graph
 
 def get_network_data(
     graph: nx.Graph

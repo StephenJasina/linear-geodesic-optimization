@@ -47,14 +47,16 @@ def main(
     mesh = RectangleMesh(width, height, mesh_scale)
 
     # Construct the networkx graph
+    traffic_matrix = None
     if filename_graphml is not None:
         graph = nx.read_graphml(directory_data / filename_graphml)
     elif filename_json is not None:
         file_path_json = directory_data / filename_json
-        graph = input_network.get_graph_from_json(
+        graph, traffic_matrix = input_network.get_graph_from_json(
             file_path_json,
             epsilon=latency_threshold,
             clustering_distance=clustering_distance,
+            return_traffic_matrix=True,
         )
     elif filename_probes is not None and filename_links is not None:
         file_path_probes = directory_data / filename_probes
@@ -77,6 +79,15 @@ def main(
     network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), coordinates_scale, bounding_box)
     network_edges = graph_data['edges']
     network_curvatures = edge_data['ricciCurvature']
+
+    if traffic_matrix is not None:
+        traffic_matrix = [
+            [
+                traffic_matrix[label_u, label_v]
+                for label_v in graph_data['labels']
+            ]
+            for label_u in graph_data['labels']
+        ]
 
     # Setup snapshots
     if os.path.isdir(directory_output):
@@ -153,10 +164,11 @@ def main(
             'initial': z_0.tolist(),
             'final': z.tolist(),
             'network': network,
-        }, file_output, ensure_ascii=False)
+            'traffic': traffic_matrix
+        }, file_output, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    directory_outputs = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes_small_mesh')
+    directory_outputs = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes', 'graphs_single_route_change_with_traffic')
     n_cores = 14  # How many processes to use
 
     # epsilon = 7
@@ -184,15 +196,18 @@ if __name__ == '__main__':
     # filenames_graphml = [None] * count
 
     epsilon = None
-    directory_json = pathlib.PurePath('toy', 'routing_with_volumes', 'graphs')
-    filenames_json = list(sorted(
-        directory_json / filename
+    # directory_json = pathlib.PurePath('toy', 'routing_with_volumes', 'graphs_outage')
+    directory_json = pathlib.PurePath('toy', 'routing_with_volumes', 'graphs_single_route_change')
+    filepaths_json = list(sorted(
+        filepath
         for filename in sorted(os.listdir(directory_data / directory_json))
+        for filepath in (directory_json / filename,)
+        if filepath.suffix == '.json'
     ))
     # filenames_json = [
     #     pathlib.PurePath('toy', 'routing_with_volumes', 'graphs', 'graph.json'),
     # ] * 10
-    count = len(filenames_json)
+    count = len(filepaths_json)
     filenames_probes = [None] * count
     filenames_links = [None] * count
     filenames_graphml = [None] * count
@@ -219,10 +234,10 @@ if __name__ == '__main__':
             / filename_json.stem
             / f'{lambda_smooth}_{width}_{height}'
         for index, (filename_probes, filename_links, filename_graphml, filename_json, lambda_smooth, latency_threshold, initial_radius, width, height, mesh_scale) \
-            in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, filenames_json, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
+            in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, filepaths_json, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
     ]
 
-    maxiters = [1000] * count
+    maxiters = [0] * count
 
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses
@@ -235,7 +250,7 @@ if __name__ == '__main__':
             initial_radius, side, mesh_scale, coordinates_scale, network_trim_radius,
             directory_output, maxiter
         ) in zip(
-            filenames_probes, filenames_links, filenames_graphml, filenames_json,
+            filenames_probes, filenames_links, filenames_graphml, filepaths_json,
             latency_thresholds, clustering_distances, ricci_curvature_alphas,
             lambdas_curvature, lambdas_smooth,
             initial_radii, sides, mesh_scales, coordinates_scales, network_trim_radii,

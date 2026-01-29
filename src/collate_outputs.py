@@ -5,13 +5,19 @@ import pathlib
 import sys
 import typing
 
-# from matplotlib import pyplot as plt
+import matplotlib as mpl
 import numpy as np
 import potpourri3d as pp3d
 
 from linear_geodesic_optimization.data import utility
 from linear_geodesic_optimization.graph import boundary
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
+
+
+tableau_colors = list(mpl.colors.TABLEAU_COLORS.values())
+def get_tableau_color(index):
+    color = mpl.colors.to_rgb(tableau_colors[index % len(tableau_colors)])
+    return [int(channel * 255) for channel in color]
 
 def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_index_pairs):
     mesh_scale = mesh.get_scale()
@@ -265,7 +271,7 @@ def collate_outputs(
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
     animation_data = []
-    for t, z, distance_to_network, hull, edges, network_border in zip(times, zs, distances_to_networks, hulls, animation_edges, network_borders):
+    for t, z, distance_to_network, hull, edges, network_border, output in zip(times, zs, distances_to_networks, hulls, animation_edges, network_borders, outputs):
         z_original = np.copy(z)
 
         distance_to_bubble = np.zeros(distance_to_network.shape) if np.isposinf(bubble_size) else np.maximum(distance_to_network / mesh_scale - bubble_size, 0.)
@@ -297,7 +303,8 @@ def collate_outputs(
             'edges': edges,
             'geodesics': geodesics,
             'edgeColors': edge_colors,
-            'border': network_border
+            'border': network_border,
+            'traffic': output['traffic'] if 'traffic' in output else None
         })
 
     # Set the map data
@@ -331,11 +338,11 @@ def collate_outputs(
         )
 
 def main_routing_with_volumes():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes_small_mesh')
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
         for directory in sorted(os.listdir(superdirectory))
-    ][:1]
+    ]
 
     geodesic_label_color_pairs = [
         ((u, v), [0, 0, 0])
@@ -347,29 +354,37 @@ def main_routing_with_volumes():
     for directory in directories_outputs:
         collate_outputs(
             [directory],
-            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes_small_mesh', f'{directory.parent.stem}.json'),
+            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'{directory.parent.stem}.json'),
             geodesic_label_color_pairs=geodesic_label_color_pairs,
             bubble_size=0.05,
             # height_scale=None,
         )
 
-def test():
-    pass
+def main_routing_with_volumes_animated():
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes', 'single_route_change')
+    directories_outputs = [
+        superdirectory / directory / '0.002_50_50'
+        for directory in sorted(os.listdir(superdirectory))
+    ]
 
-def main_from_function():
+    geodesic_label_color_pairs = [
+        ((u, v), get_tableau_color(index))
+        for index, (u, v) in enumerate([
+            (u, v)
+            for u in 'ABCDEF'
+            for v in 'ABCDEF'
+            if u != v
+        ])
+    ]
+
     collate_outputs(
-        [
-            pathlib.PurePath('..', 'outputs', 'from_function', 'positive')
-        ],
-        pathlib.PurePath('..', 'outputs', 'animations', 'positive.json'),
-    )
-    collate_outputs(
-        [
-            pathlib.PurePath('..', 'outputs', 'from_function', 'negative')
-        ],
-        pathlib.PurePath('..', 'outputs', 'animations', 'negative.json'),
+        directories_outputs,
+        pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'single_route_change.json'),
+        geodesic_label_color_pairs=geodesic_label_color_pairs,
+        bubble_size=0.05,
     )
 
 if __name__ == '__main__':
-    main_routing_with_volumes()
-    # main_from_function()
+    pass
+    # main_routing_with_volumes()
+    main_routing_with_volumes_animated()

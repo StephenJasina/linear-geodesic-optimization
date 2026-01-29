@@ -56,6 +56,8 @@ let networkEdgesRemoved = null;
 let networkBoundaries = null;
 let geodesics = null;
 let edgeColors = null;
+let traffic = null;
+let trafficMax = 0.;
 
 // Globals tracking the animation state
 let isPlaying = false;
@@ -171,6 +173,8 @@ rangeAnimation.oninput = function() {
 	for (let i = 0; i < elementsByTab.length; ++i) {
 		elementsByTab[i].canvasNeedsUpdate = true;
 	}
+
+	updateTrafficTable(currentNetworkIndex);
 }
 checkboxShowHeights.onchange = function() {
 	elementsByTab[indexTabCurrent].showHeights = checkboxShowHeights.checked;
@@ -280,7 +284,7 @@ function swapToTab(button) {
 	// Reset the style of the previous button
 	let buttonPrevious = elementsByTab[indexTabCurrent].buttonTab;
 	let indexPrevious = Number(buttonPrevious.id.substring(11));
-	while (buttonPrevious.firstChild) {
+	while (buttonPrevious.hasChildNodes()) {
 		buttonPrevious.removeChild(buttonPrevious.lastChild);
 	}
 	buttonPrevious.appendChild(document.createTextNode(String(indexPrevious + 1)));
@@ -295,12 +299,12 @@ function swapToTab(button) {
 
 	// Update the style of the next button
 	let buttonNew = elementsByTab[indexTabCurrent].buttonTab;
-	while (buttonNew.firstChild) {
+	while (buttonNew.hasChildNodes()) {
 		buttonNew.removeChild(buttonNew.lastChild);
 	}
 	let bNode = document.createElement("b");
 	let emNode = document.createElement("em");
-	bNode.appendChild(document.createTextNode(String(indexNew + 1)))
+	bNode.appendChild(document.createTextNode(String(indexNew + 1)));
 	emNode.appendChild(bNode);
 	buttonNew.appendChild(emNode);
 
@@ -339,7 +343,7 @@ function addTab() {
 	buttonNew.type = "button";
 	buttonNew.id = "button-tab-" + String(indexNew);
 	buttonNew.classList.add("button-tab");
-	buttonNew.appendChild(document.createTextNode(String(indexNew + 1)))
+	buttonNew.appendChild(document.createTextNode(String(indexNew + 1)));
 	buttonNew.onclick = swapToTab;
 	divTabs.insertBefore(buttonNew, buttonAddTab);
 
@@ -417,6 +421,27 @@ function removeTab() {
 	}
 }
 buttonRemoveTab.onclick = removeTab;
+
+let divTraffic = document.getElementById("div-traffic");
+let tableTraffic = document.getElementById("table-traffic");
+let tableTrafficCells = new Array(0);
+function updateTrafficTable(currentNetworkIndex) {
+	let indexPrevious = Math.floor(currentNetworkIndex);
+	let indexNext = Math.ceil(currentNetworkIndex);
+	let alpha = currentNetworkIndex - indexPrevious;
+
+	for (let i = 0; i < networkVertices.length; ++i) {
+		for (let j = 0; j < networkVertices.length; ++j) {
+			let cell = tableTrafficCells[i][j];
+			let trafficAtCell = alpha * traffic[indexNext][i][j] + (1 - alpha) * traffic[indexPrevious][i][j];
+			if (trafficMax != 0.) {
+				trafficAtCell /= trafficMax;
+			}
+			let color = getWeightedColor(trafficAtCell);
+			cell.style.backgroundColor = color;
+		}
+	}
+}
 
 function getPlaneScaleFactor(n) {
 	return 1 / (n + (n - 1) * spacingBetweenPlanes);
@@ -503,7 +528,7 @@ function drawLayers(time, options) {
 	}
 
 	if (options.showHeightChanges) {
-		drawHeightChanges(context, heights, heightsEWMA, time, times, networkBoundaries);
+		drawHeightChanges(context, heights, heightsEWMA, time, times, networkBoundaries, .008);
 	}
 }
 
@@ -532,6 +557,8 @@ function animate() {
 		for (let i = 0; i < elementsByTab.length; ++i) {
 			elementsByTab[i].canvasNeedsUpdate = true;
 		}
+
+		updateTrafficTable(currentNetworkIndex);
 	}
 
 	// Update the canvases if needed
@@ -622,17 +649,21 @@ function resetView() {
 	// Reset the panning
 	controls.reset();
 
-	// Front view
-	// camera.position.set(-15., 10., 0.)
-	// camera.zoom = 1.7;
-
 	// Overhead view
 	camera.position.set(-Number.EPSILON, 15., 0.);
 	camera.zoom = 1.4;
 
+	// Front view
+	// camera.position.set(-15., 10., 0.);
+	// camera.zoom = 1.7;
+
 	// Diagonal View
-	// camera.position.set(-15., 8., -5.);
+	// camera.position.set(-15., 10., -5.);
 	// camera.zoom = 1.6;
+
+	// Left view
+	// camera.position.set(0., 10., -15.);
+	// camera.zoom = 1.7;
 
 	controls.update();
 	camera.updateProjectionMatrix();
@@ -751,7 +782,7 @@ function makePlane(divisions) {
 		side: THREE.DoubleSide,
 		transparent: true,
 		opacity: 1.0,
-	})
+	});
 	let plane = new THREE.Mesh(geometry, material);
 	plane.rotation.set(-Math.PI / 2, 0, 0);
 	return plane;
@@ -982,6 +1013,7 @@ dropReader.onload = function() {
 		networkBoundaries = new Array(animationData.length);
 		geodesics = new Array(animationData.length);
 		edgeColors = new Array(animationData.length);
+		traffic = new Array(animationData.length);
 		for (let i = 0; i < animationData.length; ++i) {
 			times[i] = animationData[i].time;
 			heights[i] = animationData[i].height;
@@ -989,9 +1021,10 @@ dropReader.onload = function() {
 			networkBoundaries[i] = animationData[i].boundary;
 			geodesics[i] = animationData[i].geodesics;
 			edgeColors[i] = animationData[i].edgeColors;
+			traffic[i] = animationData[i].traffic;
 		}
 
-		animationDuration = (animationData.length - 1) / 2.;
+		animationDuration = (animationData.length - 1) * 2.;
 		heightsEWMA = new Array();
 		if (animationData.length != 0) {
 			let tRange = times[animationData.length - 1] - times[0]
@@ -1096,13 +1129,41 @@ dropReader.onload = function() {
 
 		// TODO: Clear out the list of outages
 
+		while (tableTraffic.hasChildNodes()) {
+			tableTraffic.removeChild(tableTraffic.lastChild);
+		}
+		tableTrafficCells = new Array(networkVertices.length);
+		for (let i = 0; i < networkVertices.length; ++i) {
+			let tableRow = document.createElement("tr");
+			let tableTrafficCellsRow = new Array(networkVertices.length);
+			for (let j = 0; j < networkVertices.length; ++j) {
+				let cell = document.createElement("td");
+				tableRow.appendChild(cell);
+				tableTrafficCellsRow[j] = cell;
+			}
+			tableTraffic.appendChild(tableRow);
+			tableTrafficCells[i] = tableTrafficCellsRow;
+		}
+
+		trafficMax = 0.;
+		for (let trafficMatrix of traffic) {
+			for (let trafficMatrixRow of trafficMatrix) {
+				for (let trafficMatrixCell of trafficMatrixRow) {
+					if (trafficMatrixCell > trafficMax) {
+						trafficMax = trafficMatrixCell;
+					}
+				}
+			}
+		}
+		updateTrafficTable(currentNetworkIndex)
+
 		mapCenter = mapData.center;
 		mapZoomFactor = mapData.zoomFactor;
 		for (let i = 0; i < elementsByTab.length; ++i) {
 			let options = elementsByTab[i];
 			if (options.showMap) {
 				updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-				options.textureMap = makeTextureOLMap(options.olMap)
+				options.textureMap = makeTextureOLMap(options.olMap);
 			}
 		}
 
