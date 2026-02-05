@@ -86,12 +86,24 @@ def get_shortest_routes(graph: nx.Graph, edge_distance_label: typing.Optional[st
             else:
                 routes_from_source[node] = routes_from_source[predecessor] + [node]
         routes[source] = routes_from_source
-    # return {
-    #     (source, destination): route
-    #     for soure, routes_from_source in routes.items()
-    #     for destination, route in routes_from_source.items()
-    # }
     return routes
+
+def get_random_routes(graph: nx.Graph, seed=None):
+    rng = np.random.default_rng(seed)
+    routes = {}
+
+    # Create a low-memory copy of the graph
+    if isinstance(graph, nx.DiGraph):
+        graph_copy = nx.DiGraph()
+    else:
+        graph_copy = nx.Graph()
+    for node in graph.nodes:
+        graph_copy.add_node(node)
+    for u, v, d in graph.edges(data=True):
+        distance = rng.random()
+        graph_copy.add_edge(u, v, weight=distance)
+
+    return get_shortest_routes(graph_copy, 'weight')
 
 def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
     index_to_link_id = []
