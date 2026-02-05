@@ -58,6 +58,7 @@ let geodesics = null;
 let edgeColors = null;
 let traffic = null;
 let trafficMax = 0.;
+let trafficPaths = null;
 
 // Globals tracking the animation state
 let isPlaying = false;
@@ -425,6 +426,7 @@ buttonRemoveTab.onclick = removeTab;
 let divTraffic = document.getElementById("div-traffic");
 let tableTraffic = document.getElementById("table-traffic");
 let tableTrafficCells = new Array(0);
+let tableTrafficHover = new Array(0);
 function updateTrafficTable(currentNetworkIndex) {
 	let indexPrevious = Math.floor(currentNetworkIndex);
 	let indexNext = Math.ceil(currentNetworkIndex);
@@ -505,8 +507,24 @@ function drawLayers(time, options) {
 		if (options.showGeodesics) {
 			drawGeodesics(
 				context, geodesics[currentNetworkIndexInt],
-				3, edgeColors[currentNetworkIndexInt]);
+				3, edgeColors[currentNetworkIndexInt]
+			);
 		}
+
+		let trafficPathsToDraw = new Array();
+		let trafficPathsToDrawColors = new Array();
+		for (let i = 0; i < networkVertices.length; ++i) {
+			for (let j = 0; j < networkVertices.length; ++j) {
+				if (tableTrafficHover[i][j] && trafficPaths[currentNetworkIndexInt][i] !== null && trafficPaths[currentNetworkIndexInt][i][j] !== null) {
+					trafficPathsToDraw.push(trafficPaths[currentNetworkIndexInt][i][j]);
+					trafficPathsToDrawColors.push(new Array(0, 0, 0));
+				}
+			}
+		}
+		drawGeodesics(
+			context, trafficPathsToDraw,
+			6, trafficPathsToDrawColors
+		);
 
 		// Deal with outages
 		if (options.showOutages && times.length > 1) {
@@ -687,13 +705,15 @@ document.addEventListener("keydown", function(event) {
 	if (event.key == "Escape") {
 		resetView();
 	} else if (event.key == "h") {
-		let elementIDs = ["div-gui", "button-help"];
-		for (let elementID of elementIDs) {
-			let element = document.getElementById(elementID);
+		let elementIDs = ["div-gui", "button-help", "div-traffic"];
+		let displayStyles = ["block", "block", "grid"];
+		for (let i = 0; i < elementIDs.length; ++i) {
+			let element = document.getElementById(elementIDs[i]);
+			let displayStyle = displayStyles[i];
 			if (element.style.display != "none") {
 				element.style.display = "none";
 			} else {
-				element.style.display = "block";
+				element.style.display = displayStyle;
 			}
 		}
 
@@ -1014,6 +1034,7 @@ dropReader.onload = function() {
 		geodesics = new Array(animationData.length);
 		edgeColors = new Array(animationData.length);
 		traffic = new Array(animationData.length);
+		trafficPaths = new Array(animationData.length);
 		for (let i = 0; i < animationData.length; ++i) {
 			times[i] = animationData[i].time;
 			heights[i] = animationData[i].height;
@@ -1022,6 +1043,7 @@ dropReader.onload = function() {
 			geodesics[i] = animationData[i].geodesics;
 			edgeColors[i] = animationData[i].edgeColors;
 			traffic[i] = animationData[i].traffic;
+			trafficPaths[i] = animationData[i].trafficPaths;
 		}
 
 		animationDuration = (animationData.length - 1) * 2.;
@@ -1129,6 +1151,14 @@ dropReader.onload = function() {
 
 		// TODO: Clear out the list of outages
 
+		tableTrafficHover = new Array(networkVertices.length);
+		for (let i = 0; i < networkVertices.length; ++i) {
+			let tableTrafficHoverRow = new Array(networkVertices.length);
+			for (let j = 0; j < networkVertices.length; ++j) {
+				tableTrafficHoverRow[j] = false;
+			}
+			tableTrafficHover[i] = tableTrafficHoverRow;
+		}
 		while (tableTraffic.hasChildNodes()) {
 			tableTraffic.removeChild(tableTraffic.lastChild);
 		}
@@ -1138,6 +1168,18 @@ dropReader.onload = function() {
 			let tableTrafficCellsRow = new Array(networkVertices.length);
 			for (let j = 0; j < networkVertices.length; ++j) {
 				let cell = document.createElement("td");
+				cell.addEventListener("mouseenter", function(event) {
+					tableTrafficHover[i][j] = true;
+					for (let k = 0; k < elementsByTab.length; ++k) {
+						elementsByTab[k].canvasNeedsUpdate = true;
+					}
+				});
+				cell.addEventListener("mouseleave", function(event) {
+					tableTrafficHover[i][j] = false;
+					for (let k = 0; k < elementsByTab.length; ++k) {
+						elementsByTab[k].canvasNeedsUpdate = true;
+					}
+				});
 				tableRow.appendChild(cell);
 				tableTrafficCellsRow[j] = cell;
 			}

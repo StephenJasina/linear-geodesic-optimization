@@ -297,6 +297,10 @@ def collate_outputs(
         mesh.remove_added_vertices()
         mesh.restore_removed_vertices()
 
+        paths = [[None for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
+        for (node_source, node_target), geodesic in zip(geodesic_labels, geodesics):
+            paths[node_labels_to_indices[node_source]][node_labels_to_indices[node_target]] = geodesic
+
         animation_data.append({
             'time': t,
             'height': z.reshape((width, height)).tolist(),
@@ -304,7 +308,8 @@ def collate_outputs(
             'geodesics': geodesics,
             'edgeColors': edge_colors,
             'border': network_border,
-            'traffic': output['traffic'] if 'traffic' in output else None
+            'traffic': output['traffic'] if 'traffic' in output else None,
+            'trafficPaths': paths
         })
 
     # Set the map data
