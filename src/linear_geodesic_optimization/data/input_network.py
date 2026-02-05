@@ -212,7 +212,10 @@ def compute_ricci_curvatures(
             graph, alpha=alpha, edge_weight_label=weight_label, use_augmented_graph=False
         )
     for (source, destination), ricci_curvature in ricci_curvatures.items():
-        graph.edges[source, destination]['ricciCurvature'] = ricci_curvature
+        if 'ricciCurvature' in graph.edges[source, destination]:
+            graph.edges[source, destination]['ricciCurvature'] = (graph.edges[source, destination]['ricciCurvature'] + ricci_curvature) / 2.
+        else:
+            graph.edges[source, destination]['ricciCurvature'] = ricci_curvature
 
     return graph
 
@@ -318,7 +321,7 @@ def get_graph_from_json(
     directed=False,
     symmetrize=False,
     force_optimal_transport=False,
-    return_traffic_matrix=True,
+    return_traffic_matrix=False,
 ):
     with open(path) as file:
         blob = json.load(file)

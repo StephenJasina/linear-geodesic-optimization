@@ -165,7 +165,12 @@ def compute_ricci_curvature_from_traffic_matrix(
         distance_matrix = None
 
     ricci_curvatures = {}
-    for u, v in graph.edges:
+    edges = [(u, v) for u, v in graph.edges]
+    if not isinstance(graph, nx.DiGraph):
+        edges += [(v, u) for u, v in graph.edges]
+    for u, v in edges:
+        d_u_v = graph.edges[u, v][edge_distance_label] if edge_distance_label is not None else 1.
+
         # Some running totals used to compute transportation costs. In
         # most cases, we should only expect to use the s_t variant, but
         # we compute all of them to avoid having to use more for loops.
@@ -304,16 +309,15 @@ def compute_ricci_curvature_from_traffic_matrix(
                         numerator_p_s += traffic_route * distance_route
                     else:
                         denominator_p_v += traffic_route
-                        numerator_p_v += traffic_route * distance_route
+                        numerator_p_v += traffic_route * (distance_route + d_u_v)
                 else:
                     if has_s:
                         denominator_u_s += traffic_route
-                        numerator_u_s += traffic_route * distance_route
+                        numerator_u_s += traffic_route * (distance_route + d_u_v)
                     else:
                         denominator_u_v += traffic_route
-                        numerator_u_v += traffic_route * distance_route
+                        numerator_u_v += traffic_route * (distance_route + 2 * d_u_v)
 
-        d_u_v = graph.edges[u, v][edge_distance_label] if edge_distance_label is not None else 1.
         if use_optimal_transport:
             if denominator_p_s != 0.:
                 transportation_cost = ot.emd2(
@@ -342,27 +346,28 @@ def compute_ricci_curvature_from_traffic_matrix(
             else:
                 continue
         else:
-            if denominator_p_s != 0.:
-                # Prioritize the case where we have data describing
-                # transportation between neighborhoods of u and v
-                transportation_cost = numerator_p_s / denominator_p_s
-            elif denominator_p_v != 0.:
-                # If that data doesn't exist, check whether we have routes
-                # from u's neighborhood to v
-                transportation_cost = numerator_p_v / denominator_p_v
-            elif denominator_u_s != 0.:
-                # If that data doesn't exist, check whether we have routes
-                # from u to v's neighborhood
-                transportation_cost = numerator_u_s / denominator_u_s
-            elif denominator_u_v != 0.:
-                # If that data doesn't exist, check whether we have routes
-                # from u to v
-                transportation_cost = numerator_u_v / denominator_u_v
-            else:
-                # If we get here, we don't have enough information to
-                # compute the curvature. For now, let's just not set the
-                # curvature to anything
-                continue
+            # if denominator_p_s != 0.:
+            #     # Prioritize the case where we have data describing
+            #     # transportation between neighborhoods of u and v
+            #     transportation_cost = numerator_p_s / denominator_p_s
+            # elif denominator_p_v != 0.:
+            #     # If that data doesn't exist, check whether we have routes
+            #     # from u's neighborhood to v
+            #     transportation_cost = numerator_p_v / denominator_p_v
+            # elif denominator_u_s != 0.:
+            #     # If that data doesn't exist, check whether we have routes
+            #     # from u to v's neighborhood
+            #     transportation_cost = numerator_u_s / denominator_u_s
+            # elif denominator_u_v != 0.:
+            #     # If that data doesn't exist, check whether we have routes
+            #     # from u to v
+            #     transportation_cost = numerator_u_v / denominator_u_v
+            # else:
+            #     # If we get here, we don't have enough information to
+            #     # compute the curvature. For now, let's just not set the
+            #     # curvature to anything
+            #     continue
+            transportation_cost = (numerator_p_s + numerator_p_v + numerator_u_s + numerator_u_v) / (denominator_p_s + denominator_p_v + denominator_u_s + denominator_u_v)
         ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
 
     return ricci_curvatures
