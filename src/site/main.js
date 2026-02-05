@@ -59,6 +59,7 @@ let edgeColors = null;
 let traffic = null;
 let trafficMax = 0.;
 let trafficPaths = null;
+let hasValidTraffic = false;
 
 // Globals tracking the animation state
 let isPlaying = false;
@@ -428,6 +429,10 @@ let tableTraffic = document.getElementById("table-traffic");
 let tableTrafficCells = new Array(0);
 let tableTrafficHover = new Array(0);
 function updateTrafficTable(currentNetworkIndex) {
+	if (!hasValidTraffic) {
+		return;
+	}
+
 	let indexPrevious = Math.floor(currentNetworkIndex);
 	let indexNext = Math.ceil(currentNetworkIndex);
 	let alpha = currentNetworkIndex - indexPrevious;
@@ -511,20 +516,22 @@ function drawLayers(time, options) {
 			);
 		}
 
-		let trafficPathsToDraw = new Array();
-		let trafficPathsToDrawColors = new Array();
-		for (let i = 0; i < networkVertices.length; ++i) {
-			for (let j = 0; j < networkVertices.length; ++j) {
-				if (tableTrafficHover[i][j] && trafficPaths[currentNetworkIndexInt][i] !== null && trafficPaths[currentNetworkIndexInt][i][j] !== null) {
-					trafficPathsToDraw.push(trafficPaths[currentNetworkIndexInt][i][j]);
-					trafficPathsToDrawColors.push(new Array(0, 0, 0));
+		if (hasValidTraffic) {
+			let trafficPathsToDraw = new Array();
+			let trafficPathsToDrawColors = new Array();
+			for (let i = 0; i < networkVertices.length; ++i) {
+				for (let j = 0; j < networkVertices.length; ++j) {
+					if (tableTrafficHover[i][j] && trafficPaths[currentNetworkIndexInt][i] !== null && trafficPaths[currentNetworkIndexInt][i][j] !== null) {
+						trafficPathsToDraw.push(trafficPaths[currentNetworkIndexInt][i][j]);
+						trafficPathsToDrawColors.push(new Array(0, 0, 0));
+					}
 				}
 			}
+			drawGeodesics(
+				context, trafficPathsToDraw,
+				6, trafficPathsToDrawColors
+			);
 		}
-		drawGeodesics(
-			context, trafficPathsToDraw,
-			6, trafficPathsToDrawColors
-		);
 
 		// Deal with outages
 		if (options.showOutages && times.length > 1) {
@@ -1035,6 +1042,7 @@ dropReader.onload = function() {
 		edgeColors = new Array(animationData.length);
 		traffic = new Array(animationData.length);
 		trafficPaths = new Array(animationData.length);
+		hasValidTraffic = true;
 		for (let i = 0; i < animationData.length; ++i) {
 			times[i] = animationData[i].time;
 			heights[i] = animationData[i].height;
@@ -1042,8 +1050,14 @@ dropReader.onload = function() {
 			networkBoundaries[i] = animationData[i].boundary;
 			geodesics[i] = animationData[i].geodesics;
 			edgeColors[i] = animationData[i].edgeColors;
-			traffic[i] = animationData[i].traffic;
-			trafficPaths[i] = animationData[i].trafficPaths;
+			if (hasValidTraffic && 'traffic' in animationData[i] && animationData[i].traffic !== null) {
+				traffic[i] = animationData[i].traffic;
+				trafficPaths[i] = animationData[i].trafficPaths;
+			} else {
+				traffic[i] = null;
+				trafficPaths[i] = null;
+				hasValidTraffic = false;
+			}
 		}
 
 		animationDuration = (animationData.length - 1) * 2.;
@@ -1151,53 +1165,57 @@ dropReader.onload = function() {
 
 		// TODO: Clear out the list of outages
 
-		tableTrafficHover = new Array(networkVertices.length);
-		for (let i = 0; i < networkVertices.length; ++i) {
-			let tableTrafficHoverRow = new Array(networkVertices.length);
-			for (let j = 0; j < networkVertices.length; ++j) {
-				tableTrafficHoverRow[j] = false;
-			}
-			tableTrafficHover[i] = tableTrafficHoverRow;
-		}
 		while (tableTraffic.hasChildNodes()) {
 			tableTraffic.removeChild(tableTraffic.lastChild);
 		}
-		tableTrafficCells = new Array(networkVertices.length);
-		for (let i = 0; i < networkVertices.length; ++i) {
-			let tableRow = document.createElement("tr");
-			let tableTrafficCellsRow = new Array(networkVertices.length);
-			for (let j = 0; j < networkVertices.length; ++j) {
-				let cell = document.createElement("td");
-				cell.addEventListener("mouseenter", function(event) {
-					tableTrafficHover[i][j] = true;
-					for (let k = 0; k < elementsByTab.length; ++k) {
-						elementsByTab[k].canvasNeedsUpdate = true;
-					}
-				});
-				cell.addEventListener("mouseleave", function(event) {
-					tableTrafficHover[i][j] = false;
-					for (let k = 0; k < elementsByTab.length; ++k) {
-						elementsByTab[k].canvasNeedsUpdate = true;
-					}
-				});
-				tableRow.appendChild(cell);
-				tableTrafficCellsRow[j] = cell;
+		if (hasValidTraffic) {
+			tableTrafficHover = new Array(networkVertices.length);
+			for (let i = 0; i < networkVertices.length; ++i) {
+				let tableTrafficHoverRow = new Array(networkVertices.length);
+				for (let j = 0; j < networkVertices.length; ++j) {
+					tableTrafficHoverRow[j] = false;
+				}
+				tableTrafficHover[i] = tableTrafficHoverRow;
 			}
-			tableTraffic.appendChild(tableRow);
-			tableTrafficCells[i] = tableTrafficCellsRow;
-		}
+			tableTrafficCells = new Array(networkVertices.length);
+			for (let i = 0; i < networkVertices.length; ++i) {
+				let tableRow = document.createElement("tr");
+				let tableTrafficCellsRow = new Array(networkVertices.length);
+				for (let j = 0; j < networkVertices.length; ++j) {
+					let cell = document.createElement("td");
+					cell.addEventListener("mouseenter", function(event) {
+						tableTrafficHover[i][j] = true;
+						for (let k = 0; k < elementsByTab.length; ++k) {
+							elementsByTab[k].canvasNeedsUpdate = true;
+						}
+					});
+					cell.addEventListener("mouseleave", function(event) {
+						tableTrafficHover[i][j] = false;
+						for (let k = 0; k < elementsByTab.length; ++k) {
+							elementsByTab[k].canvasNeedsUpdate = true;
+						}
+					});
+					tableRow.appendChild(cell);
+					tableTrafficCellsRow[j] = cell;
+				}
+				tableTraffic.appendChild(tableRow);
+				tableTrafficCells[i] = tableTrafficCellsRow;
+			}
 
-		trafficMax = 0.;
-		for (let trafficMatrix of traffic) {
-			for (let trafficMatrixRow of trafficMatrix) {
-				for (let trafficMatrixCell of trafficMatrixRow) {
-					if (trafficMatrixCell > trafficMax) {
-						trafficMax = trafficMatrixCell;
+			trafficMax = 0.;
+			for (let trafficMatrix of traffic) {
+				if (trafficMatrix !== null) {
+					for (let trafficMatrixRow of trafficMatrix) {
+						for (let trafficMatrixCell of trafficMatrixRow) {
+							if (trafficMatrixCell > trafficMax) {
+								trafficMax = trafficMatrixCell;
+							}
+						}
 					}
 				}
 			}
+			updateTrafficTable(currentNetworkIndex);
 		}
-		updateTrafficTable(currentNetworkIndex)
 
 		mapCenter = mapData.center;
 		mapZoomFactor = mapData.zoomFactor;

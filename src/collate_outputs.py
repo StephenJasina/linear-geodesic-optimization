@@ -297,9 +297,13 @@ def collate_outputs(
         mesh.remove_added_vertices()
         mesh.restore_removed_vertices()
 
-        paths = [[None for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
-        for (node_source, node_target), geodesic in zip(geodesic_labels, geodesics):
-            paths[node_labels_to_indices[node_source]][node_labels_to_indices[node_target]] = geodesic
+        traffic = output['traffic'] if 'traffic' in output else None
+        if 'traffic' in output:
+            paths = [[[] for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
+            for (node_source, node_target), geodesic in zip(geodesic_labels, geodesics):
+                paths[node_labels_to_indices[node_source]][node_labels_to_indices[node_target]] = geodesic
+        else:
+            paths = None
 
         animation_data.append({
             'time': t,
@@ -308,7 +312,7 @@ def collate_outputs(
             'geodesics': geodesics,
             'edgeColors': edge_colors,
             'border': network_border,
-            'traffic': output['traffic'] if 'traffic' in output else None,
+            'traffic': traffic,
             'trafficPaths': paths
         })
 
@@ -366,7 +370,7 @@ def main_routing_with_volumes():
         )
 
 def main_routing_with_volumes_animated():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes', 'single_route_change')
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes', 'graphs_single_route_change')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
         for directory in sorted(os.listdir(superdirectory))
@@ -384,7 +388,7 @@ def main_routing_with_volumes_animated():
 
     collate_outputs(
         directories_outputs,
-        pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'single_route_change.json'),
+        pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'test.json'),
         geodesic_label_color_pairs=geodesic_label_color_pairs,
         bubble_size=0.05,
     )
