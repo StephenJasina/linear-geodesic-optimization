@@ -220,4 +220,5 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
     return {
         (source, destination): x
         for source, destination, x in zip(sources, destinations, x_opt)
+        if x != 0.
     }
