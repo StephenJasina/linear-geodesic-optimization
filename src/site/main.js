@@ -444,7 +444,7 @@ function updateTrafficTable(currentNetworkIndex) {
 			if (trafficMax != 0.) {
 				trafficAtCell /= trafficMax;
 			}
-			let color = getWeightedColor(trafficAtCell);
+			let color = getWeightedColor(1. - trafficAtCell);
 			cell.style.backgroundColor = color;
 		}
 	}
