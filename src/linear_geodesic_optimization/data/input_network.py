@@ -143,9 +143,10 @@ def get_base_graph(probes, links, directed=False, symmetrize=False):
             graph.add_edge(id_source, id_target, **edge_data)
 
     # TODO: Make this less aggressive
+    # TODO: Make this a flag
     # Delete nodes with inconsistent geolocation
-    for node in minimize_id_removal(rtt_violation_list):
-        graph.remove_node(node)
+    # for node in minimize_id_removal(rtt_violation_list):
+    #     graph.remove_node(node)
 
     if directed and symmetrize:
         graph.add_edges_from([
