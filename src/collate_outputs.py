@@ -73,7 +73,7 @@ def collate_outputs(
     path_output_collated,
     *,
     times=None,
-    geodesic_label_color_pairs=[],
+    geodesic_label_color_pairs=None,
     height_scale=0.15,
     use_convex_hull=False,
     bubble_size = np.inf,
@@ -267,6 +267,12 @@ def collate_outputs(
         z_max = max(z_max, np.max(z[hull]))
         z_min = min(z_min, np.min(z[hull]))
 
+    if geodesic_label_color_pairs is None:
+        geodesic_label_color_pairs = [
+            ((node_source, node_target), [0, 0, 0])
+            for node_source in node_labels_to_indices
+            for node_target in node_labels_to_indices
+        ]
     geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
@@ -393,7 +399,24 @@ def main_routing_with_volumes_animated():
         bubble_size=0.05,
     )
 
+def main_internet2():
+    superdirectory = pathlib.PurePath('..', 'outputs', 'Internet2', 'test')
+    directories_outputs = [
+        superdirectory / directory / '0.002_50_50'
+        for directory in sorted(os.listdir(superdirectory))
+    ]
+
+    geodesic_label_color_pairs = None
+
+    collate_outputs(
+        directories_outputs,
+        pathlib.PurePath('..', 'outputs', 'animations', 'Internet2', f'test.json'),
+        geodesic_label_color_pairs=geodesic_label_color_pairs,
+        bubble_size=0.05,
+    )
+
 if __name__ == '__main__':
     pass
     # main_routing_with_volumes()
-    main_routing_with_volumes_animated()
+    # main_routing_with_volumes_animated()
+    main_internet2()
