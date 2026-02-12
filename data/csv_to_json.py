@@ -22,8 +22,8 @@ def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath)
         'nodes': [
             {
                 'id': node,
-                'latitude': graph.nodes[node]['latitude'],
-                'longitude': graph.nodes[node]['longitude'],
+                'latitude': graph.nodes[node]['lat'],
+                'longitude': graph.nodes[node]['long'],
             }
             for node in index_to_node
         ],
@@ -31,28 +31,28 @@ def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath)
             {
                 'source_id': source,
                 'target_id': destination,
-                'rtt': data['latency'],
+                'rtt': data['rtt'],
             }
             for source, destination, data in graph.edges(data=True)
         ] + [
             {
                 'source_id': destination,
                 'target_id': source,
-                'rtt': data['latency'],
+                'rtt': data['rtt'],
             }
             for source, destination, data in graph.edges(data=True)
         ],
         'routes': [
             {
                 'route': route,
-                'volume': traffic_matrix[source][destination]
+                'volume': traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
             }
             for source, routes_source in routes.items()
             for destination, route in routes_source.items()
         ]
     }
     with open(path, 'w') as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=4)
 
 if __name__ == '__main__':
     # Parse arugments
@@ -69,8 +69,6 @@ if __name__ == '__main__':
     parser.add_argument('--clustering-distance', '-c', type=float,
                         required=False, dest='clustering_distance',
                         metavar='<clustering distance>')
-    parser.add_argument('--throughputs-for-curvature', '-t',
-                        action='store_true', dest='throughputs_for_curvature')
     parser.add_argument('--output', '-o', metavar='<filename>',
                         dest='output_filename', required=True)
     args = parser.parse_args()
@@ -80,12 +78,15 @@ if __name__ == '__main__':
     if epsilon is None:
         epsilon = np.inf
     clustering_distance = args.clustering_distance
-    throughputs_for_curvature = args.throughputs_for_curvature
     output_filename = args.output_filename
 
     graph = input_network.get_graph_from_csvs(
         probes_filename, latencies_filename,
-        epsilon=epsilon,
         clustering_distance=clustering_distance,
-        throughputs_for_curvature=throughputs_for_curvature,
+        should_compute_curvatures=False, directed=True, symmetrize=True
     )
+
+    routes = tomography.get_shortest_routes(graph, 'rtt')
+    traffic_matrix = tomography.compute_traffic_matrix(graph, routes, 'throughput')
+
+    write_graph(graph, routes, traffic_matrix, output_filename)
