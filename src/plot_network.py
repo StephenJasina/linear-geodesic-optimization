@@ -38,10 +38,12 @@ if __name__ == '__main__':
         # graph = input_network.compute_ricci_curvatures(graph)
         # graph = input_network.compute_curvatures_from_throughputs(graph)
     elif json_filename is not None:
+        # TODO: Deal with occlusion
         graph = input_network.get_graph_from_json(
             json_filename,
             epsilon=epsilon,
-            clustering_distance=clustering_distance
+            clustering_distance=clustering_distance,
+            directed=True
         )
     else:
         if probes_filename is None or latencies_filename is None:
@@ -57,6 +59,9 @@ if __name__ == '__main__':
 
     # curvatures = [edge_data['ricciCurvature'] for _, _, edge_data in graph.edges(data=True) if 'ricciCurvature' in edge_data]
     # print(min(curvatures), max(curvatures))
+    # for u, v, edge_data in graph.edges(data=True):
+    #     if 'ricciCurvature' in edge_data:
+    #         print(f"{u} -> {v}: {edge_data['ricciCurvature']}")
 
     coordinates = np.array([
         utility.mercator(data['long'], data['lat'])
