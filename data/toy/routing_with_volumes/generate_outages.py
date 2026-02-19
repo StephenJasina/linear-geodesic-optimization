@@ -143,7 +143,7 @@ def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath)
             }
             for source, destination, data in graph.edges(data=True)
         ],
-        'routes': [
+        'traffic': [
             {
                 'route': route,
                 'volume': traffic_matrix[source][destination]
