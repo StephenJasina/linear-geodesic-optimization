@@ -148,8 +148,8 @@ def get_augmented_distribution(
 
     return distribution
 
-def compute_ricci_curvature_from_traffic_matrix(
-    graph: nx.Graph, routes, traffic_matrix,
+def compute_ricci_curvature_from_traffic(
+    graph: nx.Graph, routes, traffic,
     edge_distance_label='latency',
     use_optimal_transport=False
 ):
@@ -203,120 +203,120 @@ def compute_ricci_curvature_from_traffic_matrix(
             distribution_v_u_v = None
 
         # Find which routes are relevant
-        for source, routes_source in routes.items():
-            for destination, route in routes_source.items():
-                traffic_route = traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
-                if traffic_route == 0.:
-                    # In this case, nothing would be accumulated, so we can
-                    # skip investigating the route
-                    continue
+        for route, traffic_route in zip(routes, traffic):
+            source = route[0]
+            destination = route[-1]
+            if traffic_route == 0.:
+                # In this case, nothing would be accumulated, so we can
+                # skip investigating the route
+                continue
 
-                has_p_something = False
-                has_u_something = False
+            has_p_something = False
+            has_u_something = False
 
-                has_p_s = False
-                has_p_v = False
+            has_p_s = False
+            has_p_v = False
+            has_u_s = False
+            has_u_v = False
+
+            for node in route:
+                if node != v and (node, u) in graph.edges:
+                    has_p_something = True
+                if node == u:
+                    has_u_something = True
+
+                if has_p_something:
+                    if node != u and (v, node) in graph.edges:
+                        has_p_s = True
+                    if node == v:
+                        has_p_v = True
+                if has_u_something:
+                    if node != u and (v, node) in graph.edges:
+                        has_u_s = True
+                    if node == v:
+                        has_u_v = True
+
+            if has_p_s or has_p_v:
                 has_u_s = False
                 has_u_v = False
+            if has_p_s or has_u_s:
+                has_p_v = False
+                has_u_v = False
 
-                for node in route:
-                    if node != v and (node, u) in graph.edges:
-                        has_p_something = True
-                    if node == u:
-                        has_u_something = True
+            # Flags for whether we use fall under edge cases
+            has_p = has_p_s or has_p_v
+            has_s = has_p_s or has_u_s
 
-                    if has_p_something:
-                        if node != u and (v, node) in graph.edges:
-                            has_p_s = True
-                        if node == v:
-                            has_p_v = True
-                    if has_u_something:
-                        if node != u and (v, node) in graph.edges:
-                            has_u_s = True
-                        if node == v:
-                            has_u_v = True
+            # At this point, at most one of has_p_s, has_p_v,
+            # has_u_s, and has_u_v is True
+            if not (has_p_s or has_p_v or has_u_s or has_u_v):
+                # Irrelevant route in this case
+                continue
 
-                if has_p_s or has_p_v:
-                    has_u_s = False
-                    has_u_v = False
-                if has_p_s or has_u_s:
-                    has_p_v = False
-                    has_u_v = False
+            distance_route = np.inf
 
-                # Flags for whether we use fall under edge cases
-                has_p = has_p_s or has_p_v
-                has_s = has_p_s or has_u_s
+            p = None
+            s = None
 
-                # At this point, at most one of has_p_s, has_p_v,
-                # has_u_s, and has_u_v is True
-                if not (has_p_s or has_p_v or has_u_s or has_u_v):
-                    # Irrelevant route in this case
-                    continue
+            # Check all length-0 segments of the route
+            for node in route:
+                is_left = (has_p and node != v and (node, u) in graph.edges) or (not has_p and node == u)
+                is_right = (has_s and node!= u and (v, node) in graph.edges) or (not has_s and node == v)
+                if is_left and is_right:
+                    distance_route = 0.
+                    p = node
+                    s = node
+                    break
 
-                distance_route = np.inf
+            # Check all non-length-0 segments of the route
+            if distance_route != 0.:
+                distance_route_candidate = np.inf
+                p_candidate = None
+                for a, b in itertools.pairwise(route):
+                    d_a_b = graph.edges[a, b][edge_distance_label] if edge_distance_label is not None else 1.
 
-                p = None
-                s = None
+                    if (has_p and a != v and (a, u) in graph.edges) or (not has_p and a == u):
+                        distance_route_candidate = 0.
+                        p_candidate = a
 
-                # Check all length-0 segments of the route
-                for node in route:
-                    is_left = (has_p and node != v and (node, u) in graph.edges) or (not has_p and node == u)
-                    is_right = (has_s and node!= u and (v, node) in graph.edges) or (not has_s and node == v)
-                    if is_left and is_right:
-                        distance_route = 0.
-                        p = node
-                        s = node
-                        break
+                    distance_route_candidate += d_a_b
 
-                # Check all non-length-0 segments of the route
-                if distance_route != 0.:
-                    distance_route_candidate = np.inf
-                    p_candidate = None
-                    for a, b in itertools.pairwise(route):
-                        d_a_b = graph.edges[a, b][edge_distance_label] if edge_distance_label is not None else 1.
+                    if (has_s and b != u and (v, b) in graph.edges) or (not has_s and b == v):
+                        if distance_route_candidate < distance_route:
+                            distance_route = distance_route_candidate
+                            p = p_candidate
+                            s = b
 
-                        if (has_p and a != v and (a, u) in graph.edges) or (not has_p and a == u):
-                            distance_route_candidate = 0.
-                            p_candidate = a
-
-                        distance_route_candidate += d_a_b
-
-                        if (has_s and b != u and (v, b) in graph.edges) or (not has_s and b == v):
-                            if distance_route_candidate < distance_route:
-                                distance_route = distance_route_candidate
-                                p = p_candidate
-                                s = b
-
-                if use_optimal_transport:
-                    if has_p:
-                        if has_s:
-                            distribution_u_p_s[node_to_index[p]] += traffic_route
-                            distribution_v_p_s[node_to_index[s]] += traffic_route
-                        else:
-                            distribution_u_p_v[node_to_index[p]] += traffic_route
-                            distribution_v_p_v[node_to_index[s]] += traffic_route
-                    else:
-                        if has_s:
-                            distribution_u_u_s[node_to_index[p]] += traffic_route
-                            distribution_v_u_s[node_to_index[s]] += traffic_route
-                        else:
-                            distribution_u_u_v[node_to_index[p]] += traffic_route
-                            distribution_v_u_v[node_to_index[s]] += traffic_route
-
+            if use_optimal_transport:
                 if has_p:
                     if has_s:
-                        denominator_p_s += traffic_route
-                        numerator_p_s += traffic_route * distance_route
+                        distribution_u_p_s[node_to_index[p]] += traffic_route
+                        distribution_v_p_s[node_to_index[s]] += traffic_route
                     else:
-                        denominator_p_v += traffic_route
-                        numerator_p_v += traffic_route * (distance_route + d_u_v)
+                        distribution_u_p_v[node_to_index[p]] += traffic_route
+                        distribution_v_p_v[node_to_index[s]] += traffic_route
                 else:
                     if has_s:
-                        denominator_u_s += traffic_route
-                        numerator_u_s += traffic_route * (distance_route + d_u_v)
+                        distribution_u_u_s[node_to_index[p]] += traffic_route
+                        distribution_v_u_s[node_to_index[s]] += traffic_route
                     else:
-                        denominator_u_v += traffic_route
-                        numerator_u_v += traffic_route * (distance_route + 2 * d_u_v)
+                        distribution_u_u_v[node_to_index[p]] += traffic_route
+                        distribution_v_u_v[node_to_index[s]] += traffic_route
+
+            if has_p:
+                if has_s:
+                    denominator_p_s += traffic_route
+                    numerator_p_s += traffic_route * distance_route
+                else:
+                    denominator_p_v += traffic_route
+                    numerator_p_v += traffic_route * (distance_route + d_u_v)
+            else:
+                if has_s:
+                    denominator_u_s += traffic_route
+                    numerator_u_s += traffic_route * (distance_route + d_u_v)
+                else:
+                    denominator_u_v += traffic_route
+                    numerator_u_v += traffic_route * (distance_route + 2 * d_u_v)
 
         if use_optimal_transport:
             if denominator_p_s != 0.:
@@ -436,11 +436,13 @@ def compute_ricci_curvature(
             edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
             ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transportation_cost / edge_distance) / (1. - alpha)
     elif use_tomography:
-        routes = tomography.get_shortest_routes(graph, edge_distance_label=edge_distance_label)
-        traffic_matrix = tomography.compute_traffic_matrix(graph, routes, edge_weight_label)
+        routes_dict = tomography.get_shortest_routes(graph, edge_distance_label=edge_distance_label)
+        traffic_matrix_dict = tomography.compute_traffic_matrix(graph, routes_dict, edge_weight_label)
+        routes = [routes_dict[s][d] for s, d in traffic_matrix_dict]
+        traffic_matrix = list(traffic_matrix_dict.values())
         ricci_curvatures = {
             (index_to_node[source], index_to_node[destination]): curvature
-            for (source, destination), curvature in compute_ricci_curvature_from_traffic_matrix(
+            for (source, destination), curvature in compute_ricci_curvature_from_traffic(
                 graph, routes, traffic_matrix, edge_distance_label
             ).items()
         }
