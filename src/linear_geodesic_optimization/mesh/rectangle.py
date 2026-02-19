@@ -303,12 +303,9 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         Add a vertex into the mesh at the given x-y coordinates.
         """
         # Check whether `p` is very close to one of the vertices `a`
-        for va in self._topology.vertices():
-            a = self._coordinates[va.index]
-            if np.linalg.norm(p - a) <= epsilon * self._scale:
-                # If `p` and `a` are sufficiently close, there is
-                # nothing to do
-                return va
+        nearest_vertex = self._coordinates[self.nearest_vertex(p).index]
+        if np.linalg.norm(p - nearest_vertex) <= epsilon * self._scale:
+            return va
 
         # Check whether `p` is very close to one of the edges `a`-`b`
         # We first find the closest edge, which is slow, but will
