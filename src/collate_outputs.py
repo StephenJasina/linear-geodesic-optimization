@@ -6,6 +6,7 @@ import sys
 import typing
 
 import matplotlib as mpl
+import networkx as nx
 import numpy as np
 import potpourri3d as pp3d
 
@@ -19,33 +20,62 @@ def get_tableau_color(index):
     color = mpl.colors.to_rgb(tableau_colors[index % len(tableau_colors)])
     return [int(channel * 255) for channel in color]
 
-def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_index_pairs):
+def remove_loops(path):
+    indices = {}
+    path_new = []
+
+    for v in path:
+        if v in indices:
+            for _ in range(len(path_new) - indices[v] - 1):
+                indices.pop(path_new.pop())
+        else:
+            indices[v] = len(path_new)
+            path_new.append(v)
+
+    return path_new
+
+def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_routes):
     mesh_scale = mesh.get_scale()
 
     network_indices = set()
     bad_indices = set()
-    for (index_source, index_target) in geodesic_index_pairs:
-        network_indices.add(index_source)
-        network_indices.add(index_target)
+    for geodesic_route in geodesic_routes:
+        for network_index in geodesic_route:
+            network_indices.add(network_index)
     for network_index in network_indices:
         network_vertex = network_vertices[network_index]
-        if network_vertex.tolist() not in (mesh.get_coordinates()[:, :2].tolist()):
-            try:
-                mesh.add_vertex_at_coordinates(network_vertex, 0.0001)
-            except ValueError:
-                bad_indices.add(network_index)
+        try:
+            mesh.add_vertex_at_coordinates(network_vertex, 0.0001)
+        except ValueError:
+            bad_indices.add(network_index)
 
-    # fig, ax = plt.subplots(1, 1)
-    # topology = mesh.get_topology()
-    # coordinates = mesh.get_coordinates()
-    # for edge in topology.edges():
-    #     u, v = edge.vertices()
-    #     ax.plot([coordinates[u.index][0], coordinates[v.index][0]], [coordinates[u.index][1], coordinates[v.index][1]], 'k-')
-    # ax.set_aspect('equal')
-    # plt.show()
+    coordinates = mesh.get_coordinates()
+    topology = mesh.get_topology()
+    mesh_graph = nx.Graph()
+    for edge in topology.edges():
+        source, target = edge.vertices()
+        source = source.index
+        target = target.index
+        weight = np.linalg.norm(coordinates[source] - coordinates[target])
+        mesh_graph.add_edge(source, target, length=weight)
+
+    network_vertex_indices_to_mesh_vertex_indices = [
+        mesh.nearest_vertex(network_vertex).index
+        for network_vertex in network_vertices
+    ]
+    # TODO: Would using something like this be more efficient?
+    # approximate_network_edge_traces = [
+    #     nx.dijkstra_path(
+    #         mesh_graph,
+    #         network_vertex_indices_to_mesh_vertex_indices[u_index],
+    #         network_vertex_indices_to_mesh_vertex_indices[v_index],
+    #         'length'
+    #     )
+    #     for (u_index, v_index) in network_edges
+    # ]
 
     path_solver = pp3d.EdgeFlipGeodesicSolver(
-        mesh.get_coordinates(),
+        coordinates,
         np.array([
             [vertex.index for vertex in face.vertices()]
             for face in mesh.get_topology().faces()
@@ -53,17 +83,30 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
     )
 
     geodesics = []
-    for (index_source, index_target) in geodesic_index_pairs:
-        if index_source in bad_indices or index_target in bad_indices:
+    for geodesic_route in geodesic_routes:
+        is_bad = False
+        for index_node in geodesic_route:
+            if index_node in bad_indices:
+                is_bad = True
+        if is_bad:
             continue
 
-        source = mesh.nearest_vertex(network_vertices[index_source]).index
-        target = mesh.nearest_vertex(network_vertices[index_target]).index
+        approximate_trace = []
+        for index_source, index_target in itertools.pairwise(geodesic_route):
+            approximate_trace.extend(
+                nx.dijkstra_path(
+                    mesh_graph,
+                    network_vertex_indices_to_mesh_vertex_indices[index_source],
+                    network_vertex_indices_to_mesh_vertex_indices[index_target],
+                    'length'
+                )
+            )
+        approximate_trace = remove_loops(approximate_trace)
 
-        if source == target:
-            continue
+        if len(approximate_trace) < 2:
+            geodesics.append([])
         else:
-            geodesic = path_solver.find_geodesic_path(source, target)
+            geodesic = path_solver.find_geodesic_path_poly(approximate_trace)
             geodesics.append((geodesic[:, :2] / mesh_scale).tolist())
 
     return geodesics
@@ -140,7 +183,7 @@ def collate_outputs(
         for key in vertex_data.keys():
             node_data_keys.add(key)
 
-    node_indices_to_labels = list(sorted(node_labels_to_coordinates))
+    node_indices_to_labels = list(sorted(node_labels_to_coordinates.keys()))
     node_labels_to_indices = {label: index for index, label in enumerate(node_indices_to_labels)}
     for node_label, node_representative in node_labels_to_representatives.items():
         node_labels_to_indices[node_label] = node_labels_to_indices[node_representative]
@@ -268,10 +311,11 @@ def collate_outputs(
         z_min = min(z_min, np.min(z[hull]))
 
     if geodesic_label_color_pairs is None:
+        # For now, just use the routes in the first snapshot
+        # TODO: Is this exactly what we want?
         geodesic_label_color_pairs = [
-            ((node_source, node_target), [0, 0, 0])
-            for node_source in node_labels_to_indices
-            for node_target in node_labels_to_indices
+            (route, get_tableau_color(index))
+            for index, route in enumerate(outputs[0]['routes'])
         ]
     geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
@@ -293,21 +337,26 @@ def collate_outputs(
             mesh, network_vertices,
             network_edges,
             [
-                (
-                    node_labels_to_indices[node_source],
-                    node_labels_to_indices[node_target]
-                )
-                for (node_source, node_target) in geodesic_labels
+                [
+                    node_labels_to_indices[node]
+                    for node in node_list
+                ]
+                for node_list in geodesic_labels
             ]
         )
         mesh.remove_added_vertices()
         mesh.restore_removed_vertices()
 
         traffic = output['traffic'] if 'traffic' in output else None
-        if 'traffic' in output:
+        traffic_matrix = [[0. for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
+        if traffic is not None:
+            for route, volume in zip(output['routes'], output['traffic']):
+                traffic_matrix[node_labels_to_indices[route[0]]][node_labels_to_indices[route[-1]]] += volume
+
+        if traffic is not None:
             paths = [[[] for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
-            for (node_source, node_target), geodesic in zip(geodesic_labels, geodesics):
-                paths[node_labels_to_indices[node_source]][node_labels_to_indices[node_target]] = geodesic
+            for geodesic_label, geodesic in zip(geodesic_labels, geodesics):
+                paths[node_labels_to_indices[geodesic_label[0]]][node_labels_to_indices[geodesic_label[-1]]] = geodesic
         else:
             paths = None
 
@@ -318,7 +367,7 @@ def collate_outputs(
             'geodesics': geodesics,
             'edgeColors': edge_colors,
             'border': network_border,
-            'traffic': traffic,
+            'traffic': traffic_matrix,
             'trafficPaths': paths
         })
 
@@ -352,7 +401,7 @@ def collate_outputs(
             file_output, ensure_ascii=False
         )
 
-def main_routing_with_volumes():
+def main_toy_routing_with_volumes():
     superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
@@ -360,7 +409,7 @@ def main_routing_with_volumes():
     ]
 
     geodesic_label_color_pairs = [
-        ((u, v), [0, 0, 0])
+        ([u, v], [0, 0, 0])
         for u in 'ABCDEF'
         for v in 'ABCDEF'
         if u != v
@@ -375,15 +424,15 @@ def main_routing_with_volumes():
             # height_scale=None,
         )
 
-def main_routing_with_volumes_animated():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes', 'graphs_single_route_change')
+def main_toy_routing_with_volumes_animated():
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'single_route_change')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
         for directory in sorted(os.listdir(superdirectory))
     ]
 
     geodesic_label_color_pairs = [
-        ((u, v), get_tableau_color(index))
+        ([u, v], get_tableau_color(index))
         for index, (u, v) in enumerate([
             (u, v)
             for u in 'ABCDEF'
@@ -417,6 +466,6 @@ def main_internet2():
 
 if __name__ == '__main__':
     pass
-    # main_routing_with_volumes()
-    # main_routing_with_volumes_animated()
+    # main_toy_routing_with_volumes()
+    # main_toy_routing_with_volumes_animated()
     main_internet2()
