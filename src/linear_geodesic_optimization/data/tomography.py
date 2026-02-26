@@ -45,14 +45,21 @@ class PriorityQueue:
                 return value, priority
         raise KeyError('pop from an empty priority queue')
 
-def get_shortest_routes(graph: nx.Graph, edge_distance_label: typing.Optional[str]=None):
+def get_shortest_routes(
+    graph: nx.Graph,
+    edge_distance_label: typing.Optional[str]=None,
+    od_pairs: typing.Optional[typing.List[typing.Tuple[typing.Any, typing.Any]]]=None
+):
     """
     Run Dijkstra's algorithm.
 
     This is necessary ensure tie-breaking is always done in the same
-    way.
+    way, which is not guaranteed by NetworkX's implementation.
+
+    If `od_pairs` is passed in, paths for those pairs are returned.
+    Otherwise, all paths are returned.
     """
-    routes = []
+    routes_dict = {}
     for source in graph.nodes:
         tree = {
             node: {
@@ -90,9 +97,12 @@ def get_shortest_routes(graph: nx.Graph, edge_distance_label: typing.Optional[st
             else:
                 routes_from_source[node] = routes_from_source[predecessor] + [node]
         for destination, route in routes_from_source.items():
-            if destination != source:
-                routes.append(route)
-    return routes
+            routes_dict[source, destination] = route
+
+    if od_pairs is None:
+        return [route for (source, destination), route in routes_dict.items() if source != destination]
+    else:
+        return [routes_dict[od_pair] for od_pair in od_pairs]
 
 def get_random_routes(graph: nx.Graph, seed=None):
     rng = np.random.default_rng(seed)
