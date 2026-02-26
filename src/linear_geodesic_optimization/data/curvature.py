@@ -436,14 +436,12 @@ def compute_ricci_curvature(
             edge_distance = 1. if edge_distance_label is None else graph.edges[source, destination][edge_distance_label]
             ricci_curvatures[index_to_node[source], index_to_node[destination]] = (1. - transportation_cost / edge_distance) / (1. - alpha)
     elif use_tomography:
-        routes_dict = tomography.get_shortest_routes(graph, edge_distance_label=edge_distance_label)
-        traffic_matrix_dict = tomography.compute_traffic_matrix(graph, routes_dict, edge_weight_label)
-        routes = [routes_dict[s][d] for s, d in traffic_matrix_dict]
-        traffic_matrix = list(traffic_matrix_dict.values())
+        routes = tomography.get_shortest_routes(graph, edge_distance_label=edge_distance_label)
+        traffic = tomography.compute_traffic(graph, routes, edge_weight_label)
         ricci_curvatures = {
             (index_to_node[source], index_to_node[destination]): curvature
             for (source, destination), curvature in compute_ricci_curvature_from_traffic(
-                graph, routes, traffic_matrix, edge_distance_label
+                graph, routes, traffic, edge_distance_label
             ).items()
         }
     else:

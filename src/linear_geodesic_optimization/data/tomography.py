@@ -20,7 +20,7 @@ class PriorityQueue:
         self.counter = itertools.count()
 
     def add(self, value: str, priority: float):
-        'Add a new task or update the priority of an existing task'
+        """Add a new task or update the priority of an existing task."""
         if value in self.entry_finder:
             self.remove(value)
         id = next(self.counter)
@@ -33,7 +33,11 @@ class PriorityQueue:
         entry[3] = False
 
     def pop(self) -> typing.Tuple[str, float]:
-        'Remove and return the lowest priority task. Raise KeyError if empty.'
+        """
+        Remove and return the lowest priority task.
+
+        Raises a KeyError if empty.
+        """
         while self.pq:
             priority, value, _, is_valid = heapq.heappop(self.pq)
             if is_valid:
@@ -48,7 +52,7 @@ def get_shortest_routes(graph: nx.Graph, edge_distance_label: typing.Optional[st
     This is necessary ensure tie-breaking is always done in the same
     way.
     """
-    routes = {}
+    routes = []
     for source in graph.nodes:
         tree = {
             node: {
@@ -85,7 +89,9 @@ def get_shortest_routes(graph: nx.Graph, edge_distance_label: typing.Optional[st
                 routes_from_source[node] = [node]
             else:
                 routes_from_source[node] = routes_from_source[predecessor] + [node]
-        routes[source] = routes_from_source
+        for destination, route in routes_from_source.items():
+            if destination != source:
+                routes.append(route)
     return routes
 
 def get_random_routes(graph: nx.Graph, seed=None):
@@ -105,7 +111,10 @@ def get_random_routes(graph: nx.Graph, seed=None):
 
     return get_shortest_routes(graph_copy, 'weight')
 
-def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
+def compute_traffic(graph, routes, edge_weight_label='throughput'):
+    """
+    Given a list of routes, approximate traffic through them.
+    """
     index_to_link_id = []
     link_id_to_index = {}
     traffic_out_per_node = collections.defaultdict(float)
@@ -125,34 +134,25 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
         for source_id, target_id in index_to_link_id
     ])
 
-    # Determine the ordering of the columns of A, ignoring
-    # source-destination pairs with no possible traffic (either due to
+    # Determine which routes have possible traffic (either due to
     # traffic measurements or lack of possible routes)
-    sources, destinations = zip(*[
-        (source, destination)
-        for source in graph.nodes
-        for destination in graph.nodes
+    active_indices = [
+        i for i, route in enumerate(routes)
         if (
-            source != destination
-            and traffic_out_per_node[source] > 0.
-            and traffic_in_per_node[destination] > 0.
-            and source in routes
-            and destination in routes[source]
+            route[0] != route[-1]
+            and traffic_out_per_node[route[0]] > 0.
+            and traffic_in_per_node[route[-1]] > 0.
         )
-    ])
-
-    # Also have a mapping to go from source-destination pairs to indices
-    source_destination_to_index = {
-        (source, destination): index
-        for index, (source, destination) in enumerate(zip(sources, destinations))
-    }
+    ]
+    if not active_indices:
+        return [0.] * len(routes)
+    active_routes = [routes[i] for i in active_indices]
 
     # Create the (sparse) traffic matrix and its transpose
     traffic_matrix_data = []
     traffic_matrix_row_ind = []
     traffic_matrix_col_ind = []
-    for index, (source, destination) in enumerate(zip(sources, destinations)):
-        route = routes[source][destination]
+    for index, route in enumerate(active_routes):
         for link_id in itertools.pairwise(route):
             traffic_matrix_data.append(1)
             traffic_matrix_row_ind.append(link_id_to_index[link_id])
@@ -160,11 +160,11 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
 
     traffic_matrix = sparse.csr_matrix(
         (traffic_matrix_data, (traffic_matrix_row_ind, traffic_matrix_col_ind)),
-        shape=(len(index_to_link_id), len(sources))
+        shape=(len(index_to_link_id), len(active_routes))
     )
     traffic_matrix_transpose = sparse.csr_matrix(
         (traffic_matrix_data, (traffic_matrix_col_ind, traffic_matrix_row_ind)),
-        shape=(len(sources), len(index_to_link_id))
+        shape=(len(active_routes), len(index_to_link_id))
     )
 
     def loss(xs, lam=0.01):
@@ -173,9 +173,9 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
 
         penalty = 0.
         if lam != 0.:
-            for x, source, destination in zip(xs, sources, destinations):
-                n_s = traffic_out_per_node[source]
-                n_d = traffic_in_per_node[destination]
+            for x, route in zip(xs, active_routes):
+                n_s = traffic_out_per_node[route[0]]
+                n_d = traffic_in_per_node[route[-1]]
                 if n_s > 0. and n_d > 0. and x != 0.:
                     penalty += x * np.log2(x * traffic_total**2 / (n_s * n_d))
 
@@ -192,9 +192,9 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
             dif_penalty = np.array([
                 np.log2(x * traffic_total**2 / (n_s * n_d)) + 1 / np.log(2)
                 if n_s > 0. and n_d > 0. else 0.
-                for x, source, destination in zip(xs, sources, destinations)
-                for n_s in (traffic_out_per_node[source],)
-                for n_d in (traffic_in_per_node[destination],)
+                for x, route in zip(xs, active_routes)
+                for n_s in (traffic_out_per_node[route[0]],)
+                for n_d in (traffic_in_per_node[route[-1]],)
             ])
         else:
             dif_penalty = np.zeros(xs.shape)
@@ -204,9 +204,9 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
     # Gravity model
     x_0 = np.array([
         n_s * n_d / traffic_total**2
-        for source, destination in zip(sources, destinations)
-        for n_s in (traffic_out_per_node[source],)
-        for n_d in (traffic_in_per_node[destination],)
+        for route in active_routes
+        for n_s in (traffic_out_per_node[route[0]],)
+        for n_d in (traffic_in_per_node[route[-1]],)
     ])
     x_0 = x_0 / np.sum(x_0)
 
@@ -217,8 +217,7 @@ def compute_traffic_matrix(graph, routes, edge_weight_label='throughput'):
     )
     x_opt = x_opt / np.sum(x_opt)
 
-    return {
-        (source, destination): x
-        for source, destination, x in zip(sources, destinations, x_opt)
-        if x != 0.
-    }
+    result = [0.] * len(routes)
+    for active_index, x in zip(active_indices, x_opt):
+        result[active_index] = x
+    return result

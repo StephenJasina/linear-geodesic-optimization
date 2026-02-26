@@ -14,7 +14,7 @@ sys.path.append(os.path.join('..', 'src'))
 from linear_geodesic_optimization.data import input_network, tomography
 
 
-def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath):
+def write_graph(graph: nx.Graph, routes, traffic, path: pathlib.PurePath):
     index_to_node = list(graph.nodes)
     node_to_index = {node: index for index, node in enumerate(index_to_node)}
 
@@ -45,10 +45,9 @@ def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath)
         'traffic': [
             {
                 'route': route,
-                'volume': traffic_matrix[(source, destination)] if (source, destination) in traffic_matrix else 0.
+                'volume': traffic
             }
-            for source, routes_source in routes.items()
-            for destination, route in routes_source.items()
+            for route, traffic in zip(routes, traffic)
         ]
     }
     with open(path, 'w') as f:
@@ -87,6 +86,6 @@ if __name__ == '__main__':
     )
 
     routes = tomography.get_shortest_routes(graph, 'rtt')
-    traffic_matrix = tomography.compute_traffic_matrix(graph, routes, 'throughput')
+    traffic = tomography.compute_traffic(graph, routes, 'throughput')
 
-    write_graph(graph, routes, traffic_matrix, output_filename)
+    write_graph(graph, routes, traffic, output_filename)
