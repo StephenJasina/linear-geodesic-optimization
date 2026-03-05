@@ -319,32 +319,37 @@ def compute_ricci_curvature_from_traffic(
                     numerator_u_v += traffic_route * (distance_route + 2 * d_u_v)
 
         if use_optimal_transport:
-            if denominator_p_s != 0.:
-                transportation_cost = ot.emd2(
-                    distribution_u_p_s,
-                    distribution_v_p_s,
-                    distance_matrix
-                ) / denominator_p_s
-            elif denominator_p_v != 0.:
-                transportation_cost = ot.emd2(
-                    distribution_u_p_v,
-                    distribution_v_p_v,
-                    distance_matrix
-                ) / denominator_p_v
-            elif denominator_u_s != 0.:
-                transportation_cost = ot.emd2(
-                    distribution_u_u_s,
-                    distribution_v_u_s,
-                    distance_matrix
-                ) / denominator_u_s
-            elif denominator_u_v != 0.:
-                transportation_cost = ot.emd2(
-                    distribution_u_u_v,
-                    distribution_v_u_v,
-                    distance_matrix
-                ) / denominator_u_v
-            else:
-                continue
+            # if denominator_p_s != 0.:
+            #     transportation_cost = ot.emd2(
+            #         distribution_u_p_s,
+            #         distribution_v_p_s,
+            #         distance_matrix
+            #     ) / denominator_p_s
+            # elif denominator_p_v != 0.:
+            #     transportation_cost = ot.emd2(
+            #         distribution_u_p_v,
+            #         distribution_v_p_v,
+            #         distance_matrix
+            #     ) / denominator_p_v
+            # elif denominator_u_s != 0.:
+            #     transportation_cost = ot.emd2(
+            #         distribution_u_u_s,
+            #         distribution_v_u_s,
+            #         distance_matrix
+            #     ) / denominator_u_s
+            # elif denominator_u_v != 0.:
+            #     transportation_cost = ot.emd2(
+            #         distribution_u_u_v,
+            #         distribution_v_u_v,
+            #         distance_matrix
+            #     ) / denominator_u_v
+            # else:
+            #     continue
+            transportation_cost = ot.emd2(
+                distribution_u_p_s + distribution_u_p_v + distribution_u_u_s + distribution_u_u_v,
+                distribution_v_p_s + distribution_v_p_v + distribution_v_u_s + distribution_v_u_v,
+                distance_matrix
+            ) / (denominator_p_s + denominator_p_v + denominator_u_s + denominator_u_v)
         else:
             # if denominator_p_s != 0.:
             #     # Prioritize the case where we have data describing
