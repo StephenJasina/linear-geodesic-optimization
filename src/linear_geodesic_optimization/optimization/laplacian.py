@@ -6,6 +6,7 @@ import typing
 import dcelmesh
 import numpy as np
 import numpy.typing as npt
+from scipy import sparse
 
 from linear_geodesic_optimization.mesh.mesh import Mesh
 
@@ -18,42 +19,97 @@ class Computer:
         self._mesh: Mesh = mesh
         self._topology: dcelmesh.Mesh = mesh.get_topology()
 
-        v = self._topology.n_vertices
-        he = self._topology.n_halfedges
-        e = self._topology.n_edges
-        f = self._topology.n_faces
+        n_v = self._topology.n_vertices
+        n_he = self._topology.n_halfedges
+        n_e = self._topology.n_edges
+        n_f = self._topology.n_faces
+
+        # Mappings between different types of mesh elements. These are
+        # used for vectorized operations.
+        self._v_i_to_he = np.array([halfedge.origin.index for halfedge in self._topology.halfedges()])
+        self._v_j_to_he = np.array([halfedge.destination.index for halfedge in self._topology.halfedges()])
+        self._v_k_to_he = np.array([halfedge.next.destination.index for halfedge in self._topology.halfedges()])
+        self._v_i_to_f, self._v_j_to_f, self._v_k_to_f = np.array([
+            *zip(*[
+                [vertex.index for vertex in face.vertices()]
+                for face in self._topology.faces()
+            ])
+        ])
+        self._he_to_v_i = self._f_to_v = sparse.csr_array((
+            [1] * n_he,
+            (
+                [halfedge.origin.index for halfedge in self._topology.halfedges()],
+                [halfedge.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_v, n_he))
+        self._he_to_v_i_interior = self._f_to_v = sparse.csr_array((
+            [0 if halfedge.origin.is_on_boundary() or halfedge.destination.is_on_boundary() else 1 for halfedge in self._topology.halfedges()],
+            (
+                [halfedge.origin.index for halfedge in self._topology.halfedges()],
+                [halfedge.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_v, n_he))
+        self._he_to_e = self._f_to_v = sparse.csr_array((
+            [1] * n_he,
+            (
+                [halfedge.edge.index for halfedge in self._topology.halfedges()],
+                [halfedge.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_e, n_he))
+        self._he_to_e_interior = self._f_to_v = sparse.csr_array((
+            [0 if halfedge.origin.is_on_boundary() or halfedge.destination.is_on_boundary() else 1 for halfedge in self._topology.halfedges()],
+            (
+                [halfedge.edge.index for halfedge in self._topology.halfedges()],
+                [halfedge.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_e, n_he))
+        self._f_to_v = sparse.csr_array((
+            [1] * n_he,
+            (
+                [halfedge.origin.index for halfedge in self._topology.halfedges()],
+                [halfedge.face.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_v, n_f))
+        self._f_to_he = sparse.csr_array((
+            [1] * n_he,
+            (
+                [halfedge.index for halfedge in self._topology.halfedges()],
+                [halfedge.face.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_he, n_f))
 
         # Forward variables
         self._forward_updates: int = mesh.get_updates() - 1
-        self._coordinates: npt.NDArray[np.float64] = np.zeros((v, 3))
-        self.N: npt.NDArray[np.float64] = np.zeros((f, 3))
+        self._coordinates: npt.NDArray[np.float64] = np.zeros((n_v, 3))
+
+        self.N: npt.NDArray[np.float64] = np.zeros((n_f, 3))
         """An array of normals of faces, indexed by faces."""
-        self.A: npt.NDArray[np.float64] = np.zeros(f)
+        self.A: npt.NDArray[np.float64] = np.zeros(n_f)
         """An array areas of faces, indexed by faces."""
-        self.D: npt.NDArray[np.float64] = np.zeros(v)
+        self.D: npt.NDArray[np.float64] = np.zeros(n_v)
         """An array of vertex areas, indexed by vertices."""
-        self.cot: npt.NDArray[np.float64] = np.zeros(he)
+        self.cot: npt.NDArray[np.float64] = np.zeros(n_he)
         """
         An array of cotangents of the opposing angles to halfedges,
         indexed by halfedges.
         """
-        self.LC_edges: npt.NDArray[np.float64] = np.zeros(e)
+        self.LC_edges: npt.NDArray[np.float64] = np.zeros(n_e)
         """
         An array of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator, indexed by edges.
         """
-        self.LC_vertices: typing.List[np.float64] = np.zeros(v)
+        self.LC_vertices: typing.List[np.float64] = np.zeros(n_v)
         """
         An array of diagonal entries of the Laplace-Beltrami operator,
         indexed by vertices.
         """
-        self.LC_interior_edges: npt.NDArray[np.float64] = np.zeros(e)
+        self.LC_interior_edges: npt.NDArray[np.float64] = np.zeros(n_e)
         """
         An array of (non-trivial) off-diagonal entries of the
         Laplace-Beltrami operator ignoring the boundary vertices,
         indexed by edges.
         """
-        self.LC_interior_vertices: npt.NDArray[np.float64] = np.zeros(v)
+        self.LC_interior_vertices: npt.NDArray[np.float64] = np.zeros(n_v)
         """
         An array of diagonal entries of the Laplace-Beltrami operator
         ignoring the boundary vertices, indexed by vertices.
@@ -160,52 +216,14 @@ class Computer:
         self.LC_interior_vertices \
             = [np.float64(0.) for _ in range(self._topology.n_vertices)]
 
-        # N and A can be computed by iterating over faces
-        for face in self._topology.faces():
-            u, v, w = face.vertices()
-            pu = self._coordinates[u.index]
-            pv = self._coordinates[v.index]
-            pw = self._coordinates[w.index]
-
-            # Set N
-            normal = Computer._cross(pu - pw, pv - pw)
-            self.N[face.index] = normal
-
-            # Set A
-            area = np.linalg.norm(normal) / 2.
-            self.A[face.index] = area
-
-        # D, cot, and L_C can be computed by iterating over halfedges
-        for halfedge in self._topology.halfedges():
-            u = halfedge.origin
-            v = halfedge.destination
-            w = halfedge.previous.origin
-            pu = self._coordinates[u.index]
-            pv = self._coordinates[v.index]
-            pw = self._coordinates[w.index]
-
-            area = self.A[halfedge.face.index]
-
-            # Set D
-            self.D[u.index] += area / 3.
-
-            # Set cot
-            cotangent = (pu - pw) @ (pv - pw) / (2. * area)
-            self.cot[halfedge.index] = cotangent
-
-            half_cotangent = cotangent / 2.
-
-            # Set LC
-            edge = halfedge.edge
-            self.LC_edges[edge.index] += half_cotangent
-            self.LC_vertices[u.index] -= half_cotangent
-            self.LC_vertices[v.index] -= half_cotangent
-
-            # Set LC_interior
-            if not u.is_on_boundary() and not v.is_on_boundary():
-                self.LC_interior_edges[edge.index] += half_cotangent
-                self.LC_interior_vertices[u.index] -= half_cotangent
-                self.LC_interior_vertices[v.index] -= half_cotangent
+        self.N = np.cross(self._coordinates[self._v_i_to_f, :] - self._coordinates[self._v_k_to_f, :], self._coordinates[self._v_j_to_f, :] - self._coordinates[self._v_k_to_f, :], axisa=1)
+        self.A = np.linalg.norm(self.N, axis=1) / 2.
+        self.D = self._f_to_v @ self.A / 3.
+        self.cot = np.sum((self._coordinates[self._v_i_to_he, :] - self._coordinates[self._v_k_to_he, :]) * (self._coordinates[self._v_j_to_he, :] - self._coordinates[self._v_k_to_he, :]), axis=1) / (2. * self._f_to_he @ self.A)
+        self.LC_edges = self._he_to_e @ self.cot / 2.
+        self.LC_vertices = -self._he_to_v_i @ self.cot / 2.
+        self.LC_interior_edges = self._he_to_e_interior @ self.cot / 2.
+        self.LC_interior_vertices = -self._he_to_v_i_interior @ self.cot / 2.
 
     def reverse(self) -> None:
         """
