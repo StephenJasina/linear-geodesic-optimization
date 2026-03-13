@@ -157,6 +157,9 @@ class Computer:
 
         self.dif_loss *= total_area
 
-        for dif_A_part in self._laplacian.dif_A:
-            for index, dif_A_element in dif_A_part.items():
-                self.dif_loss[index] += self.loss * dif_A_element / total_area
+        # for dif_A_part in self._laplacian.dif_A:
+        #     for index, dif_A_element in dif_A_part.items():
+        #         self.dif_loss[index] += self.loss * dif_A_element / total_area
+
+        for halfedge, dif_A_element in zip(self._topology.halfedges(), self._laplacian.dif_A):
+            self.dif_loss[halfedge.origin.index] += self.loss * dif_A_element / total_area

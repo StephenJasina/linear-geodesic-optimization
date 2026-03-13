@@ -25,44 +25,56 @@ class Computer:
         n_f = self._topology.n_faces
 
         # Mappings between different types of mesh elements. These are
-        # used for vectorized operations.
+        # used for vectorized operations. Note: the naming convention is
+        # tecnically backwards.
         self._v_i_to_he = np.array([halfedge.origin.index for halfedge in self._topology.halfedges()])
         self._v_j_to_he = np.array([halfedge.destination.index for halfedge in self._topology.halfedges()])
         self._v_k_to_he = np.array([halfedge.next.destination.index for halfedge in self._topology.halfedges()])
         self._v_i_to_f, self._v_j_to_f, self._v_k_to_f = np.array([
             *zip(*[
-                [vertex.index for vertex in face.vertices()]
+                [halfedge.origin.index for halfedge in face.halfedges()]
                 for face in self._topology.faces()
             ])
         ])
-        self._he_to_v_i = self._f_to_v = sparse.csr_array((
+        self._he_to_v_i = sparse.csr_array((
             [1] * n_he,
             (
                 [halfedge.origin.index for halfedge in self._topology.halfedges()],
                 [halfedge.index for halfedge in self._topology.halfedges()]
             )
         ), (n_v, n_he))
-        self._he_to_v_i_interior = self._f_to_v = sparse.csr_array((
-            [0 if halfedge.origin.is_on_boundary() or halfedge.destination.is_on_boundary() else 1 for halfedge in self._topology.halfedges()],
+        halfedges_interior = list(filter(
+            lambda halfedge: not halfedge.origin.is_on_boundary() and not halfedge.destination.is_on_boundary(),
+            self._topology.halfedges()
+        ))
+        self._he_to_v_i_interior = sparse.csr_array((
+            [1 for halfedge in halfedges_interior],
             (
-                [halfedge.origin.index for halfedge in self._topology.halfedges()],
-                [halfedge.index for halfedge in self._topology.halfedges()]
+                [halfedge.origin.index for halfedge in halfedges_interior],
+                [halfedge.index for halfedge in halfedges_interior]
             )
         ), (n_v, n_he))
-        self._he_to_e = self._f_to_v = sparse.csr_array((
+        self._he_to_e = sparse.csr_array((
             [1] * n_he,
             (
                 [halfedge.edge.index for halfedge in self._topology.halfedges()],
                 [halfedge.index for halfedge in self._topology.halfedges()]
             )
         ), (n_e, n_he))
-        self._he_to_e_interior = self._f_to_v = sparse.csr_array((
-            [0 if halfedge.origin.is_on_boundary() or halfedge.destination.is_on_boundary() else 1 for halfedge in self._topology.halfedges()],
+        self._he_to_e_interior = sparse.csr_array((
+            [1 for halfedge in halfedges_interior],
             (
-                [halfedge.edge.index for halfedge in self._topology.halfedges()],
-                [halfedge.index for halfedge in self._topology.halfedges()]
+                [halfedge.edge.index for halfedge in halfedges_interior],
+                [halfedge.index for halfedge in halfedges_interior]
             )
         ), (n_e, n_he))
+        self._he_to_f = sparse.csr_array((
+            [1] * n_he,
+            (
+                [halfedge.face.index for halfedge in self._topology.halfedges()],
+                [halfedge.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_f, n_he))
         self._f_to_v = sparse.csr_array((
             [1] * n_he,
             (
@@ -77,6 +89,12 @@ class Computer:
                 [halfedge.face.index for halfedge in self._topology.halfedges()]
             )
         ), (n_he, n_f))
+        self._f_to_he_i, self._f_to_he_j, self._f_to_he_k = np.array([
+            *zip(*[
+                [halfedge.index for halfedge in face.halfedges()]
+                for face in self._topology.faces()
+            ])
+        ])
 
         # Forward variables
         self._forward_updates: int = mesh.get_updates() - 1
@@ -207,16 +225,7 @@ class Computer:
         self._forward_updates = self._mesh.get_updates()
         self._coordinates = self._mesh.get_coordinates()
 
-        # Reset quantities that will be computed via accumulation
-        self.D = [np.float64(0.) for _ in range(self._topology.n_vertices)]
-        self.LC_edges = [np.float64(0.) for _ in range(self._topology.n_edges)]
-        self.LC_vertices = [np.float64(0.) for _ in range(self._topology.n_vertices)]
-        self.LC_interior_edges \
-            = [np.float64(0.) for _ in range(self._topology.n_edges)]
-        self.LC_interior_vertices \
-            = [np.float64(0.) for _ in range(self._topology.n_vertices)]
-
-        self.N = np.cross(self._coordinates[self._v_i_to_f, :] - self._coordinates[self._v_k_to_f, :], self._coordinates[self._v_j_to_f, :] - self._coordinates[self._v_k_to_f, :], axisa=1)
+        self.N = np.cross(self._coordinates[self._v_i_to_f, :] - self._coordinates[self._v_k_to_f, :], self._coordinates[self._v_j_to_f, :] - self._coordinates[self._v_k_to_f, :], axis=1)
         self.A = np.linalg.norm(self.N, axis=1) / 2.
         self.D = self._f_to_v @ self.A / 3.
         self.cot = np.sum((self._coordinates[self._v_i_to_he, :] - self._coordinates[self._v_k_to_he, :]) * (self._coordinates[self._v_j_to_he, :] - self._coordinates[self._v_k_to_he, :]), axis=1) / (2. * self._f_to_he @ self.A)
@@ -284,26 +293,33 @@ class Computer:
             for vertex in self._topology.vertices()
         ]
 
+        # Use 3 separate arrays here because SciPy's `sparse` library
+        # doesn't currently support arrays of dimension greater than 2.
+        dif_N_i = np.cross(self._coordinates[self._v_k_to_f] - self._coordinates[self._v_j_to_f], self._partials[self._v_i_to_f], axis=1)
+        dif_N_j = np.cross(self._coordinates[self._v_i_to_f] - self._coordinates[self._v_k_to_f], self._partials[self._v_j_to_f], axis=1)
+        dif_N_k = np.cross(self._coordinates[self._v_j_to_f] - self._coordinates[self._v_i_to_f], self._partials[self._v_k_to_f], axis=1)
+
+        # TODO: Remove this
+        for face, dif_N_i_part, dif_N_j_part, dif_N_k_part in zip(self._topology.faces(), dif_N_i, dif_N_j, dif_N_k):
+            halfedges = list(face.halfedges())
+            self.dif_N[face.index][halfedges[0].origin.index] = dif_N_i_part
+            self.dif_N[face.index][halfedges[1].origin.index] = dif_N_j_part
+            self.dif_N[face.index][halfedges[2].origin.index] = dif_N_k_part
+
+        self.dif_A = np.zeros(self._topology.n_halfedges)
+        self.dif_A[self._f_to_he_i] = np.sum(self.N * dif_N_i, axis=1) / (4. * self.A)
+        self.dif_A[self._f_to_he_j] = np.sum(self.N * dif_N_j, axis=1) / (4. * self.A)
+        self.dif_A[self._f_to_he_k] = np.sum(self.N * dif_N_k, axis=1) / (4. * self.A)
+
+        # self.dif_D = self._he_to_f @ self.dif_A / 3.
+
         for halfedge in self._topology.halfedges():
             u = halfedge.origin
             v = halfedge.destination
             w = halfedge.previous.origin
-            pu = self._coordinates[u.index]
-            pv = self._coordinates[v.index]
-            pw = self._coordinates[w.index]
-
-            # Set dif_N
-            normal = self.N[halfedge.face.index]
-            dif_N_u = Computer._cross(pw - pv, self._partials[u.index])
-            self.dif_N[halfedge.face.index][u.index] = dif_N_u
-
-            # Set dif_A
-            area = self.A[halfedge.face.index]
-            dif_A_u = normal @ (dif_N_u) / (4. * area)
-            self.dif_A[halfedge.face.index][u.index] = dif_A_u
 
             # Set dif_D
-            third_dif_A_u = dif_A_u / 3.
+            third_dif_A_u = self.dif_A[halfedge.index] / 3.
             self.dif_D[u.index][u.index] += third_dif_A_u
             self.dif_D[v.index][u.index] += third_dif_A_u
             self.dif_D[w.index][u.index] += third_dif_A_u
@@ -320,13 +336,12 @@ class Computer:
             # Set dif_cot
             area = self.A[halfedge.face.index]
             cotangent = self.cot[halfedge.index]
-            dif_A = self.dif_A[halfedge.face.index]
             dif_cot_u = ((pv - pw) @ self._partials[u.index]
-                         - 2. * cotangent * dif_A[u.index]) / (2. * area)
+                         - 2. * cotangent * self.dif_A[halfedge.index]) / (2. * area)
             dif_cot_v = ((pu - pw) @ self._partials[v.index]
-                         - 2. * cotangent * dif_A[v.index]) / (2. * area)
+                         - 2. * cotangent * self.dif_A[halfedge.next.index]) / (2. * area)
             dif_cot_w = ((2. * pw - pu - pv) @ self._partials[w.index]
-                         - 2. * cotangent * dif_A[w.index]) / (2. * area)
+                         - 2. * cotangent * self.dif_A[halfedge.previous.index]) / (2. * area)
             self.dif_cot[halfedge.index][u.index] = dif_cot_u
             self.dif_cot[halfedge.index][v.index] = dif_cot_v
             self.dif_cot[halfedge.index][w.index] = dif_cot_w

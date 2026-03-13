@@ -36,7 +36,7 @@ z = mesh.set_parameters(np.random.random(width * height))
 # ]))
 dz = np.random.random(width * height)
 dz = dz / np.linalg.norm(dz)
-h = 1e-9
+h = 1e-6
 
 t = time.time()
 smooth.forward()

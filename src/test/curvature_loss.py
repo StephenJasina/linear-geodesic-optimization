@@ -26,7 +26,7 @@ mesh = RectangleMesh(width, height, extent=1.)
 
 graph_data, vertex_data, edge_data = input_network.get_network_data(
     nx.read_graphml(
-        os.path.join('..', 'data', 'ipv4', 'graph_US', 'graph16.graphml')
+        os.path.join('..', 'data', 'ripe', 'ipv4', 'graph_US', 'graph16.graphml')
     )
 )
 coordinates = graph_data['coordinates']

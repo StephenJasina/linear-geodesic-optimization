@@ -9,8 +9,8 @@ from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 
 
-width = 20
-height = 20
+width = 100
+height = 100
 
 mesh = RectangleMesh(width, height, extent=1.)
 laplacian = Laplacian(mesh)
