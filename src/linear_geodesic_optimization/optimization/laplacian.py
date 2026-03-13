@@ -43,6 +43,13 @@ class Computer:
                 [halfedge.index for halfedge in self._topology.halfedges()]
             )
         ), (n_v, n_he))
+        self._he_to_v_j = sparse.csr_array((
+            [1] * n_he,
+            (
+                [halfedge.destination.index for halfedge in self._topology.halfedges()],
+                [halfedge.index for halfedge in self._topology.halfedges()]
+            )
+        ), (n_v, n_he))
         halfedges_interior = list(filter(
             lambda halfedge: not halfedge.origin.is_on_boundary() and not halfedge.destination.is_on_boundary(),
             self._topology.halfedges()
@@ -51,6 +58,13 @@ class Computer:
             [1 for halfedge in halfedges_interior],
             (
                 [halfedge.origin.index for halfedge in halfedges_interior],
+                [halfedge.index for halfedge in halfedges_interior]
+            )
+        ), (n_v, n_he))
+        self._he_to_v_j_interior = sparse.csr_array((
+            [1 for halfedge in halfedges_interior],
+            (
+                [halfedge.destination.index for halfedge in halfedges_interior],
                 [halfedge.index for halfedge in halfedges_interior]
             )
         ), (n_v, n_he))
@@ -230,9 +244,9 @@ class Computer:
         self.D = self._f_to_v @ self.A / 3.
         self.cot = np.sum((self._coordinates[self._v_i_to_he, :] - self._coordinates[self._v_k_to_he, :]) * (self._coordinates[self._v_j_to_he, :] - self._coordinates[self._v_k_to_he, :]), axis=1) / (2. * self._f_to_he @ self.A)
         self.LC_edges = self._he_to_e @ self.cot / 2.
-        self.LC_vertices = -self._he_to_v_i @ self.cot / 2.
+        self.LC_vertices = -(self._he_to_v_i @ self.cot + self._he_to_v_j @ self.cot) / 2.
         self.LC_interior_edges = self._he_to_e_interior @ self.cot / 2.
-        self.LC_interior_vertices = -self._he_to_v_i_interior @ self.cot / 2.
+        self.LC_interior_vertices = -(self._he_to_v_i_interior @ self.cot + self._he_to_v_j_interior @ self.cot) / 2.
 
     def reverse(self) -> None:
         """
@@ -364,21 +378,12 @@ class Computer:
 
             # Set dif_LC_interior
             if not u.is_on_boundary() and not v.is_on_boundary():
-                self.dif_LC_interior_edges[edge.index][u.index] \
-                    += half_dif_cot_u
-                self.dif_LC_interior_edges[edge.index][v.index] \
-                    += half_dif_cot_v
-                self.dif_LC_interior_edges[edge.index][w.index] \
-                    += half_dif_cot_w
-                self.dif_LC_interior_vertices[u.index][u.index] \
-                    -= half_dif_cot_u
-                self.dif_LC_interior_vertices[u.index][v.index] \
-                    -= half_dif_cot_v
-                self.dif_LC_interior_vertices[u.index][w.index] \
-                    -= half_dif_cot_w
-                self.dif_LC_interior_vertices[v.index][u.index] \
-                    -= half_dif_cot_u
-                self.dif_LC_interior_vertices[v.index][v.index] \
-                    -= half_dif_cot_v
-                self.dif_LC_interior_vertices[v.index][w.index] \
-                    -= half_dif_cot_w
+                self.dif_LC_interior_edges[edge.index][u.index] += half_dif_cot_u
+                self.dif_LC_interior_edges[edge.index][v.index] += half_dif_cot_v
+                self.dif_LC_interior_edges[edge.index][w.index] += half_dif_cot_w
+                self.dif_LC_interior_vertices[u.index][u.index] -= half_dif_cot_u
+                self.dif_LC_interior_vertices[u.index][v.index] -= half_dif_cot_v
+                self.dif_LC_interior_vertices[u.index][w.index] -= half_dif_cot_w
+                self.dif_LC_interior_vertices[v.index][u.index] -= half_dif_cot_u
+                self.dif_LC_interior_vertices[v.index][v.index] -= half_dif_cot_v
+                self.dif_LC_interior_vertices[v.index][w.index] -= half_dif_cot_w
