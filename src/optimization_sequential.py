@@ -159,16 +159,16 @@ def main(
         }, file_output, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    directory_outputs = pathlib.PurePath('..', 'outputs', 'Internet2', 'sequential_long')
+    directory_outputs = pathlib.PurePath('..', 'outputs', 'Internet2', 'sequential_single_route_change')
 
     epsilon = None
-    directory_json = pathlib.PurePath('Internet2', 'json')
+    directory_json = pathlib.PurePath('Internet2', 'faked_single_route_change')
     filenames_json = list(sorted(
         filepath
         for filename in sorted(os.listdir(directory_data / directory_json))
         for filepath in (directory_json / filename,)
         if filepath.suffix == '.json'
-    ))[:12]
+    ))
     count = len(filenames_json)
     filenames_probes = [None] * count
     filenames_links = [None] * count
