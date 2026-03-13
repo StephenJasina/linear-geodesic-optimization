@@ -313,9 +313,14 @@ def collate_outputs(
     if geodesic_label_color_pairs is None:
         # For now, just use the routes in the first snapshot
         # TODO: Is this exactly what we want?
+        high_traffic_route_pairs = list(sorted([
+            (traffic, route)
+            for traffic, route in zip(outputs[0]['traffic'], outputs[0]['routes'])
+            if route[0] != route[-1]
+        ], reverse=True))[:200]
         geodesic_label_color_pairs = [
             (route, get_tableau_color(index))
-            for index, route in enumerate(outputs[0]['routes'])
+            for index, (_, route) in enumerate(high_traffic_route_pairs)
         ]
     geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
@@ -330,7 +335,8 @@ def collate_outputs(
             z = z / (z_max - z_min) * height_scale
         z = (z + 0.05) * np.exp(-1000 * distance_to_bubble**2) - 0.05
 
-        mesh.set_parameters(z)
+        # mesh.set_parameters(z)
+        mesh.set_parameters(z_original)
         # TODO: Make this safer
         mesh.trim_to_set(hull)
         geodesics = compute_geodesics_from_graph(
@@ -402,23 +408,26 @@ def collate_outputs(
         )
 
 def main_toy_routing_with_volumes():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'routing_with_volumes')
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'test_grid_size', '0')
     directories_outputs = [
-        superdirectory / directory / '0.002_50_50'
+        superdirectory / directory
         for directory in sorted(os.listdir(superdirectory))
     ]
 
     geodesic_label_color_pairs = [
-        ([u, v], [0, 0, 0])
-        for u in 'ABCDEF'
-        for v in 'ABCDEF'
-        if u != v
+        ([u, v], get_tableau_color(index))
+        for index, (u, v) in enumerate([
+            (u, v)
+            for u in 'ABCDEF'
+            for v in 'ABCDEF'
+            if u != v
+        ])
     ]
 
     for directory in directories_outputs:
         collate_outputs(
             [directory],
-            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'{directory.parent.stem}.json'),
+            pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', 'test_grid_size', f'{directory.name}.json'),
             geodesic_label_color_pairs=geodesic_label_color_pairs,
             bubble_size=0.05,
             # height_scale=None,
@@ -453,7 +462,7 @@ def main_internet2():
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
         for directory in sorted(os.listdir(superdirectory))
-    ]
+    ][:12]
 
     geodesic_label_color_pairs = None
 
@@ -464,8 +473,25 @@ def main_internet2():
         bubble_size=0.05,
     )
 
+def main_internet2_sequential():
+    superdirectory = pathlib.PurePath('..', 'outputs', 'Internet2', 'sequential_long')
+    directories_outputs = [
+        superdirectory / directory / '0.002_50_50'
+        for directory in sorted(os.listdir(superdirectory))
+    ]
+
+    geodesic_label_color_pairs = None
+
+    collate_outputs(
+        directories_outputs,
+        pathlib.PurePath('..', 'outputs', 'animations', 'Internet2', f'sequential_top_200_original_geodesics.json'),
+        geodesic_label_color_pairs=geodesic_label_color_pairs,
+        bubble_size=0.05,
+    )
+
 if __name__ == '__main__':
     pass
     # main_toy_routing_with_volumes()
     # main_toy_routing_with_volumes_animated()
-    main_internet2()
+    # main_internet2()
+    main_internet2_sequential()

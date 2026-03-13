@@ -82,7 +82,7 @@ class Computer:
         vertices, and then by vertices (at most distance 1 away).
         """
 
-    def forward(self) -> None:
+    def forward(self, gaussian_only=False) -> None:
         """
         Compute the forward direction.
 
@@ -115,6 +115,9 @@ class Computer:
             self.kappa_G[w.index] -= np.arccos(
                 cotangent / (1 + cotangent**2)**0.5
             ) / self._laplacian.D[w.index]
+
+        if gaussian_only:
+            return
 
         # Compute vertex normals
         self.vertex_N = [np.zeros(3) for _ in self._topology.vertices()]
@@ -158,7 +161,7 @@ class Computer:
             self.kappa_2[vertex.index] \
                 = kappa_H - offset
 
-    def reverse(self) -> None:
+    def reverse(self, gaussian_only=False) -> None:
         """
         Compute the reverse direction (that is, partials).
 
@@ -200,6 +203,9 @@ class Computer:
                     += self._laplacian.dif_cot[halfedge.index][vertex.index] \
                     / (1 + self._laplacian.cot[halfedge.index]**2) \
                     / self._laplacian.D[w.index]
+
+        if gaussian_only:
+            return
 
         # Compute partials of mean curvature normals
         self.dif_mean_curvature_normal = [

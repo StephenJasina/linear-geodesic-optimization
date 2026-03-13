@@ -160,43 +160,43 @@ def main(
         }, file_output, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    directory_outputs = pathlib.PurePath('..', 'outputs', 'Internet2', 'test')
-    # directory_outputs = pathlib.PurePath('..', 'outputs', 'toy', 'single_route_change')
     n_cores = 14  # How many processes to use
 
-    epsilon = None
-    directory_json = pathlib.PurePath('Internet2', 'json')
-    filenames_json = list(sorted(
-        filepath
-        for filename in sorted(os.listdir(directory_data / directory_json))
-        for filepath in (directory_json / filename,)
-        if filepath.suffix == '.json'
-    ))[:25]
-    count = len(filenames_json)
-    filenames_probes = [None] * count
-    filenames_links = [None] * count
-    filenames_graphml = [None] * count
-
+    # directory_outputs = pathlib.PurePath('..', 'outputs', 'Internet2', 'test')
     # epsilon = None
-    # directory_json = pathlib.PurePath('toy', 'routing_with_volumes', 'graphs_single_route_change')
+    # directory_json = pathlib.PurePath('Internet2', 'json')
     # filenames_json = list(sorted(
     #     filepath
     #     for filename in sorted(os.listdir(directory_data / directory_json))
     #     for filepath in (directory_json / filename,)
     #     if filepath.suffix == '.json'
-    # ))
+    # ))[:25]
     # count = len(filenames_json)
     # filenames_probes = [None] * count
     # filenames_links = [None] * count
     # filenames_graphml = [None] * count
 
-    latency_thresholds = [epsilon] * count
+    directory_outputs = pathlib.PurePath('..', 'outputs', 'toy', 'test_grid_size')
+    directory_json = pathlib.PurePath('toy', 'routing_with_volumes', 'graphs_single_route_change')
+    filenames_json = list(sorted(
+        filepath
+        for filename in sorted(os.listdir(directory_data / directory_json))
+        for filepath in (directory_json / filename,)
+        if filepath.suffix == '.json'
+    ))[:1] * 7
+    count = len(filenames_json)
+    filenames_probes = [None] * count
+    filenames_links = [None] * count
+    filenames_graphml = [None] * count
+
+    latency_thresholds = [None] * count
     clustering_distances = [None] * count
 
     lambdas_curvature = [1.] * count
     lambdas_smooth = [0.002] * count
     ricci_curvature_alphas = [0.] * count
-    sides = [50] * count
+    # sides = [50] * count
+    sides = [20, 25, 30, 35, 40, 45, 50]
     mesh_scales = [0.25] * count
     initial_radii = [20. / mesh_scale for mesh_scale in mesh_scales]
     coordinates_scales = [0.8] * count
@@ -216,7 +216,7 @@ if __name__ == '__main__':
             in enumerate(zip(filenames_probes, filenames_links, filenames_graphml, filenames_json, lambdas_smooth, latency_thresholds, initial_radii, sides, sides, mesh_scales))
     ]
 
-    maxiters = [2000] * count
+    maxiters = [None] * count
 
     # Need to use ProcessPoolExecutor instead of multiprocessing.Pool
     # to allow child processes to spawn their own subprocesses

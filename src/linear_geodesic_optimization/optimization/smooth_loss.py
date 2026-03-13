@@ -28,7 +28,7 @@ class Computer:
         The smoothness loss computed using the MVS-cross strategy.
 
         See
-        http://graphics.berkeley.edu/papers/Joshi-EMC-2007-06/Joshi-EMC-2007-06.pdf
+        https://www.cad-journal.net/files/vol_4/CAD_4(5)_2007_607-617.pdf
         for more information.
         """
 
