@@ -529,7 +529,7 @@ function drawLayers(time, options) {
 			}
 			drawGeodesics(
 				context, trafficPathsToDraw,
-				6, trafficPathsToDrawColors
+				12, trafficPathsToDrawColors
 			);
 		}
 
