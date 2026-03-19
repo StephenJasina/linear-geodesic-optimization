@@ -10,12 +10,12 @@ def mercator(
     float,
     typing.Tuple[float, float]
 ]:
-    '''
+    """
     Given a longitude in [-180, 180] and a latitude in [-90, 90], return
     an (x, y) pair representing the location on a Mercator projection.
     Assuming the latitude is no larger/smaller than +/- 85
     (approximately), the pair will lie in [-0.5, 0.5]^2.
-    '''
+    """
     x = longitude / 360. if longitude is not None else None
     y = np.log(np.tan(np.pi / 4. + latitude * np.pi / 360.)) / (2. * np.pi) if latitude is not None else None
 

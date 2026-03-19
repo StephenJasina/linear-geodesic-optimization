@@ -317,7 +317,7 @@ def collate_outputs(
             (traffic, route)
             for traffic, route in zip(outputs[0]['traffic'], outputs[0]['routes'])
             if route[0] != route[-1]
-        ], reverse=True))[:200]
+        ], reverse=True))[:300]
         geodesic_label_color_pairs = [
             (route, get_tableau_color(index))
             for index, (_, route) in enumerate(high_traffic_route_pairs)
@@ -335,8 +335,8 @@ def collate_outputs(
             z = z / (z_max - z_min) * height_scale
         z = (z + 0.05) * np.exp(-1000 * distance_to_bubble**2) - 0.05
 
-        # mesh.set_parameters(z)
-        mesh.set_parameters(z_original)
+        mesh.set_parameters(z)
+        # mesh.set_parameters(z_original)
         # TODO: Make this safer
         mesh.trim_to_set(hull)
         geodesics = compute_geodesics_from_graph(
@@ -434,25 +434,31 @@ def main_toy_routing_with_volumes():
         )
 
 def main_toy_routing_with_volumes_animated():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'single_route_change')
+    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'parallel_links')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
         for directory in sorted(os.listdir(superdirectory))
     ]
 
+    # nodes = 'ABCDEF'
+    nodes = [
+        '_'.join([cluster, str(index)])
+        for cluster in 'AB'
+        for index in range(8)
+    ]
     geodesic_label_color_pairs = [
         ([u, v], get_tableau_color(index))
         for index, (u, v) in enumerate([
             (u, v)
-            for u in 'ABCDEF'
-            for v in 'ABCDEF'
+            for u in nodes
+            for v in nodes
             if u != v
         ])
     ]
 
     collate_outputs(
         directories_outputs,
-        pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'test.json'),
+        pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'parallel_links.json'),
         geodesic_label_color_pairs=geodesic_label_color_pairs,
         bubble_size=0.05,
     )
@@ -474,7 +480,7 @@ def main_internet2():
     )
 
 def main_internet2_sequential():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'Internet2', 'sequential_long')
+    superdirectory = pathlib.PurePath('..', 'outputs', 'Internet2', 'sequential_single_route_change')
     directories_outputs = [
         superdirectory / directory / '0.002_50_50'
         for directory in sorted(os.listdir(superdirectory))
@@ -484,7 +490,7 @@ def main_internet2_sequential():
 
     collate_outputs(
         directories_outputs,
-        pathlib.PurePath('..', 'outputs', 'animations', 'Internet2', f'sequential_top_200_original_geodesics.json'),
+        pathlib.PurePath('..', 'outputs', 'animations', 'Internet2', f'sequential_src_top_200.json'),
         geodesic_label_color_pairs=geodesic_label_color_pairs,
         bubble_size=0.05,
     )
@@ -492,6 +498,6 @@ def main_internet2_sequential():
 if __name__ == '__main__':
     pass
     # main_toy_routing_with_volumes()
-    # main_toy_routing_with_volumes_animated()
+    main_toy_routing_with_volumes_animated()
     # main_internet2()
-    main_internet2_sequential()
+    # main_internet2_sequential()
