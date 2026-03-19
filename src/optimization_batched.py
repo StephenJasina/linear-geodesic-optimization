@@ -162,14 +162,13 @@ directory_data = pathlib.PurePath('..', 'data')
 #         }, file_output, ensure_ascii=False, indent=4)
 
 def main(**kwargs):
-    print(kwargs)
+    print(json.dumps(kwargs, indent=4))
 
 if __name__ == '__main__':
-    n_cores = 14
+    n_cores = 1
 
     parser = argparse.ArgumentParser()
     parser.add_argument('config_file')
-    parser.add_argument('--cores', '-c', dest='n_cores', metavar='n-cores', type=int)
 
     args = parser.parse_args()
 
@@ -180,7 +179,7 @@ if __name__ == '__main__':
         'filename_json': None,
         'latency_threshold': None,
         'clustering_distance': None,
-        'ricci_curvature_alpha': 0.9999,
+        'ricci_curvature_alpha': 0.,
         'lambda_curvature': 1.,
         'lambda_smooth': 0.,
         'initial_radius': 20.,
@@ -192,6 +191,6 @@ if __name__ == '__main__':
         'initialization_file_path': None,
     }
     with open(args.config_file, 'r') as f:
-        parameters = batch.parse_json(f, defaults)
+        arguments, settings = batch.parse_json(f, defaults)
 
-    batch.run_multiprocessed(main, parameters, n_cores)
+    batch.run_multiprocessed(main, arguments, n_cores)

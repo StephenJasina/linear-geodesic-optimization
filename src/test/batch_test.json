@@ -1,38 +1,20 @@
 {
-	"settings": {
+	"arguments": {
 		"filename_probes": [null],
 		"filename_links": [null],
 		"filename_graphml": [null],
 		"filename_json": [
-			["Internet2", "json", "20240804190000.json"],
-			["Internet2", "json", "20240804200000.json"],
-			["Internet2", "json", "20240804210000.json"],
-			["Internet2", "json", "20240804220000.json"],
-			["Internet2", "json", "20240804230000.json"],
-			["Internet2", "json", "20240805000000.json"],
-			["Internet2", "json", "20240805010000.json"],
-			["Internet2", "json", "20240805020000.json"],
-			["Internet2", "json", "20240805030000.json"],
-			["Internet2", "json", "20240805040000.json"],
-			["Internet2", "json", "20240805050000.json"],
-			["Internet2", "json", "20240805060000.json"],
-			["Internet2", "json", "20240805070000.json"],
-			["Internet2", "json", "20240805080000.json"],
-			["Internet2", "json", "20240805090000.json"],
-			["Internet2", "json", "20240805100000.json"],
-			["Internet2", "json", "20240805110000.json"],
-			["Internet2", "json", "20240805120000.json"],
-			["Internet2", "json", "20240805130000.json"],
-			["Internet2", "json", "20240805140000.json"],
-			["Internet2", "json", "20240805150000.json"],
-			["Internet2", "json", "20240805160000.json"],
-			["Internet2", "json", "20240805170000.json"],
-			["Internet2", "json", "20240805180000.json"],
-			["Internet2", "json", "20240805190000.json"]
+			"0.json",
+			"1.json",
+			"2.json",
+			"3.json",
+			"4.json",
+			"5.json",
+			"6.json"
 		],
 		"latency_threshold": [null],
 		"clustering_distance": [null],
-		"ricci_curvature_alpha": [0.9999],
+		"ricci_curvature_alpha": [0],
 		"lambda_curvature": [1.0],
 		"lambda_smooth": [0.0],
 		"initial_radius": [20.0],
@@ -45,5 +27,12 @@
 	},
 	"groups": [
 		["filename_json"]
-	]
+	],
+	"settings": {
+		"cores": 14,
+		"pass_arguments": {
+			"filename_json": "previous_filename_json"
+		},
+		"directory_data": ["toy", "routing_with_volumes", "epsilon_changes", "parallel_links"]
+	}
 }
