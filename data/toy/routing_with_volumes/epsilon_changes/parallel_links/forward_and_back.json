@@ -10,7 +10,13 @@
 			"3.json",
 			"4.json",
 			"5.json",
-			"6.json"
+			"6.json",
+			"5.json",
+			"4.json",
+			"3.json",
+			"2.json",
+			"1.json",
+			"0.json"
 		],
 		"latency_threshold": [null],
 		"clustering_distance": [null],
@@ -18,26 +24,21 @@
 		"lambda_curvature": [1.0],
 		"lambda_smooth": [0.002],
 		"initial_radius": [20.0],
-		"sides": [20],
+		"sides": [50],
 		"mesh_scale": [1.0],
 		"coordinates_scale": [0.8],
 		"network_trim_radius": [null],
-		"maxiter": [0],
-		"initialization_file_path": [null]
+		"maxiter": [null]
 	},
 	"groups": [
 		["filename_json"]
 	],
 	"settings": {
-		"dry_run": false,
 		"cores": 14,
-		"directory_data": ["toy", "routing_with_volumes", "epsilon_changes", "parallel_links"],
-		"directory_data_type": "data",
-		"directory_output": ["test_batching", "toy", "routing_with_volumes", "parallel_links"],
+		"directory_output": ["toy", "routing_with_volumes", "parallel_links", "forward_and_back"],
 		"output_format": [
-			"filename_json",
-			["lambda_smooth", "sides", "sides"]
+			"index"
 		],
-		"initialization": "first"
+		"initialization": "sequential"
 	}
 }

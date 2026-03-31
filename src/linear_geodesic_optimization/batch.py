@@ -99,19 +99,6 @@ def group_arguments(
     # Construct partial argument lists. These are what the lists of
     # arguments would be if we restrict our attention to individual
     # groups
-    # argument_sublists = [
-    #     [
-    #         {
-    #             parameter_name: argument_value
-    #             for parameter_name, argument_value in zip(group, argument_tuple)
-    #         }
-    #         for argument_tuple in zip(*[
-    #             arguments[element]
-    #             for element in group
-    #         ])
-    #     ]
-    #     for group in groups
-    # ]
     argument_sublists = [
         [
             {
@@ -191,6 +178,7 @@ def run_multiprocessed(
                 future.result()
             except Exception as exc:
                 print(traceback.format_exc())
+    return [future.result() for future in futures.done]
 
 def run_sequential(
     f: collections.abc.Callable,
@@ -203,5 +191,7 @@ def run_sequential(
     `arguments`. As arguments, each element `arguments` is used as `f`'s
     kwargs.
     """
+    returns = []
     for argument_list in arguments:
-        f(**argument_list)
+        returns.append(f(**argument_list))
+    return returns
