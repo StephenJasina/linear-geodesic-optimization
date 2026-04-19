@@ -10,7 +10,7 @@ import sys
 import zoneinfo
 
 import networkx as nx
-import scipy
+import scipy.interpolate
 
 sys.path.insert(0, str(pathlib.PurePath('..', '..')))
 sys.path.insert(0, str(pathlib.PurePath('..', '..', '..', 'src')))
@@ -64,31 +64,33 @@ def group_data(
     if not os.path.exists(path_output):
         os.makedirs(path_output, exist_ok=True)
 
-    # Group together tests by their source-destination pairs
-    ie_pair_to_tests = collections.defaultdict(list)
+    # Group together tests by their source-destination pairs and IP
+    # version
+    key_to_tests = collections.defaultdict(list)
     for hit in blob['hits']['hits']:
         fields = hit['fields']
         source = fields['test.spec.source.keyword'][0]
         destination = fields['test.spec.dest.keyword'][0]
+        ip_version = fields['meta.ip_version'][0]
         throughput = fields['result.throughput'][0]
         timestamp = datetime.datetime.fromisoformat(fields['pscheduler.start_time'][0])
 
-        ie_pair_to_tests[source, destination].append({
+        key_to_tests[source, destination, ip_version].append({
             'throughput': throughput,
             'timestamp': timestamp,
         })
 
     # Sort lists by their timestamps (needed for our later interpolation)
-    ie_pairs = [
+    keys = [
         ie_pair
-        for ie_pair, tests in ie_pair_to_tests.items()
+        for ie_pair, tests in key_to_tests.items()
     ]
-    for ie_pair in ie_pairs:
-        ie_pair_to_tests[ie_pair] = list(sorted(ie_pair_to_tests[ie_pair], key=(lambda test: test['timestamp'])))
+    for key in keys:
+        key_to_tests[key] = list(sorted(key_to_tests[key], key=(lambda test: test['timestamp'])))
 
     # Compute splines
-    ie_pair_to_spline = {}
-    for ie_pair, tests in ie_pair_to_tests.items():
+    key_to_spline = {}
+    for key, tests in key_to_tests.items():
         timestamp_initial = tests[0]['timestamp']
         timestamp_final = tests[-1]['timestamp']
         x = [(test['timestamp'] - timestamp_initial).total_seconds() for test in tests]
@@ -97,14 +99,15 @@ def group_data(
         if (timestamp_initial - time_initial).total_seconds() == 0.:
             x.insert(0, 0.)
             y.insert(0, tests[0]['throughput'])
-        if (time_final - timestamp_final) == 0.:
+        if (time_final - timestamp_final) != 0.:
             x.append((time_final - time_initial).total_seconds())
             y.append(tests[-1]['throughput'])
 
         if len(x) == 1:
-            ie_pair_to_spline[ie_pair] = lambda t: y[0]
+            key_to_spline[key] = lambda t: y[0]
         else:
-            ie_pair_to_spline[ie_pair] = scipy.interpolate.CubicSpline(x, y)
+            # ie_pair_to_spline[ie_pair] = scipy.interpolate.CubicSpline(x, y)
+            key_to_spline[key] = scipy.interpolate.interp1d(x, y, kind='linear')
 
     time_current = time_initial
     while time_current <= time_final:
@@ -112,19 +115,20 @@ def group_data(
 
         # Compute the interpolations
         links_to_write = {}
-        for ie_pair, spline in ie_pair_to_spline.items():
-            source = ie_pair[0].split('-')[0].upper()
-            destination = ie_pair[1].split('-')[0].upper()
-            links_to_write[source, destination] = spline(time_delta.total_seconds())
+        for key, spline in key_to_spline.items():
+            source = key[0].split('-')[0].upper()
+            destination = key[1].split('-')[0].upper()
+            links_to_write[source, destination, key[2]] = spline(time_delta.total_seconds())
 
         # Write everything to disk
         with open(path_output / time_current.strftime('%Y%m%d%H%M%S.csv'), 'w') as f:
-            writer = csv.DictWriter(f, ['source_id', 'target_id', 'throughput'])
+            writer = csv.DictWriter(f, ['source_id', 'target_id', 'ip_version', 'throughput'])
             writer.writeheader()
             for key in sorted(links_to_write.keys()):
                 writer.writerow({
                     'source_id': key[0],
                     'target_id': key[1],
+                    'ip_version': key[2],
                     'throughput': links_to_write[key],
                 })
 
@@ -135,7 +139,7 @@ def group_data(
             source.split('-')[0].upper(),
             destination.split('-')[0].upper()
         )
-        for source, destination in ie_pairs
+        for source, destination, _ in keys
     ]
 
 def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representative, path_input, path_output):
