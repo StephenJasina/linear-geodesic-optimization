@@ -372,7 +372,11 @@ def compute_ricci_curvature_from_traffic(
             #     # compute the curvature. For now, let's just not set the
             #     # curvature to anything
             #     continue
-            transportation_cost = (numerator_p_s + numerator_p_v + numerator_u_s + numerator_u_v) / (denominator_p_s + denominator_p_v + denominator_u_s + denominator_u_v)
+            numerator = numerator_p_s + numerator_p_v + numerator_u_s + numerator_u_v
+            denominator = denominator_p_s + denominator_p_v + denominator_u_s + denominator_u_v
+            if denominator == 0.:
+                continue
+            transportation_cost = numerator / denominator
         ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
 
     return ricci_curvatures
