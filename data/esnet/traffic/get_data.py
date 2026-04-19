@@ -160,7 +160,7 @@ def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representat
         path_output
     )
 
-if __name__ == '__main__':
+def main():
     path_query = pathlib.PurePath('queries', 'throughput.json')
     path_output_search = pathlib.PurePath('outputs', 'throughput_dump.json')
     path_output_group = pathlib.PurePath('outputs', 'links')
@@ -207,4 +207,6 @@ if __name__ == '__main__':
     for path_grouped_file in sorted(os.listdir(path_output_group)):
         path_input = path_output_group / path_grouped_file
         write_json(network, ie_pair_to_route, probe_to_cluster_representative, path_input, path_output_json / f'{path_input.stem}.json')
-        break
+
+if __name__ == '__main__':
+    main()
