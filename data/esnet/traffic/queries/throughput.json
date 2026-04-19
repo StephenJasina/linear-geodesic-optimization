@@ -1,0 +1,32 @@
+{
+	"size": 10000,
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"pscheduler.start_time": {
+							"time_zone": "America/New_York",
+							"gte": "2026-04-01T00:00:00",
+							"lt": "2026-04-02T00:00:00"
+						}
+					}
+				},
+				{
+					"query_string": {
+						"analyze_wildcard": true,
+						"query": "test.type.keyword: throughput AND meta.source.hostname.keyword: *\\-tp.es.net AND meta.destination.hostname.keyword: *\\-tp.es.net"
+					}
+				}
+			]
+		}
+	},
+	"fields": [
+		"test.spec.source.keyword",
+		"test.spec.dest.keyword",
+		"meta.ip_version",
+		"pscheduler.start_time",
+		"result.throughput"
+	],
+	"_source": false
+}

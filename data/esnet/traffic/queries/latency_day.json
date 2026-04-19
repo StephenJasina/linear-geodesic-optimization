@@ -1,0 +1,45 @@
+{
+	"size": 0,
+	"aggs": {
+		"source": {
+			"terms": {
+				"field": "meta.source.hostname.keyword",
+				"size": 10000
+			},
+			"aggs": {
+				"dest": {
+					"terms": {
+						"field": "meta.destination.hostname.keyword",
+						"size": 10000
+					},
+					"aggs": {
+						"min_latency": {
+							"min": {
+								"field": "result.latency.min"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"pscheduler.start_time": {
+							"gte": "now-24h"
+						}
+					}
+				},
+				{
+					"query_string": {
+						"analyze_wildcard": true,
+						"query": "test.type.keyword: latencybg AND meta.source.hostname.keyword: *-lat.es.net AND meta.destination.hostname.keyword: *-lat.es.net"
+					}
+				}
+			]
+		}
+	}
+}
