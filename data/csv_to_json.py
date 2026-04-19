@@ -34,14 +34,14 @@ def write_graph(graph: nx.Graph, routes, traffic, path: pathlib.PurePath):
                 'rtt': data['rtt'],
             }
             for source, destination, data in graph.edges(data=True)
-        ] + [
+        ] + ([] if isinstance(graph, nx.DiGraph) else [
             {
                 'source_id': destination,
                 'target_id': source,
                 'rtt': data['rtt'],
             }
             for source, destination, data in graph.edges(data=True)
-        ],
+        ]),
         'traffic': [
             {
                 'route': route,
