@@ -266,24 +266,6 @@ def collate_outputs(
     mesh_scale = parameters['mesh_scale']
     coordinates_scale = parameters['coordinates_scale']
 
-    # Normalize the z-coordinates across time
-    zs = []
-    for output in outputs:
-        # TODO: Is this the right strategy? Should we make this a
-        # parameter somewhere?
-        if parameters['initial_radius'] is None:
-            z_0 = np.array(output['initial'])
-        else:
-            z_0 = np.array([
-                (parameters['initial_radius']**2
-                    - (i / (width - 1) - 0.5)**2
-                    - (j / (height - 1) - 0.5)**2)**0.5
-                for i in range(width)
-                for j in range(height)
-            ]).reshape((width * height,))
-        z = np.array(output['final']) - z_0
-        zs.append(z - np.mean(z))
-
     mesh = RectangleMesh(width, height, mesh_scale)
 
     # Assume bounding box information is constant
@@ -319,10 +301,11 @@ def collate_outputs(
         for (graph_data, vertex_data, edge_data) in (output['network'],)
     ]
 
-    # Compute the network borders
+    # Compute the network borders and normalize the z-coordinates across time
     network_borders = []
     hulls = []
     distances_to_networks = []
+    zs = []
     for output in outputs:
         network = output['network']
         graph_data, vertex_data, edge_data = network
@@ -348,7 +331,23 @@ def collate_outputs(
             )
             for vertex_coordinate in mesh.get_coordinates()[:, :2]
         ]))
-        hulls.append(np.where(distances_to_networks[-1] / mesh_scale <= bubble_size)[0])
+        hull = np.where(distances_to_networks[-1] / mesh_scale <= bubble_size)[0]
+        hulls.append(hull)
+
+        # TODO: Is this the right strategy? Should we make this a
+        # parameter somewhere?
+        if parameters['initial_radius'] is None:
+            z_0 = np.array(output['initial'])
+        else:
+            z_0 = np.array([
+                (parameters['initial_radius']**2
+                    - (i / (width - 1) - 0.5)**2
+                    - (j / (height - 1) - 0.5)**2)**0.5
+                for i in range(width)
+                for j in range(height)
+            ]).reshape((width * height,))
+        z = np.array(output['final']) - z_0
+        zs.append(z - np.mean(z[hull]))
 
     # Determine values for vertical scaling
     z_max = -np.inf
