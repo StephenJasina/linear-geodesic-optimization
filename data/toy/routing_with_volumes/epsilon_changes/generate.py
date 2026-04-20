@@ -51,36 +51,7 @@ def compute_latencies(graph: nx.DiGraph):
         graph.edges[node_a, node_b]['latency'] = np.linalg.norm(xy_a - xy_b)
 
 def interpolate_traffic(initial, final, alpha):
-    keys = {}
-    for source, traffic_source in initial.items():
-        keys_source = set()
-        for destination in traffic_source:
-            keys_source.add(destination)
-        keys[source] = keys_source
-    for source, traffic_source in final.items():
-        if source in keys:
-            keys_source = keys[source]
-        else:
-            keys_source = set()
-        for destination in traffic_source:
-            keys_source.add(destination)
-        keys[source] = keys_source
-
-    traffic = {}
-    for source, keys_source in keys.items():
-        traffic_source = {}
-        for destination in keys_source:
-            if source in initial and destination in initial[source]:
-                traffic_initial = initial[source][destination]
-            else:
-                traffic_initial = 0.
-            if source in final and destination in final[source]:
-                traffic_final = final[source][destination]
-            else:
-                traffic_final = 0.
-            traffic_source[destination] = (1. - alpha) * traffic_initial + alpha * traffic_final
-        traffic[source] = traffic_source
-    return traffic
+    return [(1. - alpha) * v_i + alpha * v_f for v_i, v_f in zip(initial, final)]
 
 def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath):
     index_to_node = list(graph.nodes)
@@ -106,9 +77,9 @@ def write_graph(graph: nx.Graph, routes, traffic_matrix, path: pathlib.PurePath)
         'traffic': [
             {
                 'route': route,
-                'volume': traffic_matrix[route[0]][route[-1]]
+                'volume': volume,
             }
-            for route in routes
+            for route, volume in zip(routes, traffic_matrix)
         ]
     }
     with open(path, 'w') as f:
@@ -132,28 +103,18 @@ def generate_cluster_above():
     graph.add_edge('B_3', 'C_7')
     graph.add_edge('C_7', 'B_3')
     routes = tomography.get_shortest_routes(graph)
-    traffic_initial = {
-        source: {
-            destination: (
-                1. if source[0] == destination[0] else
-                1. if source[0] in 'AB' and destination[0] in 'AB' else
-                2.
-            )
-            for destination in graph.nodes
-        }
-        for source in graph.nodes
-    }
-    traffic_final = {
-        source: {
-            destination: (
-                1. if source[0] == destination[0] else
-                6. if source[0] in 'AB' and destination[0] in 'AB' else
-                2.
-            )
-            for destination in graph.nodes
-        }
-        for source in graph.nodes
-    }
+    traffic_initial = [
+        1. if route[0][0] == route[-1][0] else
+        1. if route[0][0] in 'AB' and route[-1][0] in 'AB' else
+        2.
+        for route in routes
+    ]
+    traffic_final = [
+        1. if route[0][0] == route[-1][0] else
+        6. if route[0][0] in 'AB' and route[-1][0] in 'AB' else
+        2.
+        for route in routes
+    ]
 
     compute_latencies(graph)
     plot_scenario(graph, routes, traffic_initial, traffic_final, 'cluster_above')
@@ -185,30 +146,18 @@ def generate_clusters_both_sides():
     graph.add_edge('B_5', 'D_0')
     graph.add_edge('D_0', 'B_5')
     routes = tomography.get_shortest_routes(graph)
-    traffic_initial = {
-        source: {
-            destination: (
-                1. if source[0] == destination[0] else
-                1. if source[0] in 'AB' and destination[0] in 'AB' else
-                # 1. if source in ['A_0', 'B_4'] and destination in ['A_0', 'B_4'] else
-                2.
-            )
-            for destination in graph.nodes
-        }
-        for source in graph.nodes
-    }
-    traffic_final = {
-        source: {
-            destination: (
-                1. if source[0] == destination[0] else
-                6. if source[0] in 'AB' and destination[0] in 'AB' else
-                # 600. if source in ['A_0', 'B_4'] and destination in ['A_0', 'B_4'] else
-                2.
-            )
-            for destination in graph.nodes
-        }
-        for source in graph.nodes
-    }
+    traffic_initial = [
+        1. if route[0][0] == route[-1][0] else
+        1. if route[0][0] in 'AB' and route[-1][0] in 'AB' else
+        2.
+        for route in routes
+    ]
+    traffic_final = [
+        1. if route[0][0] == route[-1][0] else
+        6. if route[0][0] in 'AB' and route[-1][0] in 'AB' else
+        2.
+        for route in routes
+    ]
 
     compute_latencies(graph)
     plot_scenario(graph, routes, traffic_initial, traffic_final, 'clusters_both_sides')
@@ -259,36 +208,123 @@ def generate_parallel_links():
             routes.append(route)
             routes.append(list(reversed(route)))
 
-    traffic_initial = {
-        source: {
-            destination: (
-                1. if source[0] == destination[0] else
-                1. if source in ['A_0', 'A_1', 'A_2', 'A_3'] or destination in ['A_0', 'A_1', 'A_2', 'A_3'] else
-                5.
-            )
-            for destination in graph.nodes
-        }
-        for source in graph.nodes
-    }
-    traffic_final = {
-        source: {
-            destination: (
-                1. if source[0] == destination[0] else
-                5. if source in ['A_0', 'A_1', 'A_2', 'A_3'] or destination in ['A_0', 'A_1', 'A_2', 'A_3'] else
-                1.
-            )
-            for destination in graph.nodes
-        }
-        for source in graph.nodes
-    }
+    traffic_initial = [
+        1. if route[0][0] == route[-1][0] else
+        1. if route[0] in ['A_0', 'A_1', 'A_2', 'A_3'] or route[-1] in ['A_0', 'A_1', 'A_2', 'A_3'] else
+        5.
+        for route in routes
+    ]
+    traffic_final = [
+        1. if route[0][0] == route[-1][0] else
+        5. if route[0] in ['A_0', 'A_1', 'A_2', 'A_3'] or route[-1] in ['A_0', 'A_1', 'A_2', 'A_3'] else
+        1.
+        for route in routes
+    ]
 
     compute_latencies(graph)
     plot_scenario(graph, routes, traffic_initial, traffic_final, 'parallel_links')
     for i in range(7):
         write_graph(graph, routes, interpolate_traffic(traffic_initial, traffic_final, i / 6.), pathlib.PurePath('parallel_links', f'{i}.json'))
 
+def generate_sinusoid():
+    graph = nx.DiGraph()
+    add_cluster(
+        graph, 8, np.array([-0.25, 0.]), 1/16, 'A', 2 * np.pi / 16
+    )
+    add_cluster(
+        graph, 8, np.array([0.25, 0.]), 1/16, 'B', 2 * np.pi / 16
+    )
+    graph.add_node(
+        'C_0',
+        x=0.,
+        y=graph.nodes['A_0']['y'],
+        latitude=graph.nodes['A_0']['latitude'],
+        longitude=0.
+    )
+    graph.add_node(
+        'C_1',
+        x=0.,
+        y=graph.nodes['A_7']['y'],
+        latitude=graph.nodes['A_7']['latitude'],
+        longitude=0.
+    )
+    graph.add_edge('A_0', 'C_0')
+    graph.add_edge('C_0', 'A_0')
+    graph.add_edge('C_0', 'B_3')
+    graph.add_edge('B_3', 'C_0')
+    graph.add_edge('A_7', 'C_1')
+    graph.add_edge('C_1', 'A_7')
+    graph.add_edge('B_4', 'C_1')
+    graph.add_edge('C_1', 'B_4')
+    graph.add_edge('C_0', 'C_1')
+    graph.add_edge('C_1', 'C_0')
+
+    # Intracluster routes
+    routes_intercluster = [
+        [f'{cluster_label}_{i}', f'{cluster_label}_{j}']
+        for cluster_label in ['A', 'B']
+        for i in range(8)
+        for j in range(8)
+        if i != j
+    ]
+    # Intercluster taking top left and bottom right paths
+    routes_up_down = [
+        (
+            ([f'A_{i}'] if i != 0 else [])
+            + ['A_0', 'C_0', 'C_1', 'B_4']
+            + ([f'B_{j}'] if j != 4 else [])
+        )
+        for i in range(8)
+        for j in range(8)
+    ] + [
+        (
+            ([f'B_{j}'] if j != 4 else [])
+            + ['B_4', 'C_1', 'C_0', 'A_0']
+            + ([f'A_{i}'] if i != 0 else [])
+        )
+        for i in range(8)
+        for j in range(8)
+    ]
+    # Intercluster taking bottom left and top right paths
+    routes_down_up = [
+        (
+            ([f'A_{i}'] if i != 7 else [])
+            + ['A_7', 'C_1', 'C_0', 'B_3']
+            + ([f'B_{j}'] if j != 3 else [])
+        )
+        for i in range(8)
+        for j in range(8)
+    ] + [
+        (
+            ([f'B_{j}'] if j != 3 else [])
+            + ['B_3', 'C_0', 'C_1', 'A_7']
+            + ([f'A_{i}'] if i != 7 else [])
+        )
+        for i in range(8)
+        for j in range(8)
+    ]
+    routes = routes_intercluster + routes_up_down + routes_down_up
+
+    traffic_initial = (
+        [1.] * len(routes_intercluster)
+        + [5.] * len(routes_up_down)
+        + [1.] * len(routes_down_up)
+    )
+    traffic_final = (
+        [1.] * len(routes_intercluster)
+        + [1.] * len(routes_up_down)
+        + [5.] * len(routes_down_up)
+    )
+
+    compute_latencies(graph)
+    plot_scenario(graph, routes, traffic_initial, traffic_final, 'sinusoid')
+    for i in range(7):
+        write_graph(graph, routes, interpolate_traffic(traffic_initial, traffic_final, i / 6.), pathlib.PurePath('sinusoid', f'{i}.json'))
+
+
 if __name__ == '__main__':
-    generate_cluster_above()
-    generate_clusters_both_sides()
-    generate_parallel_links()
+    # generate_cluster_above()
+    # generate_clusters_both_sides()
+    # generate_parallel_links()
+    generate_sinusoid()
     plt.show()

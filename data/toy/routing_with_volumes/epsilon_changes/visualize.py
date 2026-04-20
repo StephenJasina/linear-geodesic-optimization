@@ -23,27 +23,25 @@ def _sorted_clusters(graph: nx.DiGraph) -> list[str]:
     return sorted(set(_cluster_of(n) for n in graph.nodes))
 
 
-def _aggregate_cluster_traffic(graph: nx.DiGraph, traffic_matrix: dict) -> tuple[list[str], np.ndarray]:
+def _aggregate_cluster_traffic(graph: nx.DiGraph, routes: list, volumes: list) -> tuple[list[str], np.ndarray]:
     """Return (cluster_names, matrix) where matrix[i,j] is total source->dest traffic."""
     clusters = _sorted_clusters(graph)
     idx = {c: i for i, c in enumerate(clusters)}
     matrix = np.zeros((len(clusters), len(clusters)))
-    for source in graph.nodes:
-        for dest in graph.nodes:
-            if source == dest:
-                continue
-            i = idx[_cluster_of(source)]
-            j = idx[_cluster_of(dest)]
-            matrix[i, j] += traffic_matrix[source][dest]
+    for route, volume in zip(routes, volumes):
+        source, dest = route[0], route[-1]
+        if source == dest:
+            continue
+        i = idx[_cluster_of(source)]
+        j = idx[_cluster_of(dest)]
+        matrix[i, j] += volume
     return clusters, matrix
 
 
-def _compute_link_traffic(graph: nx.DiGraph, routes: list, traffic_matrix: dict) -> dict:
+def _compute_link_traffic(graph: nx.DiGraph, routes: list, volumes: list) -> dict:
     """Return a dict mapping each directed edge (u, v) to total traffic volume through it."""
     link_traffic = {edge: 0. for edge in graph.edges}
-    for route in routes:
-        source, dest = route[0], route[-1]
-        volume = traffic_matrix[source][dest]
+    for route, volume in zip(routes, volumes):
         for u, v in zip(route, route[1:]):
             link_traffic[(u, v)] = link_traffic.get((u, v), 0.) + volume
     return link_traffic
@@ -51,7 +49,8 @@ def _compute_link_traffic(graph: nx.DiGraph, routes: list, traffic_matrix: dict)
 
 def plot_cluster_traffic_matrix(
     graph: nx.DiGraph,
-    traffic_matrix: dict,
+    routes: list,
+    volumes: list,
     ax: plt.Axes = None,
     title: str = None,
 ) -> plt.Axes:
@@ -59,13 +58,12 @@ def plot_cluster_traffic_matrix(
     Heatmap of aggregate traffic between clusters.
 
     Rows are source clusters, columns are destination clusters.
-    Cell values are the sum of traffic_matrix[s][d] over all node pairs (s, d)
-    in that cluster pair (excluding same-node pairs).
+    Cell values are the sum of volumes over all routes between each cluster pair.
     """
     if ax is None:
         _, ax = plt.subplots(figsize=(5, 4))
 
-    clusters, matrix = _aggregate_cluster_traffic(graph, traffic_matrix)
+    clusters, matrix = _aggregate_cluster_traffic(graph, routes, volumes)
     n = len(clusters)
 
     im = ax.imshow(matrix, cmap='YlOrRd', aspect='auto')
@@ -98,7 +96,7 @@ def plot_cluster_traffic_matrix(
 def plot_link_traffic(
     graph: nx.DiGraph,
     routes: list,
-    traffic_matrix: dict,
+    volumes: list,
     ax: plt.Axes = None,
     title: str = None,
     max_edge_width: float = 6.0,
@@ -114,7 +112,7 @@ def plot_link_traffic(
     if ax is None:
         _, ax = plt.subplots(figsize=(6, 5))
 
-    link_traffic = _compute_link_traffic(graph, routes, traffic_matrix)
+    link_traffic = _compute_link_traffic(graph, routes, volumes)
     pos = {node: (graph.nodes[node]['x'], graph.nodes[node]['y']) for node in graph.nodes}
 
     # Assign a color to each cluster
@@ -172,8 +170,8 @@ def plot_link_traffic(
 def plot_scenario(
     graph: nx.DiGraph,
     routes: list,
-    traffic_initial: dict,
-    traffic_final: dict,
+    initial_volumes: list,
+    final_volumes: list,
     scenario_name: str = '',
 ):
     """
@@ -183,13 +181,13 @@ def plot_scenario(
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
     fig.suptitle(scenario_name, fontsize=14)
 
-    plot_cluster_traffic_matrix(graph, traffic_initial,
+    plot_cluster_traffic_matrix(graph, routes, initial_volumes,
                                 ax=axes[0, 0], title='Cluster traffic (initial)')
-    plot_cluster_traffic_matrix(graph, traffic_final,
+    plot_cluster_traffic_matrix(graph, routes, final_volumes,
                                 ax=axes[0, 1], title='Cluster traffic (final)')
-    plot_link_traffic(graph, routes, traffic_initial,
+    plot_link_traffic(graph, routes, initial_volumes,
                       ax=axes[1, 0], title='Link traffic (initial)')
-    plot_link_traffic(graph, routes, traffic_final,
+    plot_link_traffic(graph, routes, final_volumes,
                       ax=axes[1, 1], title='Link traffic (final)')
 
     fig.tight_layout()
