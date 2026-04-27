@@ -2,7 +2,7 @@ import os
 import pathlib
 import subprocess
 
-data_dir = pathlib.PurePath('..', 'data', 'Internet2')
+data_dir = pathlib.PurePath('..', 'data', 'esnet', 'traffic')
 json_dir = data_dir / 'json'
 output_dir = data_dir / 'images'
 os.makedirs(output_dir, exist_ok=True)

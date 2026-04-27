@@ -40,7 +40,6 @@ def aggregate_json_blobs(files, path_output):
             ]
         }, f, indent=4)
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('files', nargs='+')

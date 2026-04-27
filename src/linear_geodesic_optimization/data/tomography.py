@@ -100,7 +100,7 @@ def get_shortest_routes(
             routes_dict[source, destination] = route
 
     if od_pairs is None:
-        return [route for (source, destination), route in routes_dict.items() if source != destination]
+        return [route for (source, destination), route in routes_dict.items()]
     else:
         return [routes_dict[od_pair] for od_pair in od_pairs]
 
