@@ -286,7 +286,7 @@ def complete_traffic_matrix(ie_pair_to_traffic):
         rank = np.sum(s > lam)
         return rank, (U[:, :rank] * s[:rank]) @ Vt[:rank]
 
-    index_to_node = list(set(source for source, _ in ie_pair_to_traffic.keys()) | set(destination for _, destination in ie_pair_to_traffic.keys()))
+    index_to_node = list(sorted(set(source for source, _ in ie_pair_to_traffic.keys()) | set(destination for _, destination in ie_pair_to_traffic.keys())))
     node_to_index = {node: index for index, node in enumerate(index_to_node)}
     n_nodes = len(index_to_node)
 
