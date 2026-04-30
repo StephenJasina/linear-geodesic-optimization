@@ -363,7 +363,7 @@ def collate_outputs(
             (traffic, route)
             for traffic, route in zip(outputs[0]['traffic'], outputs[0]['routes'])
             if route[0] != route[-1]
-        ], reverse=True))[:300]
+        ], reverse=True))
         geodesic_label_color_pairs = [
             (route, get_tableau_color(index))
             for index, (_, route) in enumerate(high_traffic_route_pairs)
@@ -452,36 +452,6 @@ def collate_outputs(
             },
             file_output, ensure_ascii=False
         )
-
-def main_toy_routing_with_volumes_animated():
-    superdirectory = pathlib.PurePath('..', 'outputs', 'toy', 'parallel_links')
-    directories_outputs = [
-        superdirectory / directory / '0.002_50_50'
-        for directory in sorted(os.listdir(superdirectory))
-    ]
-
-    # nodes = 'ABCDEF'
-    nodes = [
-        '_'.join([cluster, str(index)])
-        for cluster in 'AB'
-        for index in range(8)
-    ]
-    geodesic_label_color_pairs = [
-        ([u, v], get_tableau_color(index))
-        for index, (u, v) in enumerate([
-            (u, v)
-            for u in nodes
-            for v in nodes
-            if u != v
-        ])
-    ]
-
-    collate_outputs(
-        directories_outputs,
-        pathlib.PurePath('..', 'outputs', 'animations', 'routing_with_volumes', f'parallel_links.json'),
-        geodesic_label_color_pairs=geodesic_label_color_pairs,
-        bubble_size=0.05,
-    )
 
 def main():
     parser = argparse.ArgumentParser()
