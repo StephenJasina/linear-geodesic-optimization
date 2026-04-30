@@ -229,10 +229,10 @@ def generate_parallel_links():
 def generate_sinusoid():
     graph = nx.DiGraph()
     add_cluster(
-        graph, 8, np.array([-0.25, 0.]), 1/16, 'A', 2 * np.pi / 16
+        graph, 8, np.array([-0.25, 0.]), 1 / 16, 'A', 2 * np.pi / 16
     )
     add_cluster(
-        graph, 8, np.array([0.25, 0.]), 1/16, 'B', 2 * np.pi / 16
+        graph, 8, np.array([0.25, 0.]), 1 / 16, 'B', 2 * np.pi / 16
     )
     graph.add_node(
         'C_0',
@@ -260,7 +260,7 @@ def generate_sinusoid():
     graph.add_edge('C_1', 'C_0')
 
     # Intracluster routes
-    routes_intercluster = [
+    routes_intracluster = [
         [f'{cluster_label}_{i}', f'{cluster_label}_{j}']
         for cluster_label in ['A', 'B']
         for i in range(8)
@@ -303,15 +303,15 @@ def generate_sinusoid():
         for i in range(8)
         for j in range(8)
     ]
-    routes = routes_intercluster + routes_up_down + routes_down_up
+    routes = routes_intracluster + routes_up_down + routes_down_up
 
     traffic_initial = (
-        [1.] * len(routes_intercluster)
+        [1.] * len(routes_intracluster)
         + [5.] * len(routes_up_down)
         + [1.] * len(routes_down_up)
     )
     traffic_final = (
-        [1.] * len(routes_intercluster)
+        [1.] * len(routes_intracluster)
         + [1.] * len(routes_up_down)
         + [5.] * len(routes_down_up)
     )
