@@ -351,6 +351,14 @@ def main():
     time_step = datetime.timedelta(seconds=3600.)
     clustering_distance = 500000.
 
+    for directory in [
+        directory_output_search_throughput,
+        directory_output_search_latency,
+        directory_output_group_throughputs,
+        directory_output_group_latencies,
+    ]:
+        os.makedirs(directory, exist_ok=True)
+
     # Get ESnet data
     blobs_throughput = []
     blobs_latency = []
