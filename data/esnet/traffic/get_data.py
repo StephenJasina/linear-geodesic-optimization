@@ -247,15 +247,21 @@ def group_latency_data(blobs, path_output, time_initial, time_final, time_step):
                         'latency': latency,
                     })
 
+        key_to_latency = {
+            (source, target, ip_version): min(test['latency'] for test in tests) + min(test['latency'] for test in key_to_tests[target, source, ip_version])
+            for (source, target, ip_version), tests in key_to_tests.items()
+            if source < target and ip_version == 4 and (target, source, ip_version) in key_to_tests
+        }
+
         with open(path_output / time.strftime('%Y%m%d%H%M%S.csv'), 'w') as f:
-            writer = csv.DictWriter(f, ['source_id', 'target_id', 'ip_version', 'latency'])
+            writer = csv.DictWriter(f, ['source_id', 'target_id', 'ip_version', 'rtt'])
             writer.writeheader()
-            for key in sorted(key_to_tests.keys()):
+            for key in sorted(key_to_latency.keys()):
                 writer.writerow({
                     'source_id': key[0],
                     'target_id': key[1],
                     'ip_version': key[2],
-                    'latency': min(test['latency'] for test in key_to_tests[key]),
+                    'rtt': key_to_latency[key],
                 })
 
         time = time + time_step
@@ -330,9 +336,9 @@ def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representat
 
 def main():
     path_query = pathlib.PurePath('queries', 'throughput.json')
-    directory_output_search_throughput = pathlib.PurePath('outputs', 'throughput_dumps')
-    directory_output_search_latency = pathlib.PurePath('outputs', 'latency_dumps')
-    directory_output_group_throughputs = pathlib.PurePath('outputs', 'links')
+    directory_output_search_throughput = pathlib.PurePath('outputs', 'dumps_throughput')
+    directory_output_search_latency = pathlib.PurePath('outputs', 'dumps_latency')
+    directory_output_group_throughputs = pathlib.PurePath('outputs', 'links_throughputs')
     directory_output_group_latencies = pathlib.PurePath('outputs', 'links_latencies')
     path_output_json = pathlib.PurePath('json')
     path_probes = pathlib.PurePath('probes.csv')
