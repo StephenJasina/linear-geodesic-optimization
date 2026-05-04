@@ -521,7 +521,7 @@ function drawLayers(time, options) {
 			let trafficPathsToDrawColors = new Array();
 			for (let i = 0; i < networkVertices.length; ++i) {
 				for (let j = 0; j < networkVertices.length; ++j) {
-					if (tableTrafficHover[i][j] && trafficPaths[currentNetworkIndexInt][i] !== null && trafficPaths[currentNetworkIndexInt][i][j] !== null) {
+					if (tableTrafficHover[i][j] && trafficPaths[currentNetworkIndexInt] != null && trafficPaths[currentNetworkIndexInt][i] !== null && trafficPaths[currentNetworkIndexInt][i][j] !== null) {
 						trafficPathsToDraw.push(trafficPaths[currentNetworkIndexInt][i][j]);
 						trafficPathsToDrawColors.push(new Array(0, 0, 0));
 					}
