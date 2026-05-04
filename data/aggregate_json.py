@@ -21,8 +21,10 @@ def aggregate_json_blobs(files, path_output):
                 nodes[node['id']] = node
 
         for link in blob['links']:
-            if (link['source_id'], link['target_id']) not in links:
-                links[link['source_id'], link['target_id']] = link
+            source = link['source_id']
+            target = link['target_id']
+            if (source, target) not in links or link['rtt'] < links[source, target]['rtt']:
+                links[source, target] = link
 
         for flow in blob['traffic']:
             traffic[tuple(flow['route'])] += flow['volume']
