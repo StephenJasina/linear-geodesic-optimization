@@ -132,3 +132,32 @@ def cluster_graph(graph: nx.Graph, distance_threshold: float):
     new_graph.graph = dict(graph.graph)
 
     return new_graph
+
+def fix_routes(graph: nx.Graph, routes):
+    """
+    Relabel nodes to their cluster representatives.
+
+    First, replace node names with their cluster representatives.
+
+    Then remove any loops in the route created due to this step. This
+    essentially results in removing self-loops.
+    """
+    node_to_cluster_representative = {
+        element: node
+        for node, data in graph.nodes(data=True)
+        for element in (data['elements'] if 'elements' in data else [node])
+    }
+
+    routes_new = []
+    for route in routes:
+        representative_previous = None
+        route_new = []
+        for node in route:
+            representative = node_to_cluster_representative[node]
+            if representative == representative_previous:
+                # Don't add self-loops
+                continue
+            route_new.append(representative)
+        routes_new.append(route_new)
+
+    return routes_new
