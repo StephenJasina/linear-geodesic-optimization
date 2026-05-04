@@ -336,11 +336,19 @@ def collate_outputs(
     if geodesic_label_color_pairs is None:
         # For now, just use the routes in the first snapshot
         # TODO: Is this exactly what we want?
-        high_traffic_route_pairs = list(sorted([
-            (traffic, route)
-            for traffic, route in zip(outputs[0]['traffic'], outputs[0]['routes'])
-            if route[0] != route[-1]
-        ], reverse=True))
+        if 'traffic' in outputs[0] and outputs[0]['traffic'] is not None:
+            high_traffic_route_pairs = list(sorted([
+                (traffic, route)
+                for traffic, route in zip(outputs[0]['traffic'], outputs[0]['routes'])
+                if route[0] != route[-1]
+            ], reverse=True))
+        else:
+            high_traffic_route_pairs = list(sorted([
+                (0., [source, destination])
+                for source in node_indices_to_labels
+                for destination in node_indices_to_labels
+                if source != destination
+            ]))
         geodesic_label_color_pairs = [
             (route, get_tableau_color(index))
             for index, (_, route) in enumerate(high_traffic_route_pairs)
