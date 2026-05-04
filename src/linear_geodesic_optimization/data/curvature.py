@@ -148,6 +148,39 @@ def get_augmented_distribution(
 
     return distribution
 
+def fix_routes(graph: nx.Graph, routes, traffic, edge_distance_label='latency'):
+    """
+    Ensure all routes actually exist in the graph.
+
+    If a route is found that doesn't correspond to a valid path in the
+    graph, attempt to fix it.
+
+    If a link in a supplied route doesn't exist, replace it with the
+    shortest path available path between the nodes in the graph. This is
+    an optimistic estimate of what the path actually is.
+    """
+    routes_shortest = {
+        (route[0], route[-1]): route
+        for route in tomography.get_shortest_routes(graph, edge_distance_label)
+    }
+
+    routes_new = []
+    traffic_new = []
+    for route, volume in zip(routes, traffic):
+        route_new = [route[0]]
+        is_valid = True
+        for source, destination in itertools.pairwise(route):
+            if (source, destination) in routes_shortest:
+                route_new.extend(routes_shortest[source, destination][1:])
+            else:
+                is_valid = False
+                break
+        if is_valid:
+            routes_new.append(route_new)
+            traffic_new.append(volume)
+
+    return routes_new, traffic_new
+
 def compute_ricci_curvature_from_traffic(
     graph: nx.Graph, routes, traffic,
     edge_distance_label='latency',
@@ -163,6 +196,10 @@ def compute_ricci_curvature_from_traffic(
     else:
         node_to_index = None
         distance_matrix = None
+
+    # Routes might attempt to use edges that don't exist in the graph.
+    # In that case, replace relevant parts using shortest path routing.
+    routes, traffic = fix_routes(graph, routes, traffic, edge_distance_label)
 
     ricci_curvatures = {}
     edges = [(u, v) for u, v in graph.edges]
@@ -372,6 +409,7 @@ def compute_ricci_curvature_from_traffic(
             #     # compute the curvature. For now, let's just not set the
             #     # curvature to anything
             #     continue
+
             numerator = numerator_p_s + numerator_p_v + numerator_u_s + numerator_u_v
             denominator = denominator_p_s + denominator_p_v + denominator_u_s + denominator_u_v
             if denominator == 0.:

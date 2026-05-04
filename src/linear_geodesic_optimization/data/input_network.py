@@ -245,6 +245,8 @@ def get_graph(
         graph = threshold_graph(graph, epsilon)
     if clustering_distance is not None:
         graph = cluster_graph(graph, clustering_distance)
+        if routes is not None:
+            routes = clustering.fix_routes(graph, routes)
     if should_compute_curvatures:
         graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic, force_optimal_transport)
     if should_include_latencies:
