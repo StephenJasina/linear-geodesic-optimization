@@ -87,3 +87,26 @@ def get_GCL(latlong_a, latlong_b):
     # thirds the speed of light
     return 2 * 1000 * get_spherical_distance(p_a, p_b) * radius_earth \
         / (2. * c / 3.)
+
+def remove_loops(path: typing.List[typing.Hashable]):
+    """
+    Remove loops in a path.
+
+    As input, take a list of vertex labels. This traces out a path that
+    might intersect itself. This function simply removes all loops, so
+    the resulting path is a sequence of unique vertex labels starting
+    and ending at the same location, and each edge in the new path is
+    one of the edges in the original path.
+    """
+    indices = {}
+    path_new = []
+
+    for v in path:
+        if v in indices:
+            for _ in range(len(path_new) - indices[v] - 1):
+                indices.pop(path_new.pop())
+        else:
+            indices[v] = len(path_new)
+            path_new.append(v)
+
+    return path_new

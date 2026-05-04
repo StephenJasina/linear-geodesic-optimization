@@ -45,29 +45,6 @@ def get_tableau_color(index: int):
     color = mpl.colors.to_rgb(tableau_colors[index % len(tableau_colors)])
     return [int(channel * 255) for channel in color]
 
-def remove_loops(path: typing.List[int]):
-    """
-    Remove loops in a path.
-
-    As input, take a list of vertex indices. This traces out a path that
-    might intersect itself. This function simply removes all loops, so
-    the resulting path is a sequence of unique vertex indices starting
-    and ending at the same location, and each edge in the new path is
-    one of the edges in the original path.
-    """
-    indices = {}
-    path_new = []
-
-    for v in path:
-        if v in indices:
-            for _ in range(len(path_new) - indices[v] - 1):
-                indices.pop(path_new.pop())
-        else:
-            indices[v] = len(path_new)
-            path_new.append(v)
-
-    return path_new
-
 def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_routes):
     mesh_scale = mesh.get_scale()
 
@@ -135,7 +112,7 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
                     'length'
                 )
             )
-        approximate_trace = remove_loops(approximate_trace)
+        approximate_trace = utility.remove_loops(approximate_trace)
 
         if len(approximate_trace) < 2:
             geodesics.append([])
