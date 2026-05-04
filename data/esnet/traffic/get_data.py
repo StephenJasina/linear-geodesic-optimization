@@ -15,7 +15,7 @@ import scipy.interpolate
 
 sys.path.insert(0, str(pathlib.PurePath('..', '..')))
 sys.path.insert(0, str(pathlib.PurePath('..', '..', '..', 'src')))
-from linear_geodesic_optimization.data import input_network, tomography
+from linear_geodesic_optimization.data import input_network, tomography, utility
 import csv_to_json
 
 
@@ -310,12 +310,41 @@ def complete_traffic_matrix(ie_pair_to_traffic):
         if traffic != 0.
     }
 
-def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representative, path_input, path_output):
+def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representative, path_input_latency, path_input_throughput, path_output):
     """
     Convert a CSV file of traffic into a JSON output.
     """
+    ie_pair_to_latency = {}
+    with open(path_input_latency, 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row['source_id'] not in probe_to_cluster_representative or row['target_id'] not in probe_to_cluster_representative:
+                continue
+            source = probe_to_cluster_representative[row['source_id']]
+            destination = probe_to_cluster_representative[row['target_id']]
+            latency = float(row['rtt'])
+            if (source, destination) in ie_pair_to_latency:
+                latency = min(ie_pair_to_latency[source, destination], latency)
+            # RTTs are symmetric, so we write them twice
+            ie_pair_to_latency[source, destination] = latency
+            ie_pair_to_latency[destination, source] = latency
+    # Fix impossible RTT measurements
+    for (source, destination), latency in ie_pair_to_latency.items():
+        node_source = network.nodes[source]
+        node_destination = network.nodes[destination]
+        gcl = utility.get_GCL(
+            (node_source['lat'], node_source['long']),
+            (node_destination['lat'], node_destination['long'])
+        )
+        if latency < gcl:
+            ie_pair_to_latency[source, destination] = gcl
+    # Estimate missing measurements (since we know the true topology)
+    for source, destination in network.edges:
+        if (source, destination) not in ie_pair_to_latency:
+            ie_pair_to_latency[source, destination] = nx.shortest_path_length(network, source, destination, 'gcl')
+
     ie_pair_to_traffic = collections.defaultdict(float)
-    with open(path_input, 'r') as f:
+    with open(path_input_throughput, 'r') as f:
         reader = csv.DictReader(f)
         for row in reader:
             if row['source_id'] not in probe_to_cluster_representative or row['target_id'] not in probe_to_cluster_representative:
@@ -326,9 +355,14 @@ def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representat
 
     ie_pair_to_traffic = complete_traffic_matrix(ie_pair_to_traffic)
 
+    network_copy = network.copy()
+    network_copy.remove_edges_from(list(network_copy.edges))
+    for (source, destination), latency in ie_pair_to_latency.items():
+        network_copy.add_edge(source, destination, rtt=latency)
+
     ie_pairs = list(sorted(ie_pair_to_traffic.keys()))
     csv_to_json.write_graph(
-        network,
+        network_copy,
         [ie_pair_to_route[ie_pair] for ie_pair in ie_pairs],
         [ie_pair_to_traffic[ie_pair] for ie_pair in ie_pairs],
         path_output
@@ -349,7 +383,7 @@ def main():
     # time_initial = datetime.datetime(2026, 4, 7, 6, 0, 0, 0, zoneinfo.ZoneInfo('America/New_York'))
     # time_final = datetime.datetime(2026, 4, 8, 18, 0, 0, 0, zoneinfo.ZoneInfo('America/New_York'))
     time_step = datetime.timedelta(seconds=3600.)
-    clustering_distance = 500000.
+    clustering_distance = None
 
     for directory in [
         directory_output_search_throughput,
@@ -363,7 +397,7 @@ def main():
     blobs_throughput = []
     blobs_latency = []
     time = time_initial
-    while time + time_step <= time_final:
+    while time <= time_final:
         path_output_search_throughput = directory_output_search_throughput / (time.strftime('%Y%m%d%H%M%S.json'))
         path_output_search_latency = directory_output_search_latency / (time.strftime('%Y%m%d%H%M%S.json'))
 
@@ -415,9 +449,10 @@ def main():
 
     time = time_initial
     while time <= time_final:
-        path_grouped_file = time.strftime('%Y%m%d%H%M%S.csv')
-        path_input = directory_output_group_throughputs / path_grouped_file
-        write_json(network, ie_pair_to_route, probe_to_cluster_representative, path_input, path_output_json / f'{path_input.stem}.json')
+        path_grouped_file = pathlib.PurePath(time.strftime('%Y%m%d%H%M%S.csv'))
+        path_input_latency = directory_output_group_latencies / path_grouped_file
+        path_input_throughput = directory_output_group_throughputs / path_grouped_file
+        write_json(network, ie_pair_to_route, probe_to_cluster_representative, path_input_latency, path_input_throughput, path_output_json / f'{path_grouped_file.stem}.json')
 
         time = time + time_step
 
