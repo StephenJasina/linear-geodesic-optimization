@@ -260,7 +260,11 @@ def main():
     for argument_dict in arguments:
         for parameter_name in parameter_name_filenames:
             if argument_dict[parameter_name] is not None:
-                argument_dict[parameter_name] = directory_data / argument_dict[parameter_name]
+                if isinstance(argument_dict[parameter_name], list):
+                    to_add = pathlib.PurePath(*argument_dict[parameter_name])
+                else:
+                    to_add = argument_dict[parameter_name]
+                argument_dict[parameter_name] = directory_data / to_add
 
     if not arguments or 'dry_run' in settings and settings['dry_run']:
         # Exit before producing output
