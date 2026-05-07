@@ -312,7 +312,7 @@ def complete_traffic_matrix(ie_pair_to_traffic):
 
 def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representative, path_input_latency, path_input_throughput, path_output):
     """
-    Convert a CSV file of traffic into a JSON output.
+    Convert CSV files of traffic and delay into a JSON output.
     """
     ie_pair_to_latency = {}
     with open(path_input_latency, 'r') as f:
@@ -336,6 +336,9 @@ def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representat
             (node_source['lat'], node_source['long']),
             (node_destination['lat'], node_destination['long'])
         )
+        # TODO: Since we know the true topology, we could do this in a
+        # smarter way (sum GCLs along the shortest paths, if a path
+        # exists)
         if latency < gcl:
             ie_pair_to_latency[source, destination] = gcl
     # Estimate missing measurements (since we know the true topology)
@@ -362,10 +365,11 @@ def write_json(network: nx.Graph, ie_pair_to_route, probe_to_cluster_representat
 
     ie_pairs = list(sorted(ie_pair_to_traffic.keys()))
     csv_to_json.write_graph(
-        network_copy,
-        [ie_pair_to_route[ie_pair] for ie_pair in ie_pairs],
-        [ie_pair_to_traffic[ie_pair] for ie_pair in ie_pairs],
-        path_output
+        network,
+        path_output,
+        delays=ie_pair_to_latency,
+        routes=[ie_pair_to_route[ie_pair] for ie_pair in ie_pairs],
+        traffic=[ie_pair_to_traffic[ie_pair] for ie_pair in ie_pairs],
     )
 
 def main():
@@ -379,9 +383,6 @@ def main():
     path_links = pathlib.PurePath('links.csv')
     time_initial = datetime.datetime(2026, 4, 1, 0, 0, 0, 0, zoneinfo.ZoneInfo('America/New_York'))
     time_final = datetime.datetime(2026, 4, 15, 0, 0, 0, 0, zoneinfo.ZoneInfo('America/New_York'))
-    # An event happens in this range
-    # time_initial = datetime.datetime(2026, 4, 7, 6, 0, 0, 0, zoneinfo.ZoneInfo('America/New_York'))
-    # time_final = datetime.datetime(2026, 4, 8, 18, 0, 0, 0, zoneinfo.ZoneInfo('America/New_York'))
     time_step = datetime.timedelta(seconds=3600.)
     clustering_distance = None
 

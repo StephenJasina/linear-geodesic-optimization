@@ -184,7 +184,8 @@ def fix_routes(graph: nx.Graph, routes, traffic, edge_distance_label='latency'):
 def compute_ricci_curvature_from_traffic(
     graph: nx.Graph, routes, traffic,
     edge_distance_label='latency',
-    use_optimal_transport=False
+    use_optimal_transport=False,
+    pairs=None
 ):
     # Throughout, have some special variables for if we want to use
     # optimal transport to compute the data flow. This places masses on
@@ -202,11 +203,13 @@ def compute_ricci_curvature_from_traffic(
     routes, traffic = fix_routes(graph, routes, traffic, edge_distance_label)
 
     ricci_curvatures = {}
-    edges = [(u, v) for u, v in graph.edges]
-    if not isinstance(graph, nx.DiGraph):
-        edges += [(v, u) for u, v in graph.edges]
-    for u, v in edges:
-        d_u_v = graph.edges[u, v][edge_distance_label] if edge_distance_label is not None else 1.
+    if pairs is None:
+        pairs = [(u, v) for u, v in graph.edges]
+        if not isinstance(graph, nx.DiGraph):
+            pairs += [(v, u) for u, v in graph.edges]
+    shortest_path_lengths = dict(nx.all_pairs_dijkstra_path_length(graph, weight=edge_distance_label))
+    for u, v in pairs:
+        d_u_v = shortest_path_lengths[u][v] if v in shortest_path_lengths[u] else np.inf
 
         # Some running totals used to compute transportation costs. In
         # most cases, we should only expect to use the s_t variant, but

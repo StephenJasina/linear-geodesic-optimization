@@ -34,9 +34,9 @@ if __name__ == '__main__':
 
     if graphml_filename is not None:
         graph = nx.graphml.read_graphml(graphml_filename)
-        # graph = input_network.cluster_graph(graph, 500000)
-        # graph = input_network.compute_ricci_curvatures(graph)
-        # graph = input_network.compute_curvatures_from_throughputs(graph)
+        if clustering_distance is not None:
+            graph = input_network.cluster_graph(graph, 500000)
+            graph = input_network.compute_ricci_curvatures(graph)
     elif json_filename is not None:
         # TODO: Deal with occlusion
         graph = input_network.get_graph_from_json(

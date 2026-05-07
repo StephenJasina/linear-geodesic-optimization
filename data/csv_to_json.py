@@ -6,17 +6,47 @@ import json
 import os
 import pathlib
 import sys
+import typing
 
 import networkx as nx
 import numpy as np
 
 sys.path.append(os.path.join('..', 'src'))
-from linear_geodesic_optimization.data import input_network, tomography
+from linear_geodesic_optimization.data import input_network, tomography, utility
 
 
-def write_graph(graph: nx.Graph, routes, traffic, path: pathlib.PurePath):
+def write_graph(
+    graph: nx.Graph, path: pathlib.PurePath,
+    delays: typing.Dict[typing.Tuple[str, str], float]={},
+    routes: typing.List[typing.List[str]]=[],
+    traffic: typing.List[float]=[]
+):
     index_to_node = list(graph.nodes)
     node_to_index = {node: index for index, node in enumerate(index_to_node)}
+
+    # Assumed delays are symmetric, which is reasonable for RTT
+    # measurements
+    delays_symmetrized = {}
+    # TODO: Should we guarantee that the edges in the graph have
+    # associated latencies? If not, remove the next few lines.
+    # Somewhat expensive operations (makes copies of the delays and the
+    # graph), but should be okay since this is not run frequently
+    delays = delays.copy()
+    for source, destination in graph.to_directed().edges:
+        if (source, destination) in delays or (destination, source) in delays:
+            continue
+        node_source = graph.nodes[source]
+        node_destination = graph.nodes[destination]
+        delays[source, destination] = utility.get_GCL(
+            (node_source['lat'], node_source['long']),
+            (node_destination['lat'], node_destination['long'])
+        )
+    # Add in the actual measured delays
+    for (source, destination), delay in delays.items():
+        if (destination, source) in delays:
+            delay = min(delay, delays[destination, source])
+        delays_symmetrized[source, destination] = delay
+        delays_symmetrized[destination, source] = delay
 
     data = {
         'nodes': [
@@ -31,17 +61,23 @@ def write_graph(graph: nx.Graph, routes, traffic, path: pathlib.PurePath):
             {
                 'source_id': source,
                 'target_id': destination,
-                'rtt': data['rtt'],
             }
             for source, destination, data in graph.edges(data=True)
         ] + ([] if isinstance(graph, nx.DiGraph) else [
             {
                 'source_id': destination,
                 'target_id': source,
-                'rtt': data['rtt'],
             }
             for source, destination, data in graph.edges(data=True)
         ]),
+        'delays': [
+            {
+                'source_id': source,
+                'target_id': destination,
+                'rtt': delay,
+            }
+            for (source, destination), delay in sorted(delays_symmetrized.items())
+        ],
         'traffic': [
             {
                 'route': route,
@@ -88,4 +124,4 @@ if __name__ == '__main__':
     routes = tomography.get_shortest_routes(graph, 'rtt')
     traffic = tomography.compute_traffic(graph, routes, 'throughput')
 
-    write_graph(graph, routes, traffic, output_filename)
+    write_graph(graph, output_filename, routes=routes, traffic=traffic)

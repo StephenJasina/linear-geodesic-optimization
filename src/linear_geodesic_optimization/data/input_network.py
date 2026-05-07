@@ -201,14 +201,27 @@ def compute_ricci_curvatures(
     graph: nx.Graph,
     alpha: float=0.,
     weight_label: typing.Optional[str]=None,
-    routes=None, traffic=None, force_optimal_transport=False
+    routes=None, traffic=None, links=None,
+    force_optimal_transport=False
 ):
+    pairs = None
+    if links is not None:
+        pairs = [
+            (link['source_id'], link['target_id'])
+            for link in links
+        ]
+
     ricci_curvatures = {}
     if routes is not None and traffic is not None:
         ricci_curvatures = curvature.compute_ricci_curvature_from_traffic(
-            graph, routes, traffic, 'rtt', force_optimal_transport
+            graph, routes, traffic, 'rtt', force_optimal_transport, pairs
         )
+        if links is not None:
+            graph.clear_edges()
+            for link in links:
+                graph.add_edge(link['source_id'], link['target_id'])
     else:
+        # TODO: Do we want to allow the pairs parameter here?
         ricci_curvatures = curvature.compute_ricci_curvature(
             graph, alpha=alpha, edge_weight_label=weight_label, use_augmented_graph=False
         )
@@ -231,9 +244,25 @@ def get_graph(
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
     directed=False, symmetrize=False,
+    delays=None,
     routes=None, traffic=None, force_optimal_transport=False
 ):
-    graph = get_base_graph(probes, links, directed, symmetrize)
+    if delays is None:
+        graph = get_base_graph(probes, links, directed, symmetrize)
+    else:
+        # Use delays to define edges. Later on, add back link attributes
+        graph = get_base_graph(
+            probes,
+            [
+                {
+                    'source_id': source_id,
+                    'target_id': target_id,
+                    'rtt': delay,
+                }
+                for (source_id, target_id), delay in delays.items()
+            ],
+            directed, symmetrize
+        )
     if should_include_latencies:
         latencies = [
             ((source_id, target_id), data['rtt'])
@@ -247,8 +276,23 @@ def get_graph(
         graph = cluster_graph(graph, clustering_distance)
         if routes is not None:
             routes = clustering.fix_routes(graph, routes)
+
+            # TODO: Move this to a function
+            node_to_cluster_representative = {
+                element: node
+                for node, data in graph.nodes(data=True)
+                for element in (data['elements'] if 'elements' in data else [node])
+            }
+            for link in links:
+                link['source_id'] = node_to_cluster_representative[link['source_id']]
+                link['target_id'] = node_to_cluster_representative[link['target_id']]
+            links = [
+                link
+                for link in links
+                if link['source_id'] != link['target_id']
+            ]
     if should_compute_curvatures:
-        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic, force_optimal_transport)
+        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic, links, force_optimal_transport)
     if should_include_latencies:
         return graph, latencies
     else:
@@ -331,6 +375,11 @@ def get_graph_from_json(
             (link['source_id'], link['target_id']): link
             for link in blob['links']
         }
+        delays = None
+        if 'delays' in blob:
+            delays = {}
+            for delay_dict in blob['delays']:
+                delays[delay_dict['source_id'], delay_dict['target_id']] = delay_dict['rtt']
         routes = None
         traffic = None
         if 'traffic' in blob:
@@ -347,7 +396,7 @@ def get_graph_from_json(
                 traffic.append(volume)
 
     graph = get_graph(
-        probes, links.values(),
+        probes, list(links.values()),
         epsilon=epsilon,
         clustering_distance=clustering_distance,
         should_remove_tivs=should_remove_tivs,
@@ -357,6 +406,7 @@ def get_graph_from_json(
         ricci_curvature_weight_label=ricci_curvature_weight_label,
         directed=directed,
         symmetrize=symmetrize,
+        delays=delays,
         routes=routes,
         traffic=traffic,
         force_optimal_transport=force_optimal_transport,
