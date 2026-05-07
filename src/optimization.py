@@ -104,9 +104,6 @@ def optimize(
     os.makedirs(directory_output)
 
     parameters = {
-        'filename_probes': str(filename_probes) if filename_probes is not None else None,
-        'filename_links': str(filename_links) if filename_links is not None else None,
-        'filename_graphml': str(filename_graphml) if filename_graphml is not None else None,
         'epsilon': float(latency_threshold) if latency_threshold is not None else None,
         'clustering_distance': float(clustering_distance) if clustering_distance is not None else None,
         'ricci_curvature_alpha': float(ricci_curvature_alpha),
