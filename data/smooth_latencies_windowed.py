@@ -11,12 +11,12 @@ sys.path.append(str(pathlib.PurePath('..', 'src')))
 from linear_geodesic_optimization.data import utility
 
 
-data_directory = pathlib.PurePath('esnet')
+data_directory = pathlib.PurePath('esnet', 'traffic', 'csv')
 probes_file_path = data_directory / 'probes.csv'
 links_input_directory = data_directory / 'links'
-threshold = 10
-window = 2.
-links_output_directory = data_directory / 'links_windowed' / f'{threshold}'
+threshold = 4
+window = 1.
+links_output_directory = data_directory / f'links_windowed_{threshold}'
 
 def smooth_windowed(zs, window_center, window_lower, window_upper):
     """
@@ -103,6 +103,11 @@ for links_input_file_path in links_input_file_paths:
             link_dict[edge] = row
         links.append(link_dict)
 edges = list(sorted(edges))
+edges = [
+    edge
+    for edge in edges
+    if edge[0] in probes_dict and edge[1] in probes_dict
+]
 # For debugging purposes, make sure that source_id and target_id are the
 # first two columns
 headers.remove('source_id')
@@ -138,5 +143,5 @@ for latencies_output_file_path, link_dict in zip(latencies_output_file_paths, li
     with open(latencies_output_file_path, 'w') as f:
         writer = csv.DictWriter(f, headers)
         writer.writeheader()
-        for edge in edges:
+        for edge in link_dict.keys():
             writer.writerow(link_dict[edge])
