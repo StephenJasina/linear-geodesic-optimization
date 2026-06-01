@@ -278,6 +278,11 @@ class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
         for vertex in excluded_vertices:
             self._topology.remove_vertex(vertex)
 
+        remaining_vertices = list(self._topology.vertices())
+        for vertex in remaining_vertices:
+            if vertex.is_isolated():
+                self._topology.remove_vertex(vertex)
+
         mapping = self._topology.reindex()
         self._coordinates = self._coordinates[mapping, :]
         self._parameters = self._parameters[mapping]
