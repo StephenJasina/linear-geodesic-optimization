@@ -1,0 +1,40 @@
+{
+	"arguments": {
+		"filename_probes": [null],
+		"filename_links": [null],
+		"filename_graphml": [
+			"graph10.graphml",
+			"graph12.graphml",
+			"graph14.graphml",
+			"graph16.graphml",
+			"graph18.graphml",
+			"graph20.graphml",
+			"graph22.graphml"
+		],
+		"filename_json": [null],
+		"latency_threshold": [null],
+		"clustering_distance": [null],
+		"ricci_curvature_alpha": [null],
+		"lambda_curvature": [1.0],
+		"lambda_smooth": [0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01],
+		"initial_radius": [20.0],
+		"sides": [50],
+		"mesh_scale": [1.0],
+		"coordinates_scale": [0.8],
+		"network_trim_radius": [null],
+		"maxiter": [2000]
+	},
+	"groups": [
+		["filename_graphml"],
+		["lambda_smooth"]
+	],
+	"settings": {
+		"directory_data": ["..", ".."],
+		"directory_output": ["ipv4", "graph_US", "parameter_testing", "lambda_smooth"],
+		"output_format": [
+			"filename_graphml",
+			"lambda_smooth"
+		],
+		"initialization": "sphere"
+	}
+}
