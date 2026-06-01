@@ -106,7 +106,7 @@ def optimize(
     parameters = {
         'epsilon': float(latency_threshold) if latency_threshold is not None else None,
         'clustering_distance': float(clustering_distance) if clustering_distance is not None else None,
-        'ricci_curvature_alpha': float(ricci_curvature_alpha),
+        'ricci_curvature_alpha': float(ricci_curvature_alpha) if ricci_curvature_alpha is not None else None,
         'lambda_curvature': float(lambda_curvature),
         'lambda_smooth': float(lambda_smooth),
         'initial_radius': float(initial_radius),
