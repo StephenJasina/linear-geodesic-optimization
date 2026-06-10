@@ -308,6 +308,9 @@ def collate_outputs(
             )
             for vertex_coordinate in mesh.get_coordinates()[:, :2]
         ]))
+        # TODO: Make this more intelligent. In particular, ensure that
+        # the bubble around solitary edges is wide enough so that the
+        # hull does not become disconnected
         hull = np.where(distances_to_networks[-1] / mesh_scale <= bubble_size)[0]
         hulls.append(hull)
 
@@ -353,6 +356,8 @@ def collate_outputs(
             (route, get_tableau_color(index))
             for index, (_, route) in enumerate(high_traffic_route_pairs)
         ]
+        # TODO: revert
+        geodesic_label_color_pairs = []
     geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
@@ -495,7 +500,7 @@ def main():
         [argument_dict['directory_output'] for argument_dict in arguments[(1 if initialization == 'first' else 0):]],
         pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*settings['directory_output']) / 'animation.json',
         geodesic_label_color_pairs=None,  # TODO: Add custom functionality
-        bubble_size=0.05,
+        bubble_size=0.03,
     )
 
 if __name__ == '__main__':
