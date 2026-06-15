@@ -226,21 +226,22 @@ def main():
             raise TypeError('Output format must be a list of (strings or lists of strings)')
     # Generate the output directories from the given format. Check if
     # they already exist
-    for index, argument_dict in enumerate(arguments):
-        argument_dict['index'] = index
-        # Also prepend ../outputs (which is the path of the outputs
-        # directory relative to the script)
-        directory_output = pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*(settings['directory_output'] + [
-            argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
-            '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
-            for output_format_part in output_format
-        ]))
-        if os.path.exists(directory_output):
-            raise ValueError(f'{str(directory_output)} already exists')
-        argument_dict['directory_output'] = directory_output
-    # Check whether the output directories overlap with themselves
-    # TODO: This can probably be improved by not constructing a set
-    if len(set(str(argument_dict['directory_output']) for argument_dict in arguments)) != len(arguments):
+    for argument_batch in arguments:
+        for index, argument_dict in enumerate(argument_batch):
+            argument_dict['index'] = index
+            # Also prepend ../outputs (which is the path of the outputs
+            # directory relative to the script)
+            directory_output = pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*(settings['directory_output'] + [
+                argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
+                '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
+                for output_format_part in output_format
+            ]))
+            if os.path.exists(directory_output):
+                raise ValueError(f'{str(directory_output)} already exists')
+            argument_dict['directory_output'] = directory_output
+        # Check whether the output directories overlap with themselves
+        # TODO: This can probably be improved by not constructing a set
+    if len(set(str(argument_dict['directory_output']) for argument_batch in arguments for argument_dict in argument_batch)) != sum(len(argument_batch) for argument_batch in arguments):
         raise ValueError('Some output directories are duplicated')
 
     # Optionally prepend a directory to where the input files are
@@ -257,14 +258,15 @@ def main():
         config_file.parent
     )
     directory_data = directory_data_parent / (pathlib.PurePath(*settings['directory_data']) if 'directory_data' in settings else '')
-    for argument_dict in arguments:
-        for parameter_name in parameter_name_filenames:
-            if argument_dict[parameter_name] is not None:
-                if isinstance(argument_dict[parameter_name], list):
-                    to_add = pathlib.PurePath(*argument_dict[parameter_name])
-                else:
-                    to_add = argument_dict[parameter_name]
-                argument_dict[parameter_name] = directory_data / to_add
+    for argument_batch in arguments:
+        for argument_dict in argument_batch:
+            for parameter_name in parameter_name_filenames:
+                if argument_dict[parameter_name] is not None:
+                    if isinstance(argument_dict[parameter_name], list):
+                        to_add = pathlib.PurePath(*argument_dict[parameter_name])
+                    else:
+                        to_add = argument_dict[parameter_name]
+                    argument_dict[parameter_name] = directory_data / to_add
 
     if not arguments or 'dry_run' in settings and settings['dry_run']:
         # Exit before producing output
@@ -278,23 +280,46 @@ def main():
         initialization = 'sphere'
     n_cores = settings['n_cores'] if 'n_cores' in settings else None
     if initialization == 'sphere':
-        for argument_dict in arguments:
-            argument_dict['initialization_file_path'] = None
-        batch.run_multiprocessed(optimize, arguments, n_cores)
+        for argument_batch in arguments:
+            for argument_dict in argument_batch:
+                argument_dict['initialization_file_path'] = None
+        batch.run_multiprocessed(optimize, itertools.chain(*arguments), n_cores)
     elif initialization == 'sequential':
-        # TODO: This behaves weirdly if the arguments don't form a
-        # single sequence (e.g., optimizing over a space of many input
-        # files and hyperparameter selections simultaneously)
-        arguments[0]['initialization_file_path'] = None
-        for argument_dict_previous, argument_dict in itertools.pairwise(arguments):
-            argument_dict['initialization_file_path'] = argument_dict_previous['directory_output'] / 'output.json'
-        batch.run_sequential(optimize, arguments)
+        for argument_batch in arguments:
+            argument_batch[0]['initialization_file_path'] = None
+            for argument_dict_previous, argument_dict in itertools.pairwise(argument_batch):
+                argument_dict['initialization_file_path'] = argument_dict_previous['directory_output'] / 'output.json'
+        batch.run_multiprocessed(
+            batch.run_sequential,
+            [
+                {
+                    'f': optimize,
+                    'arguments': argument_batch,
+                }
+                for argument_batch in arguments
+            ],
+            n_cores=n_cores
+        )
     elif initialization == 'first':
-        optimize(**arguments[0])
-        initializaiton_file_path = arguments[0]['directory_output'] / 'output.json'
-        for argument_dict in arguments[1:]:
-            argument_dict['initialization_file_path'] = initializaiton_file_path
-        batch.run_multiprocessed(optimize, arguments[1:], n_cores)
+        for argument_batch in arguments:
+            initializaiton_file_path = argument_batch[0]['directory_output'] / 'output.json'
+            for argument_dict in argument_batch[1:]:
+                argument_dict['initialization_file_path'] = initializaiton_file_path
+        batch.run_multiprocessed(
+            optimize,
+            [
+                argument_batch[0]
+                for argument_batch in arguments
+            ]
+        )
+        batch.run_multiprocessed(
+            optimize,
+            itertools.chain(*[
+                argument_batch[1:]
+                for argument_batch in arguments
+            ]),
+            n_cores
+        )
     else:
         raise ValueError(f'Invalid intiaization strategy "{initialization}"')
 

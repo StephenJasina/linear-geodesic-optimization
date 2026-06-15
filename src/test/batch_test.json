@@ -16,17 +16,18 @@
 		"clustering_distance": [null],
 		"ricci_curvature_alpha": [0],
 		"lambda_curvature": [1.0],
-		"lambda_smooth": [0.002],
-		"initial_radius": [20.0],
+		"lambda_smooth": [0.0002, 0.0005, 0.001, 0.002],
+		"initial_radius": [80.0],
 		"sides": [20],
-		"mesh_scale": [1.0],
+		"mesh_scale": [0.25],
 		"coordinates_scale": [0.8],
 		"network_trim_radius": [null],
-		"maxiter": [0],
+		"maxiter": [5],
 		"initialization_file_path": [null]
 	},
 	"groups": [
-		["filename_json"]
+		["filename_json"],
+		["lambda_smooth"]
 	],
 	"settings": {
 		"dry_run": false,
@@ -38,6 +39,7 @@
 			"filename_json",
 			["lambda_smooth", "sides", "sides"]
 		],
-		"initialization": "first"
+		"initialization": "sequential",
+		"order_by": "filename_json"
 	}
 }

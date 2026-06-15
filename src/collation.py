@@ -479,28 +479,36 @@ def main():
         output_format = ['filename_json']
     # Generate the output directories from the given format. Check if
     # they exist
-    for index, argument_dict in enumerate(arguments):
-        argument_dict['index'] = index
-        # Also prepend ../outputs (which is the path of the outputs
-        # directory relative to the script)
-        directory_output = pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*(settings['directory_output'] + [
-            argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
-            '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
-            for output_format_part in output_format
-        ]))
-        if not os.path.exists(directory_output):
-            raise ValueError(f'{str(directory_output)} does not exist')
-        argument_dict['directory_output'] = directory_output
+    for argument_batch in arguments:
+        for index, argument_dict in enumerate(argument_batch):
+            argument_dict['index'] = index
+            # Also prepend ../outputs (which is the path of the outputs
+            # directory relative to the script)
+            directory_output = pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*(settings['directory_output'] + [
+                argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
+                '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
+                for output_format_part in output_format
+            ]))
+            if not os.path.exists(directory_output):
+                raise ValueError(f'{str(directory_output)} does not exist')
+            argument_dict['directory_output'] = directory_output
 
     if 'initialization' in settings:
         initialization = settings['initialization']
     else:
         initialization = 'sphere'
-    collate_outputs(
-        [argument_dict['directory_output'] for argument_dict in arguments[(1 if initialization == 'first' else 0):]],
-        pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*settings['directory_output']) / 'animation.json',
-        geodesic_label_color_pairs=None,  # TODO: Add custom functionality
-        bubble_size=0.03,
+
+    batch.run_multiprocessed(
+        collate_outputs,
+        [
+            {
+                'directories_outputs': [argument_dict['directory_output'] for argument_dict in argument_batch[(1 if initialization == 'first' else 0):]],
+                'path_output_collated': argument_batch[0]['directory_output'] / 'animation.json',  # TODO: Smarter location of outputs
+                'geodesic_label_color_pairs': None,  # TODO: Add custom functionality
+                'bubble_size': 0.03,
+            }
+            for argument_batch in arguments
+        ]
     )
 
 if __name__ == '__main__':
