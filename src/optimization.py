@@ -226,8 +226,9 @@ def main():
             raise TypeError('Output format must be a list of (strings or lists of strings)')
     # Generate the output directories from the given format. Check if
     # they already exist
+    index = 0
     for argument_batch in arguments:
-        for index, argument_dict in enumerate(argument_batch):
+        for argument_dict in argument_batch:
             argument_dict['index'] = index
             # Also prepend ../outputs (which is the path of the outputs
             # directory relative to the script)
@@ -239,6 +240,7 @@ def main():
             if os.path.exists(directory_output):
                 raise ValueError(f'{str(directory_output)} already exists')
             argument_dict['directory_output'] = directory_output
+            index += 1
         # Check whether the output directories overlap with themselves
         # TODO: This can probably be improved by not constructing a set
     if len(set(str(argument_dict['directory_output']) for argument_batch in arguments for argument_dict in argument_batch)) != sum(len(argument_batch) for argument_batch in arguments):
