@@ -1,0 +1,36 @@
+{
+	"arguments": {
+		"filename_probes": [null],
+		"filename_links": [null],
+		"filename_graphml": [null],
+		"filename_json": [
+			"20260407060000.json",
+			"20260407060000.json",
+			"20260408000000.json",
+			"20260408180000.json"
+		],
+		"latency_threshold": [4],
+		"clustering_distance": [500000],
+		"ricci_curvature_alpha": [0],
+		"lambda_curvature": [1.0],
+		"lambda_smooth": [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05],
+		"initial_radius": [80.0],
+		"sides": [50],
+		"mesh_scale": [0.25],
+		"coordinates_scale": [0.8],
+		"network_trim_radius": [null],
+		"maxiter": [null]
+	},
+	"groups": [
+		["filename_json"]
+	],
+	"settings": {
+		"directory_data": ["..", "json"],
+		"directory_output": ["esnet", "routing_with_volumes", "test_lambda"],
+		"output_format": [
+			["index", "filename_json"]
+		],
+		"initialization": "first",
+		"order_by": "filename_json"
+	}
+}
