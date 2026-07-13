@@ -1,5 +1,4 @@
 import argparse
-import itertools
 import json
 import os
 import pathlib
@@ -11,6 +10,7 @@ import numpy as np
 import scipy
 
 import linear_geodesic_optimization.batch as batch
+import linear_geodesic_optimization.driver as driver
 from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.optimization import optimization
@@ -18,26 +18,6 @@ from linear_geodesic_optimization.optimization import optimization
 
 # Error on things like division by 0
 warnings.simplefilter('error')
-
-# List of parameters that correspond to extant files. This is used to
-# help generate output directory names (by removing extensions when they
-# would be unneeded) and determining actual locations of input files (by
-# prepending ../data)
-parameter_name_filenames = [
-    'filename_probes',
-    'filename_links',
-    'filename_graphml',
-    'filename_json',
-]
-
-def argument_to_string(
-    arguments,
-    parameter_name
-):
-    if parameter_name in parameter_name_filenames:
-        return pathlib.PurePath(arguments[parameter_name]).stem
-    else:
-        return str(arguments[parameter_name])
 
 def optimize(
     *,  # All parameters are keyword only
@@ -117,11 +97,12 @@ def optimize(
         'network_trim_radius': float(network_trim_radius) if network_trim_radius is not None else None,
     }
 
-    with open(directory_output / 'parameters.json', 'w') as file_parameters:
-        json.dump(
-            parameters, file_parameters,
-            ensure_ascii=False, indent=4, sort_keys=True
-        )
+    # TODO: Check whether this is assumed to exist anywhere
+    # with open(directory_output / 'parameters.json', 'w') as file_parameters:
+    #     json.dump(
+    #         parameters, file_parameters,
+    #         ensure_ascii=False, indent=4, sort_keys=True
+    #     )
 
     # Initialize mesh
     if initialization_file_path is None:
@@ -181,94 +162,14 @@ def main():
     config_file = pathlib.PurePath(args.config_file)
 
     # Read JSON config file and generate optimization parameters from it
-    defaults = {
-        'filename_probes': None,
-        'filename_links': None,
-        'filename_graphml': None,
-        'filename_json': None,
-        'latency_threshold': None,
-        'clustering_distance': None,
-        'ricci_curvature_alpha': 0.,
-        'lambda_curvature': 1.,
-        'lambda_smooth': 0.,
-        'initial_radius': 20.,
-        'sides': 50,
-        'mesh_scale': 1.,
-        'coordinates_scale': 0.8,
-        'network_trim_radius': None,
-        'maxiter': None,
-        'initialization_file_path': None,
-        'index': None # Additional unique ID
-    }
-    with open(config_file, 'r') as f:
-        arguments, settings = batch.parse_json(f, defaults)
+    arguments, settings, defaults = driver.load_config(config_file)
 
-    # Determine where the outputs are going
-    if 'output_format' in settings:
-        output_format = settings['output_format']
-    else:
-        output_format = ['filename_json']
-    # Check that the output format has the right types
-    if not isinstance(output_format, list):
-        raise TypeError('Output format must be a list of (strings or lists of strings)')
-    for output_format_part in output_format:
-        if isinstance(output_format_part, str):
-            if output_format_part not in defaults:
-                raise ValueError(f'{output_format_part} not a valid part of output format')
-        elif isinstance(output_format_part, list):
-            for output_format_part_part in output_format_part:
-                if isinstance(output_format_part_part, str):
-                    if output_format_part_part not in defaults:
-                        raise ValueError(f'{output_format_part_part} not a valid part of output format')
-                else:
-                    raise TypeError('Output format must be a list of (strings or lists of strings)')
-        else:
-            raise TypeError('Output format must be a list of (strings or lists of strings)')
-    # Generate the output directories from the given format. Check if
-    # they already exist
-    index = 0
-    for argument_batch in arguments:
-        for argument_dict in argument_batch:
-            argument_dict['index'] = index
-            # Also prepend ../outputs (which is the path of the outputs
-            # directory relative to the script)
-            directory_output = pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*(settings['directory_output'] + [
-                argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
-                '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
-                for output_format_part in output_format
-            ]))
-            if os.path.exists(directory_output):
-                raise ValueError(f'{str(directory_output)} already exists')
-            argument_dict['directory_output'] = directory_output
-            index += 1
-        # Check whether the output directories overlap with themselves
-        # TODO: This can probably be improved by not constructing a set
-    if len(set(str(argument_dict['directory_output']) for argument_batch in arguments for argument_dict in argument_batch)) != sum(len(argument_batch) for argument_batch in arguments):
-        raise ValueError('Some output directories are duplicated')
-
-    # Optionally prepend a directory to where the input files are
-    # stored. This is to allow different choices of where the paths are
-    # relative to (the main data directory, the script's current
-    # directory, or the config file's directory (default))
-    directory_data_type = (
-        'config' if 'directory_data_type' not in settings else
-        settings['directory_data_type']
-    )
-    directory_data_parent = (
-        pathlib.PurePath('..', 'data') if directory_data_type == 'data' else
-        pathlib.PurePath() if directory_data_type == 'script' else
-        config_file.parent
-    )
-    directory_data = directory_data_parent / (pathlib.PurePath(*settings['directory_data']) if 'directory_data' in settings else '')
-    for argument_batch in arguments:
-        for argument_dict in argument_batch:
-            for parameter_name in parameter_name_filenames:
-                if argument_dict[parameter_name] is not None:
-                    if isinstance(argument_dict[parameter_name], list):
-                        to_add = pathlib.PurePath(*argument_dict[parameter_name])
-                    else:
-                        to_add = argument_dict[parameter_name]
-                    argument_dict[parameter_name] = directory_data / to_add
+    # Determine where the outputs are going. Check that the output
+    # format has the right types, and that the output directories don't
+    # already exist or collide with one another.
+    output_format = driver.get_output_format(settings, defaults, validate=True)
+    driver.assign_output_directories(arguments, settings, output_format, existence_check='must_not_exist')
+    driver.check_no_duplicate_output_directories(arguments)
 
     if not arguments or 'dry_run' in settings and settings['dry_run']:
         # Exit before producing output
@@ -276,54 +177,10 @@ def main():
 
     # Determine the initialization strategy, and then use that to run
     # the optimization, using multiprocessing where possible.
-    if 'initialization' in settings:
-        initialization = settings['initialization']
-    else:
-        initialization = 'sphere'
+    initialization = driver.get_initialization(settings)
     n_cores = settings['n_cores'] if 'n_cores' in settings else None
-    if initialization == 'sphere':
-        for argument_batch in arguments:
-            for argument_dict in argument_batch:
-                argument_dict['initialization_file_path'] = None
-        batch.run_multiprocessed(optimize, itertools.chain(*arguments), n_cores)
-    elif initialization == 'sequential':
-        for argument_batch in arguments:
-            argument_batch[0]['initialization_file_path'] = None
-            for argument_dict_previous, argument_dict in itertools.pairwise(argument_batch):
-                argument_dict['initialization_file_path'] = argument_dict_previous['directory_output'] / 'output.json'
-        batch.run_multiprocessed(
-            batch.run_sequential,
-            [
-                {
-                    'f': optimize,
-                    'arguments': argument_batch,
-                }
-                for argument_batch in arguments
-            ],
-            n_cores=n_cores
-        )
-    elif initialization == 'first':
-        for argument_batch in arguments:
-            initializaiton_file_path = argument_batch[0]['directory_output'] / 'output.json'
-            for argument_dict in argument_batch[1:]:
-                argument_dict['initialization_file_path'] = initializaiton_file_path
-        batch.run_multiprocessed(
-            optimize,
-            [
-                argument_batch[0]
-                for argument_batch in arguments
-            ]
-        )
-        batch.run_multiprocessed(
-            optimize,
-            itertools.chain(*[
-                argument_batch[1:]
-                for argument_batch in arguments
-            ]),
-            n_cores
-        )
-    else:
-        raise ValueError(f'Invalid intiaization strategy "{initialization}"')
+    driver.assign_initialization_file_paths(arguments, initialization)
+    driver.dispatch_optimization_batches(initialization, arguments, optimize, n_cores)
 
 if __name__ == '__main__':
     main()

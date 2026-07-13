@@ -10,32 +10,14 @@ import matplotlib as mpl
 import networkx as nx
 import numpy as np
 import potpourri3d as pp3d
+import pygeodesic.geodesic as pgeo
 
 import linear_geodesic_optimization.batch as batch
+import linear_geodesic_optimization.driver as driver
 from linear_geodesic_optimization.data import utility
 from linear_geodesic_optimization.graph import boundary
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 
-
-# List of parameters that correspond to extant files. This is used to
-# help generate output directory names (by removing extensions when they
-# would be unneeded) and determining actual locations of input files (by
-# prepending ../data)
-parameter_name_filenames = [
-    'filename_probes',
-    'filename_links',
-    'filename_graphml',
-    'filename_json',
-]
-
-def argument_to_string(
-    arguments,
-    parameter_name
-):
-    if parameter_name in parameter_name_filenames:
-        return pathlib.PurePath(arguments[parameter_name]).stem
-    else:
-        return str(arguments[parameter_name])
 
 tableau_colors = list(mpl.colors.TABLEAU_COLORS.values())
 def get_tableau_color(index: int):
@@ -45,7 +27,16 @@ def get_tableau_color(index: int):
     color = mpl.colors.to_rgb(tableau_colors[index % len(tableau_colors)])
     return [int(channel * 255) for channel in color]
 
-def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_routes):
+def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_edges, geodesic_routes, exact_geodesics=False):
+    """
+    If `exact_geodesics` is false (the default), geodesic paths are
+    computed with `potpourri3d`'s edge-flip solver: an approximate
+    trace through the mesh graph (via Dijkstra's algorithm) is
+    tightened into a taut geodesic. If `exact_geodesics` is true,
+    `pygeodesic`'s exact algorithm is used instead to compute the true
+    shortest path between each pair of consecutive route waypoints
+    directly on the mesh surface.
+    """
     mesh_scale = mesh.get_scale()
 
     network_indices = set()
@@ -62,36 +53,38 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
 
     coordinates = mesh.get_coordinates()
     topology = mesh.get_topology()
-    mesh_graph = nx.Graph()
-    for edge in topology.edges():
-        source, target = edge.vertices()
-        source = source.index
-        target = target.index
-        weight = np.linalg.norm(coordinates[source] - coordinates[target])
-        mesh_graph.add_edge(source, target, length=weight)
+    faces = np.array([
+        [vertex.index for vertex in face.vertices()]
+        for face in topology.faces()
+    ])
 
     network_vertex_indices_to_mesh_vertex_indices = [
         mesh.nearest_vertex(network_vertex).index
         for network_vertex in network_vertices
     ]
-    # TODO: Would using something like this be more efficient?
-    # approximate_network_edge_traces = [
-    #     nx.dijkstra_path(
-    #         mesh_graph,
-    #         network_vertex_indices_to_mesh_vertex_indices[u_index],
-    #         network_vertex_indices_to_mesh_vertex_indices[v_index],
-    #         'length'
-    #     )
-    #     for (u_index, v_index) in network_edges
-    # ]
 
-    path_solver = pp3d.EdgeFlipGeodesicSolver(
-        coordinates,
-        np.array([
-            [vertex.index for vertex in face.vertices()]
-            for face in mesh.get_topology().faces()
-        ])
-    )
+    if exact_geodesics:
+        path_solver = pgeo.PyGeodesicAlgorithmExact(coordinates, faces)
+    else:
+        mesh_graph = nx.Graph()
+        for edge in topology.edges():
+            source, target = edge.vertices()
+            source = source.index
+            target = target.index
+            weight = np.linalg.norm(coordinates[source] - coordinates[target])
+            mesh_graph.add_edge(source, target, length=weight)
+        # TODO: Would using something like this be more efficient?
+        # approximate_network_edge_traces = [
+        #     nx.dijkstra_path(
+        #         mesh_graph,
+        #         network_vertex_indices_to_mesh_vertex_indices[u_index],
+        #         network_vertex_indices_to_mesh_vertex_indices[v_index],
+        #         'length'
+        #     )
+        #     for (u_index, v_index) in network_edges
+        # ]
+
+        path_solver = pp3d.EdgeFlipGeodesicSolver(coordinates, faces)
 
     geodesics = []
     for geodesic_route in geodesic_routes:
@@ -102,23 +95,45 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
         if is_bad:
             continue
 
-        approximate_trace = []
-        for index_source, index_target in itertools.pairwise(geodesic_route):
-            approximate_trace.extend(
-                nx.dijkstra_path(
-                    mesh_graph,
+        if exact_geodesics:
+            trace_points = []
+            for index_source, index_target in itertools.pairwise(geodesic_route):
+                _, segment_points = path_solver.geodesicDistance(
                     network_vertex_indices_to_mesh_vertex_indices[index_source],
-                    network_vertex_indices_to_mesh_vertex_indices[index_target],
-                    'length'
+                    network_vertex_indices_to_mesh_vertex_indices[index_target]
                 )
-            )
-        approximate_trace = utility.remove_loops(approximate_trace)
+                # `geodesicDistance` returns points ordered from target
+                # to source, so reverse to match the route's direction
+                segment_points = segment_points[::-1]
+                if trace_points:
+                    # Avoid duplicating the shared waypoint between
+                    # consecutive segments
+                    segment_points = segment_points[1:]
+                trace_points.extend(segment_points)
 
-        if len(approximate_trace) < 2:
-            geodesics.append([])
+            if len(trace_points) < 2:
+                geodesics.append([])
+            else:
+                geodesic = np.array(trace_points)
+                geodesics.append((geodesic[:, :2] / mesh_scale).tolist())
         else:
-            geodesic = path_solver.find_geodesic_path_poly(approximate_trace)
-            geodesics.append((geodesic[:, :2] / mesh_scale).tolist())
+            approximate_trace = []
+            for index_source, index_target in itertools.pairwise(geodesic_route):
+                approximate_trace.extend(
+                    nx.dijkstra_path(
+                        mesh_graph,
+                        network_vertex_indices_to_mesh_vertex_indices[index_source],
+                        network_vertex_indices_to_mesh_vertex_indices[index_target],
+                        'length'
+                    )
+                )
+            approximate_trace = utility.remove_loops(approximate_trace)
+
+            if len(approximate_trace) < 2:
+                geodesics.append([])
+            else:
+                geodesic = path_solver.find_geodesic_path_poly(approximate_trace)
+                geodesics.append((geodesic[:, :2] / mesh_scale).tolist())
 
     return geodesics
 
@@ -131,6 +146,8 @@ def collate_outputs(
     height_scale=0.15,
     use_convex_hull=False,
     bubble_size = np.inf,
+    postprocess=True,
+    exact_geodesics=False,
 ):
     """
     Join many optimization outputs into a single animation.
@@ -145,6 +162,21 @@ def collate_outputs(
     which is a list with elements of the form
       `((source, target), [colorR, colorG, colorB])`,
     where the colors are encoded with numbers between 0 and 255.
+
+    If `postprocess` is true, the z-coordinates (heights) are put
+    through a pipeline that subtracts a reference height, centers and
+    normalizes them across snapshots, applies a smoothing decay near
+    the trim boundary, and trims the mesh to a bubble around the
+    network before computing geodesics. If `postprocess` is false,
+    none of that happens: each snapshot's z-coordinates are just
+    `output['final']` (converted to a Numpy array and centered by
+    their own mean, so the animation doesn't jump between frames), and
+    geodesics are computed on the untrimmed mesh.
+
+    If `exact_geodesics` is true, geodesic paths are computed with
+    `pygeodesic`'s exact algorithm instead of the default
+    `potpourri3d`-based approximation. See
+    `compute_geodesics_from_graph` for details.
     """
 
     # Grab the data from the files
@@ -301,40 +333,46 @@ def collate_outputs(
             network_border = boundary.compute_border(network_vertices, network_edges)
 
         network_borders.append(network_border)
-        distances_to_networks.append(np.array([
-            boundary.distance_to_network(
-                np.array(vertex_coordinate),
-                network_border
-            )
-            for vertex_coordinate in mesh.get_coordinates()[:, :2]
-        ]))
-        # TODO: Make this more intelligent. In particular, ensure that
-        # the bubble around solitary edges is wide enough so that the
-        # hull does not become disconnected
-        hull = np.where(distances_to_networks[-1] / mesh_scale <= bubble_size)[0]
-        hulls.append(hull)
 
-        # TODO: Is this the right strategy? Should we make this a
-        # parameter somewhere?
-        if parameters['initial_radius'] is None:
-            z_0 = np.array(output['initial'])
+        if postprocess:
+            distances_to_networks.append(np.array([
+                boundary.distance_to_network(
+                    np.array(vertex_coordinate),
+                    network_border
+                )
+                for vertex_coordinate in mesh.get_coordinates()[:, :2]
+            ]))
+            # TODO: Make this more intelligent. In particular, ensure that
+            # the bubble around solitary edges is wide enough so that the
+            # hull does not become disconnected
+            hull = np.where(distances_to_networks[-1] / mesh_scale <= bubble_size)[0]
+            hulls.append(hull)
+
+            # TODO: Is this the right strategy? Should we make this a
+            # parameter somewhere?
+            if parameters['initial_radius'] is None:
+                z_0 = np.array(output['initial'])
+            else:
+                z_0 = np.array([
+                    (parameters['initial_radius']**2
+                        - (i / (width - 1) - 0.5)**2
+                        - (j / (height - 1) - 0.5)**2)**0.5
+                    for i in range(width)
+                    for j in range(height)
+                ]).reshape((width * height,))
+            z = np.array(output['final']) - z_0
+            zs.append(z - np.mean(z[hull]))
         else:
-            z_0 = np.array([
-                (parameters['initial_radius']**2
-                    - (i / (width - 1) - 0.5)**2
-                    - (j / (height - 1) - 0.5)**2)**0.5
-                for i in range(width)
-                for j in range(height)
-            ]).reshape((width * height,))
-        z = np.array(output['final']) - z_0
-        zs.append(z - np.mean(z[hull]))
+            z = np.array(output['final'])
+            zs.append(z - np.mean(z))
 
-    # Determine values for vertical scaling
-    z_max = -np.inf
-    z_min = np.inf
-    for z, hull in zip(zs, hulls):
-        z_max = max(z_max, np.max(z[hull]))
-        z_min = min(z_min, np.min(z[hull]))
+    if postprocess:
+        # Determine values for vertical scaling
+        z_max = -np.inf
+        z_min = np.inf
+        for z, hull in zip(zs, hulls):
+            z_max = max(z_max, np.max(z[hull]))
+            z_min = min(z_min, np.min(z[hull]))
 
     if geodesic_label_color_pairs is None:
         # For now, just use the routes in the first snapshot
@@ -362,19 +400,20 @@ def collate_outputs(
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
     animation_data = []
-    for t, z, distance_to_network, hull, edges, network_border, output in zip(times, zs, distances_to_networks, hulls, animation_edges, network_borders, outputs):
-        z_original = np.copy(z)
-
-        distance_to_bubble = np.zeros(distance_to_network.shape) if np.isposinf(bubble_size) else np.maximum(distance_to_network / mesh_scale - bubble_size, 0.)
-        z = z - z_min
-        if z_max != z_min and height_scale is not None:
-            z = z / (z_max - z_min) * height_scale
-        z = (z + 0.05) * np.exp(-1000 * distance_to_bubble**2) - 0.05
+    distances_to_networks_iter = distances_to_networks if postprocess else itertools.repeat(None)
+    hulls_iter = hulls if postprocess else itertools.repeat(None)
+    for t, z, distance_to_network, hull, edges, network_border, output in zip(times, zs, distances_to_networks_iter, hulls_iter, animation_edges, network_borders, outputs):
+        if postprocess:
+            distance_to_bubble = np.zeros(distance_to_network.shape) if np.isposinf(bubble_size) else np.maximum(distance_to_network / mesh_scale - bubble_size, 0.)
+            z = z - z_min
+            if z_max != z_min and height_scale is not None:
+                z = z / (z_max - z_min) * height_scale
+            z = (z + 0.05) * np.exp(-1000 * distance_to_bubble**2) - 0.05
 
         mesh.set_parameters(z)
-        # mesh.set_parameters(z_original)
-        # TODO: Make this safer
-        mesh.trim_to_set(hull)
+        if postprocess:
+            # TODO: Make this safer
+            mesh.trim_to_set(hull)
         geodesics = compute_geodesics_from_graph(
             mesh, network_vertices,
             network_edges,
@@ -384,7 +423,8 @@ def collate_outputs(
                     for node in node_list
                 ]
                 for node_list in geodesic_labels
-            ]
+            ],
+            exact_geodesics=exact_geodesics
         )
         mesh.remove_added_vertices()
         mesh.restore_removed_vertices()
@@ -450,59 +490,23 @@ def main():
     config_file = pathlib.PurePath(args.config_file)
 
     # Read JSON config file and generate optimization parameters from it
-    defaults = {
-        'filename_probes': None,
-        'filename_links': None,
-        'filename_graphml': None,
-        'filename_json': None,
-        'latency_threshold': None,
-        'clustering_distance': None,
-        'ricci_curvature_alpha': 0.,
-        'lambda_curvature': 1.,
-        'lambda_smooth': 0.,
-        'initial_radius': 20.,
-        'sides': 50,
-        'mesh_scale': 1.,
-        'coordinates_scale': 0.8,
-        'network_trim_radius': None,
-        'maxiter': None,
-        'initialization_file_path': None,
-        'index': None # Additional unique ID
-    }
-    with open(config_file, 'r') as f:
-        arguments, settings = batch.parse_json(f, defaults)
+    arguments, settings, defaults = driver.load_config(config_file)
 
-    # Determine where the outputs are going
-    if 'output_format' in settings:
-        output_format = settings['output_format']
-    else:
-        output_format = ['filename_json']
-    # Generate the output directories from the given format. Check if
-    # they exist
-    for argument_batch in arguments:
-        for index, argument_dict in enumerate(argument_batch):
-            argument_dict['index'] = index
-            # Also prepend ../outputs (which is the path of the outputs
-            # directory relative to the script)
-            directory_output = pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*(settings['directory_output'] + [
-                argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
-                '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
-                for output_format_part in output_format
-            ]))
-            if not os.path.exists(directory_output):
-                raise ValueError(f'{str(directory_output)} does not exist')
-            argument_dict['directory_output'] = directory_output
+    # Determine where the outputs are going. Check that they exist,
+    # since we're reading already-produced optimization output.
+    output_format = driver.get_output_format(settings, defaults)
+    driver.assign_output_directories(arguments, settings, output_format, existence_check='must_exist')
 
-    if 'initialization' in settings:
-        initialization = settings['initialization']
-    else:
-        initialization = 'sphere'
+    initialization = driver.get_initialization(settings)
 
     batch.run_multiprocessed(
         collate_outputs,
         [
             {
-                'directories_outputs': [argument_dict['directory_output'] for argument_dict in argument_batch[(1 if initialization == 'first' else 0):]],
+                'directories_outputs': [
+                    argument_dict['directory_output']
+                    for argument_dict in (argument_batch[1:] if driver.initialization_excludes_seed(initialization) else argument_batch)
+                ],
                 'path_output_collated': argument_batch[0]['directory_output'] / 'animation.json',  # TODO: Smarter location of outputs
                 'geodesic_label_color_pairs': None,  # TODO: Add custom functionality
                 'bubble_size': 0.03,
