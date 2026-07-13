@@ -2,17 +2,9 @@
 	"arguments": {
 		"filename_probes": [null],
 		"filename_links": [null],
-		"filename_graphml": [
-			"graph10.graphml",
-			"graph12.graphml",
-			"graph14.graphml",
-			"graph16.graphml",
-			"graph18.graphml",
-			"graph20.graphml",
-			"graph22.graphml"
-		],
-		"filename_json": [null],
-		"latency_threshold": [null],
+		"filename_graphml": [null],
+		"filename_json": ["graph.json"],
+		"latency_threshold": [10, 12, 14, 16, 18, 20, 22],
 		"clustering_distance": [null],
 		"ricci_curvature_alpha": [null],
 		"lambda_curvature": [1.0],
@@ -25,14 +17,14 @@
 		"maxiter": [2000]
 	},
 	"groups": [
-		["filename_graphml"],
+		["latency_threshold"],
 		["lambda_smooth"]
 	],
 	"settings": {
 		"directory_data": ["..", ".."],
 		"directory_output": ["ipv4", "graph_US", "parameter_testing", "lambda_smooth"],
 		"output_format": [
-			"filename_graphml",
+			"latency_threshold",
 			"lambda_smooth"
 		],
 		"initialization": "sphere"
