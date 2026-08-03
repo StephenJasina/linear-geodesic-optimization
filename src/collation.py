@@ -17,6 +17,8 @@ import linear_geodesic_optimization.driver as driver
 from linear_geodesic_optimization.data import utility
 from linear_geodesic_optimization.graph import boundary
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
+from linear_geodesic_optimization.optimization.laplacian import Computer as Laplacian
+from linear_geodesic_optimization.optimization.curvature import Computer as Curvature
 
 
 tableau_colors = list(mpl.colors.TABLEAU_COLORS.values())
@@ -275,7 +277,11 @@ def collate_outputs(
     mesh_scale = parameters['mesh_scale']
     coordinates_scale = parameters['coordinates_scale']
 
+    # Create the mesh that will be used for curvature and geodesic
+    # computations
     mesh = RectangleMesh(width, height, mesh_scale)
+    laplacian = Laplacian(mesh)
+    curvature = Curvature(mesh, laplacian)
 
     # Assume bounding box information is constant
     graph_data, vertex_data, edge_data = outputs[0]['network']
@@ -393,9 +399,9 @@ def collate_outputs(
         geodesic_label_color_pairs = [
             (route, get_tableau_color(index))
             for index, (_, route) in enumerate(high_traffic_route_pairs)
-        ]
+        ][:100]
         # TODO: revert
-        geodesic_label_color_pairs = []
+        # geodesic_label_color_pairs = []
     geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
@@ -429,6 +435,12 @@ def collate_outputs(
         mesh.remove_added_vertices()
         mesh.restore_removed_vertices()
 
+        mesh.set_parameters(output['final'])
+        # TODO: Avoid having to recreate these
+        laplacian = Laplacian(mesh)
+        curvature = Curvature(mesh, laplacian)
+        curvature.forward()
+
         traffic = output['traffic'] if 'traffic' in output else None
         traffic_matrix = [[0. for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
         if traffic is not None:
@@ -445,6 +457,7 @@ def collate_outputs(
         animation_data.append({
             'time': t,
             'height': z.reshape((width, height)).tolist(),
+            'curvature': np.array(curvature.kappa_G).reshape((width, height)).tolist(),
             'edges': edges,
             'geodesics': geodesics,
             'edgeColors': edge_colors,

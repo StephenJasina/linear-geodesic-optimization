@@ -47,7 +47,8 @@ let divisions = 5;
 // Globals tracking the manifold shape across time
 let times = null;
 let heights = null;
-let heightsEWMA = null;
+let curvatures = null;
+let curvaturesEWMA = null;
 let networkVertices = null;
 let networkEdges = null;
 let networkEdgesAll = null;
@@ -183,9 +184,9 @@ checkboxShowHeights.onchange = function() {
 	setHeights();
 }
 
-let checkboxShowHeightChanges = document.getElementById("show-height-changes");
-checkboxShowHeightChanges.onchange = function() {
-	elementsByTab[indexTabCurrent].showHeightChanges = checkboxShowHeightChanges.checked;
+let checkboxShowCurvatureChanges = document.getElementById("show-curvature-changes");
+checkboxShowCurvatureChanges.onchange = function() {
+	elementsByTab[indexTabCurrent].showCurvatureChanges = checkboxShowCurvatureChanges.checked;
 	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
@@ -315,8 +316,8 @@ function swapToTab(button) {
 	// of each DOM element be stored per-tab?
 	checkboxShowHeights.checked = elementsByTab[indexTabCurrent].showHeights;
 	checkboxShowHeights.dispatchEvent(new Event("change"));
-	checkboxShowHeightChanges.checked = elementsByTab[indexTabCurrent].showHeightChanges;
-	checkboxShowHeightChanges.dispatchEvent(new Event("change"));
+	checkboxShowCurvatureChanges.checked = elementsByTab[indexTabCurrent].showCurvatureChanges;
+	checkboxShowCurvatureChanges.dispatchEvent(new Event("change"));
 	checkboxShowMap.checked = elementsByTab[indexTabCurrent].showMap;
 	checkboxShowMap.dispatchEvent(new Event("change"));
 	checkboxShowGraph.checked = elementsByTab[indexTabCurrent].showGraph;
@@ -374,7 +375,7 @@ function addTab() {
 		"buttonTab": buttonNew,
 
 		"showHeights": true,
-		"showHeightChanges": true,
+		"showCurvatureChanges": true,
 		"showMap": false,
 		"showGraph": true,
 		"showOutages": false,
@@ -552,8 +553,8 @@ function drawLayers(time, options) {
 		drawVertices(context, networkVertices, 2);
 	}
 
-	if (options.showHeightChanges) {
-		drawHeightChanges(context, heights, heightsEWMA, time, times, networkBoundaries, .008);
+	if (options.showCurvatureChanges) {
+		drawHeightChanges(context, curvatures, curvaturesEWMA, time, times, networkBoundaries, .2);
 	}
 }
 
@@ -1036,6 +1037,7 @@ dropReader.onload = function() {
 		networkVertices = data.nodes;
 		times = new Array(animationData.length);
 		heights = new Array(animationData.length);
+		curvatures = new Array(animationData.length);
 		networkEdges = new Array(animationData.length);
 		networkBoundaries = new Array(animationData.length);
 		geodesics = new Array(animationData.length);
@@ -1046,6 +1048,7 @@ dropReader.onload = function() {
 		for (let i = 0; i < animationData.length; ++i) {
 			times[i] = animationData[i].time;
 			heights[i] = animationData[i].height;
+			curvatures[i] = animationData[i].curvature;
 			networkEdges[i] = animationData[i].edges;
 			networkBoundaries[i] = animationData[i].boundary;
 			geodesics[i] = animationData[i].geodesics;
@@ -1061,22 +1064,22 @@ dropReader.onload = function() {
 		}
 
 		animationDuration = (animationData.length - 1) * 2.;
-		heightsEWMA = new Array();
+		curvaturesEWMA = new Array();
 		if (animationData.length != 0) {
 			let tRange = times[animationData.length - 1] - times[0]
-			heightsEWMA[0] = heights[0];
+			curvaturesEWMA[0] = curvatures[0];
 			for (let i = 1; i < animationData.length; ++i) {
 				let realtimePassed = animationDuration * (times[i] - times[i - 1]) / tRange;
-				let alpha = 1 - Math.exp(-0.5 * realtimePassed);
-				let heightEWMA = new Array();
-				for (let j = 0; j < heightsEWMA[i - 1].length; ++j) {
-					let heightEWMARow = new Array();
-					for (let k = 0; k < heightsEWMA[i - 1][j].length; ++k) {
-						heightEWMARow.push(alpha * heights[i][j][k] + (1 - alpha) * heightsEWMA[i - 1][j][k]);
+				let alpha = 1 - Math.exp(-0.5 * realtimePassed);  // TODO: tune this
+				let curvatureEWMA = new Array();
+				for (let j = 0; j < curvaturesEWMA[i - 1].length; ++j) {
+					let curvatureEWMARow = new Array();
+					for (let k = 0; k < curvaturesEWMA[i - 1][j].length; ++k) {
+						curvatureEWMARow.push(alpha * curvatures[i][j][k] + (1 - alpha) * curvaturesEWMA[i - 1][j][k]);
 					}
-					heightEWMA.push(heightEWMARow);
+					curvatureEWMA.push(curvatureEWMARow);
 				}
-				heightsEWMA.push(heightEWMA);
+				curvaturesEWMA.push(curvatureEWMA);
 			}
 		}
 
