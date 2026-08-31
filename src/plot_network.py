@@ -18,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('--latencies', '-l', dest='latencies_filename', metavar='latencies-file')
     parser.add_argument('--epsilon', '-e', dest='epsilon', metavar='epsilon', type=float)
     parser.add_argument('--clustering-distance', '-c', dest='clustering_distance', metavar='clustering-distance', type=float)
+    parser.add_argument('--reweight', '-r', dest='ricci_curvature_reweight', metavar='ricci-curvature-reweight', choices=['distribution', 'metric'], default=None)
     parser.add_argument('--show-map', '-m', dest='show_map', action='store_true')
     parser.add_argument('--output', '-o', dest='output_filename', metavar='filename')
     parser.add_argument('--quiet', '-q', dest='quiet', action='store_true')
@@ -28,6 +29,7 @@ if __name__ == '__main__':
     latencies_filename = args.latencies_filename
     epsilon = args.epsilon
     clustering_distance = args.clustering_distance
+    ricci_curvature_reweight = args.ricci_curvature_reweight
     show_map = args.show_map
     output_filename = args.output_filename
     quiet = args.quiet
@@ -43,7 +45,8 @@ if __name__ == '__main__':
             json_filename,
             epsilon=epsilon,
             clustering_distance=clustering_distance,
-            directed=True
+            directed=True,
+            ricci_curvature_reweight=ricci_curvature_reweight,
         )
     else:
         if probes_filename is None or latencies_filename is None:
@@ -77,7 +80,7 @@ if __name__ == '__main__':
 
     plot.get_network_plot(
         graph, ax = ax,
-        # weight_label='throughput', color_min=-1., color_max=1.
+        color_min=-4., color_max=4.
     )
 
     if not quiet:
