@@ -185,8 +185,27 @@ def compute_ricci_curvature_from_traffic(
     graph: nx.Graph, routes, traffic,
     edge_distance_label='latency',
     use_optimal_transport=False,
-    pairs=None
+    pairs=None,
+    reweight:typing.Literal[None, 'distribution', 'metric']=None
 ):
+    """
+    Compute the Ricci curvature using the data-plane transport plan.
+
+    This computation requires knowledge about the network's topology as
+    well as the traffic (i.e., routing and the traffic matrix).
+
+    Optionally, the `pairs` parameter determines which vertex pairs to
+    compute the curvature for.
+
+    The `reweight` parameter allows for modifications to the curvature
+    formula. Setting it to `'distribution'` allows for a direct change
+    to curvature values by scaling the computed earth-mover distances
+    according to the associated traffic values. Setting it to `'metric'`
+    instead changes the metric used to compute all distances (both the
+    earth-mover distance and the actual graph distance). This latter
+    option ensures that the computation is still a curvature
+    computation.
+    """
     # Throughout, have some special variables for if we want to use
     # optimal transport to compute the data flow. This places masses on
     # relevant predecessors and successors, then discards routing
@@ -201,6 +220,34 @@ def compute_ricci_curvature_from_traffic(
     # Routes might attempt to use edges that don't exist in the graph.
     # In that case, replace relevant parts using shortest path routing.
     routes, traffic = fix_routes(graph, routes, traffic, edge_distance_label)
+
+    # Rescale traffic on a range between 0 and 5
+    traffic_per_link = collections.defaultdict(float)
+    for route, traffic_route in zip(routes, traffic):
+        for u, v in itertools.pairwise(route):
+            traffic_per_link[u, v] += traffic_route
+    traffic_per_link_min = min(traffic_per_link.values())  # TODO: Should we use this?
+    traffic_per_link_max = max(traffic_per_link.values())
+    log_traffic_per_link = {
+        (u, v): np.log(traffic / traffic_per_link_max * (np.e**2 - 1) + 1)
+        for (u, v), traffic in traffic_per_link.items()
+    }
+
+    # If we are reweighting by metric, make a new graph here to avoid
+    # destroying the original one
+    if reweight == 'metric':
+        if graph.is_directed():
+            graph_copy = nx.DiGraph()
+        else:
+            graph_copy = nx.Graph()
+        graph_copy.add_nodes_from(graph.nodes)
+        for u, v in graph.edges:
+            if edge_distance_label in graph.edges[u, v]:
+                d_u_v = graph.edges[u, v][edge_distance_label]
+            else:
+                d_u_v = 1.
+            graph_copy.add_edge(u, v, edge_distance_label=d_u_v)
+        graph = graph_copy
 
     ricci_curvatures = {}
     if pairs is None:
@@ -359,66 +406,23 @@ def compute_ricci_curvature_from_traffic(
                     numerator_u_v += traffic_route * (distance_route + 2 * d_u_v)
 
         if use_optimal_transport:
-            # if denominator_p_s != 0.:
-            #     transportation_cost = ot.emd2(
-            #         distribution_u_p_s,
-            #         distribution_v_p_s,
-            #         distance_matrix
-            #     ) / denominator_p_s
-            # elif denominator_p_v != 0.:
-            #     transportation_cost = ot.emd2(
-            #         distribution_u_p_v,
-            #         distribution_v_p_v,
-            #         distance_matrix
-            #     ) / denominator_p_v
-            # elif denominator_u_s != 0.:
-            #     transportation_cost = ot.emd2(
-            #         distribution_u_u_s,
-            #         distribution_v_u_s,
-            #         distance_matrix
-            #     ) / denominator_u_s
-            # elif denominator_u_v != 0.:
-            #     transportation_cost = ot.emd2(
-            #         distribution_u_u_v,
-            #         distribution_v_u_v,
-            #         distance_matrix
-            #     ) / denominator_u_v
-            # else:
-            #     continue
             transportation_cost = ot.emd2(
                 distribution_u_p_s + distribution_u_p_v + distribution_u_u_s + distribution_u_u_v,
                 distribution_v_p_s + distribution_v_p_v + distribution_v_u_s + distribution_v_u_v,
                 distance_matrix
             ) / (denominator_p_s + denominator_p_v + denominator_u_s + denominator_u_v)
         else:
-            # if denominator_p_s != 0.:
-            #     # Prioritize the case where we have data describing
-            #     # transportation between neighborhoods of u and v
-            #     transportation_cost = numerator_p_s / denominator_p_s
-            # elif denominator_p_v != 0.:
-            #     # If that data doesn't exist, check whether we have routes
-            #     # from u's neighborhood to v
-            #     transportation_cost = numerator_p_v / denominator_p_v
-            # elif denominator_u_s != 0.:
-            #     # If that data doesn't exist, check whether we have routes
-            #     # from u to v's neighborhood
-            #     transportation_cost = numerator_u_s / denominator_u_s
-            # elif denominator_u_v != 0.:
-            #     # If that data doesn't exist, check whether we have routes
-            #     # from u to v
-            #     transportation_cost = numerator_u_v / denominator_u_v
-            # else:
-            #     # If we get here, we don't have enough information to
-            #     # compute the curvature. For now, let's just not set the
-            #     # curvature to anything
-            #     continue
-
             numerator = numerator_p_s + numerator_p_v + numerator_u_s + numerator_u_v
             denominator = denominator_p_s + denominator_p_v + denominator_u_s + denominator_u_v
             if denominator == 0.:
                 continue
             transportation_cost = numerator / denominator
-        ricci_curvatures[(u, v)] = 1. - transportation_cost / d_u_v
+
+        if reweight == 'distribution':
+            transportation_cost_scale = 1. + (log_traffic_per_link[u, v] if (u, v) in log_traffic_per_link else 0.)
+        else:
+            transportation_cost_scale = 1.
+        ricci_curvatures[(u, v)] = 1. - transportation_cost_scale * transportation_cost / d_u_v
 
     return ricci_curvatures
 

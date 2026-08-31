@@ -27,7 +27,8 @@ def optimize(
     filename_json=None,
     latency_threshold=None,
     clustering_distance=None,
-    ricci_curvature_alpha=0.9999,
+    ricci_curvature_alpha=0.,
+    ricci_curvature_reweight=None,
     lambda_curvature=1.,
     lambda_smooth=0.,
     initial_radius,
@@ -55,6 +56,8 @@ def optimize(
             file_path_json,
             epsilon=latency_threshold,
             clustering_distance=clustering_distance,
+            ricci_curvature_alpha=ricci_curvature_alpha,
+            ricci_curvature_reweight=ricci_curvature_reweight,
             return_traffic=True,
         )
     elif filename_probes is not None and filename_links is not None:
@@ -87,6 +90,7 @@ def optimize(
         'epsilon': float(latency_threshold) if latency_threshold is not None else None,
         'clustering_distance': float(clustering_distance) if clustering_distance is not None else None,
         'ricci_curvature_alpha': float(ricci_curvature_alpha) if ricci_curvature_alpha is not None else None,
+        'ricci_curvature_reweight': ricci_curvature_reweight,
         'lambda_curvature': float(lambda_curvature),
         'lambda_smooth': float(lambda_smooth),
         'initial_radius': float(initial_radius),

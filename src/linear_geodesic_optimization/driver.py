@@ -39,6 +39,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'latency_threshold': None,
         'clustering_distance': None,
         'ricci_curvature_alpha': 0.,
+        'ricci_curvature_reweight': None,
         'lambda_curvature': 1.,
         'lambda_smooth': 0.,
         'initial_radius': 20.,

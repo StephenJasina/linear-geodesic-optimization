@@ -202,6 +202,7 @@ def compute_ricci_curvatures(
     alpha: float=0.,
     weight_label: typing.Optional[str]=None,
     routes=None, traffic=None, links=None,
+    ricci_curvature_reweight:typing.Literal[None, 'distribution', 'metric']=None,
     force_optimal_transport=False
 ):
     pairs = None
@@ -214,7 +215,7 @@ def compute_ricci_curvatures(
     ricci_curvatures = {}
     if routes is not None and traffic is not None:
         ricci_curvatures = curvature.compute_ricci_curvature_from_traffic(
-            graph, routes, traffic, 'rtt', force_optimal_transport, pairs
+            graph, routes, traffic, 'rtt', force_optimal_transport, pairs, ricci_curvature_reweight
         )
         if links is not None:
             graph.clear_edges()
@@ -243,6 +244,7 @@ def get_graph(
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
+    ricci_curvature_reweight:typing.Literal[None, 'distribution', 'metric']=None,
     directed=False, symmetrize=False,
     delays=None,
     routes=None, traffic=None, force_optimal_transport=False
@@ -292,7 +294,7 @@ def get_graph(
                 if link['source_id'] != link['target_id']
             ]
     if should_compute_curvatures:
-        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic, links, force_optimal_transport)
+        graph = compute_ricci_curvatures(graph, ricci_curvature_alpha, ricci_curvature_weight_label, routes, traffic, links, ricci_curvature_reweight, force_optimal_transport)
     if should_include_latencies:
         return graph, latencies
     else:
@@ -362,6 +364,7 @@ def get_graph_from_json(
     should_compute_curvatures=True,
     ricci_curvature_alpha=0.,
     ricci_curvature_weight_label=None,
+    ricci_curvature_reweight:typing.Literal[None, 'distribution', 'metric']=None,
     directed=False,
     symmetrize=False,
     force_optimal_transport=False,
@@ -404,6 +407,7 @@ def get_graph_from_json(
         should_compute_curvatures=should_compute_curvatures,
         ricci_curvature_alpha=ricci_curvature_alpha,
         ricci_curvature_weight_label=ricci_curvature_weight_label,
+        ricci_curvature_reweight=ricci_curvature_reweight,
         directed=directed,
         symmetrize=symmetrize,
         delays=delays,
