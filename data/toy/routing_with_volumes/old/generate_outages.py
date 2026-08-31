@@ -9,7 +9,7 @@ import typing
 import networkx as nx
 import numpy as np
 
-sys.path.append(str(pathlib.PurePath('..', '..', '..', 'src')))
+sys.path.append(str(pathlib.PurePath('..', '..', '..', '..', 'src')))
 from linear_geodesic_optimization.data import utility
 
 

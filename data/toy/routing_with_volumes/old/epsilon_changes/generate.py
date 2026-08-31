@@ -12,7 +12,7 @@ import numpy.typing as npt
 
 sys.path.append(str(pathlib.PurePath('..', '..', '..', '..', 'src')))
 from linear_geodesic_optimization.data import tomography, utility
-from visualize import plot_scenario
+from data.toy.routing_with_volumes.old.epsilon_changes.visualize import plot_scenario
 
 def add_cluster(graph: nx.DiGraph, size: int, center: npt.NDArray[np.float64], radius: float, name: str, theta_offset: float=0.):
     """
