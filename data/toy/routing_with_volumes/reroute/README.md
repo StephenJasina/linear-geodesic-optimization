@@ -1,0 +1,3 @@
+Toy examples where reroutes occur.
+* `link_outage`: A single relatively critical link suffers an outage, so traffic is forced to be rerouted
+* `partial_reroute`: Similar to `link_outage`, but only some of the routes passing through the affected link are affected. This example is inspired by the behavior of ESnet, where certain routes are preemptively changed when large amounts of data are expected.

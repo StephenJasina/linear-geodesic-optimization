@@ -128,10 +128,8 @@ if __name__ == '__main__':
                 (graph.nodes[node_a]['latitude'], graph.nodes[node_a]['longitude']),
                 (graph.nodes[node_b]['latitude'], graph.nodes[node_b]['longitude']),
             ),
-            # weight=1.,
         )
     routes = tomography.get_shortest_routes(graph, 'latency')
-    # routes = tomography.get_shortest_routes(graph, 'weight')
 
     directory_output = pathlib.PurePath('link_outage')
     os.makedirs(directory_output, exist_ok=True)
@@ -142,13 +140,3 @@ if __name__ == '__main__':
     routes = tomography.get_shortest_routes(graph, 'latency')
     write_graph(graph_original, routes, traffic_matrix, directory_output / f"graph_removed_FG.json")
     graph = graph_original
-
-    # directory_output = pathlib.PurePath('link_outage')
-    # os.makedirs(directory_output, exist_ok=True)
-    # write_graph(graph, routes, traffic_matrix, directory_output / 'graph.json')
-    # graph_original = graph.copy()
-    # edge_data = graph.edges['F', 'G']
-    # graph.remove_edge('F', 'G')
-    # routes = tomography.get_shortest_routes(graph, 'latency')
-    # write_graph(graph_original, routes, traffic_matrix, directory_output / f"graph_removed_FG.json")
-    # graph = graph_original

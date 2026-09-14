@@ -1,0 +1,1 @@
+Some toy examples that were designed to verify the qualitative correctness of the dataplane transport plan curvature computation. These examples were designed to expose specific edge case behavior, so they are likely not the best for quantitative investigation.
