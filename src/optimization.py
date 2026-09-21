@@ -9,7 +9,6 @@ import networkx as nx
 import numpy as np
 import scipy
 
-import linear_geodesic_optimization.batch as batch
 import linear_geodesic_optimization.driver as driver
 from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
