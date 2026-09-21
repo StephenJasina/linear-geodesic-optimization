@@ -4,6 +4,7 @@
 		"filename_links": [null],
 		"filename_graphml": [null],
 		"filename_json": [
+			"graph_4.json",
 			"graph_0.json",
 			"graph_1.json",
 			"graph_2.json",
@@ -19,13 +20,13 @@
 		"ricci_curvature_alpha": [0],
 		"ricci_curvature_reweight": ["distribution"],
 		"lambda_curvature": [1.0],
-		"lambda_smooth": [0.002, 0.005, 0.01],
+		"lambda_smooth": [0.001, 0.002, 0.005, 0.01, 0.02],
 		"initial_radius": [80.0],
 		"sides": [50],
 		"mesh_scale": [0.25],
 		"coordinates_scale": [0.8],
 		"network_trim_radius": [null],
-		"maxiter": [4000]
+		"maxiter": [null]
 	},
 	"groups": [
 		["filename_json"],
@@ -38,7 +39,7 @@
 			["lambda_smooth"],
 			["index", "filename_json"]
 		],
-		"initialization": "sphere",
+		"initialization": "first",
 		"order_by": "filename_json"
 	}
 }
