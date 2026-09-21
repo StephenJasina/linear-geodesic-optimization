@@ -55,7 +55,8 @@ def base_defaults() -> dict[str, typing.Any]:
 def resolve_input_file_paths(
     arguments: list[list[dict]],
     settings: dict,
-    config_file: pathlib.PurePath
+    config_file: pathlib.PurePath,
+    data_directory: str | os.PathLike[str] = pathlib.PurePath('..', 'data'),
 ) -> None:
     """
     Prepend a data directory to every filename-valued parameter (see
@@ -71,7 +72,7 @@ def resolve_input_file_paths(
         settings['directory_data_type']
     )
     directory_data_parent = (
-        pathlib.PurePath('..', 'data') if directory_data_type == 'data' else
+        data_directory if directory_data_type == 'data' else
         pathlib.PurePath() if directory_data_type == 'script' else
         config_file.parent
     )
@@ -87,7 +88,8 @@ def resolve_input_file_paths(
                     argument_dict[parameter_name] = directory_data / to_add
 
 def load_config(
-    config_file: pathlib.PurePath
+    config_file: pathlib.PurePath,
+    data_directory: str | os.PathLike[str] = pathlib.PurePath('..', 'data'),
 ) -> tuple[list[list[dict]], dict, dict]:
     """
     Read a JSON config file and produce its arguments and settings.
@@ -99,7 +101,7 @@ def load_config(
     defaults = base_defaults()
     with open(config_file, 'r') as f:
         arguments, settings = batch.parse_json(f, defaults)
-    resolve_input_file_paths(arguments, settings, config_file)
+    resolve_input_file_paths(arguments, settings, config_file, data_directory=data_directory)
     return arguments, settings, defaults
 
 def get_output_format(
@@ -138,6 +140,7 @@ def assign_output_directories(
     arguments: list[list[dict]],
     settings: dict,
     output_format: list,
+    output_directory: str | os.PathLike[str] = pathlib.PurePath('..', 'outputs'),
     *,
     existence_check: typing.Literal['must_not_exist', 'must_exist'],
 ) -> None:
@@ -158,7 +161,7 @@ def assign_output_directories(
             argument_dict['index'] = index
             # Also prepend ../outputs (which is the path of the outputs
             # directory relative to the script)
-            directory_output = pathlib.PurePath('..', 'outputs') / pathlib.PurePath(*(settings['directory_output'] + [
+            directory_output = output_directory / pathlib.PurePath(*(settings['directory_output'] + [
                 argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
                 '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
                 for output_format_part in output_format
