@@ -6,8 +6,10 @@ const RED_BLUE_COLORS = [[0.403921568627451,0.0,0.12156862745098039],[0.41545559
  * @param {number} curvature
  */
 function getCurvatureColor(curvature) {
+  let half_range = 6.;
   // return getWeightedColor((curvature + 2.) / 4.); // More accurate
-  return getWeightedColor((curvature + 1.) / 2.);  // More vibrant
+  // return getWeightedColor((curvature + 1.) / 2.);  // More vibrant
+  return getWeightedColor((curvature + half_range) / (2. * half_range));  // general
 }
 
 /**
