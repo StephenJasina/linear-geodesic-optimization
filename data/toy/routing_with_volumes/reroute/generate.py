@@ -1,3 +1,4 @@
+import copy
 import heapq
 import itertools
 import json
@@ -137,6 +138,24 @@ if __name__ == '__main__':
     graph_original = graph.copy()
     edge_data = graph.edges['F', 'G']
     graph.remove_edge('F', 'G')
+    routes_original = copy.deepcopy(routes)
     routes = tomography.get_shortest_routes(graph, 'latency')
-    write_graph(graph_original, routes, traffic_matrix, directory_output / f"graph_removed_FG.json")
+    write_graph(graph_original, routes, traffic_matrix, directory_output / 'graph_removed_FG.json')
     graph = graph_original
+    routes = routes_original
+
+    directory_output = pathlib.PurePath('partial_reroute')
+    os.makedirs(directory_output, exist_ok=True)
+    traffic_matrix_original = copy.deepcopy(traffic_matrix)
+    traffic_matrix['B']['K'] *= 3.
+    traffic_matrix['K']['B'] *= 3.
+    write_graph(graph, routes, traffic_matrix, directory_output / 'graph.json')
+    routes_original = copy.deepcopy(routes)
+    for i, route in enumerate(routes):
+        if route[0] == 'B' and route[-1] == 'K':
+            routes[i] = ['B', 'F', 'E', 'H', 'G', 'K']
+        if route[0] == 'K' and route[-1] == 'B':
+            routes[i] = ['K', 'G', 'H', 'E', 'F', 'B']
+    write_graph(graph, routes, traffic_matrix, directory_output / 'graph_rerouted.json')
+    routes = routes_original
+    traffic_matrix = traffic_matrix_original

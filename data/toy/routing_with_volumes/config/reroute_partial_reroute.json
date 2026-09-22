@@ -1,0 +1,37 @@
+{
+	"arguments": {
+		"filename_probes": [null],
+		"filename_links": [null],
+		"filename_graphml": [null],
+		"filename_json": [
+			"graph.json",
+			"graph_rerouted.json"
+		],
+		"latency_threshold": [4],
+		"clustering_distance": [500000],
+		"ricci_curvature_alpha": [0],
+		"ricci_curvature_reweight": ["distribution"],
+		"lambda_curvature": [1.0],
+		"lambda_smooth": [0.005],
+		"initial_radius": [80.0],
+		"sides": [50],
+		"mesh_scale": [0.25],
+		"coordinates_scale": [0.8],
+		"network_trim_radius": [null],
+		"maxiter": [2000]
+	},
+	"groups": [
+		["filename_json"],
+		["lambda_smooth"]
+	],
+	"settings": {
+		"directory_data": ["..", "reroute", "partial_reroute"],
+		"directory_output": ["toy", "routing_with_volumes", "reroute_partial_reroute"],
+		"output_format": [
+			["lambda_smooth"],
+			["index", "filename_json"]
+		],
+		"initialization": "sphere",
+		"order_by": "filename_json"
+	}
+}
