@@ -375,7 +375,7 @@ function addTab() {
 		"buttonTab": buttonNew,
 
 		"showHeights": true,
-		"showCurvatureChanges": true,
+		"showCurvatureChanges": false,
 		"showMap": false,
 		"showGraph": true,
 		"showOutages": false,
