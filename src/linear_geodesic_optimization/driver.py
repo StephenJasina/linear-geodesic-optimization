@@ -49,6 +49,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'coordinates_scale': 0.8,
         'network_trim_radius': None,
         'maxiter': None,
+        'backend': 'legacy',
         'initialization_file_path': None,
         'index': None # Additional unique ID
     }
@@ -270,7 +271,8 @@ def dispatch_optimization_batches(
             [
                 argument_batch[0]
                 for argument_batch in arguments
-            ]
+            ],
+            n_cores=n_cores
         )
         batch.run_multiprocessed(
             item_fn,

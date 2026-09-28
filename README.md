@@ -3,7 +3,7 @@ Tool for constructing and viewing a manifold whose geodesic distances are approx
 
 ## Requirements
 ### System Packages
-As most of the optimization code is written in [Python](https://www.python.org/), a working installation (at least version 3.6) must be installed. For viewing the outputs, a modern browser is needed, along with [npm](https://www.npmjs.com/).
+As most of the optimization code is written in [Python](https://www.python.org/), a working installation (at least version 3.10) must be installed. For viewing the outputs, a modern browser is needed, along with [npm](https://www.npmjs.com/).
 
 ### Python Packages
 Most of the packages listed below can be installed via `pip install <package name>`. For those that cannot, additional instructions are included.
@@ -25,8 +25,16 @@ Additionally helpful packages for viewing the data are
 These dependencies are controlled by the file `src/site/package.json`. To install them, simply run `npm install` from the `src/site` directory.
 
 ## Usage
-From the `src` directory, run `python optimization.py` to run the optimizer, which will generate a series of manifolds whose coordinates are stored in JSON format. At the end of the file (beneath `if __name__ == '__main__':`) are some parameters that can be changed to modify the optimization parameters (input files, hyperparameters, etc.).
+From the `src` directory, run `python optimization.py config_file.json` followed
+by `python collation.py config_file.json`. Configurations live under `data/`;
+for example, `../data/toy/routing_with_volumes/config/traffic_two_clusters.json`
+when running from `src`.
 
-Once the manifolds have been computed, create the full animation file using `python collate_outputs.py`. At the top of the file are configuration parameters to select the location of the output from the optimizer. Also here is a `list` that can be edited to select which geodesics to display.
+The optional `backend` argument selects the optimizer implementation. The
+`legacy` backend uses the original Python derivative code. The `torch` backend
+uses array operations and automatic differentiation and requires PyTorch
+(`pip install torch`). The example traffic-two-clusters config selects `torch`.
+Both backends use the same objective and output format. The torch backend
+uses one CPU thread per optimization process to avoid thread oversubscription.
 
 To run the webapp, run `npx vite` from the `src/site` directory. This will start the server locally and display a link to the page in the console. The animation can be viewed by dragging and dropping the JSON file produced by the collation process.
