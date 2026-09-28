@@ -19,6 +19,7 @@ if __name__ == '__main__':
     parser.add_argument('--epsilon', '-e', dest='epsilon', metavar='epsilon', type=float)
     parser.add_argument('--clustering-distance', '-c', dest='clustering_distance', metavar='clustering-distance', type=float)
     parser.add_argument('--reweight', '-r', dest='ricci_curvature_reweight', metavar='ricci-curvature-reweight', choices=['distribution', 'metric'], default=None)
+    parser.add_argument('--reweight_scale', '-s', dest='ricci_curvature_distribution_reweight_scale', metavar='ricci_curvature_distribution_reweight_scale', type=float, default=2.)
     parser.add_argument('--show-map', '-m', dest='show_map', action='store_true')
     parser.add_argument('--output', '-o', dest='output_filename', metavar='filename')
     parser.add_argument('--quiet', '-q', dest='quiet', action='store_true')
@@ -30,6 +31,7 @@ if __name__ == '__main__':
     epsilon = args.epsilon
     clustering_distance = args.clustering_distance
     ricci_curvature_reweight = args.ricci_curvature_reweight
+    ricci_curvature_distribution_reweight_scale = args.ricci_curvature_distribution_reweight_scale
     show_map = args.show_map
     output_filename = args.output_filename
     quiet = args.quiet
@@ -47,6 +49,7 @@ if __name__ == '__main__':
             clustering_distance=clustering_distance,
             directed=True,
             ricci_curvature_reweight=ricci_curvature_reweight,
+            ricci_curvature_distribution_reweight_scale=ricci_curvature_distribution_reweight_scale,
         )
     else:
         if probes_filename is None or latencies_filename is None:
@@ -60,8 +63,8 @@ if __name__ == '__main__':
             clustering_distance=clustering_distance,
         )
 
-    # curvatures = [edge_data['ricciCurvature'] for _, _, edge_data in graph.edges(data=True) if 'ricciCurvature' in edge_data]
-    # print(min(curvatures), max(curvatures))
+    curvatures = [edge_data['ricciCurvature'] for _, _, edge_data in graph.edges(data=True) if 'ricciCurvature' in edge_data]
+    print(min(curvatures), max(curvatures))
     # for u, v, edge_data in graph.edges(data=True):
     #     if 'ricciCurvature' in edge_data:
     #         print(f"{u} -> {v}: {edge_data['ricciCurvature']}")
@@ -80,7 +83,7 @@ if __name__ == '__main__':
 
     plot.get_network_plot(
         graph, ax = ax,
-        color_min=-4., color_max=4.
+        color_min=-8., color_max=8.
     )
 
     if not quiet:

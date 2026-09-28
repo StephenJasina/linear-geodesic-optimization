@@ -186,7 +186,8 @@ def compute_ricci_curvature_from_traffic(
     edge_distance_label='latency',
     use_optimal_transport=False,
     pairs=None,
-    reweight:typing.Literal[None, 'distribution', 'metric']=None
+    reweight:typing.Literal[None, 'distribution', 'metric']=None,
+    distribution_reweight_scale:float=0.,
 ):
     """
     Compute the Ricci curvature using the data-plane transport plan.
@@ -229,7 +230,7 @@ def compute_ricci_curvature_from_traffic(
     traffic_per_link_min = min(traffic_per_link.values())  # TODO: Should we use this?
     traffic_per_link_max = max(traffic_per_link.values())
     log_traffic_per_link = {
-        (u, v): np.log(traffic / traffic_per_link_max * (np.e**2 - 1) + 1)
+        (u, v): np.log(traffic / traffic_per_link_max * (np.e**distribution_reweight_scale - 1) + 1)
         for (u, v), traffic in traffic_per_link.items()
     }
 
@@ -433,7 +434,9 @@ def compute_ricci_curvature(
     edge_distance_label: typing.Optional[str] = None,
     alpha: float = 0.,
     use_augmented_graph: bool = False,
-    use_tomography: bool = False
+    use_tomography: bool = False,
+    reweight:typing.Literal[None, 'distribution', 'metric']=None,
+    distribution_reweight_scale:float=2.,
 ) -> typing.Dict[typing.Tuple[typing.Any, typing.Any], float]:
     """
     Compute the Ricci curvature for each edge in a graph.
@@ -495,7 +498,7 @@ def compute_ricci_curvature(
         ricci_curvatures = {
             (index_to_node[source], index_to_node[destination]): curvature
             for (source, destination), curvature in compute_ricci_curvature_from_traffic(
-                graph, routes, traffic, edge_distance_label
+                graph, routes, traffic, edge_distance_label, reweight=reweight, distribution_reweight_scale=distribution_reweight_scale
             ).items()
         }
     else:

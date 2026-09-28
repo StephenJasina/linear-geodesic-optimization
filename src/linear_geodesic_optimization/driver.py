@@ -40,6 +40,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'clustering_distance': None,
         'ricci_curvature_alpha': 0.,
         'ricci_curvature_reweight': None,
+        'ricci_curvature_distribution_reweight_scale': 0.,
         'lambda_curvature': 1.,
         'lambda_smooth': 0.,
         'initial_radius': 20.,
