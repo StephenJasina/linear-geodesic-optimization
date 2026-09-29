@@ -48,8 +48,8 @@ class PriorityQueue:
 def get_shortest_routes(
     graph: nx.Graph,
     edge_distance_label: typing.Optional[str]=None,
-    od_pairs: typing.Optional[typing.List[typing.Tuple[typing.Any, typing.Any]]]=None
-):
+    od_pairs: typing.Optional[list[tuple[typing.Any, typing.Any]]]=None
+) -> list[list[typing.Any]]:
     """
     Run Dijkstra's algorithm.
 
@@ -59,7 +59,7 @@ def get_shortest_routes(
     If `od_pairs` is passed in, paths for those pairs are returned.
     Otherwise, all paths are returned.
     """
-    routes_dict = {}
+    routes_dict: dict[tuple[typing.Any, typing.Any], list[typing.Any]] = {}
     for source in graph.nodes:
         tree = {
             node: {
@@ -89,7 +89,7 @@ def get_shortest_routes(
                     }
                     queue.add(successor, distance_candidate)
 
-        routes_from_source = {}
+        routes_from_source: dict[typing.Any, list[typing.Any]] = {}
         for node in order_visited:
             predecessor = tree[node]['predecessor']
             if predecessor is None:
