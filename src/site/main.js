@@ -261,6 +261,15 @@ checkboxShowGrid.onchange = function() {
 	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
+let checkboxShowTrafficMatrix = document.getElementById("show-traffic-matrix");
+checkboxShowTrafficMatrix.onchange = function() {
+	if (checkboxShowTrafficMatrix.checked) {
+		divTraffic.style.display = "grid";
+	} else {
+		divTraffic.style.display = "none";
+	}
+}
+
 let buttonHelp = document.getElementById("button-help");
 buttonHelp.onclick = helpClick;
 
@@ -713,15 +722,13 @@ document.addEventListener("keydown", function(event) {
 	if (event.key == "Escape") {
 		resetView();
 	} else if (event.key == "h") {
-		let elementIDs = ["div-gui", "button-help", "div-traffic"];
-		let displayStyles = ["block", "block", "grid"];
+		let elementIDs = ["div-gui", "button-help"];
 		for (let i = 0; i < elementIDs.length; ++i) {
 			let element = document.getElementById(elementIDs[i]);
-			let displayStyle = displayStyles[i];
 			if (element.style.display != "none") {
 				element.style.display = "none";
 			} else {
-				element.style.display = displayStyle;
+				element.style.display = "block";
 			}
 		}
 
@@ -1218,6 +1225,11 @@ dropReader.onload = function() {
 				}
 			}
 			updateTrafficTable(currentNetworkIndex);
+
+			checkboxShowTrafficMatrix.style.display = "inline";
+		} else {
+			// Does not have traffic
+			checkboxShowTrafficMatrix.style.display = "none";
 		}
 
 		mapCenter = mapData.center;
