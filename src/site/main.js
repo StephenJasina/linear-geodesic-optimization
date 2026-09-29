@@ -1057,7 +1057,7 @@ dropReader.onload = function() {
 			heights[i] = animationData[i].height;
 			curvatures[i] = animationData[i].curvature;
 			networkEdges[i] = animationData[i].edges;
-			networkBoundaries[i] = animationData[i].boundary;
+			networkBoundaries[i] = animationData[i].border;
 			geodesics[i] = animationData[i].geodesics;
 			edgeColors[i] = animationData[i].edgeColors;
 			if (hasValidTraffic && 'traffic' in animationData[i] && animationData[i].traffic !== null) {
