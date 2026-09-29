@@ -9,6 +9,13 @@ import traceback
 import typing
 
 
+def _batched(iterable, size):
+    """Yield fixed-size groups on Python versions before itertools.batched."""
+    iterator = iter(iterable)
+    while group := list(itertools.islice(iterator, size)):
+        yield group
+
+
 def group_arguments(
     arguments: dict[str, list[typing.Any]],
     groups: list[list[str]],
@@ -167,7 +174,7 @@ def group_arguments(
     # Combine the partial argument lists
     return [
         list(batch)
-        for batch in itertools.batched([
+        for batch in _batched([
             functools.reduce(lambda x, y: x | y, split_argument_list, defaults)
             for split_argument_list in itertools.product(*argument_sublists)
         ], length_batch)
@@ -211,7 +218,11 @@ def run_multiprocessed(
     kwargs.
     """
     if n_cores is None:
-        n_cores = max(len(os.sched_getaffinity(0)) - 2, 1)
+        available_cores = (
+            len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity")
+            else os.cpu_count() or 1
+        )
+        n_cores = max(available_cores - 2, 1)
 
     with concurrent.futures.ProcessPoolExecutor(n_cores) as executor:
         futures = []

@@ -38,9 +38,18 @@ def optimize(
     network_trim_radius=None,
     directory_output,
     maxiter=None,
+    backend="legacy",
     initialization_file_path=None,
     **kwargs
 ):
+    if backend == 'legacy':
+        computer_type = optimization.Computer
+    elif backend == 'torch':
+        from linear_geodesic_optimization.optimization.torch_optimization import Computer as TorchComputer
+        computer_type = TorchComputer
+    else:
+        raise ValueError(f'Unknown optimization backend: {backend}')
+
     # Construct the mesh
     width = height = sides
     mesh = RectangleMesh(width, height, mesh_scale)
@@ -100,6 +109,7 @@ def optimize(
         'height': int(height),
         'mesh_scale': float(mesh_scale),
         'coordinates_scale': float(coordinates_scale),
+        'backend': backend,
         'network_trim_radius': float(network_trim_radius) if network_trim_radius is not None else None,
     }
 
@@ -129,7 +139,7 @@ def optimize(
         mesh.trim_to_graph(network_vertices, network_edges, network_trim_radius)
         z_0 = mesh.get_parameters()
 
-    computer = optimization.Computer(
+    computer = computer_type(
         mesh, network_vertices, network_edges, network_curvatures,
         1.01 * 2**0.5 * mesh_scale / width,
         lambda_curvature, lambda_smooth,
