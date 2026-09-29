@@ -145,3 +145,17 @@ if __name__ == '__main__':
                 traffic_matrix[v][u] *= alpha
         write_graph(graph, routes, traffic_matrix, directory_output / f'graph_{i}.json')
     traffic_matrix = traffic_matrix_original
+
+    directory_output = pathlib.PurePath('two_clusters_extreme')
+    cluster_left = ['A', 'B', 'C']
+    cluster_right = ['J', 'K']
+    os.makedirs(directory_output, exist_ok=True)
+    traffic_matrix_original = traffic_matrix
+    for i, alpha in enumerate(np.linspace(1., 6., 9)):
+        traffic_matrix = copy.deepcopy(traffic_matrix_original)
+        for u in cluster_left:
+            for v in cluster_right:
+                traffic_matrix[u][v] *= alpha
+                traffic_matrix[v][u] *= alpha
+        write_graph(graph, routes, traffic_matrix, directory_output / f'graph_{i}.json')
+    traffic_matrix = traffic_matrix_original
