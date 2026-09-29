@@ -132,26 +132,63 @@ if __name__ == '__main__':
         )
     routes = tomography.get_shortest_routes(graph, 'latency')
 
-    directory_output = pathlib.PurePath('two_clusters')
-    cluster_left = ['A', 'B', 'C']
-    cluster_right = ['J', 'K']
-    os.makedirs(directory_output, exist_ok=True)
-    traffic_matrix_original = traffic_matrix
-    for i, alpha in enumerate(np.linspace(1., 3., 9)):
-        traffic_matrix = copy.deepcopy(traffic_matrix_original)
-        for u in cluster_left:
-            for v in cluster_right:
-                traffic_matrix[u][v] *= alpha
-                traffic_matrix[v][u] *= alpha
-        write_graph(graph, routes, traffic_matrix, directory_output / f'graph_{i}.json')
-    traffic_matrix = traffic_matrix_original
+    # directory_output = pathlib.PurePath('two_clusters')
+    # cluster_left = ['A', 'B', 'C']
+    # cluster_right = ['J', 'K']
+    # os.makedirs(directory_output, exist_ok=True)
+    # traffic_matrix_original = traffic_matrix
+    # for i, alpha in enumerate(np.linspace(1., 3., 9)):
+    #     traffic_matrix = copy.deepcopy(traffic_matrix_original)
+    #     for u in cluster_left:
+    #         for v in cluster_right:
+    #             traffic_matrix[u][v] *= alpha
+    #             traffic_matrix[v][u] *= alpha
+    #     write_graph(graph, routes, traffic_matrix, directory_output / f'graph_{i}.json')
+    # traffic_matrix = traffic_matrix_original
 
-    directory_output = pathlib.PurePath('two_clusters_extreme')
+    # directory_output = pathlib.PurePath('two_clusters_extreme')
+    # cluster_left = ['A', 'B', 'C']
+    # cluster_right = ['J', 'K']
+    # os.makedirs(directory_output, exist_ok=True)
+    # traffic_matrix_original = traffic_matrix
+    # for i, alpha in enumerate(np.linspace(1., 6., 9)):
+    #     traffic_matrix = copy.deepcopy(traffic_matrix_original)
+    #     for u in cluster_left:
+    #         for v in cluster_right:
+    #             traffic_matrix[u][v] *= alpha
+    #             traffic_matrix[v][u] *= alpha
+    #     write_graph(graph, routes, traffic_matrix, directory_output / f'graph_{i}.json')
+    # traffic_matrix = traffic_matrix_original
+
+    # directory_output = pathlib.PurePath('die_out')
+    # os.makedirs(directory_output, exist_ok=True)
+    # traffic_matrix_original = traffic_matrix
+    # link_to_kill = ('F', 'G')
+    # routes_to_kill = []
+    # for route in routes:
+    #     should_kill_route = False
+    #     for u, v in itertools.pairwise(route):
+    #         if (u, v) == link_to_kill or (v, u) == link_to_kill:
+    #             should_kill_route = True
+    #             break
+    #     if should_kill_route:
+    #         routes_to_kill.append(route)
+    # for i, alpha in enumerate(np.linspace(1., 0., 9)):
+    #     traffic_matrix = copy.deepcopy(traffic_matrix_original)
+    #     for route in routes_to_kill:
+    #         u = route[0]
+    #         v = route[-1]
+    #         traffic_matrix[u][v] *= alpha
+    #         traffic_matrix[v][u] *= alpha
+    #     write_graph(graph, routes, traffic_matrix, directory_output / f'graph_{i}.json')
+    # traffic_matrix = traffic_matrix_original
+
+    directory_output = pathlib.PurePath('two_clusters_die_out')
     cluster_left = ['A', 'B', 'C']
     cluster_right = ['J', 'K']
     os.makedirs(directory_output, exist_ok=True)
     traffic_matrix_original = traffic_matrix
-    for i, alpha in enumerate(np.linspace(1., 6., 9)):
+    for i, alpha in enumerate(np.linspace(1., 0., 9)):
         traffic_matrix = copy.deepcopy(traffic_matrix_original)
         for u in cluster_left:
             for v in cluster_right:
