@@ -50,7 +50,8 @@ The tests compare legacy and Torch losses and gradients, then run both through
 `optimization.py` on the same small GraphML fixture. The network, input, and
 initial heights must match exactly; final heights and saved diagnostic losses
 must agree within numerical tolerances. The only expected metadata difference
-is the `backend` name.
+is the `backend` name. The tests cover several mesh sizes and flat, mixed,
+positive, and negative curvature targets.
 
 The benchmark warms up each backend, alternates run order, reports median
 end-to-end times and their ratio, and fails if final heights differ by more
@@ -58,5 +59,9 @@ than its `--atol` threshold. Its default four-node fixture isolates optimizer
 runtime from route or curvature preprocessing. Use `--graphml PATH`, `--sides`,
 and `--maxiter` to try another GraphML input or mesh size. A five-iteration
 benchmark measures a fixed workload; it does not measure time to convergence.
+Use `--curvature-scale` and `--curvature-offset` to change every edge's target
+before either backend runs, according to `target = scale * original + offset`.
+For example, `--sides 30 --curvature-scale 2` tests a larger mesh with twice
+the fixture's curvature targets.
 
 To run the webapp, run `npx vite` from the `src/site` directory. This will start the server locally and display a link to the page in the console. The animation can be viewed by dragging and dropping the JSON file produced by the collation process.

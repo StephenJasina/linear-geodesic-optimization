@@ -12,16 +12,25 @@ from linear_geodesic_optimization.optimization.optimization import Computer as L
 from linear_geodesic_optimization.optimization.torch_optimization import Computer as TorchComputer
 
 
-@pytest.mark.parametrize('sides', [6, 12])
+@pytest.mark.parametrize('sides', [6, 12, 20])
 @pytest.mark.parametrize('lambda_smooth', [0.0, 0.005])
-def test_loss_and_gradient_match_legacy(sides, lambda_smooth):
+@pytest.mark.parametrize(
+    'curvatures',
+    [
+        [0.1, -0.2, 0.05, 0.3, None],
+        [0.0, 0.0, 0.0, 0.0, None],
+        [0.3, 0.15, 0.25, 0.4, 0.2],
+        [-0.4, -0.2, -0.3, -0.1, -0.25],
+    ],
+    ids=['mixed_with_missing', 'flat', 'positive', 'negative'],
+)
+def test_loss_and_gradient_match_legacy(sides, lambda_smooth, curvatures):
     mesh = Mesh(sides, sides, 0.25)
     vertices = np.array([
         [0.025, 0.025], [0.225, 0.025],
         [0.225, 0.225], [0.025, 0.225],
     ])
     edges = [(0, 1), (1, 2), (2, 3), (3, 0), (0, 2)]
-    curvatures = [0.1, -0.2, 0.05, 0.3, None]
     epsilon = 1.01 * 2**0.5 * 0.25 / sides
     legacy = LegacyComputer(
         mesh, vertices, edges, curvatures, epsilon, 1.0, lambda_smooth

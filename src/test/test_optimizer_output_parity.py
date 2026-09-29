@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+import networkx as nx
 import numpy as np
 import pytest
 
@@ -10,8 +11,17 @@ import pytest
 GRAPHML = Path(__file__).parent / "fixtures" / "optimization_parity.graphml"
 
 
-@pytest.mark.parametrize("sides,lambda_smooth", [(8, 0.0), (8, 0.005), (12, 0.005)])
-def test_optimized_output_matches_legacy(tmp_path, monkeypatch, sides, lambda_smooth):
+@pytest.mark.parametrize(
+    "sides,lambda_smooth", [(8, 0.0), (8, 0.005), (12, 0.005), (20, 0.005)]
+)
+@pytest.mark.parametrize(
+    "curvature_scale,curvature_offset",
+    [(0.0, 0.0), (1.0, 0.0), (0.0, 0.3), (0.0, -0.3)],
+    ids=["flat", "mixed", "positive", "negative"],
+)
+def test_optimized_output_matches_legacy(
+    tmp_path, monkeypatch, sides, lambda_smooth, curvature_scale, curvature_offset
+):
     # POT needs only its NumPy backend here. Avoid importing an unrelated,
     # potentially incompatible TensorFlow installation during graph loading.
     monkeypatch.setenv("POT_BACKEND_DISABLE_TENSORFLOW", "1")
@@ -19,12 +29,20 @@ def test_optimized_output_matches_legacy(tmp_path, monkeypatch, sides, lambda_sm
     pytest.importorskip("ot")
     from optimization import optimize
 
+    graph = nx.read_graphml(GRAPHML)
+    for _, _, edge in graph.edges(data=True):
+        edge["ricciCurvature"] = (
+            curvature_scale * edge["ricciCurvature"] + curvature_offset
+        )
+    graphml = tmp_path / "curvature_goal.graphml"
+    nx.write_graphml(graph, graphml)
+
     outputs = {}
     snapshots = {}
     for backend in ("legacy", "torch"):
         directory = tmp_path / backend
         optimize(
-            filename_graphml=GRAPHML,
+            filename_graphml=graphml,
             initial_radius=80.0,
             sides=sides,
             mesh_scale=0.25,

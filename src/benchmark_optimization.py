@@ -10,18 +10,33 @@ import argparse
 import contextlib
 import io
 import json
+import math
 import platform
 import statistics
 import tempfile
 import time
 from pathlib import Path
 
+import networkx as nx
 import numpy as np
 
 from optimization import optimize
 
 
 DEFAULT_GRAPHML = Path(__file__).parent / "test" / "fixtures" / "optimization_parity.graphml"
+
+
+def prepare_graphml(source, destination, curvature_scale, curvature_offset):
+    """Change every edge's curvature target before timing either backend."""
+    if curvature_scale == 1.0 and curvature_offset == 0.0:
+        return source
+    graph = nx.read_graphml(source)
+    for _, _, edge in graph.edges(data=True):
+        edge["ricciCurvature"] = (
+            curvature_scale * float(edge["ricciCurvature"]) + curvature_offset
+        )
+    nx.write_graphml(graph, destination)
+    return destination
 
 
 def run_once(graphml, directory, backend, sides, maxiter, lambda_smooth):
@@ -63,6 +78,10 @@ def main(argv=None):
     parser.add_argument("--maxiter", type=int, default=5, help="L-BFGS-B iteration cap")
     parser.add_argument("--repeats", type=int, default=3, help="measured runs per backend")
     parser.add_argument("--lambda-smooth", type=float, default=0.005)
+    parser.add_argument("--curvature-scale", type=float, default=1.0,
+                        help="multiply each GraphML curvature target before both runs")
+    parser.add_argument("--curvature-offset", type=float, default=0.0,
+                        help="add this value to each curvature target before both runs")
     parser.add_argument("--atol", type=float, default=1e-6,
                         help="maximum allowed absolute difference in final heights")
     args = parser.parse_args(argv)
@@ -70,21 +89,29 @@ def main(argv=None):
         parser.error(f"GraphML input does not exist: {args.graphml}")
     if args.sides < 3 or args.maxiter < 1 or args.repeats < 1 or args.atol < 0:
         parser.error("sides must be at least 3, maxiter/repeats positive, and atol nonnegative")
+    if not all(math.isfinite(value) for value in (
+        args.lambda_smooth, args.curvature_scale, args.curvature_offset, args.atol
+    )):
+        parser.error("lambda-smooth, curvature goals, and atol must be finite")
 
     samples = {"legacy": [], "torch": []}
     max_difference = 0.0
     with tempfile.TemporaryDirectory(prefix="manifold-optimizer-benchmark-") as temporary:
         root = Path(temporary)
+        graphml = prepare_graphml(
+            args.graphml, root / "curvature_goal.graphml",
+            args.curvature_scale, args.curvature_offset,
+        )
         # Discard one run of each backend to exclude first-use library setup.
         for backend in ("legacy", "torch"):
-            run_once(args.graphml, root / f"warmup-{backend}", backend,
+            run_once(graphml, root / f"warmup-{backend}", backend,
                      args.sides, args.maxiter, args.lambda_smooth)
         for repeat in range(args.repeats):
             outputs = {}
             order = ("legacy", "torch") if repeat % 2 == 0 else ("torch", "legacy")
             for backend in order:
                 elapsed, output = run_once(
-                    args.graphml, root / f"{backend}-{repeat}", backend,
+                    graphml, root / f"{backend}-{repeat}", backend,
                     args.sides, args.maxiter, args.lambda_smooth,
                 )
                 samples[backend].append(elapsed)
@@ -95,6 +122,8 @@ def main(argv=None):
     torch_seconds = statistics.median(samples["torch"])
     print(f"Python {platform.python_version()} | {args.sides}x{args.sides} mesh | "
           f"maxiter={args.maxiter} | {args.repeats} measured runs per backend")
+    print(f"Curvature target = {args.curvature_scale:g} × GraphML target "
+          f"{args.curvature_offset:+g}")
     print(f"Legacy median: {legacy_seconds:.4f} s")
     print(f"Torch median:  {torch_seconds:.4f} s")
     print(f"Speedup:       {legacy_seconds / torch_seconds:.2f}x")
