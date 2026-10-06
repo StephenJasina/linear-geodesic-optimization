@@ -527,7 +527,7 @@ def main():
                 'path_output_collated': argument_batch[0]['directory_output'] / 'animation.json',  # TODO: Smarter location of outputs
                 'geodesic_label_color_pairs': None,  # TODO: Add custom functionality
                 'bubble_size': 0.03,
-                'postprocess_subtract_initialization': settings['postprocess_subtract_initialization'],
+                'postprocess_subtract_initialization': settings.get('postprocess_subtract_initialization', True),
             }
             for argument_batch in arguments
         ]
