@@ -174,6 +174,8 @@ def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('config_file')
+    parser.add_argument('--dry-run', '-n', action='store_true',
+                        help='validate the config and output directories, then exit without optimizing')
     args = parser.parse_args()
     config_file = pathlib.PurePath(args.config_file)
 
@@ -187,7 +189,7 @@ def main():
     driver.assign_output_directories(arguments, settings, output_format, existence_check='must_not_exist')
     driver.check_no_duplicate_output_directories(arguments)
 
-    if not arguments or 'dry_run' in settings and settings['dry_run']:
+    if not arguments or args.dry_run:
         # Exit before producing output
         return
 
