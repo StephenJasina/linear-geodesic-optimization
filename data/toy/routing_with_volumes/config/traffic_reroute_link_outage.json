@@ -1,0 +1,49 @@
+{
+	"arguments": {
+		"filename_probes": [null],
+		"filename_links": [null],
+		"filename_graphml": [null],
+		"filename_json": [
+			"graph_4.json",
+			"graph_0.json",
+			"graph_1.json",
+			"graph_2.json",
+			"graph_3.json",
+			"graph_4.json",
+			"graph_5.json",
+			"graph_6.json",
+			"graph_7.json",
+			"graph_8.json"
+		],
+		"latency_threshold": [4],
+		"clustering_distance": [500000],
+		"ricci_curvature_alpha": [0],
+		"ricci_curvature_reweight": ["distribution"],
+		"ricci_curvature_distribution_reweight_scale": [2.0],
+		"lambda_curvature": [1.0],
+		"lambda_smooth": [0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05],
+		"initial_radius": [80.0],
+		"sides": [40],
+		"mesh_scale": [0.05, 0.10, 0.15, 0.20, 0.25],
+		"coordinates_scale": [0.8],
+		"network_trim_radius": [null],
+		"maxiter": [null],
+		"backend": ["torch"]
+	},
+	"groups": [
+		["filename_json"],
+		["lambda_smooth"],
+		["mesh_scale"]
+	],
+	"settings": {
+		"directory_data": ["..", "traffic", "reroute_link_outage"],
+		"directory_output": ["toy", "routing_with_volumes", "traffic_reroute_link_outage"],
+		"output_format": [
+			["mesh_scale", "lambda_smooth"],
+			["index", "filename_json"]
+		],
+		"initialization": "first",
+		"order_by": "filename_json",
+		"postprocess_subtract_initialization": true
+	}
+}
