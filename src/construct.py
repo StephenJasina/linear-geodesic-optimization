@@ -5,8 +5,8 @@ This is an alternative to optimization.py that uses the same config
 files and writes the same output.json format (so collation.py works
 unchanged). Instead of running L-BFGS over every mesh height, each
 network edge's Ricci curvature is turned into a target Hessian, and the
-heights are found with one sparse linear solve followed by a scalar
-amplitude calibration against the usual loss. See
+heights are found with a few sparse linear solves. The usual loss is
+only evaluated for reporting (and for the optional polish). See
 `linear_geodesic_optimization/construction/hessian_design.py`.
 """
 
@@ -19,7 +19,7 @@ import time
 import warnings
 
 import numpy as np
-import scipy
+import scipy.optimize
 
 import linear_geodesic_optimization.driver as driver
 from linear_geodesic_optimization.construction import hessian_design
@@ -91,23 +91,20 @@ def construct(
 
     time_network = time.perf_counter()
 
-    # Linear Hessian fit
-    z_unit = hessian_design.solve_heights(
+    z_constructed = hessian_design.solve_heights(
         mesh, network_vertices, network_edges, network_curvatures,
         tube_radius, hessian_anisotropy, hessian_orientation,
         hessian_regularization, hessian_iterations,
     )
 
-    # Amplitude calibration against the exact loss
+    time_constructed = time.perf_counter()
+
+    # The usual loss, used for reporting and the optional polish
     computer = TorchComputer(
         mesh, network_vertices, network_edges, network_curvatures,
         loss_epsilon, lambda_curvature, lambda_smooth,
         directory=directory_output
     )
-    scale = hessian_design.calibrate_scale(computer.forward, z_unit)
-    z_constructed = scale * z_unit
-
-    time_constructed = time.perf_counter()
 
     def losses(z):
         loss = computer.forward(z)
@@ -168,7 +165,6 @@ def construct(
     }
 
     construction = {
-        'scale': scale,
         'losses': losses_constructed,
         'time_network': time_network - time_start,
         'time_construction': time_constructed - time_network,
@@ -176,7 +172,7 @@ def construct(
         'edges': residuals,
     }
     print(
-        f'{directory_output}: scale {scale:.4g}, '
+        f'{directory_output}: '
         f'L_curvature {losses_constructed["L_curvature"]:.6f}, '
         f'construction time {construction["time_construction"]:.2f}s'
     )

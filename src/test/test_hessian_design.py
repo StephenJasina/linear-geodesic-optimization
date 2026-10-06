@@ -16,7 +16,7 @@ EPSILON = 1.01 * 2**0.5 * SCALE / SIDES
 
 
 def construct(vertices, edges, curvatures, **kwargs):
-    """Return (heights, mean kappa_G per edge) after calibration."""
+    """Return (heights, mean kappa_G per edge)."""
     mesh = Mesh(SIDES, SIDES, SCALE)
     z = hessian_design.solve_heights(
         mesh, vertices, edges, curvatures, EPSILON, **kwargs
@@ -24,7 +24,6 @@ def construct(vertices, edges, curvatures, **kwargs):
     computer = TorchComputer(
         mesh, vertices, edges, curvatures, EPSILON, 1.0, 0.0
     )
-    z = hessian_design.calibrate_scale(computer.forward, z) * z
     computer.forward(z)
     residuals = hessian_design.edge_residuals(
         computer.kappa_G, mesh.get_coordinates()[:, :2],
@@ -152,9 +151,7 @@ def test_iterations_resolve_conflicting_targets():
         computer = TorchComputer(
             mesh, vertices, edges, curvatures, EPSILON, 1.0, 0.0
         )
-        return computer.forward(
-            hessian_design.calibrate_scale(computer.forward, z) * z
-        )
+        return computer.forward(z)
 
     assert loss(5) < loss(0)
 

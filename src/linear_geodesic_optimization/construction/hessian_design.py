@@ -22,7 +22,6 @@ import typing
 
 import numpy as np
 import numpy.typing as npt
-import scipy.optimize
 import scipy.sparse
 import scipy.sparse.linalg
 
@@ -323,37 +322,6 @@ def solve_heights(
 
     z[interior] = z_interior
     return z
-
-
-def calibrate_scale(
-    loss: typing.Callable[[npt.NDArray[np.float64]], float],
-    z: npt.NDArray[np.float64],
-    scale_max: float = 4.,
-    n_grid: int = 41,
-) -> float:
-    """
-    Return the s >= 0 minimizing `loss(s * z)`.
-
-    The linearized Hessian fit ignores the slope dependence of the
-    discrete Gaussian curvature, so the overall amplitude is chosen by
-    evaluating the exact loss. A coarse grid search (expanding the
-    range while the best value sits at its upper end) is followed by a
-    bounded scalar minimization around the best grid point.
-    """
-    while True:
-        grid = np.linspace(0., scale_max, n_grid)
-        values = [loss(s * z) for s in grid]
-        best = int(np.argmin(values))
-        if best < n_grid - 1 or scale_max >= 1e3:
-            break
-        scale_max *= 4.
-
-    lower = grid[max(best - 1, 0)]
-    upper = grid[min(best + 1, n_grid - 1)]
-    result = scipy.optimize.minimize_scalar(
-        lambda s: loss(s * z), bounds=(lower, upper), method='bounded'
-    )
-    return float(result.x) if result.fun <= values[best] else float(grid[best])
 
 
 def edge_residuals(
