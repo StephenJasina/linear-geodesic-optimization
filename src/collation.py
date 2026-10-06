@@ -150,6 +150,7 @@ def collate_outputs(
     bubble_size = np.inf,
     postprocess=True,
     exact_geodesics=False,
+    postprocess_subtract_initialization=True
 ):
     """
     Join many optimization outputs into a single animation.
@@ -366,7 +367,10 @@ def collate_outputs(
                     for i in range(width)
                     for j in range(height)
                 ]).reshape((width * height,))
-            z = np.array(output['final']) - z_0
+            if postprocess_subtract_initialization:
+                z = np.array(output['final']) - z_0
+            else:
+                z = np.array(output['final'])
             zs.append(z - np.mean(z[hull]))
         else:
             z = np.array(output['final'])
@@ -523,6 +527,7 @@ def main():
                 'path_output_collated': argument_batch[0]['directory_output'] / 'animation.json',  # TODO: Smarter location of outputs
                 'geodesic_label_color_pairs': None,  # TODO: Add custom functionality
                 'bubble_size': 0.03,
+                'postprocess_subtract_initialization': settings['postprocess_subtract_initialization'],
             }
             for argument_batch in arguments
         ]
