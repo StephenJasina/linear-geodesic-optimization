@@ -215,6 +215,7 @@ class Computer:
         self._cached_loss = float(loss.detach())
         self._cached_gradient = gradient.detach().numpy().copy()
         self.curvature_loss.loss = float(curvature_loss.detach())
+        self.kappa_G = gaussian.detach().numpy().copy()
         self.smooth_loss.loss = float(smooth_loss.detach())
 
     def forward(self, parameters=None):

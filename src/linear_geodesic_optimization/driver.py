@@ -51,6 +51,13 @@ def base_defaults() -> dict[str, typing.Any]:
         'maxiter': None,
         'backend': 'legacy',
         'initialization_file_path': None,
+        # Parameters used only by construct.py
+        'hessian_anisotropy': 1.,
+        'hessian_orientation': 'hill',
+        'hessian_regularization': 1e-3,
+        'hessian_tube_radius': None,
+        'hessian_iterations': 5,
+        'hessian_polish_maxiter': 0,
         'index': None # Additional unique ID
     }
 

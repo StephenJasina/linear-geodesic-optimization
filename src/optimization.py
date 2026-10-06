@@ -18,6 +18,67 @@ from linear_geodesic_optimization.optimization import optimization
 # Error on things like division by 0
 warnings.simplefilter('error')
 
+def load_network(
+    *,
+    filename_probes=None,
+    filename_links=None,
+    filename_graphml=None,
+    filename_json=None,
+    latency_threshold=None,
+    clustering_distance=None,
+    ricci_curvature_alpha=0.,
+    ricci_curvature_reweight=None,
+    ricci_curvature_distribution_reweight_scale=0.,
+):
+    """
+    Read the input network and compute its Ricci curvatures.
+
+    Return `(network, routes, traffic)`, where `network` is the
+    `(graph_data, vertex_data, edge_data)` triple from
+    `input_network.get_network_data`.
+    """
+    routes = None
+    traffic = None
+    if filename_graphml is not None:
+        graph = nx.read_graphml(filename_graphml)
+    elif filename_json is not None:
+        file_path_json = filename_json
+        graph, routes, traffic = input_network.get_graph_from_json(
+            file_path_json,
+            epsilon=latency_threshold,
+            clustering_distance=clustering_distance,
+            ricci_curvature_alpha=ricci_curvature_alpha,
+            ricci_curvature_reweight=ricci_curvature_reweight,
+            ricci_curvature_distribution_reweight_scale=ricci_curvature_distribution_reweight_scale,
+            return_traffic=True,
+        )
+    elif filename_probes is not None and filename_links is not None:
+        file_path_probes = filename_probes
+        file_path_links = filename_links
+        graph = input_network.get_graph_from_csvs(
+            file_path_probes, file_path_links,
+            epsilon=latency_threshold,
+            clustering_distance=clustering_distance,
+            ricci_curvature_alpha=ricci_curvature_alpha,
+        )
+    else:
+        raise ValueError('Need a graphml file, a json file, or two csv files as input')
+
+    return input_network.get_network_data(graph), routes, traffic
+
+def map_network_to_mesh(mesh, network, coordinates_scale):
+    """
+    Map a network's coordinates into the mesh's support.
+
+    Return `(network_vertices, network_edges, network_curvatures)`.
+    """
+    graph_data, _, edge_data = network
+    network_vertices = mesh.map_coordinates_to_support(
+        np.array(graph_data['coordinates']), coordinates_scale,
+        graph_data['bounding_box']
+    )
+    return network_vertices, graph_data['edges'], edge_data['ricciCurvature']
+
 def optimize(
     *,  # All parameters are keyword only
     filename_probes=None,
@@ -54,42 +115,20 @@ def optimize(
     width = height = sides
     mesh = RectangleMesh(width, height, mesh_scale)
 
-    # Construct the networkx graph
-    routes = None
-    traffic = None
-    if filename_graphml is not None:
-        graph = nx.read_graphml(filename_graphml)
-    elif filename_json is not None:
-        file_path_json = filename_json
-        graph, routes, traffic = input_network.get_graph_from_json(
-            file_path_json,
-            epsilon=latency_threshold,
-            clustering_distance=clustering_distance,
-            ricci_curvature_alpha=ricci_curvature_alpha,
-            ricci_curvature_reweight=ricci_curvature_reweight,
-            ricci_curvature_distribution_reweight_scale=ricci_curvature_distribution_reweight_scale,
-            return_traffic=True,
-        )
-    elif filename_probes is not None and filename_links is not None:
-        file_path_probes = filename_probes
-        file_path_links = filename_links
-        graph = input_network.get_graph_from_csvs(
-            file_path_probes, file_path_links,
-            epsilon=latency_threshold,
-            clustering_distance=clustering_distance,
-            ricci_curvature_alpha=ricci_curvature_alpha,
-        )
-    else:
-        raise ValueError('Need a graphml file, a json file, or two csv files as input')
-
-    # Get the data from the networkx graph
-    network = input_network.get_network_data(graph)
-    graph_data, vertex_data, edge_data = network
-    bounding_box = graph_data['bounding_box']
-    network_coordinates = graph_data['coordinates']
-    network_vertices = mesh.map_coordinates_to_support(np.array(network_coordinates), coordinates_scale, bounding_box)
-    network_edges = graph_data['edges']
-    network_curvatures = edge_data['ricciCurvature']
+    network, routes, traffic = load_network(
+        filename_probes=filename_probes,
+        filename_links=filename_links,
+        filename_graphml=filename_graphml,
+        filename_json=filename_json,
+        latency_threshold=latency_threshold,
+        clustering_distance=clustering_distance,
+        ricci_curvature_alpha=ricci_curvature_alpha,
+        ricci_curvature_reweight=ricci_curvature_reweight,
+        ricci_curvature_distribution_reweight_scale=ricci_curvature_distribution_reweight_scale,
+    )
+    network_vertices, network_edges, network_curvatures = map_network_to_mesh(
+        mesh, network, coordinates_scale
+    )
 
     # Setup snapshots
     if os.path.isdir(directory_output):
