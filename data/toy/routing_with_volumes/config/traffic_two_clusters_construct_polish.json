@@ -1,0 +1,49 @@
+{
+	"arguments": {
+		"filename_probes": [null],
+		"filename_links": [null],
+		"filename_graphml": [null],
+		"filename_json": [
+			"graph_0.json",
+			"graph_1.json",
+			"graph_2.json",
+			"graph_3.json",
+			"graph_4.json",
+			"graph_5.json",
+			"graph_6.json",
+			"graph_7.json",
+			"graph_8.json"
+		],
+		"latency_threshold": [4],
+		"clustering_distance": [500000],
+		"ricci_curvature_alpha": [0],
+		"ricci_curvature_reweight": ["distribution"],
+		"ricci_curvature_distribution_reweight_scale": [3.0, 4.0],
+		"lambda_curvature": [1.0],
+		"lambda_smooth": [0.005],
+		"sides": [40],
+		"mesh_scale": [0.25],
+		"coordinates_scale": [0.8],
+		"network_trim_radius": [null],
+		"hessian_anisotropy": [1.0],
+		"hessian_orientation": ["hill"],
+		"hessian_regularization": [0.001],
+		"hessian_iterations": [5],
+		"hessian_polish_maxiter": [200]
+	},
+	"groups": [
+		["filename_json"],
+		["lambda_smooth"],
+		["ricci_curvature_distribution_reweight_scale"]
+	],
+	"settings": {
+		"directory_data": ["..", "traffic", "two_clusters"],
+		"directory_output": ["toy", "routing_with_volumes", "traffic_two_clusters_construct_polish"],
+		"output_format": [
+			["lambda_smooth", "ricci_curvature_distribution_reweight_scale"],
+			["index", "filename_json"]
+		],
+		"initialization": "sphere",
+		"order_by": "filename_json"
+	}
+}
