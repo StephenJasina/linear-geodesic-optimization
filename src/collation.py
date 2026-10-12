@@ -166,9 +166,14 @@ def collate_outputs(
       `((source, target), [colorR, colorG, colorB])`,
     where the colors are encoded with numbers between 0 and 255.
 
+    All coordinates sent to the viewer (node and border x and y,
+    geodesic x and y, and the heights z) are divided by the mesh scale,
+    so the viewer shows the surface with its true proportions.
+
     If `postprocess` is true, the z-coordinates (heights) are put
     through a pipeline that subtracts a reference height, centers and
-    normalizes them across snapshots, applies a smoothing decay near
+    normalizes them across snapshots (to a range of `height_scale`
+    times the mesh width), applies a smoothing decay near
     the trim boundary, and trims the mesh to a bubble around the
     network before computing geodesics. If `postprocess` is false,
     none of that happens: each snapshot's z-coordinates are just
@@ -417,8 +422,9 @@ def collate_outputs(
             distance_to_bubble = np.zeros(distance_to_network.shape) if np.isposinf(bubble_size) else np.maximum(distance_to_network / mesh_scale - bubble_size, 0.)
             z = z - z_min
             if z_max != z_min and height_scale is not None:
-                z = z / (z_max - z_min) * height_scale
-            z = (z + 0.05) * np.exp(-1000 * distance_to_bubble**2) - 0.05
+                z = z / (z_max - z_min) * height_scale * mesh_scale
+            offset = 0.05 * mesh_scale
+            z = (z + offset) * np.exp(-1000 * distance_to_bubble**2) - offset
 
         mesh.set_parameters(z)
         if postprocess:
@@ -460,12 +466,15 @@ def collate_outputs(
 
         animation_data.append({
             'time': t,
-            'height': z.reshape((width, height)).tolist(),
+            'height': (z / mesh_scale).reshape((width, height)).tolist(),
             'curvature': np.array(curvature.kappa_G).reshape((width, height)).tolist(),
             'edges': edges,
             'geodesics': geodesics,
             'edgeColors': edge_colors,
-            'border': network_border,
+            'border': [
+                [[coordinate / mesh_scale for coordinate in point] for point in border_part]
+                for border_part in network_border
+            ],
             'traffic': traffic_matrix,
             'trafficPaths': paths
         })
