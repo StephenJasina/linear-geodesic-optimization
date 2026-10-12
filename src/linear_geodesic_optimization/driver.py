@@ -57,6 +57,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'hessian_regularization': 1e-3,
         'hessian_tube_radius': None,
         'hessian_iterations': 5,
+        'hessian_slope_correction': False,
         'hessian_polish_maxiter': 0,
         'index': None # Additional unique ID
     }
