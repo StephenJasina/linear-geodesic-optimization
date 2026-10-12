@@ -161,3 +161,44 @@ def test_missing_curvature_is_skipped():
     _, means = construct(vertices, [(0, 1), (1, 2)], [-1.0, None])
     assert means[1] is None
     assert means[0] < 0
+
+
+def test_gradient_operators_are_exact_on_quadratics():
+    sides = 12
+    dx, dy = hessian_design.gradient_operators(sides, SCALE)
+    interior = hessian_design.hessian_operators(sides, SCALE)[3]
+    xy = Mesh(sides, sides, SCALE).get_coordinates()[:, :2]
+    x, y = xy[:, 0], xy[:, 1]
+    f = 0.3 * x**2 + 0.7 * x * y - 1.1 * y**2
+    np.testing.assert_allclose(dx @ f, (0.6 * x + 0.7 * y)[interior], atol=1e-10)
+    np.testing.assert_allclose(dy @ f, (0.7 * x - 2.2 * y)[interior], atol=1e-10)
+
+
+def test_slope_correction_matches_steep_curvature():
+    # On a large mesh the uncorrected design is steep enough that the
+    # small-slope approximation K = det(Hess f) undershoots the target
+    sides, scale = 40, 2.
+    epsilon = 1.01 * 2**0.5 * scale / sides
+    vertices = np.array([[0.64, 1.], [1.36, 1.]])
+    curvature = -2.
+
+    def mean_kappa_G(slope_correction):
+        mesh = Mesh(sides, sides, scale)
+        z = hessian_design.solve_heights(
+            mesh, vertices, [(0, 1)], [curvature], epsilon,
+            iterations=10, slope_correction=slope_correction
+        )
+        computer = TorchComputer(
+            mesh, vertices, [(0, 1)], [curvature], epsilon, 1.0, 0.0
+        )
+        computer.forward(z)
+        (residual,) = hessian_design.edge_residuals(
+            computer.kappa_G, mesh.get_coordinates()[:, :2],
+            hessian_design.hessian_operators(sides, scale)[3],
+            vertices, [(0, 1)], [curvature], epsilon
+        )
+        return residual['mean_kappa_G']
+
+    uncorrected = mean_kappa_G(False)
+    corrected = mean_kappa_G(True)
+    assert abs(corrected - curvature) < 0.5 * abs(uncorrected - curvature)
