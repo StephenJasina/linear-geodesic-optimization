@@ -133,6 +133,32 @@ def hessian_operators(
     return dxx, dyy, (d_diagonal - dxx - dyy) / 2, interior
 
 
+def gradient_operators(
+    sides: int,
+    scale: float,
+) -> typing.Tuple[scipy.sparse.csr_array, scipy.sparse.csr_array]:
+    """
+    Return central-difference gradient operators on a square grid.
+
+    The grid is the same as in `hessian_operators`. The returned
+    operators `(Dx, Dy)` map heights on all vertices to gradient
+    entries on interior vertices.
+    """
+    h = scale / (sides - 1)
+    interior_1d = np.zeros(sides, dtype=bool)
+    interior_1d[1:-1] = True
+    interior = np.outer(interior_1d, interior_1d).ravel()
+
+    d1 = scipy.sparse.diags(
+        [-1., 1.], [-1, 1], shape=(sides, sides)
+    ) / (2. * h)
+    identity = scipy.sparse.identity(sides)
+
+    dx = scipy.sparse.csr_array(scipy.sparse.kron(d1, identity))[interior]
+    dy = scipy.sparse.csr_array(scipy.sparse.kron(identity, d1))[interior]
+    return dx, dy
+
+
 def edge_weights(
     network_vertices: npt.NDArray[np.float64],
     network_edges: typing.List[typing.Tuple[int, int]],
@@ -228,6 +254,7 @@ def solve_heights(
     orientation: typing.Literal['hill', 'basin'] = 'hill',
     regularization: float = 1e-3,
     iterations: int = 0,
+    slope_correction: bool = False,
 ) -> npt.NDArray[np.float64]:
     """
     Fit heights whose Hessian matches the edge targets.
@@ -247,6 +274,14 @@ def solve_heights(
     as-rigid-as-possible deformation) monotonically decreases the
     objective over both f and the targets, and only lets the targets
     rotate and change aspect ratio while keeping their determinants.
+
+    The fit treats det(H f) as the Gaussian curvature, which only holds
+    for small slopes; in general the curvature is
+    det(H f) / (1 + |grad f|^2)^2. With `slope_correction`, each round
+    instead projects onto the determinant kappa_e (1 + |grad f(v)|^2)^2,
+    using the slopes of the previous round's heights, so that steep
+    surfaces still meet their curvature targets. This has no effect
+    when `iterations` is 0.
 
     Return the heights of all mesh vertices, in mesh order.
     """
@@ -294,6 +329,10 @@ def solve_heights(
     # objective is (up to a constant) sum_v c_v ||H f(v) - t_v / c_v||^2,
     # so the system matrix does not depend on the targets.
     operators = [d[:, interior] for d in (dxx, dyy, dxy)]
+    if slope_correction:
+        gradients = [
+            d[:, interior] for d in gradient_operators(sides, mesh.get_scale())
+        ]
     factors = (1., 1., 2.)
     c = scipy.sparse.diags_array(weight)
     normal = sum(
@@ -318,7 +357,25 @@ def solve_heights(
         ))
         if iteration < iterations:
             hessians = np.stack([d @ z_interior for d in operators], axis=1)
-            targets = project_to_determinant(hessians[rows], curvatures)
+            if slope_correction:
+                # Steeper slopes ask for larger determinants, which make
+                # the surface steeper still; on large meshes this can
+                # run away
+                try:
+                    with np.errstate(over='raise', invalid='raise'):
+                        slopes_squared = sum(
+                            (d @ z_interior)**2 for d in gradients
+                        )
+                        targets = project_to_determinant(
+                            hessians[rows],
+                            curvatures * (1. + slopes_squared[rows])**2
+                        )
+                except FloatingPointError as error:
+                    raise ValueError(
+                        'slope correction diverged; use a smaller mesh scale'
+                    ) from error
+            else:
+                targets = project_to_determinant(hessians[rows], curvatures)
 
     z[interior] = z_interior
     return z
