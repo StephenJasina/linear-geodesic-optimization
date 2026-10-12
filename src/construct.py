@@ -55,6 +55,7 @@ def construct(
     hessian_regularization=1e-3,
     hessian_tube_radius=None,
     hessian_iterations=5,
+    hessian_slope_correction=False,
     hessian_polish_maxiter=0,
     **kwargs
 ):
@@ -95,6 +96,7 @@ def construct(
         mesh, network_vertices, network_edges, network_curvatures,
         tube_radius, hessian_anisotropy, hessian_orientation,
         hessian_regularization, hessian_iterations,
+        hessian_slope_correction,
     )
 
     time_constructed = time.perf_counter()
@@ -116,18 +118,28 @@ def construct(
 
     losses_constructed = losses(z_constructed)
 
-    # Optional polish with the usual optimizer
+    # Optional polish with the usual optimizer (None polishes until
+    # convergence, lifting scipy's default caps of 15000 iterations and
+    # 15000 function evaluations)
     z = z_constructed
     polish = None
-    if hessian_polish_maxiter:
+    if hessian_polish_maxiter != 0:
+        if hessian_polish_maxiter is None:
+            options = {'maxiter': 10**7, 'maxfun': 10**7}
+        else:
+            options = {'maxiter': hessian_polish_maxiter}
         computer.diagnostics(z)
-        z = scipy.optimize.minimize(
+        result = scipy.optimize.minimize(
             computer.forward, z, method='L-BFGS-B', jac=computer.reverse,
             callback=computer.diagnostics,
-            options={'maxiter': hessian_polish_maxiter},
-        ).x
+            options=options,
+        )
+        z = result.x
         polish = {
-            'maxiter': int(hessian_polish_maxiter),
+            'maxiter': None if hessian_polish_maxiter is None else int(hessian_polish_maxiter),
+            'iterations': int(result.nit),
+            'evaluations': int(result.nfev),
+            'message': str(result.message),
             'losses': losses(z),
             'distance_from_constructed': float(np.linalg.norm(z - z_constructed)),
             'time': time.perf_counter() - time_constructed,
@@ -162,6 +174,7 @@ def construct(
         'hessian_regularization': float(hessian_regularization),
         'hessian_tube_radius': float(tube_radius),
         'hessian_iterations': int(hessian_iterations),
+        'hessian_slope_correction': bool(hessian_slope_correction),
     }
 
     construction = {
