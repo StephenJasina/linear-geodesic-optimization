@@ -43,6 +43,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'ricci_curvature_distribution_reweight_scale': 0.,
         'lambda_curvature': 1.,
         'lambda_smooth': 0.,
+        'smooth_loss_type': 'mvs',
         'initial_radius': 20.,
         'sides': 50,
         'mesh_scale': 1.,
@@ -58,6 +59,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'hessian_tube_radius': None,
         'hessian_iterations': 5,
         'hessian_slope_correction': False,
+        'hessian_smoothness': 0.,
         'hessian_polish_maxiter': 0,
         'index': None # Additional unique ID
     }

@@ -12,7 +12,11 @@ GRAPHML = Path(__file__).parent / "fixtures" / "optimization_parity.graphml"
 
 
 @pytest.mark.parametrize(
-    "sides,lambda_smooth", [(8, 0.0), (8, 0.005), (12, 0.005), (20, 0.005)]
+    "sides,lambda_smooth,smooth_loss_type",
+    [
+        (8, 0.0, "mvs"), (8, 0.005, "mvs"), (12, 0.005, "mvs"),
+        (20, 0.005, "mvs"), (12, 0.005, "tensor"),
+    ],
 )
 @pytest.mark.parametrize(
     "curvature_scale,curvature_offset",
@@ -20,7 +24,8 @@ GRAPHML = Path(__file__).parent / "fixtures" / "optimization_parity.graphml"
     ids=["flat", "mixed", "positive", "negative"],
 )
 def test_optimized_output_matches_legacy(
-    tmp_path, monkeypatch, sides, lambda_smooth, curvature_scale, curvature_offset
+    tmp_path, monkeypatch, sides, lambda_smooth, smooth_loss_type,
+    curvature_scale, curvature_offset
 ):
     # POT needs only its NumPy backend here. Avoid importing an unrelated,
     # potentially incompatible TensorFlow installation during graph loading.
@@ -49,6 +54,7 @@ def test_optimized_output_matches_legacy(
             coordinates_scale=0.8,
             lambda_curvature=1.0,
             lambda_smooth=lambda_smooth,
+            smooth_loss_type=smooth_loss_type,
             directory_output=directory,
             maxiter=5,
             backend=backend,

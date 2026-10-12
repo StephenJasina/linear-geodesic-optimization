@@ -159,6 +159,139 @@ def gradient_operators(
     return dx, dy
 
 
+def cotangent_weights(
+    mesh,
+    z: npt.NDArray[np.float64],
+) -> typing.Tuple[npt.NDArray[np.int64], npt.NDArray[np.float64], float]:
+    """
+    Return the cotangent Laplacian weights of the mesh at heights z.
+
+    The result is `(edges, weights, total_area)`, where `edges` lists
+    the edges between two interior vertices as rows `(u, v)` with
+    `u < v`, `weights` holds (cot alpha + cot beta) / 2 for each of
+    them, and `total_area` is the surface area. These match the legacy
+    laplacian's `LC_interior_edges` and `A`.
+    """
+    topology = mesh.get_topology()
+    faces = np.array([
+        [vertex.index for vertex in face.vertices()]
+        for face in topology.faces()
+    ])
+    boundary = np.array([
+        vertex.is_on_boundary() for vertex in topology.vertices()
+    ])
+    points = np.concatenate(
+        (mesh.get_coordinates()[:, :2], z[:, None]), axis=1
+    )
+    total_area = 0.
+    keys = []
+    values = []
+    for corner in range(3):
+        w = faces[:, corner]
+        a = faces[:, (corner + 1) % 3]
+        b = faces[:, (corner + 2) % 3]
+        ea, eb = points[a] - points[w], points[b] - points[w]
+        double_area = np.linalg.norm(np.cross(ea, eb), axis=1)
+        if corner == 0:
+            total_area = np.sum(double_area) / 2.
+        keep = ~boundary[a] & ~boundary[b]
+        keys.append(np.sort(np.stack([a, b], axis=1)[keep], axis=1))
+        values.append((np.sum(ea * eb, axis=1) / double_area / 2.)[keep])
+    edges, inverse = np.unique(
+        np.concatenate(keys), axis=0, return_inverse=True
+    )
+    weights = np.zeros(len(edges))
+    np.add.at(weights, inverse.ravel(), np.concatenate(values))
+    return edges, weights, float(total_area)
+
+
+def smoothness_operator(
+    mesh,
+    z: typing.Optional[npt.NDArray[np.float64]] = None,
+    clamp_negative_weights: bool = True,
+) -> scipy.sparse.csr_array:
+    """
+    Return the matrix Q of the linearized tensor smoothness loss.
+
+    The tensor smoothness loss (see
+    `linear_geodesic_optimization.optimization.smooth_loss_tensor`) is
+        A_total * sum_{interior edges uv} w_uv ||S_u - R_uv S_v R_uv^T||^2,
+    where the shape operator S = P (Hess f / W) P^T depends on the
+    heights through Hess f (linearly) and through the slopes (in P and
+    W). Freezing the slopes, the normals' transports R, the cotangent
+    weights w, and the total area at the heights `z` leaves a quadratic
+    form f^T Q f in the interior heights f (boundary heights are 0). At
+    f = z (with zero boundary), it equals the tensor smoothness loss
+    exactly. The cotangent weights of the grid's diagonal edges turn
+    negative as soon as the surface bends, so by default negative
+    weights are clamped to 0, which keeps Q positive semidefinite.
+
+    With z = None (a flat mesh), the slopes vanish and the transports
+    are the identity, so this is the third-order energy
+        A_total * sum_{axis edges uv} ||Hess f(u) - Hess f(v)||_F^2,
+    a discrete version of the integral of ||grad Hess f||^2.
+    """
+    # Imported here to avoid a circular import
+    from linear_geodesic_optimization.optimization.smooth_loss_tensor \
+        import frames, transports
+
+    sides = mesh.get_width()
+    scale = mesh.get_scale()
+    if z is None:
+        z = np.zeros(sides * sides)
+    dxx, dyy, dxy, interior = hessian_operators(sides, scale)
+    dx, dy = gradient_operators(sides, scale)
+    interior_indices = np.flatnonzero(interior)
+    n_interior = len(interior_indices)
+    row_of = np.full(sides * sides, -1)
+    row_of[interior_indices] = np.arange(n_interior)
+
+    p, w, normals = frames(np.stack([dx @ z, dy @ z], axis=1))
+    # Shape operator contribution of each Hessian channel, as rows
+    # (f_xx, f_yy, f_xy) of 3x3 matrices
+    basis = np.zeros((3, 2, 2))
+    basis[0, 0, 0] = basis[1, 1, 1] = 1.
+    basis[2, 0, 1] = basis[2, 1, 0] = 1.
+    channels = np.einsum(
+        'vik,ckl,vjl->vcij', p, basis, p
+    ) / w[:, None, None, None]
+
+    edges, weights, total_area = cotangent_weights(mesh, z)
+    u, v = row_of[edges[:, 0]], row_of[edges[:, 1]]
+    r, _, _ = transports(normals[u], normals[v])
+    channels_v = np.einsum(
+        'eik,eckl,ejl->ecij', r, channels[v], r
+    )
+
+    # Rows are (edge, matrix entry); columns are (channel, interior row)
+    n_edges = len(edges)
+    entry_rows = np.arange(n_edges * 9).reshape(n_edges, 1, 9)
+    entry_rows = np.broadcast_to(entry_rows, (n_edges, 3, 9))
+    channel_columns = np.arange(3)[None, :, None] * n_interior
+    rows = np.concatenate([entry_rows.ravel(), entry_rows.ravel()])
+    columns = np.concatenate([
+        np.broadcast_to(channel_columns + u[:, None, None], (n_edges, 3, 9)).ravel(),
+        np.broadcast_to(channel_columns + v[:, None, None], (n_edges, 3, 9)).ravel(),
+    ])
+    data = np.concatenate([
+        channels[u].reshape(n_edges, 3, 9).ravel(),
+        -channels_v.reshape(n_edges, 3, 9).ravel(),
+    ])
+    differences = scipy.sparse.csr_array(
+        (data, (rows, columns)), shape=(n_edges * 9, 3 * n_interior)
+    )
+    hessians = scipy.sparse.vstack(
+        [d[:, interior] for d in (dxx, dyy, dxy)], format='csr'
+    )
+    operator = differences @ hessians
+    edge_weights = scipy.sparse.diags_array(
+        total_area * np.repeat(
+            np.maximum(weights, 0.) if clamp_negative_weights else weights, 9
+        )
+    )
+    return scipy.sparse.csr_array(operator.T @ edge_weights @ operator)
+
+
 def edge_weights(
     network_vertices: npt.NDArray[np.float64],
     network_edges: typing.List[typing.Tuple[int, int]],
@@ -255,6 +388,7 @@ def solve_heights(
     regularization: float = 1e-3,
     iterations: int = 0,
     slope_correction: bool = False,
+    smoothness: float = 0.,
 ) -> npt.NDArray[np.float64]:
     """
     Fit heights whose Hessian matches the edge targets.
@@ -282,6 +416,15 @@ def solve_heights(
     using the slopes of the previous round's heights, so that steep
     surfaces still meet their curvature targets. This has no effect
     when `iterations` is 0.
+
+    With positive `smoothness`, the objective also includes
+    `smoothness` times the tensor smoothness loss, linearized as in
+    `smoothness_operator`. Without `slope_correction`, it is linearized
+    about the flat mesh, giving a third-order (integral of
+    ||grad Hess f||^2) penalty that, unlike `regularization`, does not
+    penalize uniform curvature. With `slope_correction`, each round
+    instead freezes the slopes of the previous round's heights, so that
+    the penalty tracks the true loss on steep surfaces.
 
     Return the heights of all mesh vertices, in mesh order.
     """
@@ -338,7 +481,14 @@ def solve_heights(
     normal = sum(
         factor * d.T @ c @ d for factor, d in zip(factors, operators)
     )
-    solve = scipy.sparse.linalg.factorized(scipy.sparse.csc_array(normal))
+
+    def factorize(z_full):
+        matrix = normal
+        if smoothness:
+            matrix = matrix + smoothness * smoothness_operator(mesh, z_full)
+        return scipy.sparse.linalg.factorized(scipy.sparse.csc_array(matrix))
+
+    solve = factorize(None)
 
     z = np.zeros(sides * sides)
     if not pair_rows:
@@ -374,6 +524,9 @@ def solve_heights(
                     raise ValueError(
                         'slope correction diverged; use a smaller mesh scale'
                     ) from error
+                if smoothness:
+                    z[interior] = z_interior
+                    solve = factorize(z)
             else:
                 targets = project_to_determinant(hessians[rows], curvatures)
 

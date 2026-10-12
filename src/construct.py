@@ -45,6 +45,7 @@ def construct(
     ricci_curvature_distribution_reweight_scale=0.,
     lambda_curvature=1.,
     lambda_smooth=0.,
+    smooth_loss_type='mvs',
     sides,
     mesh_scale=1.,
     coordinates_scale=0.8,
@@ -56,6 +57,7 @@ def construct(
     hessian_tube_radius=None,
     hessian_iterations=5,
     hessian_slope_correction=False,
+    hessian_smoothness=0.,
     hessian_polish_maxiter=0,
     **kwargs
 ):
@@ -96,7 +98,7 @@ def construct(
         mesh, network_vertices, network_edges, network_curvatures,
         tube_radius, hessian_anisotropy, hessian_orientation,
         hessian_regularization, hessian_iterations,
-        hessian_slope_correction,
+        hessian_slope_correction, hessian_smoothness,
     )
 
     time_constructed = time.perf_counter()
@@ -105,7 +107,8 @@ def construct(
     computer = TorchComputer(
         mesh, network_vertices, network_edges, network_curvatures,
         loss_epsilon, lambda_curvature, lambda_smooth,
-        directory=directory_output
+        directory=directory_output,
+        smooth_loss_type=smooth_loss_type,
     )
 
     def losses(z):
@@ -161,6 +164,7 @@ def construct(
         'ricci_curvature_distribution_reweight_scale': ricci_curvature_distribution_reweight_scale,
         'lambda_curvature': float(lambda_curvature),
         'lambda_smooth': float(lambda_smooth),
+        'smooth_loss_type': smooth_loss_type,
         # No sphere initialization; collation.py then uses 'initial'
         'initial_radius': None,
         'width': int(width),
@@ -175,6 +179,7 @@ def construct(
         'hessian_tube_radius': float(tube_radius),
         'hessian_iterations': int(hessian_iterations),
         'hessian_slope_correction': bool(hessian_slope_correction),
+        'hessian_smoothness': float(hessian_smoothness),
     }
 
     construction = {

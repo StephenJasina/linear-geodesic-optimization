@@ -13,6 +13,9 @@ from typing import Optional
 import numpy as np
 import torch
 
+from linear_geodesic_optimization.optimization.smooth_loss_tensor \
+    import grid_operators
+
 
 class Computer:
     """Drop-in objective and gradient for the legacy optimization computer."""
@@ -27,6 +30,7 @@ class Computer:
         lambda_curvature=1.0,
         lambda_smooth=0.01,
         directory: Optional[Path] = None,
+        smooth_loss_type='mvs',
     ):
         # Batch jobs run in separate processes; one thread per process avoids
         # oversubscribing CPU cores when many optimizations run concurrently.
@@ -35,6 +39,9 @@ class Computer:
         self.lambda_curvature = lambda_curvature
         self.lambda_smooth = lambda_smooth
         self.directory = directory
+        if smooth_loss_type not in ('mvs', 'tensor'):
+            raise ValueError(f'Unknown smooth loss type "{smooth_loss_type}"')
+        self.smooth_loss_type = smooth_loss_type
         self.iterations = 0
         self.curvature_loss = SimpleNamespace(loss=0.0)
         self.smooth_loss = SimpleNamespace(loss=0.0)
@@ -70,6 +77,8 @@ class Computer:
         )
         self._n_vertices = topology.n_vertices
         self._n_edges = topology.n_edges
+        if smooth_loss_type == 'tensor':
+            self._setup_tensor_smooth_loss(mesh, edge_pairs)
 
         # A graph edge contributes its normalized length divided over mesh
         # vertices within epsilon of its projected line segment.
@@ -108,6 +117,70 @@ class Computer:
         self._fat_indices = torch.tensor(fat_indices, dtype=torch.long)
         self._targets = torch.tensor(targets, dtype=torch.float64)
         self._weights = torch.tensor(weights, dtype=torch.float64)
+
+    def _setup_tensor_smooth_loss(self, mesh, edge_pairs):
+        interior, operators = grid_operators(mesh)
+        self._grid_operators = []
+        for operator in operators:
+            operator = operator.tocoo()
+            self._grid_operators.append(torch.sparse_coo_tensor(
+                np.stack([operator.row, operator.col]), operator.data,
+                operator.shape, dtype=torch.float64, check_invariants=True,
+            ).coalesce())
+        row_of = np.full(self._n_vertices, -1)
+        row_of[interior] = np.arange(len(interior))
+        u, v = row_of[edge_pairs[:, 0]], row_of[edge_pairs[:, 1]]
+        edges = np.flatnonzero((u >= 0) & (v >= 0))
+        self._tensor_edges = torch.as_tensor(edges)
+        self._tensor_u = torch.as_tensor(u[edges])
+        self._tensor_v = torch.as_tensor(v[edges])
+
+    def _tensor_smooth_energy(self, heights, interior_edges):
+        """
+        Return the sum over interior edges uv of
+        w_uv ||S_u - R_uv S_v R_uv^T||_F^2. See
+        `linear_geodesic_optimization.optimization.smooth_loss_tensor`.
+        """
+        dx, dy, dxx, dyy, dxy = (
+            torch.sparse.mm(operator, heights[:, None])[:, 0]
+            for operator in self._grid_operators
+        )
+        gradients = torch.stack((dx, dy), dim=1)
+        s = 1 / (1 + (gradients**2).sum(dim=1))
+        w = 1 / torch.sqrt(s)
+        p = torch.cat((
+            torch.eye(2, dtype=torch.float64)
+            - s[:, None, None] * gradients[:, :, None] * gradients[:, None, :],
+            (s[:, None] * gradients)[:, None, :],
+        ), dim=1)
+        hessians = torch.stack((
+            torch.stack((dxx, dxy), dim=1), torch.stack((dxy, dyy), dim=1)
+        ), dim=1)
+        shape = p @ (hessians / w[:, None, None]) @ p.transpose(1, 2)
+        normals = torch.cat(
+            (-gradients, torch.ones_like(dx)[:, None]), dim=1
+        ) / w[:, None]
+
+        normals_u = normals[self._tensor_u]
+        normals_v = normals[self._tensor_v]
+        c = torch.linalg.cross(normals_v, normals_u, dim=1)
+        d = (normals_v * normals_u).sum(dim=1)
+        zero = torch.zeros_like(d)
+        cross = torch.stack((
+            torch.stack((zero, -c[:, 2], c[:, 1]), dim=1),
+            torch.stack((c[:, 2], zero, -c[:, 0]), dim=1),
+            torch.stack((-c[:, 1], c[:, 0], zero), dim=1),
+        ), dim=1)
+        identity = torch.eye(3, dtype=torch.float64)
+        square = c[:, :, None] * c[:, None, :] \
+            - (c**2).sum(dim=1)[:, None, None] * identity
+        transports = identity + cross + square / (1 + d)[:, None, None]
+
+        difference = shape[self._tensor_u] \
+            - transports @ shape[self._tensor_v] @ transports.transpose(1, 2)
+        return (
+            interior_edges[self._tensor_edges] * (difference**2).sum(dim=(1, 2))
+        ).sum()
 
     def _evaluate(self, parameters):
         parameters = np.asarray(parameters, dtype=np.float64)
@@ -168,6 +241,32 @@ class Computer:
             (gaussian[self._fat_indices] - self._targets) ** 2 * self._weights
         ).sum()
 
+        if self.smooth_loss_type == 'tensor':
+            smooth_loss = self._tensor_smooth_energy(heights, interior_edges)
+        else:
+            smooth_loss = self._mvs_energy(
+                points, faces, normals, edge_laplacian, vertex_laplacian,
+                vertex_areas, gaussian, interior_edges, interior_vertices,
+            )
+        smooth_loss = smooth_loss * areas.sum()
+
+        loss = (
+            self.lambda_curvature * curvature_loss
+            + self.lambda_smooth * smooth_loss
+        )
+        gradient, = torch.autograd.grad(loss, heights)
+        self._cached_parameters = parameters.copy()
+        self._cached_loss = float(loss.detach())
+        self._cached_gradient = gradient.detach().numpy().copy()
+        self.curvature_loss.loss = float(curvature_loss.detach())
+        self.kappa_G = gaussian.detach().numpy().copy()
+        self.smooth_loss.loss = float(smooth_loss.detach())
+
+    def _mvs_energy(
+        self, points, faces, normals, edge_laplacian, vertex_laplacian,
+        vertex_areas, gaussian, interior_edges, interior_vertices,
+    ):
+        """Return the MVS-cross energy (before scaling by total area)."""
         vertex_normals = torch.zeros((self._n_vertices, 3), dtype=torch.float64)
         for corner in range(3):
             vertex_normals = vertex_normals.index_add(
@@ -204,19 +303,7 @@ class Computer:
         smooth_loss -= (
             interior_vertices * (principal_1**2 + principal_2**2)
         ).sum()
-        smooth_loss *= areas.sum()
-
-        loss = (
-            self.lambda_curvature * curvature_loss
-            + self.lambda_smooth * smooth_loss
-        )
-        gradient, = torch.autograd.grad(loss, heights)
-        self._cached_parameters = parameters.copy()
-        self._cached_loss = float(loss.detach())
-        self._cached_gradient = gradient.detach().numpy().copy()
-        self.curvature_loss.loss = float(curvature_loss.detach())
-        self.kappa_G = gaussian.detach().numpy().copy()
-        self.smooth_loss.loss = float(smooth_loss.detach())
+        return smooth_loss
 
     def forward(self, parameters=None):
         self._evaluate(self.mesh.get_parameters() if parameters is None else parameters)

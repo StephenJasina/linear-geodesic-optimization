@@ -14,6 +14,7 @@ from linear_geodesic_optimization.optimization.torch_optimization import Compute
 
 @pytest.mark.parametrize('sides', [6, 12, 20])
 @pytest.mark.parametrize('lambda_smooth', [0.0, 0.005])
+@pytest.mark.parametrize('smooth_loss_type', ['mvs', 'tensor'])
 @pytest.mark.parametrize(
     'curvatures',
     [
@@ -24,7 +25,9 @@ from linear_geodesic_optimization.optimization.torch_optimization import Compute
     ],
     ids=['mixed_with_missing', 'flat', 'positive', 'negative'],
 )
-def test_loss_and_gradient_match_legacy(sides, lambda_smooth, curvatures):
+def test_loss_and_gradient_match_legacy(
+    sides, lambda_smooth, smooth_loss_type, curvatures
+):
     mesh = Mesh(sides, sides, 0.25)
     vertices = np.array([
         [0.025, 0.025], [0.225, 0.025],
@@ -33,10 +36,12 @@ def test_loss_and_gradient_match_legacy(sides, lambda_smooth, curvatures):
     edges = [(0, 1), (1, 2), (2, 3), (3, 0), (0, 2)]
     epsilon = 1.01 * 2**0.5 * 0.25 / sides
     legacy = LegacyComputer(
-        mesh, vertices, edges, curvatures, epsilon, 1.0, lambda_smooth
+        mesh, vertices, edges, curvatures, epsilon, 1.0, lambda_smooth,
+        smooth_loss_type=smooth_loss_type,
     )
     fast = TorchComputer(
-        mesh, vertices, edges, curvatures, epsilon, 1.0, lambda_smooth
+        mesh, vertices, edges, curvatures, epsilon, 1.0, lambda_smooth,
+        smooth_loss_type=smooth_loss_type,
     )
 
     for z in (
@@ -52,13 +57,15 @@ def test_loss_and_gradient_match_legacy(sides, lambda_smooth, curvatures):
         )
 
 
-def test_gradient_matches_directional_difference():
+@pytest.mark.parametrize('smooth_loss_type', ['mvs', 'tensor'])
+def test_gradient_matches_directional_difference(smooth_loss_type):
     sides = 8
     mesh = Mesh(sides, sides, 0.25)
     vertices = np.array([[0.02, 0.02], [0.23, 0.20]])
     computer = TorchComputer(
         mesh, vertices, [(0, 1)], [0.1],
         1.01 * 2**0.5 * 0.25 / sides, 1.0, 0.005,
+        smooth_loss_type=smooth_loss_type,
     )
     rng = np.random.default_rng(19)
     z = rng.normal(0, 0.0002, sides * sides)

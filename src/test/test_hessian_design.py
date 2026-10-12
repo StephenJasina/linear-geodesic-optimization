@@ -202,3 +202,114 @@ def test_slope_correction_matches_steep_curvature():
     uncorrected = mean_kappa_G(False)
     corrected = mean_kappa_G(True)
     assert abs(corrected - curvature) < 0.5 * abs(uncorrected - curvature)
+
+
+def tensor_smooth_loss(mesh, z):
+    """Return the tensor smoothness loss of heights z."""
+    computer = TorchComputer(
+        mesh, np.array([[0., 0.], [1., 1.]]), [(0, 1)], [None],
+        1e-9, 1.0, 1.0, smooth_loss_type='tensor'
+    )
+    computer.forward(z)
+    return computer.smooth_loss.loss
+
+
+def bump(mesh, amplitude):
+    """Return a sin(pi x / L) sin(pi y / L), which is 0 on the boundary."""
+    xy = mesh.get_coordinates()[:, :2] / mesh.get_scale()
+    return amplitude * np.sin(np.pi * xy[:, 0]) * np.sin(np.pi * xy[:, 1])
+
+
+@pytest.mark.parametrize('amplitude', [0., 0.02, 0.1])
+def test_smoothness_operator_equals_tensor_loss_at_linearization(amplitude):
+    # Freezing every coefficient at z and evaluating at z gives back the
+    # true loss, steep or not
+    sides, scale = 16, 0.25
+    mesh = Mesh(sides, sides, scale)
+    z = bump(mesh, amplitude) + 0.01 * bump(Mesh(sides, sides, scale / 3), 1.)
+    z[~hessian_design.hessian_operators(sides, scale)[3]] = 0.
+    q = hessian_design.smoothness_operator(
+        mesh, z, clamp_negative_weights=False
+    )
+    interior = hessian_design.hessian_operators(sides, scale)[3]
+    np.testing.assert_allclose(
+        z[interior] @ q @ z[interior], tensor_smooth_loss(mesh, z), rtol=1e-9
+    )
+
+
+def test_flat_smoothness_operator_converges_to_third_derivative_energy():
+    # For a sin(pi x / L) sin(pi y / L), A_total times the integral of
+    # ||grad Hess f||^2 is 2 a^2 pi^6 / L^2
+    errors = []
+    scale = 0.5
+    for sides in (20, 40, 80):
+        mesh = Mesh(sides, sides, scale)
+        interior = hessian_design.hessian_operators(sides, scale)[3]
+        f = bump(mesh, 1.)[interior]
+        q = hessian_design.smoothness_operator(mesh)
+        errors.append(abs(f @ q @ f / (2 * np.pi**6 / scale**2) - 1.))
+    assert errors[0] > errors[1] > errors[2]
+    assert errors[2] < 0.1
+
+
+def test_tensor_loss_ignores_uniform_curvature_for_small_slopes():
+    # A quadratic has a constant Hessian, so its loss vanishes to leading
+    # order, unlike a surface of varying curvature (the thin plate
+    # regularizer would penalize both)
+    sides, scale = 16, 0.25
+    mesh = Mesh(sides, sides, scale)
+    xy = mesh.get_coordinates()[:, :2] - scale / 2
+    quadratic = 0.3 * xy[:, 0]**2 + 0.7 * xy[:, 0] * xy[:, 1] \
+        - 1.1 * xy[:, 1]**2
+    eps = 1e-3
+    assert tensor_smooth_loss(mesh, eps * quadratic) \
+        < 1e-6 * tensor_smooth_loss(mesh, eps * bump(mesh, 0.01))
+
+
+def test_tensor_loss_reduces_to_third_derivative_energy_for_small_slopes():
+    sides, scale = 20, 0.5
+    mesh = Mesh(sides, sides, scale)
+    interior = hessian_design.hessian_operators(sides, scale)[3]
+    f = bump(mesh, 1.)
+    s3 = f[interior] @ hessian_design.smoothness_operator(mesh) @ f[interior]
+    ratios = [tensor_smooth_loss(mesh, eps * f) / eps**2 / s3
+              for eps in (1e-1, 1e-2, 1e-3)]
+    assert abs(ratios[2] - 1.) < 1e-4
+    assert abs(ratios[2] - 1.) < abs(ratios[0] - 1.)
+
+
+@pytest.mark.parametrize('surface', ['sphere', 'cylinder'])
+def test_tensor_loss_vanishes_on_constant_shape_operator(surface):
+    # Spheres and cylinders have constant shape operators up to
+    # transport, so their losses shrink under refinement, unlike a
+    # surface of varying curvature at a similar scale
+    radius = 0.6
+
+    def losses(sides):
+        mesh = Mesh(sides, sides, 0.5)
+        x, y = (mesh.get_coordinates()[:, :2] - 0.25).T
+        r2 = x**2 + (y**2 if surface == 'sphere' else 0.)
+        z = np.sqrt(radius**2 - r2)
+        return tensor_smooth_loss(mesh, z), \
+            tensor_smooth_loss(mesh, 0.2 * bump(mesh, 1.))
+
+    coarse, varying = losses(20)
+    fine, _ = losses(40)
+    assert coarse < 1e-2 * varying
+    assert fine < coarse / 2
+
+
+def test_smoothness_reduces_tensor_loss():
+    vertices = np.array([[0.08, 0.08], [0.17, 0.08], [0.17, 0.17]])
+    edges = [(0, 1), (1, 2), (0, 2)]
+    curvatures = [-1.0, 0.5, -0.5]
+
+    def losses(smoothness):
+        mesh = Mesh(SIDES, SIDES, SCALE)
+        z = hessian_design.solve_heights(
+            mesh, vertices, edges, curvatures, EPSILON,
+            iterations=3, smoothness=smoothness
+        )
+        return tensor_smooth_loss(mesh, z)
+
+    assert losses(1e-4) < 0.5 * losses(0.)

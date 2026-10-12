@@ -18,3 +18,71 @@ Differentiating, and using matrix symmetry, \begin{align*}
 	\frac{\partial\pof{\mathcal{L}_{\mathrm{smooth}}\pof{M}}}{\partial z_\ell} &= \pof{-\pof{\kappa^+}^\intercal\pof{\frac{\partial L_C^{\text{D}}}{\partial z_\ell}\kappa^+ + 2L_C^{\text{D}}\frac{\partial\kappa^+}{\partial z_\ell}} - \pof{\kappa^-}^\intercal\pof{\frac{\partial L_C^{\text{D}}}{\partial z_\ell}\kappa^- + 2L_C^{\text{D}}\frac{\partial\kappa^-}{\partial z_\ell}}} \sum_{\pof{v_i, v_j} \in E_M} A_{i, j} \\
 		&\qquad+ \pof{-\pof{\kappa^+}^\intercal L_C^{\text{D}}\kappa^+ - \pof{\kappa^-}^\intercal L_C^{\text{D}}\kappa^-} \sum_{\pof{v_i, v_j} \in E_M} \frac{\partial A_{i, j}}{\partial z_\ell}.
 \end{align*}
+
+\subsection{Tensor Smoothness Loss}
+
+The \(\text{MVS}_{\text{cross}}\) energy is hard to optimize. The principal curvatures \(\kappa^\pm = \kappa^\text{H} \pm \sqrt{\pof{\kappa^\text{H}}^2 - \kappa^\text{G}}\) are not differentiable at umbilic points (which include every point of a flat mesh), \(\kappa^\text{H}\) jumps wherever \(\sgn\pof{\widetilde{N}_i^\intercal\widetilde{\kappa^\text{H}}_i}\) changes, and sorting the principal curvatures introduces kinks wherever they cross. The tensor smoothness loss avoids all three by taking the Dirichlet energy of the whole shape operator instead of its eigenvalues. This is selected with \texttt{smooth\_loss\_type = 'tensor'}.
+
+We will define the following: \begin{center}\begin{tabular}{r|l|l}
+	\(p_i\) & The gradient \(\nabla f\) at \(v_i\), by central differences & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(H_i\) & The Hessian \(\nabla^2 f\) at \(v_i\), by finite differences & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(W_i\) & The area element \(\sqrt{1 + \norm{p_i}_2^2}\) & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(n_i\) & The unit normal \(\pof{-p_i, 1} / W_i\) & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(S_i\) & The shape operator at \(v_i\), as a \(3 \times 3\) matrix in ambient coordinates & \(O\pof{\abs{V_M}}\) \\ \hline
+	\(R_{i, j}\) & The minimal rotation taking \(n_j\) to \(n_i\) & \(O\pof{\abs{E_M}}\) \\ \hline
+	\(\mathcal{L}_{\mathrm{smooth}}^{\text{tensor}}\pof{M}\) & The tensor smoothness loss & \(O\pof{\abs{V_M}}\)
+\end{tabular}\end{center}
+
+\subsubsection{Forward Computation}
+We use \begin{align*}
+	\mathcal{L}_{\mathrm{smooth}}^{\text{tensor}}\pof{M} &= \pof{\sum_{\pof{v_i, v_j} \in E_M} A_{i, j}} \sum_{\substack{\pof{v_i, v_j} \in E_M \\ v_i, v_j \text{ interior}}} \pof{L_C}_{i, j} \norm{S_i - R_{i, j} S_j R_{i, j}^\intercal}_F^2.
+\end{align*}
+The weights are the same cotangent weights as in \(-\pof{\kappa^\pm}^\intercal L_C^{\text{D}} \kappa^\pm = \sum_{i, j} \pof{L_C}_{i, j} \pof{\kappa^\pm_i - \kappa^\pm_j}^2\), so this is the same discretization as the \(\text{MVS}_{\text{cross}}\) energy with scalars replaced by tensors. The rotations \(R_{i, j}\) act as discrete parallel transport. Without them, the difference \(S_i - S_j\) would also pick up the rotation of the tangent plane, adding a spurious penalty on the curvature itself.
+
+Writing the surface as the graph of \(f\) over the plane, with tangent map \(J_i = \begin{bmatrix} I_2 \\ p_i^\intercal \end{bmatrix}\), first fundamental form \(g_i = J_i^\intercal J_i = I_2 + p_i p_i^\intercal\), and second fundamental form \(H_i / W_i\), the shape operator is \(J_i g_i^{-1} \pof{H_i / W_i} g_i^{-1} J_i^\intercal\). By the Sherman--Morrison formula, \(g_i^{-1} = I_2 - p_i p_i^\intercal / W_i^2\), so \begin{align*}
+	P_i &= J_i g_i^{-1} = \begin{bmatrix} I_2 - p_i p_i^\intercal / W_i^2 \\ p_i^\intercal / W_i^2 \end{bmatrix}, \\
+	S_i &= P_i \frac{H_i}{W_i} P_i^\intercal.
+\end{align*}
+This matrix is symmetric, sends \(n_i\) to \(0\), and has the principal curvatures as its other two eigenvalues. In particular, \(\norm{S_i}_F^2 = \pof{\kappa^+_i}^2 + \pof{\kappa^-_i}^2\). With \(c_{i, j} = n_j \times n_i\) and \(d_{i, j} = n_j^\intercal n_i\), \begin{align*}
+	R_{i, j} &= I_3 + \sof{c_{i, j}}_\times + \frac{c_{i, j} c_{i, j}^\intercal - \norm{c_{i, j}}_2^2 I_3}{1 + d_{i, j}},
+\end{align*}
+which is smooth as long as \(d_{i, j} > -1\). For a graph, this always holds, since every normal has a positive \(z\)-component.
+
+Only the estimate of \(S_i\) is specific to the rectangle mesh. On a general mesh, the same energy can be used with a shape operator estimated from normal differences over each face and averaged to vertices \cite{Rusinkiewicz2004Curvatures}, or from dihedral angles \cite{Grinspun2006ShapeOperators}.
+
+\subsubsection{Small Slopes}
+For small slopes, \(P_i \approx \begin{bmatrix} I_2 \\ 0 \end{bmatrix}\), \(W_i \approx 1\), and \(R_{i, j} \approx I_3\), so the loss approaches \(A \int \norm{\nabla \nabla^2 f}_F^2 \, \dif A\). Write \(\lambda_1, \lambda_2\) and \(u_1, u_2\) for the eigenvalues and eigenvectors of \(\nabla^2 f\), and \(\theta\) for the angle of \(u_1\). Since \(\partial \lambda_k = u_k^\intercal \pof{\partial \nabla^2 f} u_k\) and \(u_1^\intercal \pof{\partial \nabla^2 f} u_2 = \pof{\lambda_1 - \lambda_2} \partial \theta\), \begin{align*}
+	\int \norm{\nabla \nabla^2 f}_F^2 \, \dif A &= \int \norm{\nabla \lambda_1}_2^2 + \norm{\nabla \lambda_2}_2^2 \, \dif A + 2 \int \pof{\lambda_1 - \lambda_2}^2 \norm{\nabla \theta}_2^2 \, \dif A.
+\end{align*}
+The first term is the linearized \(\text{MVS}_{\text{cross}}\) energy, and the second penalizes rotation of the principal directions, weighted by how anisotropic the curvature is. So the tensor loss is a smooth upper bound on the \(\text{MVS}_{\text{cross}}\) energy. Like that energy, and unlike the thin plate energy \(\int \norm{\nabla^2 f}_F^2 \, \dif A\), it does not penalize uniform curvature.
+
+Freezing \(P_i\), \(W_i\), \(R_{i, j}\), the weights, and the area at some heights makes the loss a quadratic form in the heights that agrees with the loss at those heights. The Hessian construction uses this quadratic form as its smoothness term. Around the flat mesh, it is the third-order energy above.
+
+On the triangulated grid, the cotangent weights of the diagonal edges are \(0\) for a flat mesh and become negative as soon as the surface bends. This holds for the \(\text{MVS}_{\text{cross}}\) energy as well. The construction clamps negative weights to \(0\) so that its quadratic form stays positive semidefinite. The loss itself does not.
+
+\subsubsection{Reverse Computation}
+Write \(D_{i, j} = S_i - R_{i, j} S_j R_{i, j}^\intercal\), \(\ell = \sum_{i, j} \pof{L_C}_{i, j} \norm{D_{i, j}}_F^2\), and \(\overline{X} = \partial \mathcal{L}_{\mathrm{smooth}}^{\text{tensor}} / \partial X\) for any intermediate quantity \(X\). Then, using the symmetry of \(D_{i, j}\) and \(S_j\), \begin{align*}
+	\overline{D_{i, j}} &= 2 A \pof{L_C}_{i, j} D_{i, j}, &
+	\overline{S_i} &\mathrel{+}= \overline{D_{i, j}}, &
+	\overline{S_j} &\mathrel{+}= -R_{i, j}^\intercal \overline{D_{i, j}} R_{i, j}, &
+	\overline{R_{i, j}} &= -2 \overline{D_{i, j}} R_{i, j} S_j.
+\end{align*}
+For the rotations, write \(G = \overline{R_{i, j}}\) and \(q = 1 / \pof{1 + d_{i, j}}\). Then \begin{align*}
+	\overline{c_{i, j}} &= \begin{bmatrix} G_{3, 2} - G_{2, 3} \\ G_{1, 3} - G_{3, 1} \\ G_{2, 1} - G_{1, 2} \end{bmatrix} + q \pof{\pof{G + G^\intercal} c_{i, j} - 2 \operatorname{tr}\pof{G} c_{i, j}}, \\
+	\overline{d_{i, j}} &= -q^2 \operatorname{tr}\pof{G^\intercal \pof{c_{i, j} c_{i, j}^\intercal - \norm{c_{i, j}}_2^2 I_3}}, \\
+	\overline{n_i} &\mathrel{+}= \overline{c_{i, j}} \times n_j + \overline{d_{i, j}} n_j, \\
+	\overline{n_j} &\mathrel{+}= n_i \times \overline{c_{i, j}} + \overline{d_{i, j}} n_i.
+\end{align*}
+For the shape operators, with \(M_i = H_i / W_i\) and \(s_i = 1 / W_i^2\), \begin{align*}
+	\overline{M_i} &= P_i^\intercal \overline{S_i} P_i, \\
+	\overline{P_i} &= \pof{\overline{S_i} + \overline{S_i}^\intercal} P_i M_i, \\
+	\overline{H_i} &= \overline{M_i} / W_i.
+\end{align*}
+Splitting \(\overline{P_i}\) into its top \(2 \times 2\) block \(T\) and bottom row \(b^\intercal\), and using \(\partial s_i / \partial p_i = -2 s_i^2 p_i\) and \(\partial W_i^{-1} / \partial p_i = -p_i / W_i^3\), \begin{align*}
+	\overline{p_i} &= -s_i \pof{T + T^\intercal} p_i + 2 s_i^2 \pof{p_i^\intercal T p_i} p_i + s_i b - 2 s_i^2 \pof{b^\intercal p_i} p_i \\
+		&\qquad- \frac{\overline{n_i}_{xy}}{W_i} + \frac{\overline{n_i}_{xy}^\intercal p_i}{W_i^3} p_i - \frac{\overline{n_i}_z + \operatorname{tr}\pof{\overline{M_i}^\intercal H_i}}{W_i^3} p_i.
+\end{align*}
+Finally, since \(p\) and \(H\) are linear in the heights through the finite difference operators \(D_x\), \(D_y\), \(D_{xx}\), \(D_{yy}\), and \(D_{xy}\), \begin{align*}
+	\frac{\partial \mathcal{L}_{\mathrm{smooth}}^{\text{tensor}}}{\partial z} &= D_x^\intercal \overline{p}_x + D_y^\intercal \overline{p}_y + D_{xx}^\intercal \overline{H}_{xx} + D_{yy}^\intercal \overline{H}_{yy} + D_{xy}^\intercal \pof{\overline{H}_{xy} + \overline{H}_{yx}} \\
+		&\qquad+ A \sum_{i, j} \norm{D_{i, j}}_F^2 \frac{\partial \pof{L_C}_{i, j}}{\partial z} + \ell \sum_{\pof{v_i, v_j} \in E_M} \frac{\partial A_{i, j}}{\partial z}.
+\end{align*}

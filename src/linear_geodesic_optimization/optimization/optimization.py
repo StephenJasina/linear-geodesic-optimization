@@ -16,6 +16,8 @@ from linear_geodesic_optimization.optimization.laplacian \
     import Computer as Laplacian
 from linear_geodesic_optimization.optimization.smooth_loss \
     import Computer as SmoothLoss
+from linear_geodesic_optimization.optimization.smooth_loss_tensor \
+    import Computer as SmoothLossTensor
 
 
 class Computer:
@@ -34,7 +36,8 @@ class Computer:
         lambda_curvature: np.float64 = np.float64(1.),
         lambda_smooth: np.float64 = np.float64(0.01),
         edge_weights: typing.Optional[typing.List[np.float64]]=None,
-        directory: typing.Optional[str] = None
+        directory: typing.Optional[str] = None,
+        smooth_loss_type: typing.Literal['mvs', 'tensor'] = 'mvs',
     ):
         """
         Parameters:
@@ -52,6 +55,9 @@ class Computer:
         * `lamda_smooth`: The strength of the smoothing loss
         * `directory`: Where to save snapshots of the mesh for each
           iteration of optimization
+        * `smooth_loss_type`: Either `'mvs'` (the MVS-cross energy of
+          the principal curvatures) or `'tensor'` (the Dirichlet energy
+          of the shape operator; requires an untrimmed rectangle mesh)
         """
         self.mesh = mesh
 
@@ -69,7 +75,16 @@ class Computer:
             epsilon, self.curvature,
             # edge_weights
         )
-        self.smooth_loss = SmoothLoss(mesh, self.laplacian, self.curvature)
+        if smooth_loss_type == 'mvs':
+            self.smooth_loss = SmoothLoss(
+                mesh, self.laplacian, self.curvature
+            )
+        elif smooth_loss_type == 'tensor':
+            self.smooth_loss = SmoothLossTensor(mesh, self.laplacian)
+        else:
+            raise ValueError(
+                f'Unknown smooth loss type "{smooth_loss_type}"'
+            )
 
         # Count of iterations for diagnostic purposes
         self.iterations = 0

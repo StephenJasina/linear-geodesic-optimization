@@ -92,6 +92,7 @@ def optimize(
     ricci_curvature_distribution_reweight_scale=0.,
     lambda_curvature=1.,
     lambda_smooth=0.,
+    smooth_loss_type='mvs',
     initial_radius,
     sides,
     mesh_scale=1.,
@@ -143,6 +144,7 @@ def optimize(
         'ricci_curvature_distribution_reweight_scale': ricci_curvature_distribution_reweight_scale,
         'lambda_curvature': float(lambda_curvature),
         'lambda_smooth': float(lambda_smooth),
+        'smooth_loss_type': smooth_loss_type,
         'initial_radius': float(initial_radius),
         'width': int(width),
         'height': int(height),
@@ -182,7 +184,8 @@ def optimize(
         mesh, network_vertices, network_edges, network_curvatures,
         1.01 * 2**0.5 * mesh_scale / width,
         lambda_curvature, lambda_smooth,
-        directory=directory_output
+        directory=directory_output,
+        smooth_loss_type=smooth_loss_type,
     )
 
     f = computer.forward
