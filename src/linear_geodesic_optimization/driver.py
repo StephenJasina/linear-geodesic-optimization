@@ -44,7 +44,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'lambda_curvature': 1.,
         'lambda_smooth': 0.,
         'smooth_loss_type': 'mvs',
-        'initial_radius': 20.,
+        'initial_radius': None,  # None is an infinite radius (flat)
         'sides': 50,
         'mesh_scale': 1.,
         'coordinates_scale': 0.8,
@@ -61,6 +61,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'hessian_slope_correction': False,
         'hessian_smoothness': 0.,
         'hessian_polish_maxiter': 0,
+        'hessian_initialization': None,
         'index': None # Additional unique ID
     }
 

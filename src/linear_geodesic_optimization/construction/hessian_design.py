@@ -25,6 +25,8 @@ import numpy.typing as npt
 import scipy.sparse
 import scipy.sparse.linalg
 
+from linear_geodesic_optimization.mesh.rectangle import sphere_cap_heights
+
 
 def tube_members(
     points: npt.NDArray[np.float64],
@@ -209,6 +211,7 @@ def smoothness_operator(
     mesh,
     z: typing.Optional[npt.NDArray[np.float64]] = None,
     clamp_negative_weights: bool = True,
+    full: bool = False,
 ) -> scipy.sparse.csr_array:
     """
     Return the matrix Q of the linearized tensor smoothness loss.
@@ -230,6 +233,10 @@ def smoothness_operator(
     are the identity, so this is the third-order energy
         A_total * sum_{axis edges uv} ||Hess f(u) - Hess f(v)||_F^2,
     a discrete version of the integral of ||grad Hess f||^2.
+
+    With `full`, return instead the same quadratic form over the heights
+    of all vertices (boundary heights included), whose interior block is
+    the matrix returned without `full`.
     """
     # Imported here to avoid a circular import
     from linear_geodesic_optimization.optimization.smooth_loss_tensor \
@@ -281,7 +288,8 @@ def smoothness_operator(
         (data, (rows, columns)), shape=(n_edges * 9, 3 * n_interior)
     )
     hessians = scipy.sparse.vstack(
-        [d[:, interior] for d in (dxx, dyy, dxy)], format='csr'
+        [d if full else d[:, interior] for d in (dxx, dyy, dxy)],
+        format='csr'
     )
     operator = differences @ hessians
     edge_weights = scipy.sparse.diags_array(
@@ -377,6 +385,27 @@ def project_to_determinant(
     )
 
 
+def initial_heights(
+    mesh,
+    initialization: typing.Optional[typing.Literal['sphere']] = None,
+    initial_radius: typing.Optional[float] = None,
+) -> npt.NDArray[np.float64]:
+    """
+    Return the initial heights of all mesh vertices, in mesh order.
+
+    With `initialization` None, the surface is flat. With 'sphere', it
+    is the sphere cap of radius `initial_radius` used by
+    optimization.py (see `sphere_cap_heights`), where a radius of None
+    is infinite, again giving a flat surface.
+    """
+    sides = mesh.get_width()
+    if initialization is None:
+        return np.zeros(sides * sides)
+    if initialization == 'sphere':
+        return sphere_cap_heights(sides, sides, initial_radius)
+    raise ValueError(f'Unknown initialization "{initialization}"')
+
+
 def solve_heights(
     mesh,
     network_vertices: npt.NDArray[np.float64],
@@ -389,6 +418,8 @@ def solve_heights(
     iterations: int = 0,
     slope_correction: bool = False,
     smoothness: float = 0.,
+    initialization: typing.Optional[typing.Literal['sphere']] = None,
+    initial_radius: typing.Optional[float] = None,
 ) -> npt.NDArray[np.float64]:
     """
     Fit heights whose Hessian matches the edge targets.
@@ -425,6 +456,17 @@ def solve_heights(
     penalize uniform curvature. With `slope_correction`, each round
     instead freezes the slopes of the previous round's heights, so that
     the penalty tracks the true loss on steep surfaces.
+
+    The heights start at `initial_heights(mesh, initialization,
+    initial_radius)` (flat by default), written z0 below. The boundary
+    stays at z0, and the unknown is the interior offset from z0, so the
+    objective above is evaluated on the full heights z0 + offset. The
+    initial heights also serve as the first linearization point: with
+    `slope_correction`, the designed targets are scaled by
+    1 + |grad z0|^2 (so their determinants become
+    kappa_e (1 + |grad z0|^2)^2), and the smoothness penalty is
+    linearized about z0. With z0 = 0, all of this reduces to the
+    description above.
 
     Return the heights of all mesh vertices, in mesh order.
     """
@@ -471,51 +513,71 @@ def solve_heights(
     # the total weight at v and t_v for its weighted target sum, the
     # objective is (up to a constant) sum_v c_v ||H f(v) - t_v / c_v||^2,
     # so the system matrix does not depend on the targets.
-    operators = [d[:, interior] for d in (dxx, dyy, dxy)]
+    # The unknowns are the interior offsets from the initial heights z0,
+    # whose (fixed) boundary values enter through the full operators,
+    # which act on the heights of all vertices
+    z0 = initial_heights(mesh, initialization, initial_radius)
+    full_operators = (dxx, dyy, dxy)
+    operators = [d[:, interior] for d in full_operators]
     if slope_correction:
-        gradients = [
-            d[:, interior] for d in gradient_operators(sides, mesh.get_scale())
-        ]
+        gradients = gradient_operators(sides, mesh.get_scale())
     factors = (1., 1., 2.)
     c = scipy.sparse.diags_array(weight)
     normal = sum(
         factor * d.T @ c @ d for factor, d in zip(factors, operators)
     )
+    hessians_initial = np.stack([d @ z0 for d in full_operators], axis=1)
 
     def factorize(z_full):
+        """Return a solver for the system and the full smoothness form."""
         matrix = normal
+        smoothness_full = None
         if smoothness:
-            matrix = matrix + smoothness * smoothness_operator(mesh, z_full)
-        return scipy.sparse.linalg.factorized(scipy.sparse.csc_array(matrix))
+            smoothness_full = smoothness_operator(mesh, z_full, full=True)
+            matrix = matrix \
+                + smoothness * smoothness_full[interior][:, interior]
+        return (
+            scipy.sparse.linalg.factorized(scipy.sparse.csc_array(matrix)),
+            smoothness_full,
+        )
 
-    solve = factorize(None)
+    solve, smoothness_full = factorize(z0 if slope_correction else None)
 
-    z = np.zeros(sides * sides)
     if not pair_rows:
-        return z
+        return z0
     rows = np.concatenate(pair_rows)
     weights = np.concatenate(pair_weights)
     curvatures = np.concatenate(pair_curvatures)
     targets = np.concatenate(pair_targets)
+    if slope_correction:
+        slopes_squared = sum((d @ z0)**2 for d in gradients)
+        targets = targets * (1. + slopes_squared[rows])[:, None]
 
-    for iteration in range(iterations + 1):
+    def right_hand_side(targets):
         target_sum = np.zeros((n_interior, 3))
         np.add.at(target_sum, rows, weights[:, None] * targets)
-        z_interior = solve(sum(
+        # Fit the offsets to what the initial heights leave over
+        target_sum -= weight[:, None] * hessians_initial
+        rhs = sum(
             factor * d.T @ target_sum[:, k]
             for k, (factor, d) in enumerate(zip(factors, operators))
-        ))
+        )
+        if smoothness:
+            rhs = rhs - smoothness * (smoothness_full @ z0)[interior]
+        return rhs
+
+    z = z0.copy()
+    for iteration in range(iterations + 1):
+        z[interior] = z0[interior] + solve(right_hand_side(targets))
         if iteration < iterations:
-            hessians = np.stack([d @ z_interior for d in operators], axis=1)
+            hessians = np.stack([d @ z for d in full_operators], axis=1)
             if slope_correction:
                 # Steeper slopes ask for larger determinants, which make
                 # the surface steeper still; on large meshes this can
                 # run away
                 try:
                     with np.errstate(over='raise', invalid='raise'):
-                        slopes_squared = sum(
-                            (d @ z_interior)**2 for d in gradients
-                        )
+                        slopes_squared = sum((d @ z)**2 for d in gradients)
                         targets = project_to_determinant(
                             hessians[rows],
                             curvatures * (1. + slopes_squared[rows])**2
@@ -525,12 +587,10 @@ def solve_heights(
                         'slope correction diverged; use a smaller mesh scale'
                     ) from error
                 if smoothness:
-                    z[interior] = z_interior
-                    solve = factorize(z)
+                    solve, smoothness_full = factorize(z)
             else:
                 targets = project_to_determinant(hessians[rows], curvatures)
 
-    z[interior] = z_interior
     return z
 
 

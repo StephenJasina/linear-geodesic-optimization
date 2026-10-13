@@ -6,7 +6,7 @@ import pytest
 pytest.importorskip('torch')
 
 from linear_geodesic_optimization.construction import hessian_design
-from linear_geodesic_optimization.mesh.rectangle import Mesh
+from linear_geodesic_optimization.mesh.rectangle import Mesh, sphere_cap_heights
 from linear_geodesic_optimization.optimization.torch_optimization import Computer as TorchComputer
 
 
@@ -313,3 +313,85 @@ def test_smoothness_reduces_tensor_loss():
         return tensor_smooth_loss(mesh, z)
 
     assert losses(1e-4) < 0.5 * losses(0.)
+
+
+def test_sphere_cap_heights():
+    sides = 7
+    radius = 3.0
+    expected = np.array([
+        (radius**2 - (i / (sides - 1) - 0.5)**2
+            - (j / (sides - 1) - 0.5)**2)**0.5
+        for i in range(sides) for j in range(sides)
+    ])
+    np.testing.assert_array_equal(
+        sphere_cap_heights(sides, sides, radius), expected - expected.min()
+    )
+    np.testing.assert_array_equal(
+        sphere_cap_heights(sides, sides, None), np.zeros(sides * sides)
+    )
+
+
+def test_initial_heights_rejects_unknown_initialization():
+    with pytest.raises(ValueError):
+        hessian_design.initial_heights(Mesh(5, 5, SCALE), 'cube', 1.)
+
+
+@pytest.mark.parametrize('slope_correction', [False, True])
+@pytest.mark.parametrize('smoothness', [0., 1e-4])
+def test_flat_initializations_agree(slope_correction, smoothness):
+    vertices = np.array([[0.08, 0.08], [0.17, 0.08], [0.17, 0.17]])
+    edges = [(0, 1), (1, 2), (0, 2)]
+    curvatures = [-1.0, 0.5, -0.5]
+
+    def solve(**kwargs):
+        return hessian_design.solve_heights(
+            Mesh(SIDES, SIDES, SCALE), vertices, edges, curvatures, EPSILON,
+            iterations=3, slope_correction=slope_correction,
+            smoothness=smoothness, **kwargs
+        )
+
+    default = solve()
+    np.testing.assert_array_equal(solve(initialization=None), default)
+    np.testing.assert_array_equal(
+        solve(initialization='sphere', initial_radius=None), default
+    )
+
+
+@pytest.mark.parametrize('slope_correction', [False, True])
+@pytest.mark.parametrize('smoothness', [0., 1e-4])
+def test_sphere_initialization_pins_boundary(slope_correction, smoothness):
+    vertices = np.array([[0.08, 0.08], [0.17, 0.08], [0.17, 0.17]])
+    edges = [(0, 1), (1, 2), (0, 2)]
+    curvatures = [-1.0, 0.5, -0.5]
+    z = hessian_design.solve_heights(
+        Mesh(SIDES, SIDES, SCALE), vertices, edges, curvatures, EPSILON,
+        iterations=3, slope_correction=slope_correction,
+        smoothness=smoothness, initialization='sphere', initial_radius=20.
+    )
+    z0 = sphere_cap_heights(SIDES, SIDES, 20.)
+    interior = hessian_design.hessian_operators(SIDES, SCALE)[3]
+    np.testing.assert_allclose(z[~interior], z0[~interior], atol=1e-15)
+    assert np.abs(z - z0)[interior].max() > 0.
+
+
+def test_full_smoothness_operator_restricts_to_interior_operator():
+    mesh = Mesh(12, 12, SCALE)
+    interior = hessian_design.hessian_operators(12, SCALE)[3]
+    z = 0.01 * sphere_cap_heights(12, 12, 1.)
+    full = hessian_design.smoothness_operator(mesh, z, full=True)
+    restricted = hessian_design.smoothness_operator(mesh, z)
+    assert full.shape == (144, 144)
+    np.testing.assert_allclose(
+        full[interior][:, interior].toarray(), restricted.toarray()
+    )
+
+
+@pytest.mark.parametrize('radius', [20., 80.])
+@pytest.mark.parametrize('curvature', [-1.0, 1.0])
+def test_single_edge_curvature_is_matched_from_sphere(radius, curvature):
+    vertices = np.array([[0.08, 0.125], [0.17, 0.125]])
+    _, (mean_kappa_G,) = construct(
+        vertices, [(0, 1)], [curvature],
+        initialization='sphere', initial_radius=radius
+    )
+    assert mean_kappa_G == pytest.approx(curvature, rel=2e-2)

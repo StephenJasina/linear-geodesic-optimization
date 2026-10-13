@@ -12,6 +12,7 @@ import scipy
 import linear_geodesic_optimization.driver as driver
 from linear_geodesic_optimization.data import input_network
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
+from linear_geodesic_optimization.mesh.rectangle import sphere_cap_heights
 from linear_geodesic_optimization.optimization import optimization
 
 
@@ -145,7 +146,9 @@ def optimize(
         'lambda_curvature': float(lambda_curvature),
         'lambda_smooth': float(lambda_smooth),
         'smooth_loss_type': smooth_loss_type,
-        'initial_radius': float(initial_radius),
+        # None (an infinite radius) starts flat; collation.py then uses
+        # 'initial' as the baseline
+        'initial_radius': float(initial_radius) if initial_radius is not None else None,
         'width': int(width),
         'height': int(height),
         'mesh_scale': float(mesh_scale),
@@ -163,14 +166,7 @@ def optimize(
 
     # Initialize mesh
     if initialization_file_path is None:
-        z_0 = np.array([
-            (initial_radius**2
-                - (i / (width - 1) - 0.5)**2
-                - (j / (height - 1) - 0.5)**2)**0.5
-            for i in range(width)
-            for j in range(height)
-        ]).reshape((width * height,))
-        z_0 = z_0 - np.amin(z_0)
+        z_0 = sphere_cap_heights(width, height, initial_radius)
     else:
         with open(initialization_file_path, 'r') as f:
             z_0 = np.array(json.load(f)['final'])

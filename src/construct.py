@@ -59,6 +59,8 @@ def construct(
     hessian_slope_correction=False,
     hessian_smoothness=0.,
     hessian_polish_maxiter=0,
+    hessian_initialization=None,
+    initial_radius=None,
     **kwargs
 ):
     if network_trim_radius is not None and not np.isposinf(network_trim_radius):
@@ -99,6 +101,10 @@ def construct(
         tube_radius, hessian_anisotropy, hessian_orientation,
         hessian_regularization, hessian_iterations,
         hessian_slope_correction, hessian_smoothness,
+        hessian_initialization, initial_radius,
+    )
+    z_initial = hessian_design.initial_heights(
+        mesh, hessian_initialization, initial_radius
     )
 
     time_constructed = time.perf_counter()
@@ -165,7 +171,9 @@ def construct(
         'lambda_curvature': float(lambda_curvature),
         'lambda_smooth': float(lambda_smooth),
         'smooth_loss_type': smooth_loss_type,
-        # No sphere initialization; collation.py then uses 'initial'
+        # Always None, so that collation.py uses 'initial' (the
+        # construction's initial heights) as the baseline; the actual
+        # radius is recorded as 'hessian_initial_radius'
         'initial_radius': None,
         'width': int(width),
         'height': int(height),
@@ -180,6 +188,8 @@ def construct(
         'hessian_iterations': int(hessian_iterations),
         'hessian_slope_correction': bool(hessian_slope_correction),
         'hessian_smoothness': float(hessian_smoothness),
+        'hessian_initialization': hessian_initialization,
+        'hessian_initial_radius': float(initial_radius) if initial_radius is not None else None,
     }
 
     construction = {
@@ -198,7 +208,7 @@ def construct(
     with open(directory_output / 'output.json', 'w') as file_output:
         json.dump({
             'parameters': parameters,
-            'initial': np.zeros(width * height).tolist(),
+            'initial': z_initial.tolist(),
             'final': z.tolist(),
             'network': network,
             'routes': routes,

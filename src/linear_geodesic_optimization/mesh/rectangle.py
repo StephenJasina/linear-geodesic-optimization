@@ -11,6 +11,32 @@ from linear_geodesic_optimization import geometry
 import linear_geodesic_optimization.mesh.mesh
 
 
+def sphere_cap_heights(
+    width: int,
+    height: int,
+    initial_radius: typing.Optional[float],
+) -> npt.NDArray[np.float64]:
+    """
+    Return the heights of a sphere cap over a `width` by `height` grid.
+
+    The cap has radius `initial_radius` and is centered over the grid,
+    measured in unit-square coordinates (independently of the mesh's
+    scale), and is shifted so that its lowest height is 0. The heights
+    are ordered as in `Mesh.get_coordinates`. A radius of None stands
+    for an infinite radius, giving a flat surface.
+    """
+    if initial_radius is None:
+        return np.zeros(width * height)
+    z = np.array([
+        (initial_radius**2
+            - (i / (width - 1) - 0.5)**2
+            - (j / (height - 1) - 0.5)**2)**0.5
+        for i in range(width)
+        for j in range(height)
+    ]).reshape((width * height,))
+    return z - np.amin(z)
+
+
 class Mesh(linear_geodesic_optimization.mesh.mesh.Mesh):
     """
     Representation of a mesh that is "approximately" a rectangle.
