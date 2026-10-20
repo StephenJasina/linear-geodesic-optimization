@@ -1,6 +1,6 @@
 /**
  * @param {CanvasRenderingContext2D} context
- * @param {Array<number>} x
+ * @param {number} x
  * @returns {number}
  */
 export function xToCanvasCoordinates(context, x) {
@@ -9,7 +9,7 @@ export function xToCanvasCoordinates(context, x) {
 
 /**
  * @param {CanvasRenderingContext2D} context
- * @param {Array<number>} y
+ * @param {number} y
  * @returns {number}
  */
 export function yToCanvasCoordinates(context, y) {
@@ -27,9 +27,21 @@ export function vertexToCanvasCoordinates(context, vertex) {
 
 /**
  * @param {CanvasRenderingContext2D} context
- * @param {Array<number>} length
+ * @param {number} length
  * @returns {number}
  */
 export function lengthToCanvasCoordinates(context, length) {
 	return length * context.canvas.width;
+}
+
+/**
+ * Convert a vertex in [0, 1]^2 to x and y coordinates on a plane centered
+ * at the origin.
+ *
+ * @param {Array<number>} vertex
+ * @param {number} planeSideLength
+ * @returns {Array<number>}
+ */
+export function vertexToGlobalCoordinates(vertex, planeSideLength) {
+	return [(vertex[0] - 0.5) * planeSideLength, (vertex[1] - 0.5) * planeSideLength];
 }

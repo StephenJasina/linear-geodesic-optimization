@@ -1,4 +1,5 @@
-import { xToCanvasCoordinates, yToCanvasCoordinates, lengthToCanvasCoordinates } from "./utils.js"
+import { xToCanvasCoordinates, yToCanvasCoordinates, lengthToCanvasCoordinates } from "./utils.js";
+import { locateTime } from "../time.js";
 
 /**
  * @param {CanvasRenderingContext2D} context
@@ -8,17 +9,15 @@ import { xToCanvasCoordinates, yToCanvasCoordinates, lengthToCanvasCoordinates }
  * @param {Array<number>} ts
  * @param {number} [sensitivity]
  */
-export default function(context, zs, zsEWMA, t, ts, boundaries, sensitivity = 0.02) {
+export default function(context, zs, zsEWMA, t, ts, sensitivity = 0.02) {
 	if (t === null || ts === null || t <= ts[0] || t > ts[ts.length - 1]) {
 		return;
 	}
 
-	let index = 0;
-	while (ts[index] < t) {
+	// Use the closest time
+	let { index, lambda } = locateTime(t, ts);
+	if (lambda >= 0.5) {
 		++index;
-	}
-	if (t - ts[index - 1] < 0.5 * (ts[index] - ts[index - 1])) {
-		--index;
 	}
 
 	let divisionsX = zs[index].length;

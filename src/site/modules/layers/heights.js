@@ -1,5 +1,7 @@
 import * as THREE from "three";
 
+import { locateTime } from "../time.js";
+
 /**
  * @param {THREE.Mesh<THREE.PlaneGeometry>} plane
  */
@@ -54,30 +56,12 @@ function setPlaneHeightsWithInterpolation(plane, zs, t, ts) {
 		return;
 	}
 
-	if (t <= ts[0]) {
-		setPlaneHeights(plane, zs[0]);
-		return 0;
-	}
-
-	if (t >= ts[ts.length - 1]) {
-		setPlaneHeights(plane, zs[ts.length - 1]);
-		return ts.length - 1;
-	}
-
-	// TODO: Improve this from a linear search
-	let index = 0;
-	while (ts[index] < t) {
-		++index;
-	}
-
-	if (ts[index] == t) {
+	let { index, lambda } = locateTime(t, ts);
+	if (lambda == 0.) {
 		setPlaneHeights(plane, zs[index]);
-		return index;
+	} else {
+		setPlaneHeights(plane, zs[index], zs[index + 1], lambda);
 	}
-
-	// If we reach here ts[index - 1] <= t < ts[index]
-	let lambda = (t - ts[index - 1]) / (ts[index] - ts[index - 1]);
-	setPlaneHeights(plane, zs[index - 1], zs[index], lambda);
 }
 
 export { resetPlaneHeights, setPlaneHeightsWithInterpolation };

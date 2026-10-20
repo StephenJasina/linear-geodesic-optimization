@@ -14,7 +14,7 @@ const CIRCUMFERENCE_EARTH = 40075016.68557849;
  * Return a View object for a given set of map descriptors.
  *
  * @param {number} resolution
- * @param {number} mapCenter
+ * @param {Array<number>} mapCenter longitude and latitude
  * @param {number} mapZoomFactor
  */
 function getView(resolution, mapCenter, mapZoomFactor) {
@@ -29,7 +29,7 @@ function getView(resolution, mapCenter, mapZoomFactor) {
  * Return a new OpenLayers map, created as a child of the DOM's body.
  *
  * @param {number} resolution
- * @param {number} mapCenter
+ * @param {Array<number>} mapCenter longitude and latitude
  * @param {number} mapZoomFactor
  */
 function createOLMap(resolution, mapCenter, mapZoomFactor) {
@@ -73,8 +73,8 @@ function destroyOLMap(olMap) {
  * Update an existing OpenLayers map.
  *
  * @param {Map} olMap
- * @param {Number} resolution
- * @param {number} mapCenter
+ * @param {number} resolution
+ * @param {Array<number>} mapCenter longitude and latitude
  * @param {number} mapZoomFactor
  */
 function updateOLMap(olMap, resolution, mapCenter, mapZoomFactor) {

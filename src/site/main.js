@@ -1,16 +1,14 @@
 // Three.js
 import * as THREE from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { Line2 } from "three/addons/lines/Line2.js";
-import { LineGeometry } from "three/addons/lines/LineGeometry.js";
-import { LineMaterial } from "three/addons/lines/LineMaterial.js";
-import { LineSegments2 } from "three/addons/lines/LineSegments2.js";
-import { LineSegmentsGeometry } from "three/addons/lines/LineSegmentsGeometry.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 // Styling
-import { getCurvatureColor, getWeightedColor } from "./modules/colors.js";
+import { getWeightedColor } from "./modules/colors.js";
+
+// Utilities
+import { locateTime } from "./modules/time.js";
 
 // Layers
 import { createOLMap, destroyOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMap } from "./modules/layers/map.js";
@@ -19,6 +17,8 @@ import { default as drawGrid } from "./modules/layers/grid.js";
 import { default as drawGeodesics } from "./modules/layers/geodesics.js";
 import { resetPlaneHeights, setPlaneHeightsWithInterpolation } from "./modules/layers/heights.js";
 import { default as drawHeightChanges } from "./modules/layers/height_changes.js";
+import { clearHoverArcs, drawHoverArcs } from "./modules/layers/hover_arcs.js";
+import { clearHoveringGraph, drawHoveringGraph } from "./modules/layers/hover_graph.js";
 import { drawOutages, updateOutageList } from "./modules/layers/outages.js";
 import { default as drawVertices } from "./modules/layers/vertices.js";
 
@@ -34,10 +34,6 @@ let canvasResolution = 1000;
 
 // Size of the plane
 let planeSideLength = 20.;
-let planeXMin = -planeSideLength / 2;
-let planeXMax = planeSideLength / 2;
-let planeYMin = -planeSideLength / 2;
-let planeYMax = planeSideLength / 2;
 
 let spacingBetweenPlanes = 0.45;
 
@@ -54,7 +50,6 @@ let networkEdges = null;
 let networkEdgesAll = null;
 let networkEdgesAdded = null;
 let networkEdgesRemoved = null;
-let networkBoundaries = null;
 let geodesics = null;
 let edgeColors = null;
 let traffic = null;
@@ -103,33 +98,9 @@ scene.add(lightDirectional);
 let lightAmbient = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(lightAmbient);
 
-// Network drawing setup
-const HEIGHT_HOVER_GRAPH = 10;
-const SIZE_HOVER_VERTEX = 6;
-const SIZE_HOVER_EDGE = 4;
-
-const HOVER_VERTEX_MATERIAL = new THREE.PointsMaterial({
-	color: "#4caf50",
-	size: SIZE_HOVER_VERTEX,
-});
-
-let hoverVerticesDrawn = [];
-let hoverEdgesDrawn = [];
-
-// Weighted arc setup
-const MIN_HEIGHT_HOVER_ARC = 5;
-const MAX_HEIGHT_HOVER_ARC = 8;
-const SIZE_HOVER_ARC_VERTEX = 6;
-const SIZE_HOVER_ARC_EDGE = 4;
-const HOVER_ARC_DIVISIONS = 31;
-
-const HOVER_ARC_VERTEX_MATERIAL = new THREE.PointsMaterial({
-	color: "#4caf50",
-	size: SIZE_HOVER_VERTEX,
-});
-
-let hoverArcVerticesDrawn = [];
-let hoverArcEdgesDrawn = [];
+// Objects drawn above the planes
+const hoverGraphObjects = [];
+const hoverArcObjects = [];
 
 // Renderers
 let renderPass = new RenderPass(scene, camera);
@@ -154,19 +125,25 @@ divDropOutput.addEventListener("dragover", dragOver, false);
 divDropOutput.addEventListener("drop", dropOutput, false);
 
 let rangeAnimation = document.getElementById("range-animation");
+/**
+ * The slider's time as a number (the slider stores it as a string).
+ */
+function getCurrentTime() {
+	return parseFloat(rangeAnimation.value);
+}
 let checkboxShowHeights = document.getElementById("show-heights");
 function setHeights() {
 	for (let i = 0; i < elementsByTab.length; ++i) {
 		let options = elementsByTab[i];
 		if (heights != null && options.showHeights) {
-			setPlaneHeightsWithInterpolation(options.plane, heights, rangeAnimation.value, times);
+			setPlaneHeightsWithInterpolation(options.plane, heights, getCurrentTime(), times);
 		} else {
 			resetPlaneHeights(options.plane);
 		}
 	}
 }
 rangeAnimation.oninput = function() {
-	timeInitial = parseFloat(rangeAnimation.value);
+	timeInitial = getCurrentTime();
 	dateTimeInitial = Date.now() / 1000;
 	updateCurrentNetworkIndex();
 	setHeights();
@@ -225,10 +202,13 @@ let checkboxShowHoveringGraph = document.getElementById("show-hover-graph");
 checkboxShowHoveringGraph.onchange = function() {
 	if (checkboxShowHoveringGraph.checked) {
 		if (times != null) {
-			drawHoveringGraph(Math.round(currentNetworkIndex));
+			drawHoveringGraph(
+				scene, hoverGraphObjects, networkVertices,
+				networkEdges[Math.round(currentNetworkIndex)], planeSideLength
+			);
 		}
 	} else {
-		clearHoveringGraph();
+		clearHoveringGraph(scene, hoverGraphObjects);
 	}
 	elementsByTab[indexTabCurrent].showHoveringGraph = checkboxShowHoveringGraph.checked;
 }
@@ -236,9 +216,14 @@ checkboxShowHoveringGraph.onchange = function() {
 let checkboxShowWeightArcs = document.getElementById("show-weight-arcs");
 checkboxShowWeightArcs.onchange = function() {
 	if (checkboxShowWeightArcs.checked) {
-		drawHoverArcs();
+		if (times != null) {
+			drawHoverArcs(
+				scene, hoverArcObjects, networkVertices, networkEdges,
+				getCurrentTime(), times, heights, planeSideLength
+			);
+		}
 	} else {
-		clearHoverArcs();
+		clearHoverArcs(scene, hoverArcObjects);
 	}
 	elementsByTab[indexTabCurrent].showWeightArcs = checkboxShowWeightArcs.checked;
 }
@@ -278,7 +263,7 @@ buttonPlay.onclick = function() {
 		buttonPlay.innerText = "Play";
 	} else {
 		buttonPlay.innerText = "Pause";
-		timeInitial = parseFloat(rangeAnimation.value);
+		timeInitial = getCurrentTime();
 		dateTimeInitial = Date.now() / 1000;
 	}
 	isPlaying = !isPlaying;
@@ -444,7 +429,8 @@ buttonRemoveTab.onclick = removeTab;
 let divTraffic = document.getElementById("div-traffic");
 let tableTraffic = document.getElementById("table-traffic");
 let tableTrafficCells = new Array(0);
-let tableTrafficHover = new Array(0);
+// [i, j] pairs of the hovered cells
+let tableTrafficHover = new Set();
 function updateTrafficTable(currentNetworkIndex) {
 	if (!hasValidTraffic) {
 		return;
@@ -497,8 +483,6 @@ controls.addEventListener("change", function() {
  * Draw every layer above the base layer (i.e., excluding the map)
  */
 function drawLayers(time, options) {
-	let plane = options.plane;
-
 	// Figure out which canvas we're using
 	let context = null;
 	if (options.showMap && options.textureMap !== null) {
@@ -534,14 +518,13 @@ function drawLayers(time, options) {
 		}
 
 		if (hasValidTraffic) {
+			let trafficPathsCurrent = trafficPaths[currentNetworkIndexInt];
 			let trafficPathsToDraw = new Array();
 			let trafficPathsToDrawColors = new Array();
-			for (let i = 0; i < networkVertices.length; ++i) {
-				for (let j = 0; j < networkVertices.length; ++j) {
-					if (tableTrafficHover[i][j] && trafficPaths[currentNetworkIndexInt] != null && trafficPaths[currentNetworkIndexInt][i] !== null && trafficPaths[currentNetworkIndexInt][i][j] !== null) {
-						trafficPathsToDraw.push(trafficPaths[currentNetworkIndexInt][i][j]);
-						trafficPathsToDrawColors.push(new Array(0, 0, 0));
-					}
+			for (let [i, j] of tableTrafficHover) {
+				if (trafficPathsCurrent != null && trafficPathsCurrent[i] != null && trafficPathsCurrent[i][j] != null) {
+					trafficPathsToDraw.push(trafficPathsCurrent[i][j]);
+					trafficPathsToDrawColors.push(new Array(0, 0, 0));
 				}
 			}
 			drawGeodesics(
@@ -567,7 +550,7 @@ function drawLayers(time, options) {
 	}
 
 	if (options.showCurvatureChanges) {
-		drawHeightChanges(context, curvatures, curvaturesEWMA, time, times, networkBoundaries, .2);
+		drawHeightChanges(context, curvatures, curvaturesEWMA, time, times, .2);
 	}
 }
 
@@ -581,7 +564,10 @@ function animate() {
 		let dateTimeNow = Date.now() / 1000;
 		let alpha = ((dateTimeNow - dateTimeInitial) % animationDuration) / animationDuration;
 		let timeNow = (timeInitial - timeMin + alpha * timeRange) % timeRange + timeMin;
+		// The slider snaps the time to its step, so read it back so that
+		// every layer uses the same time
 		rangeAnimation.value = timeNow;
+		timeNow = getCurrentTime();
 
 		// Update the heights if necessary
 		for (let i = 0; i < elementsByTab.length; ++i) {
@@ -632,7 +618,7 @@ function animate() {
 			}
 
 			drawLayers(
-				(times === null || times.length == 0) ? null : (times.length == 1 ? times[0] : rangeAnimation.value),
+				(times === null || times.length == 0) ? null : (times.length == 1 ? times[0] : getCurrentTime()),
 				options
 			);
 
@@ -675,32 +661,12 @@ function updateCurrentNetworkIndex() {
 }
 
 function getCurrentNetworkIndex() {
-	let time = parseFloat(rangeAnimation.value);
 	if (times === null) {
 		return null;
 	}
 
-	if (time <= times[0]) {
-		return 0;
-	}
-
-	if (time >= times[times.length - 1]) {
-		return times.length - 1;
-	}
-
-	// TODO: Improve this from a linear search
-	let index = 0;
-	while (times[index] < time) {
-		++index;
-	}
-
-	if (times[index] == time) {
-		return index;
-	}
-
-	// If we reach here ts[index - 1] <= t < ts[index]
-	let lambda = (time - times[index - 1]) / (times[index] - times[index - 1]);
-	return index - 1 + lambda;
+	let { index, lambda } = locateTime(getCurrentTime(), times);
+	return index + lambda;
 }
 
 function resetView() {
@@ -840,228 +806,6 @@ function makePlane(divisions) {
 	return plane;
 }
 
-function clearHoveringGraph() {
-	for (let hoveringVertex of hoverVerticesDrawn) {
-		scene.remove(hoveringVertex);
-		hoveringVertex.geometry.dispose();
-	}
-	hoverVerticesDrawn = [];
-
-	for (let hoveringEdge of hoverEdgesDrawn) {
-		scene.remove(hoveringEdge);
-		hoveringEdge.material.dispose();
-		hoveringEdge.geometry.dispose();
-	}
-	hoverEdgesDrawn = [];
-}
-
-function drawHoveringGraph(index) {
-	clearHoveringGraph();
-
-	let vertexArray = [];
-	for (let vertex of networkVertices) {
-		let vertexGlobal = vertexToGlobalCoordinates(vertex.coordinates);
-		vertexArray.push(vertexGlobal[1], HEIGHT_HOVER_GRAPH, vertexGlobal[0]);
-	}
-	let pointsGeometry = new THREE.BufferGeometry();
-	pointsGeometry.setAttribute("position", new THREE.BufferAttribute(
-		new Float32Array(vertexArray), 3
-	));
-	let points = new THREE.Points(pointsGeometry, HOVER_VERTEX_MATERIAL);
-	scene.add(points);
-	hoverVerticesDrawn.push(points);
-
-	for (let edge of networkEdges[index]) {
-		let edgeArray = [];
-		let source = vertexToGlobalCoordinates(networkVertices[edge.source].coordinates);
-		let target = vertexToGlobalCoordinates(networkVertices[edge.target].coordinates);
-		edgeArray.push(source[1], HEIGHT_HOVER_GRAPH, source[0]);
-		edgeArray.push(target[1], HEIGHT_HOVER_GRAPH, target[0]);
-
-		let edgesGeometry = new LineSegmentsGeometry();
-		edgesGeometry.setPositions(new Float32Array(edgeArray));
-		let lineSegment = new LineSegments2(edgesGeometry, new LineMaterial({
-			color: getCurvatureColor(edge.curvature),
-			linewidth: SIZE_HOVER_EDGE,
-		}));
-
-		scene.add(lineSegment);
-		hoverEdgesDrawn.push(lineSegment);
-	}
-}
-
-function clearHoverArcs() {
-	for (let hoveringVertex of hoverArcVerticesDrawn) {
-		scene.remove(hoveringVertex);
-		hoveringVertex.geometry.dispose();
-	}
-	hoverArcVerticesDrawn = [];
-
-	for (let hoveringEdge of hoverArcEdgesDrawn) {
-		scene.remove(hoveringEdge);
-		hoveringEdge.material.dispose();
-		hoveringEdge.geometry.dispose();
-	}
-	hoverArcEdgesDrawn = [];
-}
-
-function getMeshHeightAtCoordinates(vertex, zs) {
-	let i, alpha;
-	if (vertex[0] === 1.) {
-		i = divisions - 2;
-		alpha = 1.;
-	} else {
-		i = Math.floor(vertex[0] * (divisions - 1));
-		alpha = (vertex[0] * (divisions - 1)) % 1;
-	}
-	let j, beta;
-	if (vertex[1] === 1.) {
-		j = divisions - 2;
-		beta = 1.;
-	} else {
-		j = Math.floor(vertex[1] * (divisions - 1));
-		beta = (vertex[1] * (divisions - 1)) % 1;
-	}
-
-	let z00 = zs[i][j];
-	let z01 = zs[i][j + 1];
-	let z10 = zs[i + 1][j];
-	let z11 = zs[i + 1][j + 1];
-
-	return (
-		(1. - alpha) * ((1. - beta) * z00 + beta * z01)
-		+ alpha * ((1. - beta) * z10 + beta * z11)
-	) * planeSideLength;
-}
-
-function drawHoverArcsWithInterpolation(networkVertices, networkEdgesLeft, networkEdgesRight, zLeft, zRight, lambda) {
-	clearHoverArcs();
-
-	// Compute edge weights
-	let edgeWeightsLeft = new Array();
-	for (const vertex of networkVertices) {
-		edgeWeightsLeft.push(new Map());
-	}
-	for (const edge of networkEdgesLeft) {
-		let source = edge.source;
-		let target = edge.target;
-
-		edgeWeightsLeft[source].set(target, edge.throughput);
-	}
-
-	let edgeWeights = new Array();
-	for (let vertex of networkVertices) {
-		edgeWeights.push(new Map());
-	}
-	for (let edge of networkEdgesRight) {
-		let source = edge.source;
-		let target = edge.target;
-
-		if (edgeWeightsLeft[source].has(target)) {
-			edgeWeights[source].set(target, (1. - lambda) * edgeWeightsLeft[source].get(target) + lambda * edge.throughput);
-		} else if (lambda > 0.5) {
-				edgeWeights[source].set(target, (2. * lambda - 1.) * edge.throughput);
-		}
-	}
-	for (let edge of networkEdgesLeft) {
-		let source = edge.source;
-		let target = edge.target;
-
-		if (!edgeWeights[source].has(target) && lambda <= 0.5) {
-			edgeWeights[source].set(target, (1. - 2. * lambda) * edge.throughput);
-		}
-	}
-
-	// Compute network coordinates
-	let coordinates = new Array(networkVertices.length);
-	for (let i = 0; i < coordinates.length; ++i) {
-		let vertex = networkVertices[i].coordinates;
-
-		let coordinatesXY = vertexToGlobalCoordinates(vertex);
-
-		coordinates[i] = new Array(
-			coordinatesXY[0],
-			coordinatesXY[1],
-			(1 - lambda) * getMeshHeightAtCoordinates(vertex, zLeft) + lambda * getMeshHeightAtCoordinates(vertex, zRight)
-		);
-	}
-
-	// Draw the arcs
-	for (let source = 0; source < edgeWeights.length; ++source) {
-		let sourceCoordinates = coordinates[source];
-		let hSource = sourceCoordinates[2];
-
-		for (let [target, weight] of edgeWeights[source]) {
-			let targetCoordinates = coordinates[target];
-			let hTarget = targetCoordinates[2];
-			let hCenter = MIN_HEIGHT_HOVER_ARC + weight * (MAX_HEIGHT_HOVER_ARC - MIN_HEIGHT_HOVER_ARC);
-
-			let pointsArray = [];
-
-			for (let i = 0; i < HOVER_ARC_DIVISIONS + 1; ++i) {
-				let lambda = i / HOVER_ARC_DIVISIONS;
-				let p = [
-					(1. - lambda) * sourceCoordinates[0] + lambda * targetCoordinates[0],
-					(1. - lambda) * sourceCoordinates[1] + lambda * targetCoordinates[1]
-				];
-				let hp = (
-					(2. * hSource - 4. * hCenter + 2. * hTarget) * lambda * lambda
-					+ (-3. * hSource + 4. * hCenter - hTarget) * lambda
-					+ hSource
-				);
-
-				pointsArray.push(p[1], hp, p[0]);
-			}
-
-			let edgesGeometry = new LineGeometry();
-			edgesGeometry.setPositions(new Float32Array(pointsArray));
-			let lineSegment = new Line2(edgesGeometry, new LineMaterial({
-				color: getWeightedColor(1. - weight),
-				linewidth: SIZE_HOVER_EDGE,
-			}));
-
-			scene.add(lineSegment);
-			hoverArcEdgesDrawn.push(lineSegment);
-		}
-	}
-}
-
-function drawHoverArcsWithMultipleInterpolation(networkVertices, networkEdges, t, ts, zs) {
-	if (ts === null) {
-		return;
-	}
-
-	if (t <= ts[0]) {
-		drawHoverArcsWithInterpolation(networkVertices, networkEdges[0], networkEdges[0], zs[0], zs[0], 0.);
-		return;
-	}
-
-	if (t >= ts[ts.length - 1]) {
-		drawHoverArcsWithInterpolation(networkVertices, networkEdges[ts.length - 1], networkEdges[ts.length - 1], zs[ts.length - 1], zs[ts.length - 1], 0.);
-		return;
-	}
-
-	// TODO: Improve this from a linear search
-	let index = 0;
-	while (ts[index] < t) {
-		++index;
-	}
-
-	if (ts[index] == t) {
-		drawHoverArcsWithInterpolation(networkVertices, networkEdges[index], networkEdges[index], zs[index], zs[index], 0.);
-		return index;
-	}
-
-	// If we reach here ts[index - 1] <= t < ts[index]
-	let lambda = (t - ts[index - 1]) / (ts[index] - ts[index - 1]);
-	drawHoverArcsWithInterpolation(networkVertices, networkEdges[index - 1], networkEdges[index], zs[index - 1], zs[index], lambda);
-}
-
-function drawHoverArcs() {
-	if (times != null) {
-		drawHoverArcsWithMultipleInterpolation(networkVertices, networkEdges, rangeAnimation.value, times, heights);
-	}
-}
 
 let dropReader = new FileReader();
 dropReader.onload = function() {
@@ -1075,7 +819,6 @@ dropReader.onload = function() {
 		heights = new Array(animationData.length);
 		curvatures = new Array(animationData.length);
 		networkEdges = new Array(animationData.length);
-		networkBoundaries = new Array(animationData.length);
 		geodesics = new Array(animationData.length);
 		edgeColors = new Array(animationData.length);
 		traffic = new Array(animationData.length);
@@ -1086,7 +829,6 @@ dropReader.onload = function() {
 			heights[i] = animationData[i].height;
 			curvatures[i] = animationData[i].curvature;
 			networkEdges[i] = animationData[i].edges;
-			networkBoundaries[i] = animationData[i].border;
 			geodesics[i] = animationData[i].geodesics;
 			edgeColors[i] = animationData[i].edgeColors;
 			if (hasValidTraffic && 'traffic' in animationData[i] && animationData[i].traffic !== null) {
@@ -1197,10 +939,13 @@ dropReader.onload = function() {
 		}
 
 		if (checkboxShowHoveringGraph.checked) {
-			drawHoveringGraph(0);
+			drawHoveringGraph(scene, hoverGraphObjects, networkVertices, networkEdges[0], planeSideLength);
 		}
 		if (checkboxShowWeightArcs.checked) {
-			drawHoverArcs();
+			drawHoverArcs(
+				scene, hoverArcObjects, networkVertices, networkEdges,
+				getCurrentTime(), times, heights, planeSideLength
+			);
 		}
 
 		setHeights();
@@ -1212,28 +957,22 @@ dropReader.onload = function() {
 			tableTraffic.removeChild(tableTraffic.lastChild);
 		}
 		if (hasValidTraffic) {
-			tableTrafficHover = new Array(networkVertices.length);
-			for (let i = 0; i < networkVertices.length; ++i) {
-				let tableTrafficHoverRow = new Array(networkVertices.length);
-				for (let j = 0; j < networkVertices.length; ++j) {
-					tableTrafficHoverRow[j] = false;
-				}
-				tableTrafficHover[i] = tableTrafficHoverRow;
-			}
+			tableTrafficHover = new Set();
 			tableTrafficCells = new Array(networkVertices.length);
 			for (let i = 0; i < networkVertices.length; ++i) {
 				let tableRow = document.createElement("tr");
 				let tableTrafficCellsRow = new Array(networkVertices.length);
 				for (let j = 0; j < networkVertices.length; ++j) {
 					let cell = document.createElement("td");
+					let pair = [i, j];
 					cell.addEventListener("mouseenter", function(event) {
-						tableTrafficHover[i][j] = true;
+						tableTrafficHover.add(pair);
 						for (let k = 0; k < elementsByTab.length; ++k) {
 							elementsByTab[k].canvasNeedsUpdate = true;
 						}
 					});
 					cell.addEventListener("mouseleave", function(event) {
-						tableTrafficHover[i][j] = false;
+						tableTrafficHover.delete(pair);
 						for (let k = 0; k < elementsByTab.length; ++k) {
 							elementsByTab[k].canvasNeedsUpdate = true;
 						}
@@ -1307,10 +1046,4 @@ function dragOver(evt) {
 	evt.stopPropagation();
 	evt.preventDefault();
 	evt.dataTransfer.dropEffect = "copy"; // Explicitly show this is a copy.
-}
-
-function vertexToGlobalCoordinates(vertex) {
-	let x = vertex[0] * planeSideLength + planeXMin;
-	let y = vertex[1] * planeSideLength + planeYMin;
-	return [x, y];
 }
