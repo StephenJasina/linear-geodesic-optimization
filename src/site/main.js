@@ -748,9 +748,7 @@ function makeTextureBlank(contextBlank) {
 function getCurrentResolution() {
 	let planeScaleFactor = getPlaneScaleFactor(elementsByTab.length);
 	let resolution = canvasResolution * Math.min(camera.zoom * planeScaleFactor, 4.);
-	// OpenLayers scales its canvas by the device pixel ratio
-	let resolutionMax = renderer.capabilities.maxTextureSize / window.devicePixelRatio;
-	return Math.round(Math.min(resolution, resolutionMax));
+	return Math.round(Math.min(resolution, renderer.capabilities.maxTextureSize));
 }
 
 /**

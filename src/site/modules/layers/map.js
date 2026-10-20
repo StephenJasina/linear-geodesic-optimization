@@ -50,6 +50,9 @@ function createOLMap(resolution, mapCenter, mapZoomFactor) {
 
 	let olMap = new Map({
 		controls: [],
+		// Match the blank canvas, so that layers drawn with widths in pixels
+		// look the same with and without the map
+		pixelRatio: 1,
 		interactions: [],
 		layers: [layerTile],
 		target: divMap,
