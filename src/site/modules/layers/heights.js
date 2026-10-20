@@ -12,6 +12,7 @@ function resetPlaneHeights(plane) {
 		}
 	}
 	bufferedHeights.needsUpdate = true;
+	plane.geometry.computeVertexNormals();
 }
 
 /**
@@ -38,6 +39,7 @@ function setPlaneHeights(plane, zLeft, zRight = null, lambda = null) {
 		}
 	}
 	bufferedHeights.needsUpdate = true;
+	plane.geometry.computeVertexNormals();
 }
 
 /**

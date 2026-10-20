@@ -145,7 +145,6 @@ controls.enableZoom = true;
 controls.minZoom = 1;
 // controls.target = new THREE.Vector3(0., 0., camera.position.z);
 // controls.update();
-window.addEventListener("wheel", wheelEvent, true);
 
 // Interactivity with DOM elements
 
@@ -191,12 +190,8 @@ checkboxShowCurvatureChanges.onchange = function() {
 
 let checkboxShowMap = document.getElementById("show-map");
 checkboxShowMap.onchange = function() {
-	if (checkboxShowMap.checked) {
-		updateOLMap(elementsByTab[indexTabCurrent].olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-	} else {
-		setCanvasZoom(elementsByTab[indexTabCurrent], getCurrentResolution());
-	}
 	elementsByTab[indexTabCurrent].showMap = checkboxShowMap.checked;
+	setCanvasResolution(elementsByTab[indexTabCurrent]);
 	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
@@ -373,7 +368,6 @@ function addTab() {
 	contextBlank.fillRect(0, 0, contextBlank.canvas.width, contextBlank.canvas.height);
 	let textureBlank = makeTextureBlank(contextBlank);
 	plane.material.map = textureBlank;
-	// plane.material.needsUpdate = true;
 
 	let olMap = createOLMap(canvasResolution, mapCenter, mapZoomFactor);
 
@@ -384,6 +378,10 @@ function addTab() {
 		"contextMap": null,
 		"textureMap": null,
 		"olMap": olMap,
+
+		// Current side lengths of the two canvases, in pixels
+		"resolutionBlank": canvasResolution,
+		"resolutionMap": canvasResolution,
 
 		"buttonTab": buttonNew,
 
@@ -619,7 +617,10 @@ function animate() {
 				context = options.contextBlank;
 				texture = options.textureBlank;
 			}
-			plane.material.map = texture;
+			if (plane.material.map !== texture) {
+				plane.material.map = texture;
+				plane.material.needsUpdate = true;
+			}
 
 			// Draw the bottommost layer
 			if (useMap) {
@@ -637,8 +638,6 @@ function animate() {
 
 			texture.needsUpdate = true;
 		}
-		plane.geometry.computeVertexNormals();
-		plane.material.needsUpdate = true;
 	}
 
 	// Render
@@ -727,19 +726,7 @@ function resetView() {
 	controls.update();
 	camera.updateProjectionMatrix();
 
-	for (let i = 0; i < elementsByTab.length; ++i) {
-		let options = elementsByTab[i];
-		if (options.showMap) {
-			updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-			options.textureMap = makeTextureOLMap(options.olMap);
-		} else {
-			setCanvasZoom(options, getCurrentResolution());
-		}
-	}
-
-	for (let i = 0; i < elementsByTab.length; ++i) {
-		elementsByTab[i].canvasNeedsUpdate = true;
-	}
+	setCanvasResolutions();
 }
 
 document.addEventListener("keydown", function(event) {
@@ -802,38 +789,39 @@ function makeTextureBlank(contextBlank) {
 
 function getCurrentResolution() {
 	let planeScaleFactor = getPlaneScaleFactor(elementsByTab.length);
-	return canvasResolution * Math.min(camera.zoom * planeScaleFactor, 4.);
+	let resolution = canvasResolution * Math.min(camera.zoom * planeScaleFactor, 4.);
+	// OpenLayers scales its canvas by the device pixel ratio
+	let resolutionMax = renderer.capabilities.maxTextureSize / window.devicePixelRatio;
+	return Math.round(Math.min(resolution, resolutionMax));
 }
 
-function setCanvasZoom(options, resolution) {
-	options.textureBlank.dispose();
-	options.contextBlank.canvas.width = resolution;
-	options.contextBlank.canvas.height = resolution;
-	options.textureBlank = makeTextureBlank(options.contextBlank);
-	options.plane.material.map = options.textureBlank;
-}
-
-function wheelEvent(event) {
-	let element = document.elementFromPoint(event.clientX, event.clientY);
-	if (element === null || element.tagName != "CANVAS") {
-		return;
+/**
+ * Resize the canvas a tab is currently showing, if the zoom level calls for
+ * a different resolution. The textures are kept, but their GPU storage has to
+ * be reallocated at the new size.
+ */
+function setCanvasResolution(options) {
+	let resolution = getCurrentResolution();
+	if (options.showMap) {
+		if (resolution != options.resolutionMap) {
+			options.resolutionMap = resolution;
+			updateOLMap(options.olMap, resolution, mapCenter, mapZoomFactor);
+			if (options.textureMap !== null) {
+				options.textureMap.dispose();
+			}
+			options.canvasNeedsUpdate = true;
+		}
+	} else if (resolution != options.resolutionBlank) {
+		options.resolutionBlank = resolution;
+		options.contextBlank.canvas.width = resolution;
+		options.contextBlank.canvas.height = resolution;
+		options.textureBlank.dispose();
+		options.canvasNeedsUpdate = true;
 	}
-
-	setCanvasResolutions();
 }
 function setCanvasResolutions() {
 	for (let i = 0; i < elementsByTab.length; ++i) {
-		let options = elementsByTab[i];
-		if (options.showMap) {
-			updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-			options.textureMap = makeTextureOLMap(options.olMap);
-		} else {
-			setCanvasZoom(options, getCurrentResolution());
-		}
-	}
-
-	for (let i = 0; i < elementsByTab.length; ++i) {
-		elementsByTab[i].canvasNeedsUpdate = true;
+		setCanvasResolution(elementsByTab[i]);
 	}
 }
 
@@ -1277,15 +1265,14 @@ dropReader.onload = function() {
 			checkboxShowTrafficMatrix.style.display = "none";
 		}
 
+		// Force every map to pick up the new center and zoom the next time it
+		// is shown
 		mapCenter = mapData.center;
 		mapZoomFactor = mapData.zoomFactor;
 		for (let i = 0; i < elementsByTab.length; ++i) {
-			let options = elementsByTab[i];
-			if (options.showMap) {
-				updateOLMap(options.olMap, getCurrentResolution(), mapCenter, mapZoomFactor);
-				options.textureMap = makeTextureOLMap(options.olMap);
-			}
+			elementsByTab[i].resolutionMap = null;
 		}
+		setCanvasResolutions();
 
 		for (let i = 0; i < elementsByTab.length; ++i) {
 			elementsByTab[i].canvasNeedsUpdate = true;

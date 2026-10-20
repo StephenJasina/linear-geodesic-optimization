@@ -82,7 +82,9 @@ function updateOLMap(olMap, resolution, mapCenter, mapZoomFactor) {
 	divMap.style.width = resolution + "px";
 	divMap.style.height = resolution + "px";
 	olMap.updateSize();
-	olMap.setView(getView(resolution, mapCenter, mapZoomFactor));
+	let view = olMap.getView();
+	view.setCenter(fromLonLat(mapCenter));
+	view.setResolution(CIRCUMFERENCE_EARTH / resolution / mapZoomFactor);
 }
 
 /**
