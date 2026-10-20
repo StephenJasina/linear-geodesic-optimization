@@ -52,6 +52,7 @@ def run_once(graphml, directory, backend, sides, maxiter, lambda_smooth):
             lambda_smooth=lambda_smooth,
             directory_output=directory,
             maxiter=maxiter,
+            method="lbfgs",
             backend=backend,
         )
     elapsed = time.perf_counter() - start

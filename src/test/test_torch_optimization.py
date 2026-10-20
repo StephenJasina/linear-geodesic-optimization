@@ -52,6 +52,7 @@ def test_loss_and_gradient_match_legacy(
         expected_loss = legacy.forward()
         expected_gradient = legacy.reverse()
         np.testing.assert_allclose(fast.forward(z), expected_loss, rtol=1e-9)
+        np.testing.assert_allclose(fast.kappa_G, legacy.kappa_G, rtol=1e-9, atol=1e-9)
         np.testing.assert_allclose(
             fast.reverse(z), expected_gradient, rtol=1e-7, atol=1e-7
         )

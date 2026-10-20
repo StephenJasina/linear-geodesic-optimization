@@ -49,10 +49,11 @@ def base_defaults() -> dict[str, typing.Any]:
         'mesh_scale': 1.,
         'coordinates_scale': 0.8,
         'network_trim_radius': None,
-        'maxiter': None,
-        'backend': 'legacy',
-        'initialization_file_path': None,
-        # Parameters used only by construct.py
+        'method': 'construction',  # Or 'lbfgs'
+        'backend': 'torch',  # Or 'legacy'
+        'maxiter': None,  # Used only when method is 'lbfgs'
+        'initialization_file_path': None,  # Ignored when method is 'construction'
+        # Parameters used only when method is 'construction'
         'hessian_anisotropy': 1.,
         'hessian_orientation': 'hill',
         'hessian_regularization': 1e-3,

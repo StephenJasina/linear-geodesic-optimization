@@ -30,12 +30,21 @@ by `python collation.py config_file.json`. Configurations live under `data/`;
 for example, `../data/toy/routing_with_volumes/config/traffic_two_clusters.json`
 when running from `src`.
 
-The optional `backend` argument selects the optimizer implementation. The
-`legacy` backend uses the original Python derivative code. The `torch` backend
-uses array operations and automatic differentiation and requires PyTorch
-(`pip install torch`). The example traffic-two-clusters config selects `torch`.
-Both backends use the same objective and output format. The torch backend
-uses one CPU thread per optimization process to avoid thread oversubscription.
+The optional `method` argument selects how the surface is built. The default,
+`construction`, turns each edge's Ricci curvature into a target Hessian and
+solves for the heights with a few sparse linear solves, optionally followed by
+`hessian_polish_maxiter` iterations of L-BFGS on the usual loss. The `lbfgs`
+method minimizes the loss with L-BFGS over every mesh height, starting from a
+sphere cap (or from a previous run, depending on `settings.initialization`).
+Configs that run L-BFGS must set `"method": ["lbfgs"]`.
+
+The optional `backend` argument selects the loss implementation, which is used
+by L-BFGS, by the construction's polish, and for the construction's loss report.
+The default, `torch`, uses array operations and automatic differentiation and
+requires PyTorch (`pip install torch`). The `legacy` backend uses the original
+Python derivative code. Both backends use the same objective and output format.
+The torch backend uses one CPU thread per optimization process to avoid thread
+oversubscription.
 
 ### Verify and benchmark the optimizer
 
@@ -47,7 +56,7 @@ python benchmark_optimization.py --sides 20 --maxiter 5 --repeats 3
 ```
 
 The tests compare legacy and Torch losses and gradients, then run both through
-`optimization.py` on the same small GraphML fixture. The network, input, and
+`optimization.py` on the same small GraphML fixture, with both methods. The network, input, and
 initial heights must match exactly; final heights and saved diagnostic losses
 must agree within numerical tolerances. The only expected metadata difference
 is the `backend` name. The tests cover several mesh sizes and flat, mixed,

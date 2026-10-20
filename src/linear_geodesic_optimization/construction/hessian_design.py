@@ -394,7 +394,7 @@ def initial_heights(
     Return the initial heights of all mesh vertices, in mesh order.
 
     With `initialization` None, the surface is flat. With 'sphere', it
-    is the sphere cap of radius `initial_radius` used by
+    is the sphere cap of radius `initial_radius` used by L-BFGS in
     optimization.py (see `sphere_cap_heights`), where a radius of None
     is infinite, again giving a flat surface.
     """

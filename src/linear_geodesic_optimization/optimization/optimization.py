@@ -105,6 +105,14 @@ class Computer:
         return self.lambda_curvature * self.curvature_loss.dif_loss \
             + self.lambda_smooth * self.smooth_loss.dif_loss
 
+    @property
+    def kappa_G(self) -> npt.NDArray[np.float64]:
+        """
+        The Gaussian curvature at each vertex as of the last call to
+        `forward`, matching the torch backend's `Computer.kappa_G`.
+        """
+        return np.asarray(self.curvature.kappa_G, dtype=np.float64)
+
     @staticmethod
     def to_float_list(array: npt.NDArray[np.float64]):
         return [float(item) for item in array]
