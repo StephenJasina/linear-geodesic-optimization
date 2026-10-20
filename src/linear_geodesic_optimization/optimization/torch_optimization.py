@@ -15,6 +15,7 @@ import torch
 
 from linear_geodesic_optimization.optimization.smooth_loss_tensor \
     import grid_operators
+from linear_geodesic_optimization.optimization.route_preference import RoutePreference
 
 
 class Computer:
@@ -31,6 +32,12 @@ class Computer:
         lambda_smooth=0.01,
         directory: Optional[Path] = None,
         smooth_loss_type='mvs',
+        *,
+        lambda_route: float = 0.0,
+        route_constraints=None,
+        route_corridor_width: float = 0.05,
+        route_margin: float = 0.02,
+        route_metric: str = 'mesh_edges',
     ):
         # Batch jobs run in separate processes; one thread per process avoids
         # oversubscribing CPU cores when many optimizations run concurrently.
@@ -38,6 +45,24 @@ class Computer:
         self.mesh = mesh
         self.lambda_curvature = lambda_curvature
         self.lambda_smooth = lambda_smooth
+        if not np.isfinite(lambda_route) or lambda_route < 0:
+            raise ValueError('lambda_route must be finite and nonnegative')
+        if route_metric not in ('mesh_edges', 'continuous'):
+            raise ValueError(f'Unknown route metric: {route_metric}')
+        self.lambda_route = lambda_route
+        if lambda_route > 0 and route_metric == 'continuous':
+            from linear_geodesic_optimization.optimization.continuous_route_preference import (
+                ContinuousRoutePreference,
+            )
+            preference_type = ContinuousRoutePreference
+        else:
+            preference_type = RoutePreference
+        self.route_preference = (
+            preference_type(mesh, network_vertices, route_constraints,
+                            route_corridor_width, route_margin)
+            if lambda_route > 0 else None
+        )
+        self.route_loss = SimpleNamespace(loss=0.0)
         self.directory = directory
         if smooth_loss_type not in ('mvs', 'tensor'):
             raise ValueError(f'Unknown smooth loss type "{smooth_loss_type}"')
@@ -250,9 +275,15 @@ class Computer:
             )
         smooth_loss = smooth_loss * areas.sum()
 
+        route_loss = (
+            self.route_preference.loss(heights)
+            if self.route_preference is not None
+            else heights.sum() * 0.0
+        )
         loss = (
             self.lambda_curvature * curvature_loss
             + self.lambda_smooth * smooth_loss
+            + self.lambda_route * route_loss
         )
         gradient, = torch.autograd.grad(loss, heights)
         self._cached_parameters = parameters.copy()
@@ -261,6 +292,7 @@ class Computer:
         self.curvature_loss.loss = float(curvature_loss.detach())
         self.kappa_G = gaussian.detach().numpy().copy()
         self.smooth_loss.loss = float(smooth_loss.detach())
+        self.route_loss.loss = float(route_loss.detach())
 
     def _mvs_energy(
         self, points, faces, normals, edge_laplacian, vertex_laplacian,
@@ -319,6 +351,7 @@ class Computer:
             f'iteration {self.iterations}:\n'
             f'\tL_curvature: {self.curvature_loss.loss:.6f}\n'
             f'\tL_smooth: {self.smooth_loss.loss:.6f}\n'
+            f'\tL_route: {self.route_loss.loss:.6f}\n'
             f'\tLoss: {loss:.6f}\n'
         )
         if self.directory is not None and self.iterations % 100 == 0:
@@ -327,5 +360,6 @@ class Computer:
                     'mesh_parameters': self.mesh.get_parameters().tolist(),
                     'L_curvature': self.curvature_loss.loss,
                     'L_smooth': self.smooth_loss.loss,
+                    'L_route': self.route_loss.loss,
                 }, output)
         self.iterations += 1

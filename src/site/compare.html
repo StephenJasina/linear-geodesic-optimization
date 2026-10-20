@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Four manifold routes · Matisse</title>
+    <link rel="stylesheet" href="/compare.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span> Matisse <span class="brand-separator">/</span> route comparison</div>
+        <nav aria-label="Viewer navigation">
+          <a href="/index.html">Main viewer</a>
+          <label class="file-action" for="comparison-file">Load comparison JSON</label>
+          <input id="comparison-file" type="file" accept=".json,application/json" />
+        </nav>
+      </header>
+
+      <main>
+        <div class="intro">
+          <div>
+            <p class="eyebrow">C → J route alternatives</p>
+            <h1>One network. Four fitted surfaces.</h1>
+            <p class="lede">Each refit starts from the original manifold. Play to trace four exact geodesics together; rotate any surface to move all cameras.</p>
+          </div>
+          <div class="readout" aria-label="Comparison summary">
+            <span class="readout-label">Routing choices</span>
+            <strong id="surface-count">4</strong>
+            <small>Each panel compares its route fit with the original manifold.</small>
+          </div>
+        </div>
+
+        <div class="playback" aria-label="Animation controls">
+          <button id="play-button" type="button" aria-label="Pause animation">Pause <span aria-hidden="true">Ⅱ</span></button>
+          <label for="timeline">Path progress</label>
+          <input id="timeline" type="range" min="0" max="1000" value="0" aria-label="Path progress" />
+          <span id="time-readout" aria-live="off">00:00 / 00:08</span>
+        </div>
+        <div class="comparison-grid" id="comparison-grid">
+          <section class="manifold-panel before" aria-labelledby="before-title">
+            <div class="panel-heading">
+              <div><span class="panel-index">01 / ORIGINAL</span><h2 id="before-title">Original routing</h2></div>
+              <span class="panel-stat" id="before-distance">Geodesic —</span>
+            </div>
+            <div class="stage">
+              <div class="render-host" id="before-render" aria-label="Interactive 3D manifold for Original routing"></div>
+              <div class="map-inset"><span>TOP VIEW</span><canvas id="before-map" aria-label="Original routing from above"></canvas></div>
+            </div>
+            <div class="panel-caption">
+              <div>Traffic route: <strong id="before-route">—</strong></div>
+              <div>Geodesic in route corridor: <strong id="before-baseline-fraction">—</strong> → <strong id="before-fraction">—</strong></div>
+              <div>Mean route deviation: <strong id="before-baseline-deviation">—</strong> → <strong id="before-deviation">—</strong></div>
+              <div>Curvature loss <strong id="before-curvature">—</strong> · Smoothness loss <strong id="before-smooth">—</strong></div>
+            </div>
+          </section>
+          <section class="manifold-panel after" aria-labelledby="after-title">
+            <div class="panel-heading">
+              <div><span class="panel-index">02 / REFIT</span><h2 id="after-title">Lower route via I</h2></div>
+              <span class="panel-stat" id="after-distance">Geodesic —</span>
+            </div>
+            <div class="stage">
+              <div class="render-host" id="after-render" aria-label="Interactive 3D manifold for Lower route via I"></div>
+              <div class="map-inset"><span>TOP VIEW</span><canvas id="after-map" aria-label="Lower route via I from above"></canvas></div>
+            </div>
+            <div class="panel-caption">
+              <div>Traffic route: <strong id="after-route">—</strong></div>
+              <div>Geodesic in route corridor: <strong id="after-baseline-fraction">—</strong> → <strong id="after-fraction">—</strong></div>
+              <div>Mean route deviation: <strong id="after-baseline-deviation">—</strong> → <strong id="after-deviation">—</strong></div>
+              <div>Curvature loss <strong id="after-curvature">—</strong> · Smoothness loss <strong id="after-smooth">—</strong></div>
+            </div>
+          </section>
+          <section class="manifold-panel third" aria-labelledby="third-title">
+            <div class="panel-heading">
+              <div><span class="panel-index">03 / REFIT</span><h2 id="third-title">Upper route via E and H</h2></div>
+              <span class="panel-stat" id="third-distance">Geodesic —</span>
+            </div>
+            <div class="stage">
+              <div class="render-host" id="third-render" aria-label="Interactive 3D manifold for Upper route via E and H"></div>
+              <div class="map-inset"><span>TOP VIEW</span><canvas id="third-map" aria-label="Upper route via E and H from above"></canvas></div>
+            </div>
+            <div class="panel-caption">
+              <div>Traffic route: <strong id="third-route">—</strong></div>
+              <div>Geodesic in route corridor: <strong id="third-baseline-fraction">—</strong> → <strong id="third-fraction">—</strong></div>
+              <div>Mean route deviation: <strong id="third-baseline-deviation">—</strong> → <strong id="third-deviation">—</strong></div>
+              <div>Curvature loss <strong id="third-curvature">—</strong> · Smoothness loss <strong id="third-smooth">—</strong></div>
+            </div>
+          </section>
+          <section class="manifold-panel fourth" aria-labelledby="fourth-title">
+            <div class="panel-heading">
+              <div><span class="panel-index">04 / REFIT</span><h2 id="fourth-title">Lower route via G</h2></div>
+              <span class="panel-stat" id="fourth-distance">Geodesic —</span>
+            </div>
+            <div class="stage">
+              <div class="render-host" id="fourth-render" aria-label="Interactive 3D manifold for Lower route via G"></div>
+              <div class="map-inset"><span>TOP VIEW</span><canvas id="fourth-map" aria-label="Lower route via G from above"></canvas></div>
+            </div>
+            <div class="panel-caption">
+              <div>Traffic route: <strong id="fourth-route">—</strong></div>
+              <div>Geodesic in route corridor: <strong id="fourth-baseline-fraction">—</strong> → <strong id="fourth-fraction">—</strong></div>
+              <div>Mean route deviation: <strong id="fourth-baseline-deviation">—</strong> → <strong id="fourth-deviation">—</strong></div>
+              <div>Curvature loss <strong id="fourth-curvature">—</strong> · Smoothness loss <strong id="fourth-smooth">—</strong></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="legend" aria-label="Legend">
+          <span><i class="legend-line requested"></i> Traffic route</span>
+          <span><i class="legend-line before-line"></i> Original geodesic</span>
+          <span><i class="legend-line after-line"></i> Lower via I</span>
+          <span><i class="legend-line third-line"></i> Upper via E/H</span>
+          <span><i class="legend-line fourth-line"></i> Lower via G</span>
+          <span class="legend-note">Shared height and color scale · vertical display ×6 · maximum height change <b id="height-change">—</b></span>
+        </div>
+        <p class="experiment-note"></p>
+        <p id="load-error" class="load-error" role="alert" hidden></p>
+      </main>
+    </div>
+    <script type="module" src="/compare.js"></script>
+  </body>
+</html>
