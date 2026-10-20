@@ -1,7 +1,5 @@
 // Three.js
 import * as THREE from "three";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 // Styling
@@ -101,11 +99,6 @@ scene.add(lightAmbient);
 // Objects drawn above the planes
 const hoverGraphObjects = [];
 const hoverArcObjects = [];
-
-// Renderers
-let renderPass = new RenderPass(scene, camera);
-let composer = new EffectComposer(renderer);
-composer.addPass(renderPass);
 
 // Controls setup
 let controls = new OrbitControls(camera, renderer.domElement);
@@ -627,7 +620,7 @@ function animate() {
 	}
 
 	// Render
-	composer.render();
+	renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
 
@@ -640,7 +633,6 @@ window.addEventListener("resize", function() {
 	camera.updateProjectionMatrix();
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	composer.setSize(window.innerWidth, window.innerHeight);
 }, false);
 
 /**
