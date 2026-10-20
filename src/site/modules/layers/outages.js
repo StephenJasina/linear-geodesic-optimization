@@ -1,19 +1,17 @@
 import { vertexToCanvasCoordinates } from "./utils";
 
 /**
+ * Draw the edges added (fading in) and removed (fading out) between two
+ * consecutive network graphs.
+ *
  * @param {CanvasRenderingContext2D} context
  * @param {Array<{coordinates: Array<number>}>} networkVertices
  * @param {Array<Set<number>>} edgesAdded
  * @param {Array<Set<number>>} edgesRemoved
  * @param {number} lambda
- * @param {HTMLUListElement} [ulOutages]
- * @param {number} [outageBlinkRate]
  * @param {number} [lineWidth]
- * @param {string} [colorOutage]
- *
- * @returns {null}
  */
-export function drawOutages(context, networkVertices, edgesAdded, edgesRemoved, edges, edgesAll, lambda, ulOutages = null, lineWidth = 6, colorOutage = "#00ff00") {
+export function drawOutages(context, networkVertices, edgesAdded, edgesRemoved, lambda, lineWidth = 6) {
 	if (lambda == 0) {
 		return;
 	}
@@ -25,28 +23,22 @@ export function drawOutages(context, networkVertices, edgesAdded, edgesRemoved, 
 	let edgesToDrawRemoved = new Array();
 	for (let source = 0; source < networkVertices.length; ++source) {
 		for (let target of edgesAdded[source]) {
-			edgesToDrawAll.push({
+			let edge = {
 				'source': source,
 				'target': target,
 				'lambda': lambda,
-			});
-			edgesToDrawAdded.push({
-				'source': source,
-				'target': target,
-				'lambda': lambda,
-			});
+			};
+			edgesToDrawAll.push(edge);
+			edgesToDrawAdded.push(edge);
 		}
 		for (let target of edgesRemoved[source]) {
-			edgesToDrawAll.push({
+			let edge = {
 				'source': source,
 				'target': target,
 				'lambda': 1 - lambda,
-			});
-			edgesToDrawRemoved.push({
-				'source': source,
-				'target': target,
-				'lambda': 1 - lambda,
-			});
+			};
+			edgesToDrawAll.push(edge);
+			edgesToDrawRemoved.push(edge);
 		}
 	}
 
@@ -74,7 +66,6 @@ export function drawOutages(context, networkVertices, edgesAdded, edgesRemoved, 
 		context.lineWidth = lineWidth;
 		context.stroke();
 	}
-	context.save();
 	for (let edge of edgesToDrawRemoved) {
 		let coordinatesSource = vertexToCanvasCoordinates(context, networkVertices[edge.source].coordinates);
 		let coordinatesTarget = vertexToCanvasCoordinates(context, networkVertices[edge.target].coordinates);
@@ -86,32 +77,39 @@ export function drawOutages(context, networkVertices, edgesAdded, edgesRemoved, 
 		context.lineWidth = lineWidth;
 		context.stroke();
 	}
-	context.restore();
 
 	context.restore();
+}
 
-	// Update the info box
-	if (ulOutages != null) {
-		// Clear out the list first
-		while (ulOutages.firstChild) {
-			ulOutages.removeChild(ulOutages.firstChild);
-		}
+/**
+ * Fill the outage list with every edge that appears at some point in the
+ * animation but is missing from the given network graph.
+ *
+ * @param {HTMLUListElement} ulOutages
+ * @param {Array<{label: string}>} networkVertices
+ * @param {Array<{source: number, target: number}>} edges
+ * @param {Array<Set<number>>} edgesAll
+ */
+export function updateOutageList(ulOutages, networkVertices, edges, edgesAll) {
+	// Clear out the list first
+	while (ulOutages.firstChild) {
+		ulOutages.removeChild(ulOutages.firstChild);
+	}
 
-		// Add the new edges
-		let currentEdges = new Array(networkVertices.length);
-		for (let source = 0; source < networkVertices.length; ++source) {
-			currentEdges[source] = new Set();
-		}
-		for (let edge of edges) {
-			currentEdges[edge.source].add(edge.target);
-		}
-		for (let source = 0; source < networkVertices.length; ++source) {
-			for (let target of edgesAll[source]) {
-				if (!currentEdges[source].has(target)) {
-					let li = document.createElement("li");
-					li.appendChild(document.createTextNode(networkVertices[source].label + " ↔ " + networkVertices[target].label));
-					ulOutages.appendChild(li);
-				}
+	// Add the missing edges
+	let currentEdges = new Array(networkVertices.length);
+	for (let source = 0; source < networkVertices.length; ++source) {
+		currentEdges[source] = new Set();
+	}
+	for (let edge of edges) {
+		currentEdges[edge.source].add(edge.target);
+	}
+	for (let source = 0; source < networkVertices.length; ++source) {
+		for (let target of edgesAll[source]) {
+			if (!currentEdges[source].has(target)) {
+				let li = document.createElement("li");
+				li.appendChild(document.createTextNode(networkVertices[source].label + " ↔ " + networkVertices[target].label));
+				ulOutages.appendChild(li);
 			}
 		}
 	}

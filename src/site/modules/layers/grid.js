@@ -10,22 +10,22 @@ export default function(context, divisions, lineWidth = 2) {
 
 	let width = canvas.width;
 	let height = canvas.height;
-	let start_i = 0;
-	let start_j = 0;
 
 	context.save();
 
 	context.beginPath();
-	for (let i = start_i; i <= width; i += (width - start_i) / cols) {
+	for (let col = 0; col <= cols; ++col) {
+		let i = col * width / cols;
 		context.moveTo(i, 0);
-		context.lineTo(i, canvas.height);
+		context.lineTo(i, height);
 	}
-	for (let j = start_j; j <= height; j += (height - start_j) / rows) {
+	for (let row = 0; row <= rows; ++row) {
+		let j = row * height / rows;
 		context.moveTo(0, j);
-		context.lineTo(canvas.width, j);
+		context.lineTo(width, j);
 	}
 	context.lineWidth = lineWidth;
-	context.strokyStyle = "black";
+	context.strokeStyle = "black";
 	context.stroke();
 
 	context.restore();

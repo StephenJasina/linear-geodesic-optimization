@@ -35,7 +35,7 @@ function getView(resolution, mapCenter, mapZoomFactor) {
 function createOLMap(resolution, mapCenter, mapZoomFactor) {
 	let divMap = document.createElement("div");
 	divMap.id = "map";
-	divMap.class = "map-div";
+	divMap.className = "map-div";
 	divMap.style.width = resolution + "px";
 	divMap.style.height = resolution + "px";
 	// Hide and draw on the bottom
@@ -63,7 +63,10 @@ function createOLMap(resolution, mapCenter, mapZoomFactor) {
  * @param {Map} olMap
  */
 function destroyOLMap(olMap) {
-	olMap.getTargetElement().remove();
+	let divMap = olMap.getTargetElement();
+	olMap.setTarget(null);
+	olMap.dispose();
+	divMap.remove();
 }
 
 /**

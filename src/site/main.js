@@ -19,7 +19,7 @@ import { default as drawGrid } from "./modules/layers/grid.js";
 import { default as drawGeodesics } from "./modules/layers/geodesics.js";
 import { resetPlaneHeights, setPlaneHeightsWithInterpolation } from "./modules/layers/heights.js";
 import { default as drawHeightChanges } from "./modules/layers/height_changes.js";
-import { drawOutages } from "./modules/layers/outages.js";
+import { drawOutages, updateOutageList } from "./modules/layers/outages.js";
 import { default as drawVertices } from "./modules/layers/vertices.js";
 
 // Colors
@@ -68,7 +68,7 @@ let timeInitial = null;
 let dateTimeInitial = null;
 let animationDuration = null;
 let currentNetworkIndex = null;
-let previousNetworkIndex = null;
+let outageListIndex = null;
 
 // Scene setup
 let scene = new THREE.Scene();
@@ -169,8 +169,7 @@ function setHeights() {
 rangeAnimation.oninput = function() {
 	timeInitial = parseFloat(rangeAnimation.value);
 	dateTimeInitial = Date.now() / 1000;
-	previousNetworkIndex = currentNetworkIndex;
-	currentNetworkIndex = getCurrentNetworkIndex();
+	updateCurrentNetworkIndex();
 	setHeights();
 
 	for (let i = 0; i < elementsByTab.length; ++i) {
@@ -276,6 +275,10 @@ buttonHelp.onclick = helpClick;
 let divAnimationControls = document.getElementById("div-animation-controls");
 let buttonPlay = document.getElementById("button-play");
 buttonPlay.onclick = function() {
+	if (!isPlaying && (times === null || times.length <= 1)) {
+		return;
+	}
+
 	if (isPlaying) {
 		buttonPlay.innerText = "Play";
 	} else {
@@ -289,9 +292,10 @@ buttonPlay.onclick = function() {
 let divTabs = document.getElementById("div-tabs");
 let elementsByTab = [];
 let indexTabCurrent = 0;
-function swapToTab(button) {
+function swapToTab(event) {
 	// TODO: Make this safer against spamming click
-	let indexNew = Number(button.target.id.substring(11));
+	let buttonClicked = event.currentTarget;
+	let indexNew = Number(buttonClicked.id.substring(11));
 
 	// Reset the style of the previous button
 	let buttonPrevious = elementsByTab[indexTabCurrent].buttonTab;
@@ -303,7 +307,7 @@ function swapToTab(button) {
 
 	// Determine the current tab index
 	for (let indexTab = 0; indexTab < elementsByTab.length; ++indexTab) {
-		if (button.target.id == elementsByTab[indexTab].buttonTab.id) {
+		if (buttonClicked.id == elementsByTab[indexTab].buttonTab.id) {
 			indexTabCurrent = indexTab;
 			break;
 		}
@@ -415,10 +419,15 @@ buttonAddTab.onclick = addTab;
 function removeTab() {
 	elementsByTab[indexTabCurrent].buttonTab.remove();
 
-	scene.remove(elementsByTab[indexTabCurrent].plane);
-	elementsByTab[indexTabCurrent].textureBlank.dispose();
-	elementsByTab[indexTabCurrent].textureMap.dispose();
-	destroyOLMap(elementsByTab[indexTabCurrent].olMap);
+	let options = elementsByTab[indexTabCurrent];
+	scene.remove(options.plane);
+	options.plane.geometry.dispose();
+	options.plane.material.dispose();
+	options.textureBlank.dispose();
+	if (options.textureMap !== null) {
+		options.textureMap.dispose();
+	}
+	destroyOLMap(options.olMap);
 
 	elementsByTab.splice(indexTabCurrent, 1);
 
@@ -494,7 +503,7 @@ function drawLayers(time, options) {
 
 	// Figure out which canvas we're using
 	let context = null;
-	if (options.showMap && options.contextMap != null) {
+	if (options.showMap && options.textureMap !== null) {
 		context = options.contextMap;
 	} else {
 		context = options.contextBlank;
@@ -549,10 +558,7 @@ function drawLayers(time, options) {
 				context, networkVertices,
 				networkEdgesAdded[Math.floor(currentNetworkIndex)],
 				networkEdgesRemoved[Math.floor(currentNetworkIndex)],
-				networkEdges[Math.floor(currentNetworkIndex)],
-				networkEdgesAll,
-				currentNetworkIndex % 1.,
-				currentNetworkIndex != previousNetworkIndex ? ulOutages : null
+				currentNetworkIndex % 1.
 			);
 		}
 	}
@@ -586,8 +592,7 @@ function animate() {
 			}
 		}
 
-		previousNetworkIndex = currentNetworkIndex;
-		currentNetworkIndex = getCurrentNetworkIndex();
+		updateCurrentNetworkIndex();
 
 		for (let i = 0; i < elementsByTab.length; ++i) {
 			elementsByTab[i].canvasNeedsUpdate = true;
@@ -604,9 +609,10 @@ function animate() {
 			options.canvasNeedsUpdate = false;
 
 			// Figure out which canvas we're using
+			let useMap = options.showMap && options.textureMap !== null;
 			let context = null;
 			let texture = null;
-			if (options.showMap) {
+			if (useMap) {
 				context = options.contextMap;
 				texture = options.textureMap;
 			} else {
@@ -616,7 +622,7 @@ function animate() {
 			plane.material.map = texture;
 
 			// Draw the bottommost layer
-			if (options.showMap) {
+			if (useMap) {
 				options.olMap.renderSync();
 				options.canvasNeedsUpdate = false;  // Hack to avoid endlessly rendering
 			} else {
@@ -649,7 +655,25 @@ window.addEventListener("resize", function() {
 	camera.updateProjectionMatrix();
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	composer.setSize(window.innerWidth, window.innerHeight);
 }, false);
+
+/**
+ * Recompute currentNetworkIndex from the slider, refreshing the outage list
+ * whenever the underlying network graph changes.
+ */
+function updateCurrentNetworkIndex() {
+	currentNetworkIndex = getCurrentNetworkIndex();
+	if (currentNetworkIndex === null || networkEdgesAll === null) {
+		return;
+	}
+
+	let index = Math.floor(currentNetworkIndex);
+	if (index !== outageListIndex) {
+		outageListIndex = index;
+		updateOutageList(ulOutages, networkVertices, networkEdges[index], networkEdgesAll);
+	}
+}
 
 function getCurrentNetworkIndex() {
 	let time = parseFloat(rangeAnimation.value);
@@ -719,6 +743,10 @@ function resetView() {
 }
 
 document.addEventListener("keydown", function(event) {
+	if (event.target === rangeAnimation && (event.key == "ArrowLeft" || event.key == "ArrowRight")) {
+		return;
+	}
+
 	if (event.key == "Escape") {
 		resetView();
 	} else if (event.key == "h") {
@@ -786,7 +814,8 @@ function setCanvasZoom(options, resolution) {
 }
 
 function wheelEvent(event) {
-	if (document.elementFromPoint(event.clientX, event.clientY).tagName != "CANVAS") {
+	let element = document.elementFromPoint(event.clientX, event.clientY);
+	if (element === null || element.tagName != "CANVAS") {
 		return;
 	}
 
@@ -889,10 +918,22 @@ function clearHoverArcs() {
 }
 
 function getMeshHeightAtCoordinates(vertex, zs) {
-	let i = Math.floor(vertex[0] * (divisions - 1));
-	let alpha = (vertex[0] * (divisions - 1)) % 1;
-	let j = Math.floor(vertex[1] * (divisions - 1));
-	let beta = (vertex[1] * (divisions - 1)) % 1;
+	let i, alpha;
+	if (vertex[0] === 1.) {
+		i = divisions - 2;
+		alpha = 1.;
+	} else {
+		i = Math.floor(vertex[0] * (divisions - 1));
+		alpha = (vertex[0] * (divisions - 1)) % 1;
+	}
+	let j, beta;
+	if (vertex[1] === 1.) {
+		j = divisions - 2;
+		beta = 1.;
+	} else {
+		j = Math.floor(vertex[1] * (divisions - 1));
+		beta = (vertex[1] * (divisions - 1)) % 1;
+	}
 
 	let z00 = zs[i][j];
 	let z01 = zs[i][j + 1];
@@ -1140,9 +1181,14 @@ dropReader.onload = function() {
 
 		if (heights.length != 0 && heights[0].length != divisions) {
 			for (let i = 0; i < elementsByTab.length; ++i) {
-				scene.remove(elementsByTab[i].plane);
-				elementsByTab[i].plane = makePlane(heights[0].length);
-				scene.add(elementsByTab[i].plane);
+				let planeOld = elementsByTab[i].plane;
+				let planeNew = makePlane(heights[0].length);
+				planeNew.material.map = planeOld.material.map;
+				scene.remove(planeOld);
+				planeOld.geometry.dispose();
+				planeOld.material.dispose();
+				scene.add(planeNew);
+				elementsByTab[i].plane = planeNew;
 			}
 			setPlaneCenters(true);
 
@@ -1171,9 +1217,8 @@ dropReader.onload = function() {
 
 		setHeights();
 
-		currentNetworkIndex = getCurrentNetworkIndex();
-
-		// TODO: Clear out the list of outages
+		outageListIndex = null;
+		updateCurrentNetworkIndex();
 
 		while (tableTraffic.hasChildNodes()) {
 			tableTraffic.removeChild(tableTraffic.lastChild);
@@ -1255,12 +1300,19 @@ function dropOutput(evt) {
 	evt.stopPropagation();
 	evt.preventDefault();
 
+	if (evt.dataTransfer.files.length == 0) {
+		return;
+	}
+
 	if (isPlaying) {
 		isPlaying = false;
 		timeInitial = null;
 		dateTimeInitial = null;
 	}
 
+	if (dropReader.readyState === FileReader.LOADING) {
+		dropReader.abort();
+	}
 	dropReader.readAsText(evt.dataTransfer.files[0]);
 }
 
