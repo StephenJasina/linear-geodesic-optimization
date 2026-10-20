@@ -1,5 +1,5 @@
 {
-	"arguments": {
+	"arguments_optimization": {
 		"filename_json": [
 			"graph_0.json",
 			"graph_1.json",
@@ -38,12 +38,16 @@
 		"initial_radius": [80.0],
 		"hessian_polish_maxiter": [0, 200]
 	},
-	"groups": [
+	"groups_optimization": [
 		["filename_json"],
 		["smooth_loss_type", "lambda_smooth", "hessian_smoothness"],
 		["ricci_curvature_distribution_reweight_scale"],
 		["hessian_polish_maxiter"]
 	],
+	"arguments_collation": {
+		"postprocess_subtract_initialization": [true],
+		"postprocess": [true]
+	},
 	"settings": {
 		"directory_data": ["..", "traffic", "reroute_link_outage"],
 		"directory_output": ["toy", "routing_with_volumes", "traffic_reroute_link_outage_compare_construct"],
@@ -53,8 +57,6 @@
 			["index", "filename_json"]
 		],
 		"initialization": "sphere",
-		"order_by": "filename_json",
-		"postprocess_subtract_initialization": true,
-		"postprocess": true
+		"order_by": "filename_json"
 	}
 }

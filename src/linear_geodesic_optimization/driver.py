@@ -66,6 +66,20 @@ def base_defaults() -> dict[str, typing.Any]:
         'index': None # Additional unique ID
     }
 
+def collation_defaults() -> dict[str, typing.Any]:
+    """
+    Return a fresh copy of the default collation arguments (the keyword
+    options of `collation.render_animation`).
+    """
+    return {
+        'postprocess': True,
+        'postprocess_subtract_initialization': True,
+        'height_scale': 0.15,
+        'bubble_size': 0.03,
+        'exact_geodesics': False,
+        'use_convex_hull': False,
+    }
+
 def resolve_input_file_paths(
     arguments: list[list[dict]],
     settings: dict,
@@ -104,19 +118,64 @@ def resolve_input_file_paths(
 def load_config(
     config_file: pathlib.PurePath,
     data_directory: str | os.PathLike[str] = pathlib.PurePath('..', 'data'),
-) -> tuple[list[list[dict]], dict, dict]:
+) -> tuple[list[list[dict]], list[dict], dict, dict]:
     """
-    Read a JSON config file and produce its arguments and settings.
+    Read a JSON config file and produce its arguments, collation
+    arguments, and settings.
 
     Input file paths (see `parameter_name_filenames`) are resolved
-    relative to the appropriate data directory as a side effect. Returns
-    `(arguments, settings, defaults)`.
+    relative to the appropriate data directory as a side effect. Raise
+    if a collation argument isn't a known collation parameter. Returns
+    `(arguments, arguments_collation, settings, defaults)`.
     """
     defaults = base_defaults()
+    defaults_collation = collation_defaults()
     with open(config_file, 'r') as f:
-        arguments, settings = batch.parse_json(f, defaults)
+        arguments, arguments_collation, settings = batch.parse_json(
+            f, defaults, default_arguments_collation=defaults_collation
+        )
+    unknown = sorted({
+        name
+        for argument_dict in arguments_collation
+        for name in argument_dict
+    } - set(defaults_collation))
+    if unknown:
+        raise ValueError(f'Unknown collation parameters: {", ".join(unknown)}')
     resolve_input_file_paths(arguments, settings, config_file, data_directory=data_directory)
-    return arguments, settings, defaults
+    return arguments, arguments_collation, settings, defaults
+
+def validate_output_format(output_format, valid_names) -> None:
+    """
+    Raise if `output_format` isn't a list of (strings or lists of
+    strings), each of which must be in `valid_names`.
+    """
+    if not isinstance(output_format, list):
+        raise TypeError('Output format must be a list of (strings or lists of strings)')
+    for output_format_part in output_format:
+        if isinstance(output_format_part, str):
+            if output_format_part not in valid_names:
+                raise ValueError(f'{output_format_part} not a valid part of output format')
+        elif isinstance(output_format_part, list):
+            for output_format_part_part in output_format_part:
+                if isinstance(output_format_part_part, str):
+                    if output_format_part_part not in valid_names:
+                        raise ValueError(f'{output_format_part_part} not a valid part of output format')
+                else:
+                    raise TypeError('Output format must be a list of (strings or lists of strings)')
+        else:
+            raise TypeError('Output format must be a list of (strings or lists of strings)')
+
+def format_output_name(arguments, output_format) -> list[str]:
+    """
+    Return the name parts described by `output_format` for the given
+    arguments. A part that is a list of parameter names becomes their
+    values joined with '_'.
+    """
+    return [
+        argument_to_string(arguments, output_format_part) if isinstance(output_format_part, str) else
+        '_'.join([argument_to_string(arguments, output_format_part_part) for output_format_part_part in output_format_part])
+        for output_format_part in output_format
+    ]
 
 def get_output_format(
     settings: dict,
@@ -133,21 +192,7 @@ def get_output_format(
     """
     output_format = settings['output_format'] if 'output_format' in settings else ['filename_json']
     if validate:
-        if not isinstance(output_format, list):
-            raise TypeError('Output format must be a list of (strings or lists of strings)')
-        for output_format_part in output_format:
-            if isinstance(output_format_part, str):
-                if output_format_part not in defaults:
-                    raise ValueError(f'{output_format_part} not a valid part of output format')
-            elif isinstance(output_format_part, list):
-                for output_format_part_part in output_format_part:
-                    if isinstance(output_format_part_part, str):
-                        if output_format_part_part not in defaults:
-                            raise ValueError(f'{output_format_part_part} not a valid part of output format')
-                    else:
-                        raise TypeError('Output format must be a list of (strings or lists of strings)')
-            else:
-                raise TypeError('Output format must be a list of (strings or lists of strings)')
+        validate_output_format(output_format, defaults)
     return output_format
 
 def assign_output_directories(
@@ -175,11 +220,9 @@ def assign_output_directories(
             argument_dict['index'] = index
             # Also prepend ../outputs (which is the path of the outputs
             # directory relative to the script)
-            directory_output = output_directory / pathlib.PurePath(*(settings['directory_output'] + [
-                argument_to_string(argument_dict, output_format_part) if isinstance(output_format_part, str) else
-                '_'.join([argument_to_string(argument_dict, output_format_part_part) for output_format_part_part in output_format_part])
-                for output_format_part in output_format
-            ]))
+            directory_output = output_directory / pathlib.PurePath(*(
+                settings['directory_output'] + format_output_name(argument_dict, output_format)
+            ))
             if existence_check == 'must_not_exist':
                 if os.path.exists(directory_output):
                     raise ValueError(f'{str(directory_output)} already exists')
@@ -199,6 +242,60 @@ def check_no_duplicate_output_directories(arguments: list[list[dict]]) -> None:
     # TODO: This can probably be improved by not constructing a set
     if len(set(str(argument_dict['directory_output']) for argument_batch in arguments for argument_dict in argument_batch)) != sum(len(argument_batch) for argument_batch in arguments):
         raise ValueError('Some output directories are duplicated')
+
+def assign_collation_paths(
+    arguments: list[list[dict]],
+    arguments_collation: list[dict],
+    settings: dict,
+    defaults: dict,
+    initialization: str,
+    output_directory: str | os.PathLike[str] = pathlib.PurePath('..', 'outputs'),
+) -> list[dict]:
+    """
+    Determine the collation jobs: one per argument batch, each writing
+    one animation file per collation variant. `assign_output_directories`
+    must have been called on `arguments` first.
+
+    Each animation is named 'animation.json' if
+    `settings['output_format_collation']` is empty (the default), and
+    'animation_<parts>.json' otherwise, where the parts follow the same
+    format as `settings['output_format']`. The parts may name collation
+    parameters, or optimization parameters (whose values are taken from
+    the batch's first run). The files go in the batch's first run
+    directory, or in `settings['directory_collation']` (under
+    `output_directory`) if it is set.
+
+    Raise if two animations would be written to the same path. Return a
+    list of dicts with keys `directories_outputs` (the runs to collate,
+    excluding seeds) and `variants` (a list of `(collation arguments,
+    animation path)` pairs).
+    """
+    output_format = settings['output_format_collation'] if 'output_format_collation' in settings else []
+    validate_output_format(output_format, set(defaults) | set(collation_defaults()))
+
+    jobs = []
+    paths = set()
+    for argument_batch in arguments:
+        if 'directory_collation' in settings:
+            directory = output_directory / pathlib.PurePath(*settings['directory_collation'])
+        else:
+            directory = argument_batch[0]['directory_output']
+        variants = []
+        for argument_dict_collation in arguments_collation:
+            name_parts = format_output_name(argument_batch[0] | argument_dict_collation, output_format)
+            path = directory / ('_'.join(['animation'] + name_parts) + '.json')
+            if path in paths:
+                raise ValueError(f'Collation path {path} is duplicated')
+            paths.add(path)
+            variants.append((argument_dict_collation, path))
+        jobs.append({
+            'directories_outputs': [
+                argument_dict['directory_output']
+                for argument_dict in (argument_batch[1:] if initialization_excludes_seed(initialization) else argument_batch)
+            ],
+            'variants': variants,
+        })
+    return jobs
 
 def get_initialization(settings: dict) -> str:
     """

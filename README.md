@@ -30,6 +30,12 @@ by `python collation.py config_file.json`. Configurations live under `data/`;
 for example, `../data/toy/routing_with_volumes/config/traffic_two_clusters.json`
 when running from `src`.
 
+A config's `arguments_optimization` describe the optimization runs. Its
+optional `arguments_collation` lists postprocessing variants (for example,
+`"postprocess": [true, false]`). Collation reads each batch's optimizer outputs
+once and writes one animation file per variant, named by
+`settings.output_format_collation`.
+
 The optional `method` argument selects how the surface is built. The default,
 `construction`, turns each edge's Ricci curvature into a target Hessian and
 solves for the heights with a few sparse linear solves, optionally followed by

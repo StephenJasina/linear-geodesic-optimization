@@ -1,5 +1,5 @@
 {
-	"arguments": {
+	"arguments_optimization": {
 		"method": ["lbfgs"],
 		"filename_probes": [null],
 		"filename_links": [null],
@@ -31,11 +31,14 @@
 		"maxiter": [null],
 		"backend": ["torch"]
 	},
-	"groups": [
+	"groups_optimization": [
 		["filename_json"],
 		["lambda_smooth"],
 		["mesh_scale"]
 	],
+	"arguments_collation": {
+		"postprocess_subtract_initialization": [true]
+	},
 	"settings": {
 		"directory_data": ["..", "traffic", "reroute_link_outage"],
 		"directory_output": ["toy", "routing_with_volumes", "traffic_reroute_link_outage"],
@@ -44,7 +47,6 @@
 			["index", "filename_json"]
 		],
 		"initialization": "first",
-		"order_by": "filename_json",
-		"postprocess_subtract_initialization": true
+		"order_by": "filename_json"
 	}
 }

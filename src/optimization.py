@@ -304,7 +304,7 @@ def main():
     config_file = pathlib.PurePath(args.config_file)
 
     # Read JSON config file and generate optimization parameters from it
-    arguments, settings, defaults = driver.load_config(config_file)
+    arguments, arguments_collation, settings, defaults = driver.load_config(config_file)
 
     # Determine where the outputs are going. Check that the output
     # format has the right types, and that the output directories don't
@@ -312,6 +312,12 @@ def main():
     output_format = driver.get_output_format(settings, defaults, validate=True)
     driver.assign_output_directories(arguments, settings, output_format, existence_check='must_not_exist')
     driver.check_no_duplicate_output_directories(arguments)
+
+    # Check the collation settings now rather than after optimizing
+    driver.assign_collation_paths(
+        arguments, arguments_collation, settings, defaults,
+        driver.get_initialization(settings)
+    )
 
     if not arguments or args.dry_run:
         # Exit before producing output

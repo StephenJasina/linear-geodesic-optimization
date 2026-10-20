@@ -139,52 +139,27 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
 
     return geodesics
 
-def collate_outputs(
+def load_batch(
     directories_outputs,
-    path_output_collated,
     *,
     times=None,
     geodesic_label_color_pairs=None,
-    height_scale=0.15,
-    use_convex_hull=False,
-    bubble_size = np.inf,
-    postprocess=True,
-    exact_geodesics=False,
-    postprocess_subtract_initialization=True
 ):
     """
-    Join many optimization outputs into a single animation.
+    Read a batch of optimization outputs and do the collation work that
+    doesn't depend on postprocessing, so that `render_animation` can
+    reuse it for any number of postprocessing variants.
 
     `directories_outputs` is a collection of directories, each of which
     contains an optimization output file called 'output.json'.
     Optionally, these are each associated with timestamps in `times`
-
-    The data are then combined and written to `path_output_collated`.
 
     Geodesic paths can be computed using `geodesic_label_color_pairs`,
     which is a list with elements of the form
       `((source, target), [colorR, colorG, colorB])`,
     where the colors are encoded with numbers between 0 and 255.
 
-    All coordinates sent to the viewer (node and border x and y,
-    geodesic x and y, and the heights z) are divided by the mesh scale,
-    so the viewer shows the surface with its true proportions.
-
-    If `postprocess` is true, the z-coordinates (heights) are put
-    through a pipeline that subtracts a reference height, centers and
-    normalizes them across snapshots (to a range of `height_scale`
-    times the mesh width), applies a smoothing decay near
-    the trim boundary, and trims the mesh to a bubble around the
-    network before computing geodesics. If `postprocess` is false,
-    none of that happens: each snapshot's z-coordinates are just
-    `output['final']` (converted to a Numpy array and centered by
-    their own mean, so the animation doesn't jump between frames), and
-    geodesics are computed on the untrimmed mesh.
-
-    If `exact_geodesics` is true, geodesic paths are computed with
-    `pygeodesic`'s exact algorithm instead of the default
-    `potpourri3d`-based approximation. See
-    `compute_geodesics_from_graph` for details.
+    Return a dictionary of the shared data.
     """
 
     # Grab the data from the files
@@ -286,8 +261,6 @@ def collate_outputs(
     # Create the mesh that will be used for curvature and geodesic
     # computations
     mesh = RectangleMesh(width, height, mesh_scale)
-    laplacian = Laplacian(mesh)
-    curvature = Curvature(mesh, laplacian)
 
     # Assume bounding box information is constant
     graph_data, vertex_data, edge_data = outputs[0]['network']
@@ -322,42 +295,197 @@ def collate_outputs(
         for (graph_data, vertex_data, edge_data) in (output['network'],)
     ]
 
-    # Compute the network borders and normalize the z-coordinates across time
-    network_borders = []
-    hulls = []
-    distances_to_networks = []
-    zs = []
-    for output in outputs:
-        network = output['network']
-        graph_data, vertex_data, edge_data = network
-        network_edges = graph_data['edges']
-
-        if use_convex_hull:
-            convex_hulls_indices = boundary.compute_connected_convex_hulls(network_vertices, network_edges)
-            network_border = [
-                [
-                    list(network_vertices[index])
-                    for index in border_part
-                ]
-                for border_part in convex_hulls_indices
-            ]
+    if geodesic_label_color_pairs is None:
+        # For now, just use the routes in the first snapshot
+        # TODO: Is this exactly what we want?
+        if 'traffic' in outputs[0] and outputs[0]['traffic'] is not None:
+            high_traffic_route_pairs = list(sorted([
+                (traffic, route)
+                for traffic, route in zip(outputs[0]['traffic'], outputs[0]['routes'])
+                if route[0] != route[-1]
+            ], reverse=True))
         else:
-            network_border = boundary.compute_border(network_vertices, network_edges)
+            high_traffic_route_pairs = list(sorted([
+                (0., [source, destination])
+                for source in node_indices_to_labels
+                for destination in node_indices_to_labels
+                if source != destination
+            ]))
+        geodesic_label_color_pairs = [
+            (route, get_tableau_color(index))
+            for index, (_, route) in enumerate(high_traffic_route_pairs)
+        ][:100]
+        # TODO: revert
+        # geodesic_label_color_pairs = []
+    geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
+    edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
-        network_borders.append(network_border)
+    # The curvatures of the unprocessed surfaces and the traffic data
+    curvatures = []
+    traffic_matrices = []
+    traffic_paths_needed = []
+    for output in outputs:
+        mesh.set_parameters(output['final'])
+        # TODO: Avoid having to recreate these
+        laplacian = Laplacian(mesh)
+        curvature = Curvature(mesh, laplacian)
+        curvature.forward()
+        curvatures.append(np.array(curvature.kappa_G).reshape((width, height)).tolist())
 
-        if postprocess:
-            distances_to_networks.append(np.array([
+        traffic = output['traffic'] if 'traffic' in output else None
+        traffic_matrix = [[0. for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
+        if traffic is not None:
+            for route, volume in zip(output['routes'], output['traffic']):
+                traffic_matrix[node_labels_to_indices[route[0]]][node_labels_to_indices[route[-1]]] += volume
+        traffic_matrices.append(traffic_matrix)
+        traffic_paths_needed.append(traffic is not None)
+
+    # Set the map data
+    # TODO: Make this more robust
+    if node_coordinates:
+        coordinates = np.array(node_coordinates)
+        center_xy = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
+        center = utility.inverse_mercator(*center_xy)
+        left, _ = utility.inverse_mercator(np.amin(coordinates[:,0]), 0)
+        right, _ = utility.inverse_mercator(np.amax(coordinates[:,0]), 0)
+        zoom_factor = coordinates_scale * 360. / (right - left)
+        map_data = {
+            'center': center,
+            'zoomFactor': zoom_factor,
+        }
+    else:
+        map_data = {
+            'center': (0., 0.),
+            'zoomFactor': 1.,
+        }
+
+    return {
+        'outputs': outputs,
+        'times': times,
+        'parameters': parameters,
+        'mesh': mesh,
+        'network_vertices': network_vertices,
+        'node_labels_to_indices': node_labels_to_indices,
+        'animation_vertices': animation_vertices,
+        'animation_edges': animation_edges,
+        'geodesic_labels': geodesic_labels,
+        'edge_colors': edge_colors,
+        'curvatures': curvatures,
+        'traffic_matrices': traffic_matrices,
+        'traffic_paths_needed': traffic_paths_needed,
+        'map_data': map_data,
+        # Caches keyed by `use_convex_hull`, filled by `render_animation`
+        'borders': {},
+        'distances_to_networks': {},
+    }
+
+def get_network_borders(batch_data, use_convex_hull):
+    """
+    Return the network border of each snapshot, along with the edges of
+    the last snapshot, caching the borders in `batch_data`.
+    """
+    if use_convex_hull not in batch_data['borders']:
+        network_vertices = batch_data['network_vertices']
+        network_borders = []
+        for output in batch_data['outputs']:
+            network = output['network']
+            graph_data, vertex_data, edge_data = network
+            network_edges = graph_data['edges']
+
+            if use_convex_hull:
+                convex_hulls_indices = boundary.compute_connected_convex_hulls(network_vertices, network_edges)
+                network_border = [
+                    [
+                        list(network_vertices[index])
+                        for index in border_part
+                    ]
+                    for border_part in convex_hulls_indices
+                ]
+            else:
+                network_border = boundary.compute_border(network_vertices, network_edges)
+
+            network_borders.append(network_border)
+        batch_data['borders'][use_convex_hull] = (network_borders, network_edges)
+    return batch_data['borders'][use_convex_hull]
+
+def get_distances_to_networks(batch_data, use_convex_hull):
+    """
+    Return, for each snapshot, the distance from each mesh vertex to
+    the network border, caching the distances in `batch_data`.
+    """
+    if use_convex_hull not in batch_data['distances_to_networks']:
+        network_borders, _ = get_network_borders(batch_data, use_convex_hull)
+        mesh = batch_data['mesh']
+        batch_data['distances_to_networks'][use_convex_hull] = [
+            np.array([
                 boundary.distance_to_network(
                     np.array(vertex_coordinate),
                     network_border
                 )
                 for vertex_coordinate in mesh.get_coordinates()[:, :2]
-            ]))
+            ])
+            for network_border in network_borders
+        ]
+    return batch_data['distances_to_networks'][use_convex_hull]
+
+def render_animation(
+    batch_data,
+    *,
+    height_scale=0.15,
+    use_convex_hull=False,
+    bubble_size=np.inf,
+    postprocess=True,
+    exact_geodesics=False,
+    postprocess_subtract_initialization=True
+):
+    """
+    Turn a batch loaded by `load_batch` into a single animation, using
+    the given postprocessing options. Return the animation data.
+
+    All coordinates sent to the viewer (node and border x and y,
+    geodesic x and y, and the heights z) are divided by the mesh scale,
+    so the viewer shows the surface with its true proportions.
+
+    If `postprocess` is true, the z-coordinates (heights) are put
+    through a pipeline that subtracts a reference height, centers and
+    normalizes them across snapshots (to a range of `height_scale`
+    times the mesh width), applies a smoothing decay near
+    the trim boundary, and trims the mesh to a bubble around the
+    network before computing geodesics. If `postprocess` is false,
+    none of that happens: each snapshot's z-coordinates are just
+    `output['final']` (converted to a Numpy array and centered by
+    their own mean, so the animation doesn't jump between frames), and
+    geodesics are computed on the untrimmed mesh.
+
+    If `exact_geodesics` is true, geodesic paths are computed with
+    `pygeodesic`'s exact algorithm instead of the default
+    `potpourri3d`-based approximation. See
+    `compute_geodesics_from_graph` for details.
+    """
+    outputs = batch_data['outputs']
+    parameters = batch_data['parameters']
+    width = parameters['width']
+    height = parameters['height']
+    mesh_scale = parameters['mesh_scale']
+    mesh = batch_data['mesh']
+    network_vertices = batch_data['network_vertices']
+    node_labels_to_indices = batch_data['node_labels_to_indices']
+    geodesic_labels = batch_data['geodesic_labels']
+
+    network_borders, network_edges = get_network_borders(batch_data, use_convex_hull)
+
+    # Normalize the z-coordinates across time
+    distances_to_networks = []
+    hulls = []
+    zs = []
+    if postprocess:
+        distances_to_networks = get_distances_to_networks(batch_data, use_convex_hull)
+    for index, output in enumerate(outputs):
+        if postprocess:
             # TODO: Make this more intelligent. In particular, ensure that
             # the bubble around solitary edges is wide enough so that the
             # hull does not become disconnected
-            hull = np.where(distances_to_networks[-1] / mesh_scale <= bubble_size)[0]
+            hull = np.where(distances_to_networks[index] / mesh_scale <= bubble_size)[0]
             hulls.append(hull)
 
             # TODO: Is this the right strategy? Should we make this a
@@ -389,35 +517,14 @@ def collate_outputs(
             z_max = max(z_max, np.max(z[hull]))
             z_min = min(z_min, np.min(z[hull]))
 
-    if geodesic_label_color_pairs is None:
-        # For now, just use the routes in the first snapshot
-        # TODO: Is this exactly what we want?
-        if 'traffic' in outputs[0] and outputs[0]['traffic'] is not None:
-            high_traffic_route_pairs = list(sorted([
-                (traffic, route)
-                for traffic, route in zip(outputs[0]['traffic'], outputs[0]['routes'])
-                if route[0] != route[-1]
-            ], reverse=True))
-        else:
-            high_traffic_route_pairs = list(sorted([
-                (0., [source, destination])
-                for source in node_indices_to_labels
-                for destination in node_indices_to_labels
-                if source != destination
-            ]))
-        geodesic_label_color_pairs = [
-            (route, get_tableau_color(index))
-            for index, (_, route) in enumerate(high_traffic_route_pairs)
-        ][:100]
-        # TODO: revert
-        # geodesic_label_color_pairs = []
-    geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
-    edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
-
     animation_data = []
     distances_to_networks_iter = distances_to_networks if postprocess else itertools.repeat(None)
     hulls_iter = hulls if postprocess else itertools.repeat(None)
-    for t, z, distance_to_network, hull, edges, network_border, output in zip(times, zs, distances_to_networks_iter, hulls_iter, animation_edges, network_borders, outputs):
+    for t, z, distance_to_network, hull, edges, network_border, curvature, traffic_matrix, traffic_paths_needed in zip(
+        batch_data['times'], zs, distances_to_networks_iter, hulls_iter,
+        batch_data['animation_edges'], network_borders, batch_data['curvatures'],
+        batch_data['traffic_matrices'], batch_data['traffic_paths_needed'],
+    ):
         if postprocess:
             distance_to_bubble = np.zeros(distance_to_network.shape) if np.isposinf(bubble_size) else np.maximum(distance_to_network / mesh_scale - bubble_size, 0.)
             z = z - z_min
@@ -445,19 +552,7 @@ def collate_outputs(
         mesh.remove_added_vertices()
         mesh.restore_removed_vertices()
 
-        mesh.set_parameters(output['final'])
-        # TODO: Avoid having to recreate these
-        laplacian = Laplacian(mesh)
-        curvature = Curvature(mesh, laplacian)
-        curvature.forward()
-
-        traffic = output['traffic'] if 'traffic' in output else None
-        traffic_matrix = [[0. for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
-        if traffic is not None:
-            for route, volume in zip(output['routes'], output['traffic']):
-                traffic_matrix[node_labels_to_indices[route[0]]][node_labels_to_indices[route[-1]]] += volume
-
-        if traffic is not None:
+        if traffic_paths_needed:
             paths = [[[] for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
             for geodesic_label, geodesic in zip(geodesic_labels, geodesics):
                 paths[node_labels_to_indices[geodesic_label[0]]][node_labels_to_indices[geodesic_label[-1]]] = geodesic
@@ -467,10 +562,10 @@ def collate_outputs(
         animation_data.append({
             'time': t,
             'height': (z / mesh_scale).reshape((width, height)).tolist(),
-            'curvature': np.array(curvature.kappa_G).reshape((width, height)).tolist(),
+            'curvature': curvature,
             'edges': edges,
             'geodesics': geodesics,
-            'edgeColors': edge_colors,
+            'edgeColors': batch_data['edge_colors'],
             'border': [
                 [[coordinate / mesh_scale for coordinate in point] for point in border_part]
                 for border_part in network_border
@@ -479,35 +574,41 @@ def collate_outputs(
             'trafficPaths': paths
         })
 
-    # Set the map data
-    # TODO: Make this more robust
-    if node_coordinates:
-        coordinates = np.array(node_coordinates)
-        center_xy = (np.amin(coordinates, axis=0) + np.amax(coordinates, axis=0)) / 2.
-        center = utility.inverse_mercator(*center_xy)
-        left, _ = utility.inverse_mercator(np.amin(coordinates[:,0]), 0)
-        right, _ = utility.inverse_mercator(np.amax(coordinates[:,0]), 0)
-        zoom_factor = coordinates_scale * 360. / (right - left)
-        map_data = {
-            'center': center,
-            'zoomFactor': zoom_factor,
-        }
-    else:
-        map_data = {
-            'center': (0., 0.),
-            'zoomFactor': 1.,
-        }
+    return {
+        'nodes': batch_data['animation_vertices'],
+        'animation': animation_data,
+        'map': batch_data['map_data'],
+    }
 
-    os.makedirs(path_output_collated.parent, exist_ok=True)
-    with open(path_output_collated, 'w') as file_output:
-        json.dump(
-            {
-                'nodes': animation_vertices,
-                'animation': animation_data,
-                'map': map_data,
-            },
-            file_output, ensure_ascii=False
-        )
+def collate_outputs(
+    directories_outputs,
+    variants,
+    *,
+    times=None,
+    geodesic_label_color_pairs=None,
+):
+    """
+    Join many optimization outputs into animations, one per collation
+    variant.
+
+    `directories_outputs` is a collection of directories, each of which
+    contains an optimization output file called 'output.json'. The
+    outputs are read and processed once (see `load_batch`). Then, for
+    each `(collation_arguments, path_output_collated)` pair in
+    `variants`, an animation is made with `render_animation`, using
+    `collation_arguments` as its keyword arguments, and written to
+    `path_output_collated`.
+    """
+    batch_data = load_batch(
+        directories_outputs,
+        times=times,
+        geodesic_label_color_pairs=geodesic_label_color_pairs,
+    )
+    for collation_arguments, path_output_collated in variants:
+        animation = render_animation(batch_data, **collation_arguments)
+        os.makedirs(path_output_collated.parent, exist_ok=True)
+        with open(path_output_collated, 'w') as file_output:
+            json.dump(animation, file_output, ensure_ascii=False)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -515,33 +616,22 @@ def main():
     args = parser.parse_args()
     config_file = pathlib.PurePath(args.config_file)
 
-    # Read JSON config file and generate optimization parameters from it
-    arguments, settings, defaults = driver.load_config(config_file)
+    # Read JSON config file and generate optimization and collation
+    # parameters from it
+    arguments, arguments_collation, settings, defaults = driver.load_config(config_file)
 
-    # Determine where the outputs are going. Check that they exist,
-    # since we're reading already-produced optimization output.
+    # Determine where the outputs are. Check that they exist, since
+    # we're reading already-produced optimization output.
     output_format = driver.get_output_format(settings, defaults)
     driver.assign_output_directories(arguments, settings, output_format, existence_check='must_exist')
 
+    # Each batch's outputs are read once and reused for every collation
+    # variant
     initialization = driver.get_initialization(settings)
-
-    batch.run_multiprocessed(
-        collate_outputs,
-        [
-            {
-                'directories_outputs': [
-                    argument_dict['directory_output']
-                    for argument_dict in (argument_batch[1:] if driver.initialization_excludes_seed(initialization) else argument_batch)
-                ],
-                'path_output_collated': argument_batch[0]['directory_output'] / 'animation.json',  # TODO: Smarter location of outputs
-                'geodesic_label_color_pairs': None,  # TODO: Add custom functionality
-                'bubble_size': 0.03,
-                'postprocess': settings.get('postprocess', True),
-                'postprocess_subtract_initialization': settings.get('postprocess_subtract_initialization', True),
-            }
-            for argument_batch in arguments
-        ]
+    jobs = driver.assign_collation_paths(
+        arguments, arguments_collation, settings, defaults, initialization
     )
+    batch.run_multiprocessed(collate_outputs, jobs)
 
 if __name__ == '__main__':
     main()

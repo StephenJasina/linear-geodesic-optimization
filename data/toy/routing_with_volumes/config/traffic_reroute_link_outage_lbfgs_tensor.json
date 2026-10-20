@@ -1,5 +1,5 @@
 {
-	"arguments": {
+	"arguments_optimization": {
 		"method": ["lbfgs"],
 		"filename_probes": [
 			null
@@ -68,7 +68,7 @@
 			"torch"
 		]
 	},
-	"groups": [
+	"groups_optimization": [
 		[
 			"filename_json"
 		],
@@ -76,6 +76,10 @@
 			"smooth_loss_type"
 		]
 	],
+	"arguments_collation": {
+		"postprocess_subtract_initialization": [false],
+		"postprocess": [false]
+	},
 	"settings": {
 		"directory_data": [
 			"..",
@@ -97,8 +101,6 @@
 			]
 		],
 		"initialization": "sphere",
-		"order_by": "filename_json",
-		"postprocess_subtract_initialization": false,
-		"postprocess": false
+		"order_by": "filename_json"
 	}
 }

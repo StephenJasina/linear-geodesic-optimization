@@ -180,30 +180,62 @@ def group_arguments(
         ], length_batch)
     ]
 
+# Keys from older config formats, mapped to where they now belong
+_renamed_config_keys = {
+    'arguments': '"arguments_optimization"',
+    'groups': '"groups_optimization"',
+}
+_renamed_settings_keys = {
+    'postprocess': '"arguments_collation"',
+    'postprocess_subtract_initialization': '"arguments_collation"',
+}
+
 def parse_json(
     f: str | bytes | os.PathLike,
     default_arguments: dict[str, typing.Any]={},
-    default_settings: dict[str, typing.Any]={}
-) -> tuple[list[dict[str, typing.Any]], dict[str, typing.Any]]:
+    default_settings: dict[str, typing.Any]={},
+    default_arguments_collation: dict[str, typing.Any]={},
+) -> tuple[list[list[dict[str, typing.Any]]], list[dict[str, typing.Any]], dict[str, typing.Any]]:
     """
-    Convert a JSON file into a list of argument lists and other settings.
+    Convert a JSON file into a list of argument lists, a list of
+    collation arguments, and other settings.
 
     As input, take a path to a file. Also, take default arguments (that can be
     grouped together) and default settings (that are separate from the
     arguments and their groups).
 
-    Return a tuple of the arguments and settings after parsing the file.
+    The optimization arguments come from `arguments_optimization` and
+    `groups_optimization`, and are batched by `settings['order_by']`.
+    The collation arguments come from `arguments_collation` and
+    `groups_collation`, grouped the same way but not batched, so they
+    form a flat list with one dictionary per collation variant. Without
+    `arguments_collation`, there is a single variant of defaults.
+
+    Return a tuple of the arguments, collation arguments, and settings
+    after parsing the file.
     """
     json_blob = json.load(f)
+    for key, replacement in _renamed_config_keys.items():
+        if key in json_blob:
+            raise ValueError(f'Config key "{key}" has been renamed to {replacement}')
+    for key, replacement in _renamed_settings_keys.items():
+        if key in json_blob.get('settings', {}):
+            raise ValueError(f'Setting "{key}" has moved to {replacement}')
+
     settings = default_settings | json_blob['settings'] if 'settings' in json_blob else {}
     arguments = group_arguments(
-        json_blob['arguments'],
-        json_blob['groups'] if 'groups' in json_blob else [],
+        json_blob['arguments_optimization'],
+        json_blob['groups_optimization'] if 'groups_optimization' in json_blob else [],
         default_arguments,
         pass_arguments=settings['pass_arguments'] if 'pass_arguments' in settings else {},
         order_by=settings['order_by'] if 'order_by' in settings else None
     )
-    return arguments, settings
+    arguments_collation = list(itertools.chain(*group_arguments(
+        json_blob['arguments_collation'] if 'arguments_collation' in json_blob else {},
+        json_blob['groups_collation'] if 'groups_collation' in json_blob else [],
+        default_arguments_collation,
+    )))
+    return arguments, arguments_collation, settings
 
 def run_multiprocessed(
     f: collections.abc.Callable,

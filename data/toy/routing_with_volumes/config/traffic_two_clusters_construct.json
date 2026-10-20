@@ -1,5 +1,5 @@
 {
-	"arguments": {
+	"arguments_optimization": {
 		"filename_probes": [null],
 		"filename_links": [null],
 		"filename_graphml": [null],
@@ -31,11 +31,14 @@
 		"hessian_iterations": [5],
 		"hessian_polish_maxiter": [0]
 	},
-	"groups": [
+	"groups_optimization": [
 		["filename_json"],
 		["lambda_smooth"],
 		["ricci_curvature_distribution_reweight_scale"]
 	],
+	"arguments_collation": {
+		"postprocess": [false]
+	},
 	"settings": {
 		"directory_data": ["..", "traffic", "two_clusters"],
 		"directory_output": ["toy", "routing_with_volumes", "traffic_two_clusters_construct"],
@@ -44,7 +47,6 @@
 			["index", "filename_json"]
 		],
 		"initialization": "sphere",
-		"order_by": "filename_json",
-		"postprocess": false
+		"order_by": "filename_json"
 	}
 }
