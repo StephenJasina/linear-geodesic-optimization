@@ -46,6 +46,11 @@ def optimize(
     ricci_curvature_distribution_reweight_scale=0.,
     lambda_curvature=1.,
     lambda_smooth=0.,
+    lambda_route=0.,
+    route_constraints=None,
+    route_corridor_width=0.05,
+    route_margin=0.02,
+    route_metric='mesh_edges',
     smooth_loss_type='mvs',
     initial_radius=None,
     sides,
@@ -70,6 +75,12 @@ def optimize(
 ):
     if method not in ('construction', 'lbfgs'):
         raise ValueError(f'Unknown method: {method}')
+    if not np.isfinite(lambda_route) or lambda_route < 0:
+        raise ValueError('lambda_route must be finite and nonnegative')
+    if lambda_route > 0 and method != 'lbfgs':
+        raise ValueError('Route preferences require method="lbfgs"')
+    if lambda_route > 0 and backend != 'torch':
+        raise ValueError('Route preferences require the torch backend')
     if method == 'construction' and network_trim_radius is not None \
             and not np.isposinf(network_trim_radius):
         raise ValueError('The construction method does not support network_trim_radius')
@@ -94,6 +105,10 @@ def optimize(
     network_vertices, network_edges, network_curvatures = pipeline.map_network_to_mesh(
         mesh, network, coordinates_scale
     )
+    resolved_routes = (
+        _resolve_route_constraints(network, route_constraints)
+        if lambda_route > 0 else None
+    )
 
     # Setup snapshots
     pipeline.reset_output_directory(directory_output)
@@ -115,6 +130,13 @@ def optimize(
         backend=backend,
         network_trim_radius=network_trim_radius,
     )
+    parameters.update({
+        'lambda_route': float(lambda_route),
+        'route_constraints': route_constraints,
+        'route_corridor_width': float(route_corridor_width),
+        'route_margin': float(route_margin),
+        'route_metric': route_metric,
+    })
 
     def make_computer():
         return computer_type(
@@ -123,6 +145,13 @@ def optimize(
             lambda_curvature, lambda_smooth,
             directory=directory_output,
             smooth_loss_type=smooth_loss_type,
+            **({
+                'lambda_route': lambda_route,
+                'route_constraints': resolved_routes,
+                'route_corridor_width': route_corridor_width,
+                'route_margin': route_margin,
+                'route_metric': route_metric,
+            } if lambda_route > 0 else {}),
         )
 
     if method == 'lbfgs':
@@ -152,6 +181,30 @@ def optimize(
         **extra,
     )
 
+def _resolve_route_constraints(network, constraints):
+    """Convert node labels in route constraints to network vertex indices."""
+    from linear_geodesic_optimization.optimization.route_preference import RouteConstraint
+
+    if not isinstance(constraints, list) or not constraints:
+        raise ValueError('route_constraints must be a nonempty list')
+    graph_data, vertex_data, _ = network
+    labels_to_indices = {
+        str(label): index for index, label in enumerate(graph_data['labels'])
+    }
+    for index, elements in enumerate(vertex_data.get('elements', [])):
+        for element in elements or []:
+            labels_to_indices[str(element)] = index
+    resolved = []
+    for constraint in constraints:
+        if not isinstance(constraint, dict) or not isinstance(constraint.get('route'), list):
+            raise ValueError('Each route constraint needs a route list')
+        try:
+            route = tuple(labels_to_indices[str(label)] for label in constraint['route'])
+        except KeyError as error:
+            raise ValueError(f'Unknown route waypoint: {error.args[0]}') from error
+        resolved.append(RouteConstraint(route, float(constraint.get('weight', 1.0))))
+    return resolved
+
 def _optimize_lbfgs(
     mesh, network_vertices, network_edges, make_computer,
     sides, initial_radius, network_trim_radius, maxiter,
@@ -178,12 +231,29 @@ def _optimize_lbfgs(
         z_0 = mesh.get_parameters()
 
     computer = make_computer()
-    z = pipeline.minimize_lbfgs(
+    time_start = time.perf_counter()
+    result = pipeline.minimize_lbfgs(
         computer, z_0, None if maxiter is None else {'maxiter': maxiter}
-    ).x
-    z = mesh.set_parameters(z)
+    )
+    elapsed_seconds = time.perf_counter() - time_start
+    z = mesh.set_parameters(result.x)
+    total_loss = computer.forward(z)
 
-    return z_0, z, {}
+    return z_0, z, {
+        'optimization': {
+            'iterations': int(result.nit),
+            'converged': bool(result.success),
+            'message': str(result.message),
+            'elapsed_seconds': elapsed_seconds,
+            'loss': float(total_loss),
+            'curvature_loss': float(computer.curvature_loss.loss),
+            'smooth_loss': float(computer.smooth_loss.loss),
+            'route_loss': float(computer.route_loss.loss)
+                if hasattr(computer, 'route_loss') else None,
+        },
+        'route_fit': computer.route_preference.metrics(z)
+            if getattr(computer, 'route_preference', None) is not None else None,
+    }
 
 def _construct(
     mesh, network_vertices, network_edges, network_curvatures,

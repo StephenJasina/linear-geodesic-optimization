@@ -43,6 +43,11 @@ def base_defaults() -> dict[str, typing.Any]:
         'ricci_curvature_distribution_reweight_scale': 0.,
         'lambda_curvature': 1.,
         'lambda_smooth': 0.,
+        'lambda_route': 0.,
+        'route_constraints': None,
+        'route_corridor_width': 0.05,
+        'route_margin': 0.02,
+        'route_metric': 'mesh_edges',
         'smooth_loss_type': 'mvs',
         'initial_radius': None,  # None is an infinite radius (flat)
         'sides': 50,
