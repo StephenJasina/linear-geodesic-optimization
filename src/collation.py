@@ -377,6 +377,8 @@ def load_batch(
         # Caches keyed by `use_convex_hull`, filled by `render_animation`
         'borders': {},
         'distances_to_networks': {},
+        # Cache keyed by `exact_geodesics`, filled by `get_original_frames`
+        'original_frames': {},
     }
 
 def get_network_borders(batch_data, use_convex_hull):
@@ -428,6 +430,78 @@ def get_distances_to_networks(batch_data, use_convex_hull):
         ]
     return batch_data['distances_to_networks'][use_convex_hull]
 
+def compute_frame_geodesics(batch_data, z, hull, exact_geodesics, traffic_paths_needed):
+    """
+    Set the mesh heights to `z` and compute the geodesics of one
+    snapshot. If `hull` is not `None`, the mesh is first trimmed to it.
+
+    Return the geodesics and, if `traffic_paths_needed` is true, the
+    matrix of traffic paths (otherwise `None`).
+    """
+    mesh = batch_data['mesh']
+    network_vertices = batch_data['network_vertices']
+    node_labels_to_indices = batch_data['node_labels_to_indices']
+    geodesic_labels = batch_data['geodesic_labels']
+    # Use the edges of the last snapshot, as `get_network_borders` does
+    graph_data, _, _ = batch_data['outputs'][-1]['network']
+    network_edges = graph_data['edges']
+
+    mesh.set_parameters(z)
+    if hull is not None:
+        # TODO: Make this safer
+        mesh.trim_to_set(hull)
+    geodesics = compute_geodesics_from_graph(
+        mesh, network_vertices,
+        network_edges,
+        [
+            [
+                node_labels_to_indices[node]
+                for node in node_list
+            ]
+            for node_list in geodesic_labels
+        ],
+        exact_geodesics=exact_geodesics
+    )
+    mesh.remove_added_vertices()
+    mesh.restore_removed_vertices()
+
+    if traffic_paths_needed:
+        paths = [[[] for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
+        for geodesic_label, geodesic in zip(geodesic_labels, geodesics):
+            paths[node_labels_to_indices[geodesic_label[0]]][node_labels_to_indices[geodesic_label[-1]]] = geodesic
+    else:
+        paths = None
+
+    return geodesics, paths
+
+def get_original_frames(batch_data, exact_geodesics):
+    """
+    Return, for each snapshot, the unprocessed surface: its heights
+    (`output['final']` centered by its own mean and divided by the mesh
+    scale), and the geodesics and traffic paths on the untrimmed mesh.
+    These are cached in `batch_data`, since they don't depend on any
+    postprocessing option.
+    """
+    if exact_geodesics not in batch_data['original_frames']:
+        parameters = batch_data['parameters']
+        width = parameters['width']
+        height = parameters['height']
+        mesh_scale = parameters['mesh_scale']
+        frames = []
+        for output, traffic_paths_needed in zip(batch_data['outputs'], batch_data['traffic_paths_needed']):
+            z = np.array(output['final'])
+            z = z - np.mean(z)
+            geodesics, paths = compute_frame_geodesics(
+                batch_data, z, None, exact_geodesics, traffic_paths_needed
+            )
+            frames.append({
+                'height': (z / mesh_scale).reshape((width, height)).tolist(),
+                'geodesics': geodesics,
+                'trafficPaths': paths,
+            })
+        batch_data['original_frames'][exact_geodesics] = frames
+    return batch_data['original_frames'][exact_geodesics]
+
 def render_animation(
     batch_data,
     *,
@@ -457,6 +531,11 @@ def render_animation(
     their own mean, so the animation doesn't jump between frames), and
     geodesics are computed on the untrimmed mesh.
 
+    If `postprocess` is true, each frame also has an `'original'` field
+    holding the unprocessed surface's `'height'`, `'geodesics'`, and
+    `'trafficPaths'` (the same values `postprocess=False` would give),
+    so the viewer can show both. See `get_original_frames`.
+
     If `exact_geodesics` is true, geodesic paths are computed with
     `pygeodesic`'s exact algorithm instead of the default
     `potpourri3d`-based approximation. See
@@ -467,12 +546,8 @@ def render_animation(
     width = parameters['width']
     height = parameters['height']
     mesh_scale = parameters['mesh_scale']
-    mesh = batch_data['mesh']
-    network_vertices = batch_data['network_vertices']
-    node_labels_to_indices = batch_data['node_labels_to_indices']
-    geodesic_labels = batch_data['geodesic_labels']
 
-    network_borders, network_edges = get_network_borders(batch_data, use_convex_hull)
+    network_borders, _ = get_network_borders(batch_data, use_convex_hull)
 
     # Normalize the z-coordinates across time
     distances_to_networks = []
@@ -480,8 +555,7 @@ def render_animation(
     zs = []
     if postprocess:
         distances_to_networks = get_distances_to_networks(batch_data, use_convex_hull)
-    for index, output in enumerate(outputs):
-        if postprocess:
+        for index, output in enumerate(outputs):
             # TODO: Make this more intelligent. In particular, ensure that
             # the bubble around solitary edges is wide enough so that the
             # hull does not become disconnected
@@ -505,9 +579,6 @@ def render_animation(
             else:
                 z = np.array(output['final'])
             zs.append(z - np.mean(z[hull]))
-        else:
-            z = np.array(output['final'])
-            zs.append(z - np.mean(z))
 
     if postprocess:
         # Determine values for vertical scaling
@@ -517,13 +588,17 @@ def render_animation(
             z_max = max(z_max, np.max(z[hull]))
             z_min = min(z_min, np.min(z[hull]))
 
+    originals = get_original_frames(batch_data, exact_geodesics)
+
     animation_data = []
+    zs_iter = zs if postprocess else itertools.repeat(None)
     distances_to_networks_iter = distances_to_networks if postprocess else itertools.repeat(None)
     hulls_iter = hulls if postprocess else itertools.repeat(None)
-    for t, z, distance_to_network, hull, edges, network_border, curvature, traffic_matrix, traffic_paths_needed in zip(
-        batch_data['times'], zs, distances_to_networks_iter, hulls_iter,
+    for t, z, distance_to_network, hull, edges, network_border, curvature, traffic_matrix, traffic_paths_needed, original in zip(
+        batch_data['times'], zs_iter, distances_to_networks_iter, hulls_iter,
         batch_data['animation_edges'], network_borders, batch_data['curvatures'],
         batch_data['traffic_matrices'], batch_data['traffic_paths_needed'],
+        originals,
     ):
         if postprocess:
             distance_to_bubble = np.zeros(distance_to_network.shape) if np.isposinf(bubble_size) else np.maximum(distance_to_network / mesh_scale - bubble_size, 0.)
@@ -533,35 +608,19 @@ def render_animation(
             offset = 0.05 * mesh_scale
             z = (z + offset) * np.exp(-1000 * distance_to_bubble**2) - offset
 
-        mesh.set_parameters(z)
-        if postprocess:
-            # TODO: Make this safer
-            mesh.trim_to_set(hull)
-        geodesics = compute_geodesics_from_graph(
-            mesh, network_vertices,
-            network_edges,
-            [
-                [
-                    node_labels_to_indices[node]
-                    for node in node_list
-                ]
-                for node_list in geodesic_labels
-            ],
-            exact_geodesics=exact_geodesics
-        )
-        mesh.remove_added_vertices()
-        mesh.restore_removed_vertices()
-
-        if traffic_paths_needed:
-            paths = [[[] for _ in range(len(network_vertices))] for _ in range(len(network_vertices))]
-            for geodesic_label, geodesic in zip(geodesic_labels, geodesics):
-                paths[node_labels_to_indices[geodesic_label[0]]][node_labels_to_indices[geodesic_label[-1]]] = geodesic
+            geodesics, paths = compute_frame_geodesics(
+                batch_data, z, hull, exact_geodesics, traffic_paths_needed
+            )
+            z_height = (z / mesh_scale).reshape((width, height)).tolist()
         else:
-            paths = None
+            # The unprocessed surface is exactly the original one
+            z_height = original['height']
+            geodesics = original['geodesics']
+            paths = original['trafficPaths']
 
-        animation_data.append({
+        frame = {
             'time': t,
-            'height': (z / mesh_scale).reshape((width, height)).tolist(),
+            'height': z_height,
             'curvature': curvature,
             'edges': edges,
             'geodesics': geodesics,
@@ -572,7 +631,10 @@ def render_animation(
             ],
             'traffic': traffic_matrix,
             'trafficPaths': paths
-        })
+        }
+        if postprocess:
+            frame['original'] = original
+        animation_data.append(frame)
 
     return {
         'nodes': batch_data['animation_vertices'],

@@ -55,6 +55,11 @@ let trafficMax = 0.;
 let trafficPaths = null;
 let hasValidTraffic = false;
 
+// The unprocessed surface, if the animation has one (null otherwise)
+let heightsOriginal = null;
+let geodesicsOriginal = null;
+let trafficPathsOriginal = null;
+
 // Globals tracking the animation state
 let isPlaying = false;
 let timeInitial = null;
@@ -124,12 +129,30 @@ let rangeAnimation = document.getElementById("range-animation");
 function getCurrentTime() {
 	return parseFloat(rangeAnimation.value);
 }
+/**
+ * The heights, geodesics, and traffic paths a tab shows: the original
+ * (unprocessed) surface's if the tab asks for it and the animation has one,
+ * and the default surface's otherwise.
+ */
+function useOriginal(options) {
+	return options.useOriginal && heightsOriginal !== null;
+}
+function getTabHeights(options) {
+	return useOriginal(options) ? heightsOriginal : heights;
+}
+function getTabGeodesics(options) {
+	return useOriginal(options) ? geodesicsOriginal : geodesics;
+}
+function getTabTrafficPaths(options) {
+	return useOriginal(options) ? trafficPathsOriginal : trafficPaths;
+}
+
 let checkboxShowHeights = document.getElementById("show-heights");
 function setHeights() {
 	for (let i = 0; i < elementsByTab.length; ++i) {
 		let options = elementsByTab[i];
 		if (heights != null && options.showHeights) {
-			setPlaneHeightsWithInterpolation(options.plane, heights, getCurrentTime(), times);
+			setPlaneHeightsWithInterpolation(options.plane, getTabHeights(options), getCurrentTime(), times);
 		} else {
 			resetPlaneHeights(options.plane);
 		}
@@ -150,6 +173,17 @@ rangeAnimation.oninput = function() {
 checkboxShowHeights.onchange = function() {
 	elementsByTab[indexTabCurrent].showHeights = checkboxShowHeights.checked;
 	setHeights();
+}
+
+let spanShowOriginal = document.getElementById("span-show-original");
+let checkboxShowOriginal = document.getElementById("show-original");
+checkboxShowOriginal.onchange = function() {
+	elementsByTab[indexTabCurrent].useOriginal = checkboxShowOriginal.checked;
+	setHeights();
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
+	if (checkboxShowWeightArcs.checked) {
+		checkboxShowWeightArcs.dispatchEvent(new Event("change"));
+	}
 }
 
 let checkboxShowCurvatureChanges = document.getElementById("show-curvature-changes");
@@ -212,7 +246,7 @@ checkboxShowWeightArcs.onchange = function() {
 		if (times != null) {
 			drawHoverArcs(
 				scene, hoverArcObjects, networkVertices, networkEdges,
-				getCurrentTime(), times, heights, planeSideLength
+				getCurrentTime(), times, getTabHeights(elementsByTab[indexTabCurrent]), planeSideLength
 			);
 		}
 	} else {
@@ -302,6 +336,8 @@ function swapToTab(event) {
 	// of each DOM element be stored per-tab?
 	checkboxShowHeights.checked = elementsByTab[indexTabCurrent].showHeights;
 	checkboxShowHeights.dispatchEvent(new Event("change"));
+	checkboxShowOriginal.checked = elementsByTab[indexTabCurrent].useOriginal;
+	checkboxShowOriginal.dispatchEvent(new Event("change"));
 	checkboxShowCurvatureChanges.checked = elementsByTab[indexTabCurrent].showCurvatureChanges;
 	checkboxShowCurvatureChanges.dispatchEvent(new Event("change"));
 	checkboxShowMap.checked = elementsByTab[indexTabCurrent].showMap;
@@ -364,6 +400,7 @@ function addTab() {
 		"buttonTab": buttonNew,
 
 		"showHeights": true,
+		"useOriginal": false,
 		"showCurvatureChanges": false,
 		"showMap": false,
 		"showGraph": true,
@@ -505,13 +542,13 @@ function drawLayers(time, options) {
 		// Draw the geodesics
 		if (options.showGeodesics) {
 			drawGeodesics(
-				context, geodesics[currentNetworkIndexInt],
+				context, getTabGeodesics(options)[currentNetworkIndexInt],
 				3, edgeColors[currentNetworkIndexInt]
 			);
 		}
 
 		if (hasValidTraffic) {
-			let trafficPathsCurrent = trafficPaths[currentNetworkIndexInt];
+			let trafficPathsCurrent = getTabTrafficPaths(options)[currentNetworkIndexInt];
 			let trafficPathsToDraw = new Array();
 			let trafficPathsToDrawColors = new Array();
 			for (let [i, j] of tableTrafficHover) {
@@ -565,7 +602,7 @@ function animate() {
 		// Update the heights if necessary
 		for (let i = 0; i < elementsByTab.length; ++i) {
 			if (elementsByTab[i].showHeights) {
-				setPlaneHeightsWithInterpolation(elementsByTab[i].plane, heights, timeNow, times);
+				setPlaneHeightsWithInterpolation(elementsByTab[i].plane, getTabHeights(elementsByTab[i]), timeNow, times);
 			}
 		}
 
@@ -814,6 +851,10 @@ dropReader.onload = function() {
 		traffic = new Array(animationData.length);
 		trafficPaths = new Array(animationData.length);
 		hasValidTraffic = true;
+		let hasOriginal = animationData.length != 0 && animationData.every((frame) => frame.original != null);
+		heightsOriginal = hasOriginal ? new Array(animationData.length) : null;
+		geodesicsOriginal = hasOriginal ? new Array(animationData.length) : null;
+		trafficPathsOriginal = hasOriginal ? new Array(animationData.length) : null;
 		for (let i = 0; i < animationData.length; ++i) {
 			times[i] = animationData[i].time;
 			heights[i] = animationData[i].height;
@@ -821,6 +862,11 @@ dropReader.onload = function() {
 			networkEdges[i] = animationData[i].edges;
 			geodesics[i] = animationData[i].geodesics;
 			edgeColors[i] = animationData[i].edgeColors;
+			if (hasOriginal) {
+				heightsOriginal[i] = animationData[i].original.height;
+				geodesicsOriginal[i] = animationData[i].original.geodesics;
+				trafficPathsOriginal[i] = animationData[i].original.trafficPaths;
+			}
 			if (hasValidTraffic && 'traffic' in animationData[i] && animationData[i].traffic !== null) {
 				traffic[i] = animationData[i].traffic;
 				trafficPaths[i] = animationData[i].trafficPaths;
@@ -922,6 +968,8 @@ dropReader.onload = function() {
 
 		buttonPlay.innerText = "Play";
 
+		spanShowOriginal.style.display = hasOriginal ? "inline" : "none";
+
 		if (times.length <= 1) {
 			divAnimationControls.style.display = "none";
 		} else {
@@ -934,7 +982,7 @@ dropReader.onload = function() {
 		if (checkboxShowWeightArcs.checked) {
 			drawHoverArcs(
 				scene, hoverArcObjects, networkVertices, networkEdges,
-				getCurrentTime(), times, heights, planeSideLength
+				getCurrentTime(), times, getTabHeights(elementsByTab[indexTabCurrent]), planeSideLength
 			);
 		}
 
