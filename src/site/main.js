@@ -9,6 +9,7 @@ import { getWeightedColor } from "./modules/colors.js";
 import { locateTime } from "./modules/time.js";
 
 // Layers
+import { addContourShader, getContourSpacing, setContours } from "./modules/layers/contours.js";
 import { createOLMap, destroyOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMap } from "./modules/layers/map.js";
 import { default as drawEdges } from "./modules/layers/edges.js";
 import { default as drawGrid } from "./modules/layers/grid.js";
@@ -23,6 +24,18 @@ import { default as drawVertices } from "./modules/layers/vertices.js";
 // Colors
 const COLOR_BACKGROUND = "#f3f3f3";
 const COLOR_PLANE = "#ffffff";
+const COLOR_LIGHT_SKY = "#ffffff";
+const COLOR_LIGHT_GROUND = "#888888";
+
+// Lights. A white surface lit head-on by a directional light of intensity I
+// has brightness I / pi (in linear color), so these are chosen to keep the
+// flat plane a light gray and leave headroom for slopes facing the light.
+const LIGHT_KEY_INTENSITY = 1.5;
+const LIGHT_HEMISPHERE_INTENSITY = 0.5;
+// Direction the key light comes from, relative to the camera's azimuth (back
+// left of the view) and above the ground plane
+const LIGHT_KEY_AZIMUTH = -3. * Math.PI / 4.;
+const LIGHT_KEY_ELEVATION = 40. * Math.PI / 180.;
 
 // Globals tracking the world map
 let mapCenter = [0.0, 0.0];
@@ -95,11 +108,23 @@ renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 // Lighting setup
-let lightDirectional = new THREE.DirectionalLight(0xffffff, 1.);
-lightDirectional.position.set(1, 1, 1);
-scene.add(lightDirectional);
-let lightAmbient = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(lightAmbient);
+// The key light turns with the camera's azimuth but keeps a fixed elevation
+// above the ground, like a hillshade, so slopes facing away from the light
+// are darker from every viewing angle. The hemisphere light keeps those
+// slopes from going black.
+let lightKey = new THREE.DirectionalLight(0xffffff, LIGHT_KEY_INTENSITY);
+scene.add(lightKey);
+function updateLightKey() {
+	let offset = camera.position.clone().sub(controls.target);
+	let azimuth = Math.atan2(offset.x, offset.z) + LIGHT_KEY_AZIMUTH;
+	lightKey.position.set(
+		Math.sin(azimuth) * Math.cos(LIGHT_KEY_ELEVATION),
+		Math.sin(LIGHT_KEY_ELEVATION),
+		Math.cos(azimuth) * Math.cos(LIGHT_KEY_ELEVATION)
+	);
+}
+let lightHemisphere = new THREE.HemisphereLight(COLOR_LIGHT_SKY, COLOR_LIGHT_GROUND, LIGHT_HEMISPHERE_INTENSITY);
+scene.add(lightHemisphere);
 
 // Objects drawn above the planes
 const hoverGraphObjects = [];
@@ -267,6 +292,17 @@ checkboxShowGrid.onchange = function() {
 	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
+// Height difference between adjacent contour lines (0 if the surface is flat)
+let contourSpacing = 0.;
+function updateContours(options) {
+	setContours(options.plane, options.showContours, contourSpacing);
+}
+let checkboxShowContours = document.getElementById("show-contours");
+checkboxShowContours.onchange = function() {
+	elementsByTab[indexTabCurrent].showContours = checkboxShowContours.checked;
+	updateContours(elementsByTab[indexTabCurrent]);
+}
+
 let checkboxShowTrafficMatrix = document.getElementById("show-traffic-matrix");
 checkboxShowTrafficMatrix.onchange = function() {
 	if (checkboxShowTrafficMatrix.checked) {
@@ -354,6 +390,8 @@ function swapToTab(event) {
 	checkboxShowGeodesics.dispatchEvent(new Event("change"));
 	checkboxShowGrid.checked = elementsByTab[indexTabCurrent].showGrid;
 	checkboxShowGrid.dispatchEvent(new Event("change"));
+	checkboxShowContours.checked = elementsByTab[indexTabCurrent].showContours;
+	checkboxShowContours.dispatchEvent(new Event("change"));
 }
 let buttonAddTab = document.getElementById("button-add-tab");
 let buttonRemoveTab = document.getElementById("button-remove-tab");
@@ -409,6 +447,7 @@ function addTab() {
 		"showWeightArcs": false,
 		"showGeodesics": false,
 		"showGrid": false,
+		"showContours": false,
 
 		"canvasNeedsUpdate": true,
 	};
@@ -657,6 +696,7 @@ function animate() {
 	}
 
 	// Render
+	updateLightKey();
 	renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
@@ -776,6 +816,7 @@ function helpClick(event) {
 
 function makeTextureBlank(contextBlank) {
 	let texture = new THREE.CanvasTexture(contextBlank.canvas);
+	texture.colorSpace = THREE.SRGBColorSpace;
 	texture.minFilter = THREE.LinearFilter;
 	texture.center = new THREE.Vector2(0.5, 0.5);
 	texture.rotation = -Math.PI / 2;
@@ -828,6 +869,7 @@ function makePlane(divisions) {
 		transparent: true,
 		opacity: 1.0,
 	});
+	addContourShader(material);
 	let plane = new THREE.Mesh(geometry, material);
 	plane.rotation.set(-Math.PI / 2, 0, 0);
 	return plane;
@@ -959,6 +1001,11 @@ dropReader.onload = function() {
 			setPlaneCenters(true);
 
 			divisions = heights[0].length;
+		}
+
+		contourSpacing = getContourSpacing([heights, heightsOriginal], planeSideLength);
+		for (let i = 0; i < elementsByTab.length; ++i) {
+			updateContours(elementsByTab[i]);
 		}
 
 		rangeAnimation.min = animationData[0].time;

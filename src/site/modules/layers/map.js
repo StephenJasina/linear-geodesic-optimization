@@ -103,6 +103,7 @@ function getCanvasOLMap(olMap) {
 function makeTextureOLMap(olMap) {
 	let canvasMap = getCanvasOLMap(olMap);
 	let textureMap = new THREE.CanvasTexture(canvasMap);
+	textureMap.colorSpace = THREE.SRGBColorSpace;
 	textureMap.minFilter = THREE.LinearFilter;
 	textureMap.magFilter = THREE.NearestFilter;
 	textureMap.center = new THREE.Vector2(0.5, 0.5);
