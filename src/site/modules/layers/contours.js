@@ -18,7 +18,9 @@ function addContourShader(material) {
 	};
 	material.userData.contourUniforms = uniforms;
 
-	material.onBeforeCompile = function(shader) {
+	let onBeforeCompilePrevious = material.onBeforeCompile;
+	material.onBeforeCompile = function(shader, renderer) {
+		onBeforeCompilePrevious.call(this, shader, renderer);
 		Object.assign(shader.uniforms, uniforms);
 
 		shader.vertexShader = shader.vertexShader

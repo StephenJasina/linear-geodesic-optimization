@@ -10,6 +10,7 @@ import { locateTime } from "./modules/time.js";
 
 // Layers
 import { addContourShader, getContourSpacing, setContours } from "./modules/layers/contours.js";
+import { addHatchingShader, getHatchingScale, setHatching, updateCurvatureFrames } from "./modules/layers/hatching.js";
 import { createOLMap, destroyOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMap } from "./modules/layers/map.js";
 import { default as drawEdges } from "./modules/layers/edges.js";
 import { default as drawGrid } from "./modules/layers/grid.js";
@@ -205,6 +206,7 @@ let checkboxShowOriginal = document.getElementById("show-original");
 checkboxShowOriginal.onchange = function() {
 	elementsByTab[indexTabCurrent].useOriginal = checkboxShowOriginal.checked;
 	setHeights();
+	updateHatching(elementsByTab[indexTabCurrent]);
 	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 	if (checkboxShowWeightArcs.checked) {
 		checkboxShowWeightArcs.dispatchEvent(new Event("change"));
@@ -303,6 +305,30 @@ checkboxShowContours.onchange = function() {
 	updateContours(elementsByTab[indexTabCurrent]);
 }
 
+// Approximate number of hatch lines across the plane
+const HATCHING_COUNT = 60;
+// Anisotropy at which hatch lines are fully opaque (0 if the surface is
+// flat), for the postprocessed and original heights. These are kept separate
+// because postprocessing can change the curvature scale by an order of
+// magnitude, which would otherwise wash out the less curved surface.
+let hatchingScale = 0.;
+let hatchingScaleOriginal = 0.;
+function updateHatching(options) {
+	let scale = useOriginal(options) ? hatchingScaleOriginal : hatchingScale;
+	setHatching(options.plane, options.showHatching, options.hatchingMode, planeSideLength / HATCHING_COUNT, scale);
+}
+let checkboxShowHatching = document.getElementById("show-hatching");
+let selectHatchingMode = document.getElementById("hatching-mode");
+checkboxShowHatching.onchange = function() {
+	elementsByTab[indexTabCurrent].showHatching = checkboxShowHatching.checked;
+	selectHatchingMode.disabled = !checkboxShowHatching.checked;
+	updateHatching(elementsByTab[indexTabCurrent]);
+}
+selectHatchingMode.onchange = function() {
+	elementsByTab[indexTabCurrent].hatchingMode = selectHatchingMode.value;
+	updateHatching(elementsByTab[indexTabCurrent]);
+}
+
 let checkboxShowTrafficMatrix = document.getElementById("show-traffic-matrix");
 checkboxShowTrafficMatrix.onchange = function() {
 	if (checkboxShowTrafficMatrix.checked) {
@@ -392,6 +418,10 @@ function swapToTab(event) {
 	checkboxShowGrid.dispatchEvent(new Event("change"));
 	checkboxShowContours.checked = elementsByTab[indexTabCurrent].showContours;
 	checkboxShowContours.dispatchEvent(new Event("change"));
+	selectHatchingMode.value = elementsByTab[indexTabCurrent].hatchingMode;
+	selectHatchingMode.dispatchEvent(new Event("change"));
+	checkboxShowHatching.checked = elementsByTab[indexTabCurrent].showHatching;
+	checkboxShowHatching.dispatchEvent(new Event("change"));
 }
 let buttonAddTab = document.getElementById("button-add-tab");
 let buttonRemoveTab = document.getElementById("button-remove-tab");
@@ -448,6 +478,8 @@ function addTab() {
 		"showGeodesics": false,
 		"showGrid": false,
 		"showContours": false,
+		"showHatching": false,
+		"hatchingMode": "both",
 
 		"canvasNeedsUpdate": true,
 	};
@@ -870,7 +902,9 @@ function makePlane(divisions) {
 		opacity: 1.0,
 	});
 	addContourShader(material);
+	addHatchingShader(material);
 	let plane = new THREE.Mesh(geometry, material);
+	updateCurvatureFrames(plane);
 	plane.rotation.set(-Math.PI / 2, 0, 0);
 	return plane;
 }
@@ -1006,6 +1040,11 @@ dropReader.onload = function() {
 		contourSpacing = getContourSpacing([heights, heightsOriginal], planeSideLength);
 		for (let i = 0; i < elementsByTab.length; ++i) {
 			updateContours(elementsByTab[i]);
+		}
+		hatchingScale = getHatchingScale([heights], planeSideLength);
+		hatchingScaleOriginal = hasOriginal ? getHatchingScale([heightsOriginal], planeSideLength) : 0.;
+		for (let i = 0; i < elementsByTab.length; ++i) {
+			updateHatching(elementsByTab[i]);
 		}
 
 		rangeAnimation.min = animationData[0].time;

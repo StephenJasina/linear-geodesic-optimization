@@ -1,6 +1,7 @@
 import * as THREE from "three";
 
 import { locateTime } from "../time.js";
+import { updateCurvatureFrames } from "./hatching.js";
 
 /**
  * @param {THREE.Mesh<THREE.PlaneGeometry>} plane
@@ -15,6 +16,7 @@ function resetPlaneHeights(plane) {
 	}
 	bufferedHeights.needsUpdate = true;
 	plane.geometry.computeVertexNormals();
+	updateCurvatureFrames(plane);
 }
 
 /**
@@ -42,6 +44,7 @@ function setPlaneHeights(plane, zLeft, zRight = null, lambda = null) {
 	}
 	bufferedHeights.needsUpdate = true;
 	plane.geometry.computeVertexNormals();
+	updateCurvatureFrames(plane);
 }
 
 /**
