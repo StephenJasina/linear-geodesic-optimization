@@ -66,6 +66,7 @@ def optimize(
     hessian_smoothness=0.,
     hessian_polish_maxiter=0,
     hessian_initialization=None,
+    hessian_boundary='fixed',
     **kwargs
 ):
     if method not in ('construction', 'lbfgs'):
@@ -139,6 +140,7 @@ def optimize(
             hessian_anisotropy, hessian_orientation, hessian_regularization,
             hessian_tube_radius, hessian_iterations, hessian_slope_correction,
             hessian_smoothness, hessian_polish_maxiter, hessian_initialization,
+            hessian_boundary,
         )
 
     pipeline.write_output(
@@ -192,6 +194,7 @@ def _construct(
     hessian_anisotropy, hessian_orientation, hessian_regularization,
     hessian_tube_radius, hessian_iterations, hessian_slope_correction,
     hessian_smoothness, hessian_polish_maxiter, hessian_initialization,
+    hessian_boundary,
 ):
     """
     Construct the heights from target Hessians, then optionally polish
@@ -213,6 +216,7 @@ def _construct(
         hessian_regularization, hessian_iterations,
         hessian_slope_correction, hessian_smoothness,
         hessian_initialization, initial_radius,
+        boundary=hessian_boundary,
     )
     z_initial = hessian_design.initial_heights(
         mesh, hessian_initialization, initial_radius
@@ -277,6 +281,7 @@ def _construct(
         'hessian_smoothness': float(hessian_smoothness),
         'hessian_initialization': hessian_initialization,
         'hessian_initial_radius': float(initial_radius) if initial_radius is not None else None,
+        'hessian_boundary': hessian_boundary,
     })
 
     construction = {

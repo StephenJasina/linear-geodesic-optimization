@@ -420,6 +420,10 @@ def solve_heights(
     smoothness: float = 0.,
     initialization: typing.Optional[typing.Literal['sphere']] = None,
     initial_radius: typing.Optional[float] = None,
+    extra_targets: typing.Optional[typing.Iterable[typing.Tuple[
+        npt.NDArray[np.int64], float, float, npt.NDArray[np.float64]
+    ]]] = None,
+    boundary: typing.Literal['fixed', 'free'] = 'fixed',
 ) -> npt.NDArray[np.float64]:
     """
     Fit heights whose Hessian matches the edge targets.
@@ -427,8 +431,9 @@ def solve_heights(
     Minimize
         sum_e sum_{v in tube(e)} w_e / |tube(e)| * ||H f(v) - T_{e,v}||_F^2
             + regularization * mean_v ||H f(v)||_F^2
-    over heights f that vanish on the boundary of the mesh, where the
-    inner sums run over interior mesh vertices. The weights w_e sum to
+    over heights f that vanish on the boundary of the mesh (see
+    `boundary` below), where the inner sums run over interior mesh
+    vertices. The weights w_e sum to
     1, so `regularization` is relative to the total target weight.
 
     Initially, T_{e,v} = T_e is the designed target from `edge_target`.
@@ -467,6 +472,24 @@ def solve_heights(
     kappa_e (1 + |grad z0|^2)^2), and the smoothness penalty is
     linearized about z0. With z0 = 0, all of this reduces to the
     description above.
+
+    Each element `(vertices, weight, curvature, target)` of
+    `extra_targets` adds one more group of targets alongside the edge
+    tubes: the Hessian `target` (as (T_xx, T_yy, T_xy)) of determinant
+    `curvature` at the given mesh vertices, with total weight `weight`
+    (relative to the edge weights, which sum to 1) split evenly among
+    the interior ones. These targets are projected and slope corrected
+    in each round exactly like the edge targets.
+
+    With `boundary` 'fixed', the boundary heights stay at z0. Then, for
+    small slopes, the integral of det(H f) is pinned by the boundary
+    values, so any curvature a target adds must be balanced elsewhere in
+    the mesh. With 'free', the boundary heights are unknowns too (the
+    Hessians are still only fitted at interior vertices), so curvature
+    can instead be balanced through the boundary. Affine offsets have
+    no Hessian, so a tiny penalty on the offset from z0 pins them. The
+    two corners that no Hessian stencil reaches are extrapolated from
+    their neighbors.
 
     Return the heights of all mesh vertices, in mesh order.
     """
@@ -507,18 +530,36 @@ def solve_heights(
             edge_target(a, b, curvature, anisotropy, orientation),
             (len(rows), 1)
         ))
+    for vertices, w, curvature, target in extra_targets or []:
+        rows = row_of[np.asarray(vertices, dtype=np.int64)]
+        rows = rows[rows >= 0]
+        if len(rows) == 0:
+            continue
+        w_v = w / len(rows)
+        weight[rows] += w_v
+        pair_rows.append(rows)
+        pair_weights.append(np.full(len(rows), w_v))
+        pair_curvatures.append(np.full(len(rows), curvature))
+        pair_targets.append(np.tile(target, (len(rows), 1)))
 
-    # Restrict to interior unknowns (boundary heights are 0). The xy
+    if boundary == 'fixed':
+        unknown = interior
+    elif boundary == 'free':
+        unknown = np.ones(sides * sides, dtype=bool)
+    else:
+        raise ValueError(f'Unknown boundary "{boundary}"')
+
+    # Restrict to the unknown heights. The xy
     # component appears twice in the Frobenius norm. Writing c_v for
     # the total weight at v and t_v for its weighted target sum, the
     # objective is (up to a constant) sum_v c_v ||H f(v) - t_v / c_v||^2,
     # so the system matrix does not depend on the targets.
-    # The unknowns are the interior offsets from the initial heights z0,
-    # whose (fixed) boundary values enter through the full operators,
-    # which act on the heights of all vertices
+    # The unknowns are the offsets from the initial heights z0, whose
+    # fixed values (on the boundary, unless it is free) enter through the
+    # full operators, which act on the heights of all vertices
     z0 = initial_heights(mesh, initialization, initial_radius)
     full_operators = (dxx, dyy, dxy)
-    operators = [d[:, interior] for d in full_operators]
+    operators = [d[:, unknown] for d in full_operators]
     if slope_correction:
         gradients = gradient_operators(sides, mesh.get_scale())
     factors = (1., 1., 2.)
@@ -526,6 +567,12 @@ def solve_heights(
     normal = sum(
         factor * d.T @ c @ d for factor, d in zip(factors, operators)
     )
+    if boundary == 'free':
+        # Pin the affine offsets (and the unreached corners), which no
+        # Hessian sees
+        normal = normal + 1e-9 * weight.sum() * scipy.sparse.identity(
+            sides * sides
+        )
     hessians_initial = np.stack([d @ z0 for d in full_operators], axis=1)
 
     def factorize(z_full):
@@ -535,7 +582,7 @@ def solve_heights(
         if smoothness:
             smoothness_full = smoothness_operator(mesh, z_full, full=True)
             matrix = matrix \
-                + smoothness * smoothness_full[interior][:, interior]
+                + smoothness * smoothness_full[unknown][:, unknown]
         return (
             scipy.sparse.linalg.factorized(scipy.sparse.csc_array(matrix)),
             smoothness_full,
@@ -563,12 +610,21 @@ def solve_heights(
             for k, (factor, d) in enumerate(zip(factors, operators))
         )
         if smoothness:
-            rhs = rhs - smoothness * (smoothness_full @ z0)[interior]
+            rhs = rhs - smoothness * (smoothness_full @ z0)[unknown]
         return rhs
 
     z = z0.copy()
     for iteration in range(iterations + 1):
-        z[interior] = z0[interior] + solve(right_hand_side(targets))
+        z[unknown] = z0[unknown] + solve(right_hand_side(targets))
+        if boundary == 'free':
+            # The corners (0, sides - 1) and (sides - 1, 0) are in no
+            # stencil, so complete the parallelogram from their neighbors
+            for corner, a, b, opposite in (
+                (sides - 1, sides - 2, 2 * sides - 1, 2 * sides - 2),
+                (sides * (sides - 1), sides * (sides - 2),
+                 sides * (sides - 1) + 1, sides * (sides - 2) + 1),
+            ):
+                z[corner] = z[a] + z[b] - z[opposite]
         if iteration < iterations:
             hessians = np.stack([d @ z for d in full_operators], axis=1)
             if slope_correction:

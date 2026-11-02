@@ -63,6 +63,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'hessian_smoothness': 0.,
         'hessian_polish_maxiter': 0,
         'hessian_initialization': None,
+        'hessian_boundary': 'fixed',
         'index': None # Additional unique ID
     }
 

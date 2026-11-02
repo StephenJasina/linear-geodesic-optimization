@@ -45,6 +45,32 @@ def test_operators_are_exact_on_quadratics():
     np.testing.assert_allclose(dxy @ f, 0.7, atol=1e-10)
 
 
+def test_free_boundary_fits_uniform_hessian():
+    # A uniform target Hessian is met by a quadratic, which only a free
+    # boundary allows
+    mesh = Mesh(SIDES, SIDES, SCALE)
+    vertices = np.array([[0.3, 0.5], [0.7, 0.5]]) * SCALE
+    target = np.array([0.6, -2.2, 0.7])
+    curvature = target[0] * target[1] - target[2]**2
+    extra_targets = [(np.arange(SIDES * SIDES), 1.0, curvature, target)]
+    dxx, dyy, dxy, _ = hessian_design.hessian_operators(SIDES, SCALE)
+
+    def fit(boundary):
+        z = hessian_design.solve_heights(
+            mesh, vertices, [(0, 1)], [None], EPSILON,
+            extra_targets=extra_targets, boundary=boundary,
+        )
+        return z, np.stack([dxx @ z, dyy @ z, dxy @ z], axis=1)
+
+    z, hessians = fit('free')
+    assert np.all(np.isfinite(z))
+    np.testing.assert_allclose(hessians, np.tile(target, (len(hessians), 1)), rtol=2e-3)
+    # The two corners in no stencil complete their parallelograms
+    np.testing.assert_allclose(z[SIDES - 1], z[SIDES - 2] + z[2 * SIDES - 1] - z[2 * SIDES - 2])
+    _, hessians_fixed = fit('fixed')
+    assert np.max(np.abs(hessians_fixed - target)) > 0.1
+
+
 @pytest.mark.parametrize('curvature', [-1.0, -0.3, 0.3, 1.0])
 @pytest.mark.parametrize('anisotropy', [1.0, 2.0])
 def test_edge_target_determinant(curvature, anisotropy):
