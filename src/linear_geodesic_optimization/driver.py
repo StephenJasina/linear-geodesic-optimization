@@ -49,7 +49,7 @@ def base_defaults() -> dict[str, typing.Any]:
         'mesh_scale': 1.,
         'coordinates_scale': 0.8,
         'network_trim_radius': None,
-        'method': 'construction',  # Or 'lbfgs'
+        'method': 'construction',  # Or 'ridges' or 'lbfgs'
         'backend': 'torch',  # Or 'legacy'
         'maxiter': None,  # Used only when method is 'lbfgs'
         'initialization_file_path': None,  # Ignored when method is 'construction'
@@ -64,6 +64,20 @@ def base_defaults() -> dict[str, typing.Any]:
         'hessian_polish_maxiter': 0,
         'hessian_initialization': None,
         'hessian_boundary': 'fixed',
+        # Parameters used only when method is 'ridges'
+        'ridge_width': 0.3,  # Half-width, as a fraction of mesh_scale
+        'ridge_height_scale': 0.05,  # Maximum node height, as a fraction of the half-width
+        'ridge_height_base': 0.25,  # Height fraction for nodes with no throughput
+        'ridge_node_height': 'max',  # Or 'sum' or 'mean' of incident throughputs
+        'ridge_height_transform': 'linear',  # Or 'sqrt' or 'log'
+        'ridge_blend_p': 8.,  # Sharpness of the smooth max combining ridges
+        'ridge_smoothing': 0.035,  # Gaussian smoothing width, as a fraction of mesh_scale
+        'ridge_polish_maxiter': 0,
+        # 'batch' normalizes node heights by the largest node throughput
+        # across the batch (filled into ridge_height_reference by
+        # optimization.py), 'run' by each run's own
+        'ridge_height_normalization': 'batch',
+        'ridge_height_reference': None,
         'index': None # Additional unique ID
     }
 
@@ -78,6 +92,7 @@ def collation_defaults() -> dict[str, typing.Any]:
         'height_scale': 0.15,
         'bubble_size': 0.03,
         'exact_geodesics': False,
+        'vertical_centering': 'mean',  # Or 'min' or None (no shift)
         'use_convex_hull': False,
     }
 

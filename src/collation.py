@@ -95,6 +95,8 @@ def compute_geodesics_from_graph(mesh: RectangleMesh, network_vertices, network_
             if index_node in bad_indices:
                 is_bad = True
         if is_bad:
+            # Keep `geodesics` aligned with `geodesic_routes`
+            geodesics.append([])
             continue
 
         if exact_geodesics:
@@ -369,6 +371,10 @@ def load_batch(
         'animation_vertices': animation_vertices,
         'animation_edges': animation_edges,
         'geodesic_labels': geodesic_labels,
+        'geodesic_routes': [
+            [node_labels_to_indices[node] for node in geodesic_label]
+            for geodesic_label in geodesic_labels
+        ],
         'edge_colors': edge_colors,
         'curvatures': curvatures,
         'traffic_matrices': traffic_matrices,
@@ -474,33 +480,55 @@ def compute_frame_geodesics(batch_data, z, hull, exact_geodesics, traffic_paths_
 
     return geodesics, paths
 
-def get_original_frames(batch_data, exact_geodesics):
+def center_heights(z, mode, region=None):
+    """
+    Shift the heights `z` vertically according to `mode`: 'mean' or
+    'min' subtracts the mean or minimum of `z[region]` (of all of `z`
+    when `region` is None), and None leaves `z` unchanged.
+    """
+    if mode is None:
+        return z
+    values = z if region is None else z[region]
+    if mode == 'mean':
+        return z - np.mean(values)
+    if mode == 'min':
+        return z - np.min(values)
+    raise ValueError(f"vertical_centering must be 'mean', 'min', or None, not {mode!r}")
+
+def get_original_frames(batch_data, exact_geodesics, vertical_centering='mean'):
     """
     Return, for each snapshot, the unprocessed surface: its heights
-    (`output['final']` centered by its own mean and divided by the mesh
-    scale), and the geodesics and traffic paths on the untrimmed mesh.
-    These are cached in `batch_data`, since they don't depend on any
-    postprocessing option.
+    (`output['final']` centered over the whole mesh according to
+    `vertical_centering` (see `center_heights`), and divided by the
+    mesh scale), and the geodesics and traffic paths on the untrimmed
+    mesh. The geodesics don't depend on vertical shifts, so they are
+    cached in `batch_data` (by `exact_geodesics`) and computed once.
     """
     if exact_geodesics not in batch_data['original_frames']:
-        parameters = batch_data['parameters']
-        width = parameters['width']
-        height = parameters['height']
-        mesh_scale = parameters['mesh_scale']
-        frames = []
+        geodesic_frames = []
         for output, traffic_paths_needed in zip(batch_data['outputs'], batch_data['traffic_paths_needed']):
-            z = np.array(output['final'])
-            z = z - np.mean(z)
             geodesics, paths = compute_frame_geodesics(
-                batch_data, z, None, exact_geodesics, traffic_paths_needed
+                batch_data, np.array(output['final']), None, exact_geodesics, traffic_paths_needed
             )
-            frames.append({
-                'height': (z / mesh_scale).reshape((width, height)).tolist(),
-                'geodesics': geodesics,
-                'trafficPaths': paths,
-            })
-        batch_data['original_frames'][exact_geodesics] = frames
-    return batch_data['original_frames'][exact_geodesics]
+            geodesic_frames.append((geodesics, paths))
+        batch_data['original_frames'][exact_geodesics] = geodesic_frames
+
+    parameters = batch_data['parameters']
+    width = parameters['width']
+    height = parameters['height']
+    mesh_scale = parameters['mesh_scale']
+    return [
+        {
+            'height': (
+                center_heights(np.array(output['final']), vertical_centering) / mesh_scale
+            ).reshape((width, height)).tolist(),
+            'geodesics': geodesics,
+            'trafficPaths': paths,
+        }
+        for output, (geodesics, paths) in zip(
+            batch_data['outputs'], batch_data['original_frames'][exact_geodesics]
+        )
+    ]
 
 def render_animation(
     batch_data,
@@ -510,7 +538,8 @@ def render_animation(
     bubble_size=np.inf,
     postprocess=True,
     exact_geodesics=False,
-    postprocess_subtract_initialization=True
+    postprocess_subtract_initialization=True,
+    vertical_centering='mean',
 ):
     """
     Turn a batch loaded by `load_batch` into a single animation, using
@@ -520,16 +549,23 @@ def render_animation(
     geodesic x and y, and the heights z) are divided by the mesh scale,
     so the viewer shows the surface with its true proportions.
 
+    `vertical_centering` ('mean', 'min', or None) sets how each
+    snapshot is shifted vertically, whether or not `postprocess` is
+    true: by its mean or minimum height, or not at all (None), in which
+    case vertical offsets between snapshots are kept. With
+    `postprocess`, the mean or minimum is taken over the bubble around
+    the network; otherwise, over the whole mesh. See `center_heights`.
+
     If `postprocess` is true, the z-coordinates (heights) are put
-    through a pipeline that subtracts a reference height, centers and
-    normalizes them across snapshots (to a range of `height_scale`
-    times the mesh width), applies a smoothing decay near
-    the trim boundary, and trims the mesh to a bubble around the
-    network before computing geodesics. If `postprocess` is false,
-    none of that happens: each snapshot's z-coordinates are just
-    `output['final']` (converted to a Numpy array and centered by
-    their own mean, so the animation doesn't jump between frames), and
-    geodesics are computed on the untrimmed mesh.
+    through a pipeline that subtracts a reference height, centers them
+    (per `vertical_centering`), normalizes them across snapshots (to a
+    range of `height_scale` times the mesh width, with one scale and
+    offset shared by all snapshots), applies a smoothing decay near the
+    trim boundary, and trims the mesh to a bubble around the network
+    before computing geodesics. If `postprocess` is false, none of that
+    happens: each snapshot's z-coordinates are just `output['final']`,
+    centered per `vertical_centering`, and geodesics are computed on
+    the untrimmed mesh.
 
     If `postprocess` is true, each frame also has an `'original'` field
     holding the unprocessed surface's `'height'`, `'geodesics'`, and
@@ -578,7 +614,7 @@ def render_animation(
                 z = np.array(output['final']) - z_0
             else:
                 z = np.array(output['final'])
-            zs.append(z - np.mean(z[hull]))
+            zs.append(center_heights(z, vertical_centering, hull))
 
     if postprocess:
         # Determine values for vertical scaling
@@ -588,7 +624,7 @@ def render_animation(
             z_max = max(z_max, np.max(z[hull]))
             z_min = min(z_min, np.min(z[hull]))
 
-    originals = get_original_frames(batch_data, exact_geodesics)
+    originals = get_original_frames(batch_data, exact_geodesics, vertical_centering)
 
     animation_data = []
     zs_iter = zs if postprocess else itertools.repeat(None)
@@ -638,6 +674,8 @@ def render_animation(
 
     return {
         'nodes': batch_data['animation_vertices'],
+        # Node indices of the route of each geodesic (fixed per batch)
+        'geodesicRoutes': batch_data['geodesic_routes'],
         'animation': animation_data,
         'map': batch_data['map_data'],
     }

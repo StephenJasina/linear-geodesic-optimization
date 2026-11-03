@@ -221,7 +221,16 @@ def compute_ricci_curvatures(
         if links is not None:
             graph.clear_edges()
             for link in links:
-                graph.add_edge(link['source_id'], link['target_id'])
+                source, target = link['source_id'], link['target_id']
+                if 'throughput' not in link:
+                    graph.add_edge(source, target)
+                elif graph.has_edge(source, target) \
+                        and 'throughput' in graph.edges[source, target]:
+                    # Aggregate the throughputs of links that share an
+                    # edge (e.g., after clustering)
+                    graph.edges[source, target]['throughput'] += link['throughput']
+                else:
+                    graph.add_edge(source, target, throughput=link['throughput'])
     else:
         # TODO: Do we want to allow the pairs parameter here?
         ricci_curvatures = curvature.compute_ricci_curvature(
