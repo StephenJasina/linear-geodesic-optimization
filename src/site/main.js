@@ -15,6 +15,9 @@ import { createOLMap, destroyOLMap, updateOLMap, getCanvasOLMap, makeTextureOLMa
 import { default as drawEdges } from "./modules/layers/edges.js";
 import { default as drawGrid } from "./modules/layers/grid.js";
 import { default as drawGeodesics } from "./modules/layers/geodesics.js";
+import {
+	getRouteHops, canonicalizeGeodesic, canonicalizeRoute, blendPolylines
+} from "./modules/path_interpolation.js";
 import { resetPlaneHeights, setPlaneHeightsWithInterpolation } from "./modules/layers/heights.js";
 import { default as drawHeightChanges } from "./modules/layers/height_changes.js";
 import { clearHoverArcs, drawHoverArcs } from "./modules/layers/hover_arcs.js";
@@ -72,6 +75,15 @@ let hasValidTraffic = false;
 // The unprocessed surface, if the animation has one (null otherwise)
 let heightsOriginal = null;
 let geodesicsOriginal = null;
+// Hop coordinates of the route of each geodesic, the routes and the
+// geodesics resampled onto their canonical grids (filled lazily per
+// frame), and the index of the route between each pair of nodes. All are
+// null if the animation doesn't carry routes.
+let routeHops = null;
+let routesCanonical = null;
+let geodesicsCanonical = null;
+let geodesicsOriginalCanonical = null;
+let trafficRouteIndex = null;
 let trafficPathsOriginal = null;
 
 // Globals tracking the animation state
@@ -171,6 +183,51 @@ function getTabGeodesics(options) {
 }
 function getTabTrafficPaths(options) {
 	return useOriginal(options) ? trafficPathsOriginal : trafficPaths;
+}
+/**
+ * The geodesics of frame `frame`, resampled onto their routes' canonical
+ * grids (`null` for empty geodesics or degenerate routes).
+ */
+function getTabGeodesicsCanonical(options, frame) {
+	let cache = useOriginal(options) ? geodesicsOriginalCanonical : geodesicsCanonical;
+	if (cache[frame] == null) {
+		let geodesicsFrame = getTabGeodesics(options)[frame];
+		cache[frame] = routeHops.map((hops, k) =>
+			hops === null || k >= geodesicsFrame.length ? null : canonicalizeGeodesic(geodesicsFrame[k], hops)
+		);
+	}
+	return cache[frame];
+}
+/**
+ * Geodesic `k` at the (fractional) frame `networkIndex`, interpolated
+ * between the neighboring keyframes and pulled toward its route by the
+ * tab's magnetism. Return an empty path if there is nothing to draw.
+ */
+function getInterpolatedGeodesic(options, k, networkIndex) {
+	let frameLast = times.length - 1;
+	let frame = Math.min(Math.max(Math.floor(networkIndex), 0), frameLast);
+	let frameNext = Math.min(frame + 1, frameLast);
+	let lambda = Math.min(Math.max(networkIndex - frame, 0.), 1.);
+
+	if (routeHops[k] === null) {
+		// No canonical grid, so fall back to the nearest keyframe
+		let geodesicsFrame = getTabGeodesics(options)[Math.round(networkIndex)];
+		return k < geodesicsFrame.length ? geodesicsFrame[k] : [];
+	}
+
+	let a = getTabGeodesicsCanonical(options, frame)[k];
+	let b = getTabGeodesicsCanonical(options, frameNext)[k];
+	let path = null;
+	if (a !== null && b !== null) {
+		path = blendPolylines(a, b, lambda);
+	} else {
+		// One side is missing, so snap to the nearer keyframe
+		path = lambda < 0.5 ? a : b;
+	}
+	if (path === null) {
+		return [];
+	}
+	return blendPolylines(path, routesCanonical[k], options.magnetize);
 }
 
 let checkboxShowHeights = document.getElementById("show-heights");
@@ -285,6 +342,12 @@ checkboxShowWeightArcs.onchange = function() {
 let checkboxShowGeodesics = document.getElementById("show-geodesics");
 checkboxShowGeodesics.onchange = function() {
 	elementsByTab[indexTabCurrent].showGeodesics = checkboxShowGeodesics.checked;
+	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
+}
+
+let rangeMagnetize = document.getElementById("range-magnetize");
+rangeMagnetize.oninput = function() {
+	elementsByTab[indexTabCurrent].magnetize = parseFloat(rangeMagnetize.value);
 	elementsByTab[indexTabCurrent].canvasNeedsUpdate = true;
 }
 
@@ -414,6 +477,8 @@ function swapToTab(event) {
 	checkboxShowWeightArcs.dispatchEvent(new Event("change"));
 	checkboxShowGeodesics.checked = elementsByTab[indexTabCurrent].showGeodesics;
 	checkboxShowGeodesics.dispatchEvent(new Event("change"));
+	rangeMagnetize.value = elementsByTab[indexTabCurrent].magnetize;
+	rangeMagnetize.dispatchEvent(new Event("input"));
 	checkboxShowGrid.checked = elementsByTab[indexTabCurrent].showGrid;
 	checkboxShowGrid.dispatchEvent(new Event("change"));
 	checkboxShowContours.checked = elementsByTab[indexTabCurrent].showContours;
@@ -476,6 +541,7 @@ function addTab() {
 		"showHoveringGraph": false,
 		"showWeightArcs": false,
 		"showGeodesics": false,
+		"magnetize": 0.,
 		"showGrid": false,
 		"showContours": false,
 		"showHatching": false,
@@ -612,8 +678,14 @@ function drawLayers(time, options) {
 
 		// Draw the geodesics
 		if (options.showGeodesics) {
+			let geodesicsToDraw = getTabGeodesics(options)[currentNetworkIndexInt];
+			if (routeHops !== null) {
+				geodesicsToDraw = routeHops.map((_, k) =>
+					getInterpolatedGeodesic(options, k, currentNetworkIndex)
+				);
+			}
 			drawGeodesics(
-				context, getTabGeodesics(options)[currentNetworkIndexInt],
+				context, geodesicsToDraw,
 				3, edgeColors[currentNetworkIndexInt]
 			);
 		}
@@ -623,7 +695,11 @@ function drawLayers(time, options) {
 			let trafficPathsToDraw = new Array();
 			let trafficPathsToDrawColors = new Array();
 			for (let [i, j] of tableTrafficHover) {
-				if (trafficPathsCurrent != null && trafficPathsCurrent[i] != null && trafficPathsCurrent[i][j] != null) {
+				let k = trafficRouteIndex === null ? undefined : trafficRouteIndex.get(`${i},${j}`);
+				if (k !== undefined) {
+					trafficPathsToDraw.push(getInterpolatedGeodesic(options, k, currentNetworkIndex));
+					trafficPathsToDrawColors.push(new Array(0, 0, 0));
+				} else if (trafficPathsCurrent != null && trafficPathsCurrent[i] != null && trafficPathsCurrent[i][j] != null) {
 					trafficPathsToDraw.push(trafficPathsCurrent[i][j]);
 					trafficPathsToDrawColors.push(new Array(0, 0, 0));
 				}
@@ -953,6 +1029,29 @@ dropReader.onload = function() {
 			}
 		}
 
+		// Routes of the geodesics, for interpolating them across keyframes
+		// and toward the routes
+		if (Array.isArray(data.geodesicRoutes) && animationData.length != 0) {
+			routeHops = data.geodesicRoutes.map((route) => getRouteHops(route, networkVertices));
+			routesCanonical = routeHops.map((hops) => hops === null ? null : canonicalizeRoute(hops));
+			geodesicsCanonical = new Array(animationData.length).fill(null);
+			geodesicsOriginalCanonical = hasOriginal ? new Array(animationData.length).fill(null) : null;
+			// Later routes overwrite earlier ones, as in collation's traffic paths
+			trafficRouteIndex = new Map();
+			data.geodesicRoutes.forEach((route, k) => {
+				if (route.length >= 2) {
+					trafficRouteIndex.set(`${route[0]},${route[route.length - 1]}`, k);
+				}
+			});
+		} else {
+			routeHops = null;
+			routesCanonical = null;
+			geodesicsCanonical = null;
+			geodesicsOriginalCanonical = null;
+			trafficRouteIndex = null;
+		}
+		rangeMagnetize.disabled = routeHops === null;
+
 		animationDuration = (animationData.length - 1) * 2.;
 		curvaturesEWMA = new Array();
 		if (animationData.length != 0) {
@@ -1049,7 +1148,7 @@ dropReader.onload = function() {
 
 		rangeAnimation.min = animationData[0].time;
 		rangeAnimation.max = animationData[animationData.length - 1].time;
-		rangeAnimation.step = (rangeAnimation.max - rangeAnimation.min) / (Math.max(animationData.length * 10, 100));
+		rangeAnimation.step = (rangeAnimation.max - rangeAnimation.min) / (Math.max(animationData.length * 24, 100));
 		rangeAnimation.value = rangeAnimation.min;
 
 		buttonPlay.innerText = "Play";
