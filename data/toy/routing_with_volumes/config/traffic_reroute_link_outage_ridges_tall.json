@@ -33,27 +33,24 @@
 			"distribution"
 		],
 		"ricci_curvature_distribution_reweight_scale": [
-			1.0,
-			2.0
+			1.0
 		],
 		"lambda_curvature": [
 			1.0
 		],
 		"lambda_smooth": [
-			0.005,
-			0.005,
-			0.005,
-			0.00125,
-			0.0003125
+			0.0003125,
+			3.125e-05,
+			3.125e-06,
+			3.125e-07
 		],
 		"sides": [
 			80
 		],
 		"mesh_scale": [
-			1.0,
-			2.0,
 			4.0,
-			2.0,
+			4.0,
+			4.0,
 			4.0
 		],
 		"coordinates_scale": [
@@ -69,13 +66,11 @@
 			"max"
 		],
 		"ridge_polish_maxiter": [
-			0,
-			200
+			200,
+			1000
 		],
 		"ridge_height_scale": [
-			0.67,
-			0.8,
-			1.0
+			0.8
 		],
 		"ridge_height_normalization": [
 			"batch"
@@ -119,7 +114,7 @@
 		"directory_output": [
 			"toy",
 			"routing_with_volumes",
-			"traffic_reroute_link_outage_ridges_tall_batch"
+			"traffic_reroute_link_outage_ridges_tall_smooth"
 		],
 		"output_format": [
 			[
