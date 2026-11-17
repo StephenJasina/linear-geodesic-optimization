@@ -1,5 +1,6 @@
 import json
 import pathlib
+import types
 import typing
 
 import numpy as np
@@ -38,6 +39,11 @@ class Computer:
         edge_weights: typing.Optional[typing.List[np.float64]]=None,
         directory: typing.Optional[str] = None,
         smooth_loss_type: typing.Literal['mvs', 'tensor'] = 'mvs',
+        lambda_geodesic: np.float64 = np.float64(0.),
+        geodesic_bending=None,
+        curvature_falloff: float = 0.,
+        curvature_falloff_weight: bool = False,
+        curvature_falloff_ends: bool = True,
     ):
         """
         Parameters:
@@ -58,6 +64,14 @@ class Computer:
         * `smooth_loss_type`: Either `'mvs'` (the MVS-cross energy of
           the principal curvatures) or `'tensor'` (the Dirichlet energy
           of the shape operator; requires an untrimmed rectangle mesh)
+        * `lambda_geodesic`: The strength of the geodesic loss, the
+          bending energy of the routes
+        * `geodesic_bending`: A `geodesic_curvature.CurveBending`
+          giving the geodesic loss (needed when `lambda_geodesic` is
+          nonzero)
+        * `curvature_falloff`, `curvature_falloff_weight`: a soft edge
+          for the curvature loss's tube (see
+          `curvature_loss.tapered_tube`)
         """
         self.mesh = mesh
 
@@ -67,6 +81,12 @@ class Computer:
 
         self.directory = directory
 
+        if lambda_geodesic and geodesic_bending is None:
+            raise ValueError('lambda_geodesic needs geodesic_bending')
+        self.lambda_geodesic = lambda_geodesic
+        self.geodesic_bending = geodesic_bending
+        self.geodesic_loss = types.SimpleNamespace(loss=0., dif_loss=0.)
+
         self.laplacian = Laplacian(mesh)
         self.curvature = Curvature(mesh, self.laplacian)
         self.curvature_loss = CurvatureLoss(
@@ -74,6 +94,9 @@ class Computer:
             network_edges, network_curvatures,
             epsilon, self.curvature,
             # edge_weights
+            falloff=curvature_falloff,
+            falloff_weight=curvature_falloff_weight,
+            falloff_ends=curvature_falloff_ends,
         )
         if smooth_loss_type == 'mvs':
             self.smooth_loss = SmoothLoss(
@@ -94,16 +117,29 @@ class Computer:
             self.mesh.set_parameters(z)
         self.curvature_loss.forward()
         self.smooth_loss.forward()
+        self._geodesic()
         return self.lambda_curvature * self.curvature_loss.loss \
-            + self.lambda_smooth * self.smooth_loss.loss
+            + self.lambda_smooth * self.smooth_loss.loss \
+            + self.lambda_geodesic * self.geodesic_loss.loss
 
     def reverse(self, z: typing.Optional[npt.NDArray[np.float64]] = None):
         if z is not None:
             self.mesh.set_parameters(z)
         self.smooth_loss.reverse()
         self.curvature_loss.reverse()
+        self._geodesic()
         return self.lambda_curvature * self.curvature_loss.dif_loss \
-            + self.lambda_smooth * self.smooth_loss.dif_loss
+            + self.lambda_smooth * self.smooth_loss.dif_loss \
+            + self.lambda_geodesic * self.geodesic_loss.dif_loss
+
+    def _geodesic(self):
+        """Evaluate the geodesic loss and its gradient, if it is used."""
+        if self.lambda_geodesic:
+            loss, gradient = self.geodesic_bending.evaluate(
+                np.asarray(self.mesh.get_parameters(), dtype=np.float64)
+            )
+            self.geodesic_loss.loss = loss
+            self.geodesic_loss.dif_loss = gradient
 
     @property
     def kappa_G(self) -> npt.NDArray[np.float64]:
@@ -127,6 +163,7 @@ class Computer:
             f'iteration {self.iterations}:\n'
             + f'\tL_curvature: {self.curvature_loss.loss:.6f}\n'
             + f'\tL_smooth: {self.smooth_loss.loss:.6f}\n'
+            + f'\tL_geodesic: {self.geodesic_loss.loss:.6f}\n'
             + f'\tLoss: {loss:.6f}\n'
         )
 
@@ -136,6 +173,7 @@ class Computer:
                     'mesh_parameters': Computer.to_float_list(self.mesh.get_parameters()),
                     'L_curvature': float(self.curvature_loss.loss),
                     'L_smooth': float(self.smooth_loss.loss),
+                    'L_geodesic': float(self.geodesic_loss.loss),
                 }, file_output)
 
         self.iterations += 1

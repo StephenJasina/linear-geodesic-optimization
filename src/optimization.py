@@ -30,7 +30,7 @@ import warnings
 import numpy as np
 
 import linear_geodesic_optimization.driver as driver
-from linear_geodesic_optimization import pipeline
+from linear_geodesic_optimization import geodesic_curvature, pipeline, route_stretch
 from linear_geodesic_optimization.construction import hessian_design, ridges
 from linear_geodesic_optimization.mesh.rectangle import Mesh as RectangleMesh
 from linear_geodesic_optimization.mesh.rectangle import sphere_cap_heights
@@ -53,6 +53,15 @@ def optimize(
     lambda_curvature=1.,
     lambda_smooth=0.,
     smooth_loss_type='mvs',
+    lambda_geodesic=0.,
+    geodesic_curve='route',
+    lambda_stretch=0.,
+    stretch_refresh=100,
+    stretch_smoothing=0.035,
+    curvature_tube_radius=None,
+    curvature_tube_falloff=0.,
+    curvature_tube_falloff_weight=False,
+    curvature_tube_falloff_ends=True,
     initial_radius=None,
     sides,
     mesh_scale=1.,
@@ -83,6 +92,7 @@ def optimize(
     ridge_polish_maxiter=0,
     ridge_height_normalization='batch',
     ridge_height_reference=None,
+    ridge_crest_height='nodes',
     **kwargs
 ):
     if method not in ('construction', 'ridges', 'lbfgs'):
@@ -91,6 +101,8 @@ def optimize(
             and not np.isposinf(network_trim_radius):
         raise ValueError(f'The {method} method does not support network_trim_radius')
     computer_type = pipeline.get_computer_type(backend)
+    if lambda_stretch and method == 'lbfgs':
+        raise ValueError('lambda_stretch is supported only by the polish of the construction and ridges methods')
 
     time_start = time.perf_counter()
 
@@ -124,6 +136,15 @@ def optimize(
         lambda_curvature=lambda_curvature,
         lambda_smooth=lambda_smooth,
         smooth_loss_type=smooth_loss_type,
+        lambda_geodesic=lambda_geodesic,
+        geodesic_curve=geodesic_curve,
+        lambda_stretch=lambda_stretch,
+        stretch_refresh=stretch_refresh,
+        stretch_smoothing=stretch_smoothing,
+        curvature_tube_radius=curvature_tube_radius,
+        curvature_tube_falloff=curvature_tube_falloff,
+        curvature_tube_falloff_weight=curvature_tube_falloff_weight,
+        curvature_tube_falloff_ends=curvature_tube_falloff_ends,
         initial_radius=initial_radius,
         sides=sides,
         mesh_scale=mesh_scale,
@@ -133,14 +154,88 @@ def optimize(
         network_trim_radius=network_trim_radius,
     )
 
-    def make_computer():
-        return computer_type(
+    # The geodesic loss: the bending energy of the routes (as natural
+    # cubic splines through their waypoints) or of the links they use,
+    # weighted by traffic, so that the routes are geodesics
+    geodesic_bending = None
+    if lambda_geodesic:
+        if routes is None or traffic is None:
+            raise ValueError('lambda_geodesic needs a JSON network with routes and traffic')
+        if geodesic_curve not in ('route', 'link'):
+            raise ValueError(f'Unknown geodesic_curve "{geodesic_curve}"')
+        curves, weights = geodesic_curvature.route_curves(
+            network, routes, traffic, geodesic_curve
+        )
+        geodesic_bending = geodesic_curvature.CurveBending(
+            mesh, [network_vertices[list(curve)] for curve in curves],
+            weights, 0.25 * mesh_scale / (sides - 1),
+            'spline' if geodesic_curve == 'route' else 'polyline',
+        )
+
+    # The route stretch loss: how much longer each route is than the
+    # geodesic between its endpoints (see route_stretch.py)
+    stretch = None
+    if lambda_stretch:
+        if routes is None or traffic is None:
+            raise ValueError('lambda_stretch needs a JSON network with routes and traffic')
+        curves, weights = geodesic_curvature.route_curves(network, routes, traffic, 'route')
+        stretch = route_stretch.RouteStretch(
+            mesh, [network_vertices[list(curve)] for curve in curves],
+            weights, 0.25 * mesh_scale / (sides - 1),
+            stretch_smoothing * mesh_scale,
+        )
+        stretch.labels = [[network[0]['labels'][index] for index in curve] for curve in curves]
+        stretch.refresh_every = stretch_refresh
+
+    def make_computer(stage=None):
+        computer = make_base_computer(stage)
+        if stretch is None:
+            return computer
+        return route_stretch.WithRouteStretch(computer, stretch, lambda_stretch)
+
+    # The radius of the tube around each edge over which the curvature
+    # loss compares kappa_G with the edge's ORC: by default just over one
+    # mesh diagonal, or `curvature_tube_radius` times mesh_scale, which
+    # doesn't shrink as the mesh is refined. A list of radii polishes in
+    # stages (ridges/construction polish only), `*_polish_maxiter`
+    # iterations each, each stage starting from the previous one's
+    # result; the last radius is the one reported.
+    tube_fractions = curvature_tube_radius if isinstance(curvature_tube_radius, (list, tuple)) \
+        else [curvature_tube_radius]
+    if not tube_fractions:
+        raise ValueError('curvature_tube_radius must not be an empty list')
+    if len(tube_fractions) > 1 and (method == 'lbfgs' or lambda_stretch):
+        raise ValueError('Staged curvature_tube_radius needs the construction or ridges polish, without lambda_stretch')
+    tube_stages = [
+        pipeline.curvature_tube_radius(sides, mesh_scale, fraction)
+        for fraction in tube_fractions
+    ]
+    loss_tube_radius = tube_stages[-1]
+    # The soft edge (see `curvature_loss.tapered_tube`), one value per
+    # stage, or one value for every stage
+    falloff_stages = curvature_tube_falloff if isinstance(curvature_tube_falloff, (list, tuple)) \
+        else [curvature_tube_falloff] * len(tube_stages)
+    if len(falloff_stages) != len(tube_stages):
+        raise ValueError('curvature_tube_falloff needs one value per curvature_tube_radius stage')
+
+    def make_base_computer(stage=None):
+        stage = len(tube_stages) - 1 if stage is None else stage
+        tube_radius = tube_stages[stage]
+        computer = computer_type(
             mesh, network_vertices, network_edges, network_curvatures,
-            pipeline.fat_edge_width(sides, mesh_scale),
+            tube_radius,
             lambda_curvature, lambda_smooth,
             directory=directory_output,
             smooth_loss_type=smooth_loss_type,
+            lambda_geodesic=lambda_geodesic,
+            geodesic_bending=geodesic_bending,
+            curvature_falloff=falloff_stages[stage] * mesh_scale,
+            curvature_falloff_weight=curvature_tube_falloff_weight,
+            curvature_falloff_ends=curvature_tube_falloff_ends,
         )
+        computer.loss_tube_radius = tube_radius
+        return computer
+    make_computer.tube_stages = tube_stages
 
     if method == 'lbfgs':
         z_0, z, extra = _optimize_lbfgs(
@@ -157,6 +252,7 @@ def optimize(
             ridge_node_height, ridge_height_transform, ridge_blend_p,
             ridge_smoothing, ridge_polish_maxiter,
             ridge_height_normalization, ridge_height_reference,
+            ridge_crest_height,
         )
     else:
         z_0, z, extra = _construct(
@@ -303,14 +399,22 @@ def _report_and_polish(
     """
     computer = make_computer()
 
+    stretch = getattr(computer, 'stretch', None)
+
     def losses(z):
         loss = computer.forward(z)
-        return {
+        result = {
             'loss': float(loss),
             'L_curvature': float(computer.curvature_loss.loss),
             'L_smooth': float(computer.smooth_loss.loss),
+            'L_geodesic': float(computer.geodesic_loss.loss),
         }
+        if stretch is not None:
+            result['L_stretch'] = float(computer.stretch_loss.loss)
+        return result
 
+    if stretch is not None:
+        stretch.refresh(z_constructed)
     losses_constructed = losses(z_constructed)
 
     # Optional polish with the usual optimizer (None polishes until
@@ -323,24 +427,66 @@ def _report_and_polish(
             options = {'maxiter': 10**7, 'maxfun': 10**7}
         else:
             options = {'maxiter': polish_maxiter}
-        result = pipeline.minimize_lbfgs(computer, z, options, z)
+        stages = []
+        if stretch is None:
+            # Earlier stages of a staged tube radius, each from the
+            # previous stage's result
+            iterations = evaluations = 0
+            for stage, tube_radius in enumerate(getattr(make_computer, 'tube_stages', [None])[:-1]):
+                result = pipeline.minimize_lbfgs(make_computer(stage), z, options, z)
+                z = result.x
+                iterations += result.nit
+                evaluations += result.nfev
+                stages.append({
+                    'tube_radius': float(tube_radius),
+                    'iterations': int(result.nit),
+                    'message': str(result.message),
+                })
+            result = pipeline.minimize_lbfgs(computer, z, options, z)
+            iterations += result.nit
+            evaluations += result.nfev
+        else:
+            # Alternate between refreshing the competing geodesics and
+            # running `stretch.refresh_every` L-BFGS iterations
+            iterations = evaluations = 0
+            while iterations < options['maxiter']:
+                stretch.refresh(z)
+                round_options = dict(options, maxiter=min(
+                    stretch.refresh_every, options['maxiter'] - iterations
+                ))
+                result = pipeline.minimize_lbfgs(computer, z, round_options, z)
+                z = result.x
+                iterations += result.nit
+                evaluations += result.nfev
+                if result.nit == 0:
+                    break
+            stretch.refresh(z)
         z = result.x
         polish = {
             'maxiter': None if polish_maxiter is None else int(polish_maxiter),
-            'iterations': int(result.nit),
-            'evaluations': int(result.nfev),
+            'iterations': int(iterations),
+            'evaluations': int(evaluations),
             'message': str(result.message),
             'losses': losses(z),
             'distance_from_constructed': float(np.linalg.norm(z - z_constructed)),
             'time': time.perf_counter() - time_constructed,
         }
+        if stages:
+            polish['stages'] = stages
+        if stretch is not None:
+            polish['route_stretch'] = [
+                {'route': labels, 'weight': float(weight), 'stretch': float(value)}
+                for labels, weight, value in zip(
+                    stretch.labels, stretch.weights, stretch.stretches(z)
+                )
+            ]
 
     computer.forward(z)
     residuals = hessian_design.edge_residuals(
         computer.kappa_G, mesh.get_coordinates()[:, :2],
         hessian_design.hessian_operators(sides, mesh_scale)[3],
         network_vertices, network_edges, network_curvatures,
-        pipeline.fat_edge_width(sides, mesh_scale)
+        computer.loss_tube_radius,
     )
     z = mesh.set_parameters(z)
 
@@ -354,6 +500,7 @@ def _build_ridges(
     ridge_node_height, ridge_height_transform, ridge_blend_p,
     ridge_smoothing, ridge_polish_maxiter,
     ridge_height_normalization, ridge_height_reference,
+    ridge_crest_height='nodes',
 ):
     """
     Build the heights from raised ridges along the network's edges,
@@ -397,6 +544,7 @@ def _build_ridges(
         transform=ridge_height_transform, blend_p=ridge_blend_p,
         smoothing=ridge_smoothing * mesh_scale,
         reference=ridge_height_reference,
+        crest=ridge_crest_height,
     )
     z_initial = np.zeros_like(z_constructed)
 
@@ -428,6 +576,7 @@ def _build_ridges(
         'ridge_polish_maxiter': None if ridge_polish_maxiter is None else int(ridge_polish_maxiter),
         'ridge_height_normalization': ridge_height_normalization,
         'ridge_height_reference': None if ridge_height_reference is None else float(ridge_height_reference),
+        'ridge_crest_height': ridge_crest_height,
     })
 
     construction = {

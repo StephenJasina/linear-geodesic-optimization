@@ -10,6 +10,62 @@ from linear_geodesic_optimization.optimization.curvature \
     import Computer as Curvature
 
 
+def tapered_tube(
+    points: npt.NDArray[np.float64],
+    network_vertices: npt.NDArray[np.float64],
+    network_edges: typing.List[typing.Tuple[int, int]],
+    network_curvatures: typing.List[typing.Optional[float]],
+    epsilon: float,
+    falloff: float,
+    falloff_weight: bool = False,
+    falloff_ends: bool = True,
+) -> typing.List[typing.Tuple[npt.NDArray[np.int64], npt.NDArray[np.float64], npt.NDArray[np.float64]]]:
+    """
+    Return, per network edge, `(indices, targets, weights)` for a tube
+    with a soft edge.
+
+    Vertices within `epsilon` of the edge (as a segment) have the edge's
+    curvature as their target. In the ring out to `epsilon + falloff`,
+    the target fades to 0 as `curvature * b(d)` with the cosine taper
+    `b(d) = (1 + cos(pi (d - epsilon) / falloff)) / 2`, so the loss
+    asks the curvature to fade out instead of leaving the ring free
+    (which otherwise collects the compensating curvature in a rim just
+    outside the tube). Each vertex weighs 1, or `b(d)` when
+    `falloff_weight` is true, and the weights are normalized to sum to
+    1 per edge. Edges with no target or no vertices get empty arrays.
+
+    With `falloff_ends` false, the ring only runs along the sides of the
+    edge (vertices projecting strictly inside the segment), not around
+    its ends, so it doesn't reach over the nodes, where edges with other
+    targets meet.
+    """
+    points = np.asarray(points, dtype=np.float64)[:, :2]
+    network_vertices = np.asarray(network_vertices, dtype=np.float64)
+    result = []
+    for (i, j), curvature in zip(network_edges, network_curvatures):
+        a = network_vertices[i, :2]
+        direction = network_vertices[j, :2] - a
+        length_squared = direction @ direction
+        if length_squared:
+            fraction = np.clip(((points - a) @ direction) / length_squared, 0., 1.)
+        else:
+            fraction = np.zeros(len(points))
+        distance = np.linalg.norm(points - (a + fraction[:, None] * direction), axis=1)
+        within = distance < epsilon + falloff
+        if not falloff_ends:
+            within &= (distance < epsilon) | ((fraction > 0.) & (fraction < 1.))
+        members = np.flatnonzero(within)
+        if curvature is None or len(members) == 0:
+            result.append((np.zeros(0, dtype=np.int64), np.zeros(0), np.zeros(0)))
+            continue
+        ring = np.clip((distance[members] - epsilon) / falloff, 0., 1.) if falloff > 0 \
+            else np.zeros(len(members))
+        taper = 0.5 * (1. + np.cos(np.pi * ring))
+        weights = taper if falloff_weight else np.ones(len(members))
+        result.append((members, curvature * taper, weights / weights.sum()))
+    return result
+
+
 class Computer:
     """Implementation of curvature loss."""
 
@@ -21,12 +77,25 @@ class Computer:
         network_curvatures: typing.List[np.float64],
         epsilon: np.float64,
         curvature: Curvature,
-        edge_weights = None
+        edge_weights = None,
+        falloff: float = 0.,
+        falloff_weight: bool = False,
+        falloff_ends: bool = True,
     ):
-        """Initialize the computer."""
+        """
+        Initialize the computer. With a positive `falloff`, the tube
+        has a soft edge (see `tapered_tube`).
+        """
         self._mesh = mesh
         self._topology = mesh.get_topology()
         self._curvature: Curvature = curvature
+        self._tapered = None
+        if falloff > 0:
+            self._tapered = tapered_tube(
+                mesh.get_coordinates()[:, :2], network_vertices,
+                network_edges, network_curvatures, epsilon, falloff,
+                falloff_weight, falloff_ends,
+            )
 
         self._fat_edges = mesh.get_fat_edges(
             network_vertices,
@@ -79,6 +148,12 @@ class Computer:
         self._forward_updates = self._mesh.get_updates()
 
         self.loss = np.float64(0.)
+        if self._tapered is not None:
+            for (indices, targets, weights), edge_weight in zip(self._tapered, self._edge_weights):
+                if len(indices):
+                    residuals = np.asarray(self._curvature.kappa_G)[indices] - targets
+                    self.loss += edge_weight * np.sum(weights * residuals**2)
+            return
         for fat_edge, network_curvature, edge_weight in zip(
             self._fat_edges,
             self._network_curvatures,
@@ -109,6 +184,13 @@ class Computer:
         self._partials = self._mesh.get_partials()
 
         self.dif_loss = np.zeros(self._topology.n_vertices)
+        if self._tapered is not None:
+            for (indices, targets, weights), edge_weight in zip(self._tapered, self._edge_weights):
+                for vertex, target, weight in zip(indices, targets, weights):
+                    coefficient = 2 * edge_weight * weight * (self._curvature.kappa_G[vertex] - target)
+                    for index, partial in self._curvature.dif_kappa_G[vertex].items():
+                        self.dif_loss[index] += coefficient * partial
+            return
         for fat_edge, network_curvature, edge_weight \
                 in zip(self._fat_edges,
                        self._network_curvatures,

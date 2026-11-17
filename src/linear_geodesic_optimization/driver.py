@@ -23,8 +23,11 @@ def argument_to_string(
 ):
     if parameter_name in parameter_name_filenames:
         return pathlib.PurePath(arguments[parameter_name]).stem
-    else:
-        return str(arguments[parameter_name])
+    value = arguments[parameter_name]
+    if isinstance(value, (list, tuple)):
+        # e.g. a staged curvature_tube_radius: [None, 0.025] -> 'default-0.025'
+        return '-'.join('default' if item is None else str(item) for item in value)
+    return str(value)
 
 def base_defaults() -> dict[str, typing.Any]:
     """
@@ -44,6 +47,22 @@ def base_defaults() -> dict[str, typing.Any]:
         'lambda_curvature': 1.,
         'lambda_smooth': 0.,
         'smooth_loss_type': 'mvs',
+        'lambda_geodesic': 0.,  # Weight of the routes' bending energy (geodesic curvature)
+        'geodesic_curve': 'route',  # Or 'link': bend the straight links instead of route splines
+        'lambda_stretch': 0.,  # Weight of the route stretch loss (routes longer than geodesics); polish only
+        'stretch_refresh': 100,  # Polish iterations between recomputing the competing geodesics
+        'stretch_smoothing': 0.035,
+        # Radius of the curvature loss's tube around each edge, as a
+        # fraction of mesh_scale (None: just over one mesh diagonal)
+        'curvature_tube_radius': None,
+        # Width of a ring outside the tube where the curvature target fades
+        # to 0 (fraction of mesh_scale; 0 for a hard edge), and whether the
+        # ring's weights fade too
+        'curvature_tube_falloff': 0.,
+        'curvature_tube_falloff_weight': False,
+        # Whether the falloff ring also wraps around the edge's ends (over
+        # the nodes) or only runs along its sides
+        'curvature_tube_falloff_ends': True,  # Gaussian blur width for the stretch lengths, as a fraction of mesh_scale
         'initial_radius': None,  # None is an infinite radius (flat)
         'sides': 50,
         'mesh_scale': 1.,
@@ -78,6 +97,9 @@ def base_defaults() -> dict[str, typing.Any]:
         # optimization.py), 'run' by each run's own
         'ridge_height_normalization': 'batch',
         'ridge_height_reference': None,
+        # 'nodes': crests run between node heights; 'edges': each crest is
+        # at its edge's own (throughput) height
+        'ridge_crest_height': 'nodes',
         'index': None # Additional unique ID
     }
 
@@ -94,6 +116,9 @@ def collation_defaults() -> dict[str, typing.Any]:
         'exact_geodesics': False,
         'vertical_centering': 'mean',  # Or 'min' or None (no shift)
         'use_convex_hull': False,
+        # Draw one geodesic per source-destination pair between the
+        # endpoints only, instead of through the first snapshot's routes
+        'geodesic_endpoints': False,
     }
 
 def resolve_input_file_paths(

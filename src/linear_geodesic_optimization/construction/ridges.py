@@ -116,6 +116,26 @@ def node_heights(
     return height * (base + (1. - base) * normalized)
 
 
+def edge_heights(
+    throughputs: typing.Sequence[typing.Optional[float]],
+    transform: typing.Literal['linear', 'sqrt', 'log'],
+    height: float,
+    base: float,
+    reference: float,
+) -> npt.NDArray[np.float64]:
+    """
+    Return each edge's own height, normalized like `node_heights`
+    (with the same `reference`), so that with the 'max' node rule a
+    node's height is the height of its busiest edge.
+    """
+    values = transform_throughput(
+        np.array([0. if t is None else float(t) for t in throughputs]), transform
+    )
+    maximum = float(transform_throughput(np.array([reference]), transform)[0])
+    normalized = np.clip(values / maximum, 0., 1.) if maximum > 0. else np.zeros_like(values)
+    return height * (base + (1. - base) * normalized)
+
+
 def crest_profile(
     length: float,
     height_a: float,
@@ -226,6 +246,7 @@ def build_heights(
     blend_p: float = 8.,
     smoothing: float = 0.,
     reference: typing.Optional[float] = None,
+    crest: typing.Literal['nodes', 'edges'] = 'nodes',
 ) -> typing.Tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], typing.List[typing.Dict[str, typing.Any]]]:
     """
     Return `(z, node_heights, edges)`.
@@ -236,6 +257,11 @@ def build_heights(
     height, and `smoothing` the standard deviation of the final
     Gaussian smoothing (0 for none), all in mesh units. `reference` is
     the node throughput that maps to full height (see `node_heights`). `edges` holds one dictionary of diagnostics per edge.
+
+    With `crest` 'nodes', each crest runs between its endpoints' node
+    heights. With 'edges', both ends of a crest are at the edge's own
+    height (see `edge_heights`), so a quiet edge is a low ridge leaving
+    its endpoints' domes, and a path along it must descend and climb.
     """
     network_vertices = np.asarray(network_vertices)[:, :2]
     heights = node_heights(
@@ -243,14 +269,26 @@ def build_heights(
         node_rule, transform, height, base, reference
     )
     floor = 0.05 * base * height
+    if crest not in ('nodes', 'edges'):
+        raise ValueError(f'Unknown ridge_crest_height: {crest}')
+    if crest == 'edges':
+        if reference is None:
+            reference = float(np.max(node_throughputs(
+                len(network_vertices), network_edges, throughputs, node_rule
+            ), initial=0.))
+        own_heights = edge_heights(throughputs, transform, height, base, reference)
 
     accumulated = np.zeros(len(points))
     edges = []
-    for (i, j), curvature, throughput in zip(network_edges, network_curvatures, throughputs):
+    for index, ((i, j), curvature, throughput) in enumerate(zip(network_edges, network_curvatures, throughputs)):
         a, b = network_vertices[i], network_vertices[j]
         length = float(np.linalg.norm(b - a))
+        if crest == 'edges':
+            end_a = end_b = own_heights[index]
+        else:
+            end_a, end_b = heights[i], heights[j]
         profile, info = crest_profile(
-            length, heights[i], heights[j],
+            length, end_a, end_b,
             None if curvature is None else float(curvature),
             width, floor
         )
@@ -261,6 +299,7 @@ def build_heights(
             'curvature': None if curvature is None else float(curvature),
             'throughput': None if throughput is None else float(throughput),
             'heights': [float(heights[i]), float(heights[j])],
+            'crest_ends': [float(end_a), float(end_b)],
             **info,
         })
 

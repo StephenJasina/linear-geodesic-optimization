@@ -15,6 +15,8 @@ import torch
 
 from linear_geodesic_optimization.optimization.smooth_loss_tensor \
     import grid_operators
+from linear_geodesic_optimization.optimization.curvature_loss \
+    import tapered_tube
 
 
 class Computer:
@@ -31,6 +33,11 @@ class Computer:
         lambda_smooth=0.01,
         directory: Optional[Path] = None,
         smooth_loss_type='mvs',
+        lambda_geodesic=0.0,
+        geodesic_bending=None,
+        curvature_falloff=0.0,
+        curvature_falloff_weight=False,
+        curvature_falloff_ends=True,
     ):
         # Batch jobs run in separate processes; one thread per process avoids
         # oversubscribing CPU cores when many optimizations run concurrently.
@@ -45,6 +52,28 @@ class Computer:
         self.iterations = 0
         self.curvature_loss = SimpleNamespace(loss=0.0)
         self.smooth_loss = SimpleNamespace(loss=0.0)
+        self.geodesic_loss = SimpleNamespace(loss=0.0)
+        # A `geodesic_curvature.CurveBending`, used when lambda_geodesic
+        # is nonzero
+        self.lambda_geodesic = lambda_geodesic
+        self._geodesic_operators = None
+        if lambda_geodesic and geodesic_bending is None:
+            raise ValueError('lambda_geodesic needs geodesic_bending')
+        if lambda_geodesic:
+            self._geodesic_operators = []
+            for operator in geodesic_bending.operators:
+                operator = operator.tocoo()
+                self._geodesic_operators.append(torch.sparse_coo_tensor(
+                    np.stack([operator.row, operator.col]), operator.data,
+                    operator.shape, dtype=torch.float64,
+                    check_invariants=True,
+                ).coalesce())
+            self._geodesic_weights = torch.as_tensor(
+                geodesic_bending.sample_weights, dtype=torch.float64
+            )
+            self._geodesic_curvatures = torch.as_tensor(
+                geodesic_bending.planar_curvatures, dtype=torch.float64
+            )
         self._cached_parameters = None
         self._cached_loss = None
         self._cached_gradient = None
@@ -114,6 +143,20 @@ class Computer:
             fat_indices.extend(members)
             targets.extend([target] * len(members))
             weights.extend([edge_weight / len(members)] * len(members))
+        if curvature_falloff > 0:
+            # A tube with a soft edge (see `curvature_loss.tapered_tube`)
+            fat_indices, targets, weights = [], [], []
+            for (indices, edge_targets, edge_vertex_weights), edge_weight in zip(
+                tapered_tube(
+                    mesh_points, network_vertices, network_edges,
+                    network_curvatures, epsilon, curvature_falloff,
+                    curvature_falloff_weight, curvature_falloff_ends,
+                ),
+                edge_weights,
+            ):
+                fat_indices.extend(indices)
+                targets.extend(edge_targets)
+                weights.extend(edge_weight * edge_vertex_weights)
         self._fat_indices = torch.tensor(fat_indices, dtype=torch.long)
         self._targets = torch.tensor(targets, dtype=torch.float64)
         self._weights = torch.tensor(weights, dtype=torch.float64)
@@ -254,6 +297,10 @@ class Computer:
             self.lambda_curvature * curvature_loss
             + self.lambda_smooth * smooth_loss
         )
+        geodesic_loss = None
+        if self._geodesic_operators is not None:
+            geodesic_loss = self._geodesic_energy(heights)
+            loss = loss + self.lambda_geodesic * geodesic_loss
         gradient, = torch.autograd.grad(loss, heights)
         self._cached_parameters = parameters.copy()
         self._cached_loss = float(loss.detach())
@@ -261,6 +308,25 @@ class Computer:
         self.curvature_loss.loss = float(curvature_loss.detach())
         self.kappa_G = gaussian.detach().numpy().copy()
         self.smooth_loss.loss = float(smooth_loss.detach())
+        self.geodesic_loss.loss = (
+            0.0 if geodesic_loss is None else float(geodesic_loss.detach())
+        )
+
+    def _geodesic_energy(self, heights):
+        """
+        Return the bending energy of the network's routes. See
+        `linear_geodesic_optimization.geodesic_curvature.CurveBending`.
+        """
+        h_t, h_n, h_tt = (
+            torch.sparse.mm(operator, heights[:, None])[:, 0]
+            for operator in self._geodesic_operators
+        )
+        q = 1 + h_t**2
+        g = q + h_n**2
+        numerator = self._geodesic_curvatures * g + h_n * h_tt
+        return (
+            self._geodesic_weights * numerator**2 / (g * q**2.5)
+        ).sum()
 
     def _mvs_energy(
         self, points, faces, normals, edge_laplacian, vertex_laplacian,
@@ -319,6 +385,7 @@ class Computer:
             f'iteration {self.iterations}:\n'
             f'\tL_curvature: {self.curvature_loss.loss:.6f}\n'
             f'\tL_smooth: {self.smooth_loss.loss:.6f}\n'
+            f'\tL_geodesic: {self.geodesic_loss.loss:.6f}\n'
             f'\tLoss: {loss:.6f}\n'
         )
         if self.directory is not None and self.iterations % 100 == 0:
@@ -327,5 +394,6 @@ class Computer:
                     'mesh_parameters': self.mesh.get_parameters().tolist(),
                     'L_curvature': self.curvature_loss.loss,
                     'L_smooth': self.smooth_loss.loss,
+                    'L_geodesic': self.geodesic_loss.loss,
                 }, output)
         self.iterations += 1

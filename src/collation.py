@@ -322,6 +322,23 @@ def load_batch(
     geodesic_labels = [geodesic_label for geodesic_label, _ in geodesic_label_color_pairs]
     edge_colors = [list(color) for _, color in geodesic_label_color_pairs]
 
+    # For `geodesic_endpoints`: one geodesic per unordered
+    # source-destination pair, taken from the routes of every snapshot
+    # (the first snapshot's in order of traffic, then any new pairs), so
+    # that each frame's geodesic can follow whichever way that frame's
+    # surface makes shortest
+    endpoint_labels = []
+    seen_pairs = set()
+    for geodesic_label in geodesic_labels + [
+        route for output in outputs for route in (output.get('routes') or [])
+    ]:
+        pair = (geodesic_label[0], geodesic_label[-1])
+        if pair[0] == pair[1] or frozenset(pair) in seen_pairs:
+            continue
+        seen_pairs.add(frozenset(pair))
+        endpoint_labels.append(list(pair))
+    endpoint_labels = endpoint_labels[:100]
+
     # The curvatures of the unprocessed surfaces and the traffic data
     curvatures = []
     traffic_matrices = []
@@ -376,6 +393,12 @@ def load_batch(
             for geodesic_label in geodesic_labels
         ],
         'edge_colors': edge_colors,
+        'endpoint_labels': endpoint_labels,
+        'endpoint_routes': [
+            [node_labels_to_indices[node] for node in label]
+            for label in endpoint_labels
+        ],
+        'endpoint_colors': [get_tableau_color(index) for index in range(len(endpoint_labels))],
         'curvatures': curvatures,
         'traffic_matrices': traffic_matrices,
         'traffic_paths_needed': traffic_paths_needed,
@@ -383,7 +406,8 @@ def load_batch(
         # Caches keyed by `use_convex_hull`, filled by `render_animation`
         'borders': {},
         'distances_to_networks': {},
-        # Cache keyed by `exact_geodesics`, filled by `get_original_frames`
+        # Cache keyed by `(exact_geodesics, geodesic_endpoints)`, filled
+        # by `get_original_frames`
         'original_frames': {},
     }
 
@@ -436,10 +460,22 @@ def get_distances_to_networks(batch_data, use_convex_hull):
         ]
     return batch_data['distances_to_networks'][use_convex_hull]
 
-def compute_frame_geodesics(batch_data, z, hull, exact_geodesics, traffic_paths_needed):
+def geodesic_set(batch_data, geodesic_endpoints):
+    """
+    Return the `(labels, routes, colors)` of the geodesics to draw: the
+    first snapshot's routes, or with `geodesic_endpoints`, one
+    source-destination pair per route endpoint pair (see `load_batch`).
+    """
+    if geodesic_endpoints:
+        return batch_data['endpoint_labels'], batch_data['endpoint_routes'], batch_data['endpoint_colors']
+    return batch_data['geodesic_labels'], batch_data['geodesic_routes'], batch_data['edge_colors']
+
+def compute_frame_geodesics(batch_data, z, hull, exact_geodesics, traffic_paths_needed, geodesic_endpoints=False):
     """
     Set the mesh heights to `z` and compute the geodesics of one
     snapshot. If `hull` is not `None`, the mesh is first trimmed to it.
+    With `geodesic_endpoints`, each geodesic runs between a route's
+    endpoints only, so it isn't steered through the route's waypoints.
 
     Return the geodesics and, if `traffic_paths_needed` is true, the
     matrix of traffic paths (otherwise `None`).
@@ -447,7 +483,7 @@ def compute_frame_geodesics(batch_data, z, hull, exact_geodesics, traffic_paths_
     mesh = batch_data['mesh']
     network_vertices = batch_data['network_vertices']
     node_labels_to_indices = batch_data['node_labels_to_indices']
-    geodesic_labels = batch_data['geodesic_labels']
+    geodesic_labels, _, _ = geodesic_set(batch_data, geodesic_endpoints)
     # Use the edges of the last snapshot, as `get_network_borders` does
     graph_data, _, _ = batch_data['outputs'][-1]['network']
     network_edges = graph_data['edges']
@@ -495,7 +531,7 @@ def center_heights(z, mode, region=None):
         return z - np.min(values)
     raise ValueError(f"vertical_centering must be 'mean', 'min', or None, not {mode!r}")
 
-def get_original_frames(batch_data, exact_geodesics, vertical_centering='mean'):
+def get_original_frames(batch_data, exact_geodesics, vertical_centering='mean', geodesic_endpoints=False):
     """
     Return, for each snapshot, the unprocessed surface: its heights
     (`output['final']` centered over the whole mesh according to
@@ -504,14 +540,16 @@ def get_original_frames(batch_data, exact_geodesics, vertical_centering='mean'):
     mesh. The geodesics don't depend on vertical shifts, so they are
     cached in `batch_data` (by `exact_geodesics`) and computed once.
     """
-    if exact_geodesics not in batch_data['original_frames']:
+    key = (exact_geodesics, geodesic_endpoints)
+    if key not in batch_data['original_frames']:
         geodesic_frames = []
         for output, traffic_paths_needed in zip(batch_data['outputs'], batch_data['traffic_paths_needed']):
             geodesics, paths = compute_frame_geodesics(
-                batch_data, np.array(output['final']), None, exact_geodesics, traffic_paths_needed
+                batch_data, np.array(output['final']), None, exact_geodesics, traffic_paths_needed,
+                geodesic_endpoints,
             )
             geodesic_frames.append((geodesics, paths))
-        batch_data['original_frames'][exact_geodesics] = geodesic_frames
+        batch_data['original_frames'][key] = geodesic_frames
 
     parameters = batch_data['parameters']
     width = parameters['width']
@@ -526,7 +564,7 @@ def get_original_frames(batch_data, exact_geodesics, vertical_centering='mean'):
             'trafficPaths': paths,
         }
         for output, (geodesics, paths) in zip(
-            batch_data['outputs'], batch_data['original_frames'][exact_geodesics]
+            batch_data['outputs'], batch_data['original_frames'][key]
         )
     ]
 
@@ -540,6 +578,7 @@ def render_animation(
     exact_geodesics=False,
     postprocess_subtract_initialization=True,
     vertical_centering='mean',
+    geodesic_endpoints=False,
 ):
     """
     Turn a batch loaded by `load_batch` into a single animation, using
@@ -576,8 +615,16 @@ def render_animation(
     `pygeodesic`'s exact algorithm instead of the default
     `potpourri3d`-based approximation. See
     `compute_geodesics_from_graph` for details.
+
+    If `geodesic_endpoints` is false (the default), a geodesic is drawn
+    for each of the first snapshot's routes, through that route's
+    waypoints, in every frame. If it is true, one geodesic is drawn per
+    source-destination pair (from the routes of every snapshot), between
+    the endpoints only, so it can switch to whichever way each frame's
+    surface makes shortest.
     """
     outputs = batch_data['outputs']
+    _, geodesic_routes, geodesic_colors = geodesic_set(batch_data, geodesic_endpoints)
     parameters = batch_data['parameters']
     width = parameters['width']
     height = parameters['height']
@@ -624,7 +671,7 @@ def render_animation(
             z_max = max(z_max, np.max(z[hull]))
             z_min = min(z_min, np.min(z[hull]))
 
-    originals = get_original_frames(batch_data, exact_geodesics, vertical_centering)
+    originals = get_original_frames(batch_data, exact_geodesics, vertical_centering, geodesic_endpoints)
 
     animation_data = []
     zs_iter = zs if postprocess else itertools.repeat(None)
@@ -645,7 +692,8 @@ def render_animation(
             z = (z + offset) * np.exp(-1000 * distance_to_bubble**2) - offset
 
             geodesics, paths = compute_frame_geodesics(
-                batch_data, z, hull, exact_geodesics, traffic_paths_needed
+                batch_data, z, hull, exact_geodesics, traffic_paths_needed,
+                geodesic_endpoints,
             )
             z_height = (z / mesh_scale).reshape((width, height)).tolist()
         else:
@@ -660,7 +708,7 @@ def render_animation(
             'curvature': curvature,
             'edges': edges,
             'geodesics': geodesics,
-            'edgeColors': batch_data['edge_colors'],
+            'edgeColors': geodesic_colors,
             'border': [
                 [[coordinate / mesh_scale for coordinate in point] for point in border_part]
                 for border_part in network_border
@@ -675,7 +723,7 @@ def render_animation(
     return {
         'nodes': batch_data['animation_vertices'],
         # Node indices of the route of each geodesic (fixed per batch)
-        'geodesicRoutes': batch_data['geodesic_routes'],
+        'geodesicRoutes': geodesic_routes,
         'animation': animation_data,
         'map': batch_data['map_data'],
     }

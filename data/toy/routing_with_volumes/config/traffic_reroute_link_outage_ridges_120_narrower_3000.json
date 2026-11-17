@@ -11,13 +11,7 @@
 		],
 		"filename_json": [
 			"graph_0.json",
-			"graph_1.json",
-			"graph_2.json",
-			"graph_3.json",
 			"graph_4.json",
-			"graph_5.json",
-			"graph_6.json",
-			"graph_7.json",
 			"graph_8.json"
 		],
 		"latency_threshold": [
@@ -39,18 +33,12 @@
 			1.0
 		],
 		"lambda_smooth": [
-			0.0003125,
-			3.125e-05,
-			3.125e-06,
 			3.125e-07
 		],
 		"sides": [
-			80
+			120
 		],
 		"mesh_scale": [
-			4.0,
-			4.0,
-			4.0,
 			4.0
 		],
 		"coordinates_scale": [
@@ -66,14 +54,31 @@
 			"max"
 		],
 		"ridge_polish_maxiter": [
-			200,
-			1000
+			3000
 		],
 		"ridge_height_scale": [
-			0.8
+			3.0,
+			4.8,
+			6.8571,
+			4.8
 		],
 		"ridge_height_normalization": [
 			"batch"
+		],
+		"stretch_refresh": [
+			100
+		],
+		"ridge_width": [
+			0.08,
+			0.05,
+			0.035,
+			0.05
+		],
+		"ridge_smoothing": [
+			0.0175,
+			0.0175,
+			0.0175,
+			0.025
 		]
 	},
 	"groups_optimization": [
@@ -88,10 +93,12 @@
 			"lambda_smooth"
 		],
 		[
-			"ridge_height_scale"
+			"ridge_polish_maxiter"
 		],
 		[
-			"ridge_polish_maxiter"
+			"ridge_width",
+			"ridge_height_scale",
+			"ridge_smoothing"
 		]
 	],
 	"arguments_collation": {
@@ -114,15 +121,17 @@
 		"directory_output": [
 			"toy",
 			"routing_with_volumes",
-			"traffic_reroute_link_outage_ridges_tall_smooth"
+			"traffic_reroute_link_outage_ridges_120_narrower_3000"
 		],
 		"output_format": [
 			[
 				"mesh_scale",
 				"lambda_smooth",
 				"ricci_curvature_distribution_reweight_scale",
+				"ridge_width",
 				"ridge_height_scale",
-				"ridge_polish_maxiter"
+				"ridge_polish_maxiter",
+				"ridge_smoothing"
 			],
 			[
 				"index",
@@ -130,6 +139,7 @@
 			]
 		],
 		"initialization": "sphere",
-		"order_by": "filename_json"
+		"order_by": "filename_json",
+		"n_cores": 20
 	}
 }

@@ -96,3 +96,38 @@ def test_diagnostics_write_compatible_snapshot(tmp_path):
     np.testing.assert_allclose(data['mesh_parameters'], z)
     assert np.isfinite(data['L_curvature'])
     assert np.isfinite(data['L_smooth'])
+
+
+@pytest.mark.parametrize('falloff_weight', [False, True])
+@pytest.mark.parametrize('falloff_ends', [True, False])
+def test_tapered_tube_matches_legacy(falloff_weight, falloff_ends):
+    sides = 12
+    mesh = Mesh(sides, sides, 0.25)
+    vertices = np.array([[0.05, 0.05], [0.2, 0.06], [0.12, 0.2]])
+    edges = [(0, 1), (1, 2), (2, 0)]
+    curvatures = [0.3, -0.2, None]
+    epsilon = 1.01 * 2**0.5 * 0.25 / sides
+    keywords = {'curvature_falloff': 2 * epsilon, 'curvature_falloff_weight': falloff_weight, 'curvature_falloff_ends': falloff_ends}
+    legacy = LegacyComputer(mesh, vertices, edges, curvatures, epsilon, 1.0, 0.005, **keywords)
+    fast = TorchComputer(mesh, vertices, edges, curvatures, epsilon, 1.0, 0.005, **keywords)
+    plain = TorchComputer(mesh, vertices, edges, curvatures, epsilon, 1.0, 0.005)
+    z = 0.01 * np.sin(np.arange(sides * sides))
+    mesh.set_parameters(z)
+    expected_loss = legacy.forward()
+    expected_gradient = legacy.reverse()
+    np.testing.assert_allclose(fast.forward(z), expected_loss, rtol=1e-9)
+    np.testing.assert_allclose(fast.reverse(z), expected_gradient, rtol=1e-7, atol=1e-7)
+    # The soft edge changes the loss
+    assert not np.isclose(plain.forward(z), expected_loss)
+
+
+def test_zero_falloff_tapered_tube_matches_hard_tube():
+    from linear_geodesic_optimization.optimization.curvature_loss import tapered_tube
+    sides = 12
+    mesh = Mesh(sides, sides, 0.25)
+    vertices = np.array([[0.05, 0.05], [0.2, 0.06]])
+    epsilon = 1.01 * 2**0.5 * 0.25 / sides
+    (indices, targets, weights), = tapered_tube(
+        mesh.get_coordinates(), vertices, [(0, 1)], [0.4], epsilon, 1e-12
+    )
+    assert np.allclose(targets, 0.4) and np.allclose(weights, 1 / len(indices))

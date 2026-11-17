@@ -1,6 +1,7 @@
 """Checks for the geodesic curvature of lifted curves."""
 
 import numpy as np
+import pytest
 
 from linear_geodesic_optimization import geodesic_curvature as gc
 from linear_geodesic_optimization.mesh.rectangle import Mesh
@@ -104,3 +105,95 @@ def test_closed_route_satisfies_gauss_bonnet():
 
     assert np.isclose(smooth + corners + total_curvature, 2 * np.pi,
                       atol=2e-3)
+
+
+def bending_setup():
+    mesh = Mesh(41, 41, 1.)
+    xy = mesh.get_coordinates()[:, :2]
+    z = 0.3 * np.sin(3 * xy[:, 0]) * np.cos(2 * xy[:, 1]) \
+        + 0.2 * xy[:, 0]**2 * xy[:, 1]
+    curves = [
+        np.array([[0.2, 0.2], [0.8, 0.35]]),
+        np.array([[0.3, 0.8], [0.7, 0.2]]),
+        np.array([[0.2, 0.5], [0.5, 0.75], [0.8, 0.6], [0.7, 0.3]]),
+    ]
+    return mesh, z, curves, np.array([1., 3., 2.])
+
+
+@pytest.mark.parametrize('curve', ['polyline', 'spline'])
+def test_curve_bending_matches_route_bending(curve):
+    mesh, z, curves, weights = bending_setup()
+    if curve == 'polyline':
+        # Polyline corners aren't counted, so use only straight segments
+        curves, weights = curves[:2], weights[:2]
+    spacing = 0.25 / 40
+    bending = gc.CurveBending(mesh, curves, weights, spacing, curve)
+    loss, _ = bending.evaluate(z)
+    fields = gc.derivative_fields(mesh, z)
+    expected = sum(
+        weight / weights.sum() * gc.route_curvature(
+            mesh, fields, waypoints, spacing, curve=curve
+        )['bending']
+        for waypoints, weight in zip(curves, weights)
+    )
+    assert np.isclose(loss, expected, rtol=1e-12)
+
+
+@pytest.mark.parametrize('curve', ['polyline', 'spline'])
+def test_curve_bending_gradient_matches_directional_difference(curve):
+    mesh, z, curves, weights = bending_setup()
+    bending = gc.CurveBending(mesh, curves, weights, 0.25 / 40, curve)
+    direction = np.random.default_rng(3).normal(size=z.shape)
+    step = 1e-6
+    numerical = (
+        bending.evaluate(z + step * direction)[0]
+        - bending.evaluate(z - step * direction)[0]
+    ) / (2 * step)
+    assert np.isclose(bending.evaluate(z)[1] @ direction, numerical,
+                      rtol=1e-5)
+
+
+def test_route_curves_merge_reversals_and_accumulate_traffic():
+    network = ({'labels': ['A', 'B', 'C']}, {}, {})
+    routes = [['A', 'B', 'C'], ['C', 'B'], ['C', 'B', 'A'], ['A', 'A']]
+    traffic = [1., 2., 4., 5.]
+    curves, weights = gc.route_curves(network, routes, traffic, 'route')
+    assert dict(zip(curves, weights)) == {(0, 1, 2): 5., (1, 2): 2.}
+    curves, weights = gc.route_curves(network, routes, traffic, 'link')
+    assert dict(zip(curves, weights)) == {(0, 1): 5., (1, 2): 7.}
+
+
+@pytest.mark.parametrize('curve', ['polyline', 'spline'])
+def test_geodesic_loss_matches_between_backends(curve):
+    torch_optimization = pytest.importorskip(
+        'linear_geodesic_optimization.optimization.torch_optimization'
+    )
+    from linear_geodesic_optimization.optimization.optimization import \
+        Computer as LegacyComputer
+    sides = 12
+    mesh = Mesh(sides, sides, 0.25)
+    vertices = np.array([[0.05, 0.05], [0.2, 0.06], [0.12, 0.2]])
+    edges = [(0, 1), (1, 2), (2, 0)]
+    bending = gc.CurveBending(
+        mesh, [vertices[[0, 1]], vertices[[0, 1, 2]], vertices[[2, 0]]],
+        np.array([1., 2., 0.5]), 0.25 * 0.25 / (sides - 1), curve,
+    )
+    arguments = (
+        mesh, vertices, edges, [0.1, -0.2, 0.05],
+        1.01 * 2**0.5 * 0.25 / sides, 1.0, 0.005,
+    )
+    keywords = {'lambda_geodesic': 0.7, 'geodesic_bending': bending}
+    legacy = LegacyComputer(*arguments, **keywords)
+    fast = torch_optimization.Computer(*arguments, **keywords)
+    z = 0.01 * np.sin(np.arange(sides * sides))
+    mesh.set_parameters(z)
+    expected_loss = legacy.forward()
+    expected_gradient = legacy.reverse()
+    assert legacy.geodesic_loss.loss > 0
+    np.testing.assert_allclose(fast.forward(z), expected_loss, rtol=1e-9)
+    np.testing.assert_allclose(
+        fast.geodesic_loss.loss, legacy.geodesic_loss.loss, rtol=1e-9
+    )
+    np.testing.assert_allclose(
+        fast.reverse(z), expected_gradient, rtol=1e-7, atol=1e-7
+    )
